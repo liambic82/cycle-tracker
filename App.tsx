@@ -1,0 +1,511 @@
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import {
+  CalendarDays,
+  ChartNoAxesCombined,
+  Check,
+  Flower2,
+  Heart,
+  LockKeyhole,
+  Plus,
+  ShieldCheck,
+  X,
+  type LucideIcon,
+} from 'lucide-react-native';
+import { useJournal } from './src/data/useJournal';
+import { cycleDay, starts, updateEntry } from './src/domain/journal';
+import { formatDay, toDay, type Day } from './src/domain/dates';
+import { AuthGate } from './src/ui/AuthGate';
+import { Calendar } from './src/ui/Calendar';
+import { DayEditor } from './src/ui/DayEditor';
+import { History } from './src/ui/History';
+import { DataSettings } from './src/ui/DataSettings';
+import { Brand, Button } from './src/ui/components';
+import { colors, common, serif } from './src/ui/theme';
+
+type Page = 'calendar' | 'history' | 'data';
+const NAV: Array<{ id: Page; label: string; icon: LucideIcon }> = [
+  { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+  { id: 'history', label: 'Your history', icon: ChartNoAxesCombined },
+  { id: 'data', label: 'Your data', icon: ShieldCheck },
+];
+
+function CycleApp() {
+  const state = useJournal();
+  const width = useWindowDimensions().width;
+  const desktop = width >= 900;
+  const inlineEditor = width >= 1180;
+  const [page, setPage] = useState<Page>('calendar');
+  const [editing, setEditing] = useState(false);
+  const [today, setToday] = useState(toDay(new Date()));
+  useEffect(() => {
+    const timer = setInterval(() => setToday(toDay(new Date())), 30000);
+    return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    if (!state.journal) {
+      setEditing(false);
+      setPage('calendar');
+    }
+  }, [!!state.journal]);
+
+  if (state.loading)
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 20,
+          backgroundColor: colors.background,
+        }}
+      >
+        <Brand />
+        <ActivityIndicator color={colors.plum} />
+      </View>
+    );
+  if (!state.journal)
+    return (
+      <AuthGate
+        exists={state.exists}
+        busy={state.busy}
+        error={state.error}
+        start={state.start}
+        explore={state.explore}
+        restore={state.restore}
+      />
+    );
+  const journal = state.journal;
+  const day = cycleDay(journal, today);
+  const lastStart = starts(journal, today).at(-1);
+  const select = (date: Day) => {
+    state.update((value) => ({ ...value, selectedDate: date }));
+    if (!inlineEditor) setEditing(true);
+  };
+  const logToday = () => {
+    setPage('calendar');
+    select(today);
+  };
+  const editor = (
+    <DayEditor
+      journal={journal}
+      today={today}
+      onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
+      onCustom={(symptom) =>
+        state.update((value) => {
+          const entry = value.entries[value.selectedDate];
+          return updateEntry(
+            { ...value, customSymptoms: [...value.customSymptoms, symptom] },
+            value.selectedDate,
+            { symptoms: [...(entry?.symptoms ?? []), symptom] },
+          );
+        })
+      }
+    />
+  );
+  const saveStatus = (
+    <View style={[common.row, { gap: 6 }]}>
+      <Check size={13} color={state.status === 'Not saved' ? colors.error : colors.sageInk} />
+      <Text accessibilityLiveRegion="polite" style={[common.small, { fontSize: 11 }]}>
+        {state.status}
+      </Text>
+    </View>
+  );
+  return (
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: colors.background }}>
+      {desktop && (
+        <View
+          style={{
+            width: 210,
+            paddingHorizontal: 22,
+            paddingVertical: 35,
+            backgroundColor: '#FDFCFA',
+            borderRightWidth: 1,
+            borderColor: colors.line,
+          }}
+        >
+          <Brand />
+          <Text style={[common.eyebrow, { marginTop: 45, marginBottom: 18, fontSize: 9 }]}>
+            YOUR EVERYDAY COMPANION
+          </Text>
+          <View style={{ gap: 8 }}>
+            {NAV.map(({ id, label, icon: Icon }) => (
+              <Pressable
+                key={id}
+                accessibilityRole="tab"
+                accessibilityLabel={label}
+                accessibilityState={{ selected: page === id }}
+                onPress={() => setPage(id)}
+                style={{
+                  minHeight: 49,
+                  flexDirection: 'row',
+                  gap: 12,
+                  alignItems: 'center',
+                  paddingHorizontal: 14,
+                  borderRadius: 12,
+                  backgroundColor: page === id ? '#F0E7E9' : 'transparent',
+                }}
+              >
+                <Icon
+                  size={18}
+                  strokeWidth={1.6}
+                  color={page === id ? colors.plumDark : colors.muted}
+                />
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: page === id ? '600' : '400',
+                    color: page === id ? colors.plumDark : colors.muted,
+                  }}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <View style={{ flex: 1, minHeight: 40 }} />
+          <View style={{ padding: 18, borderRadius: 17, backgroundColor: colors.sage, gap: 12 }}>
+            <Flower2 size={26} color={colors.sageInk} strokeWidth={1.3} />
+            <Text style={{ fontFamily: serif, fontSize: 19, lineHeight: 25, color: colors.ink }}>
+              A space that’s{'\n'}yours.
+            </Text>
+            <Text style={[common.small, { fontSize: 11 }]}>
+              Your journal stays on this device. Your story stays yours.
+            </Text>
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={state.demo ? 'Exit demo' : 'Lock journal'}
+            onPress={state.lock}
+            style={[common.row, { minHeight: 52, marginTop: 15, paddingHorizontal: 12 }]}
+          >
+            <LockKeyhole size={15} color={colors.muted} />
+            <Text style={common.small}>{state.demo ? 'Exit demo' : 'Lock journal'}</Text>
+          </Pressable>
+          <Text style={[common.eyebrow, { fontSize: 8, marginLeft: 12, color: '#989099' }]}>
+            EARLY PREVIEW · 0.1
+          </Text>
+        </View>
+      )}
+      <View style={{ flex: 1, minWidth: 0 }}>
+        {!desktop && (
+          <View
+            style={[
+              common.between,
+              {
+                paddingHorizontal: 21,
+                paddingVertical: 14,
+                borderBottomWidth: 1,
+                borderColor: colors.line,
+                backgroundColor: '#FDFCFA',
+              },
+            ]}
+          >
+            <Brand small />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={state.demo ? 'Exit demo' : 'Lock journal'}
+              onPress={state.lock}
+              style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <LockKeyhole size={20} color={colors.plum} />
+            </Pressable>
+          </View>
+        )}
+        {state.demo && (
+          <View
+            style={[
+              common.between,
+              {
+                paddingHorizontal: desktop ? 32 : 20,
+                paddingVertical: 10,
+                backgroundColor: colors.sage,
+                flexWrap: 'wrap',
+              },
+            ]}
+          >
+            <Text style={[common.small, { color: colors.sageInk }]}>
+              Sample journal · All entries are fictional
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={state.lock}
+              style={{ minHeight: 35, justifyContent: 'center' }}
+            >
+              <Text style={{ fontSize: 12, color: colors.sageInk, fontWeight: '700' }}>
+                Make it yours →
+              </Text>
+            </Pressable>
+          </View>
+        )}
+        {!!state.error && (
+          <View style={{ backgroundColor: colors.roseSoft, padding: 16, gap: 10 }}>
+            <Text accessibilityRole="alert" style={common.error}>
+              {state.error}
+            </Text>
+            <Button secondary label="Retry saving" onPress={state.retry} />
+          </View>
+        )}
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            padding: desktop ? 32 : 20,
+            gap: 24,
+            maxWidth: 1530,
+            width: '100%',
+            alignSelf: 'center',
+            paddingBottom: 36,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={[common.between, { alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }]}>
+            <View style={{ gap: 8 }}>
+              <Text style={common.eyebrow}>
+                {formatDay(today, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase()}
+              </Text>
+              <Text style={[common.title, { fontSize: desktop ? 35 : 29 }]}>
+                {page === 'calendar'
+                  ? 'Your cycle, at a glance.'
+                  : page === 'history'
+                    ? 'A picture of your patterns.'
+                    : 'Your space. Your choice.'}
+              </Text>
+              <Text style={common.body}>
+                {page === 'calendar'
+                  ? 'A little awareness. A little more care for yourself.'
+                  : page === 'history'
+                    ? 'Getting to know your own kind of normal.'
+                    : 'Keep your records close, and in your control.'}
+              </Text>
+            </View>
+            {desktop && <Button label="Log today" icon={Plus} onPress={logToday} />}
+          </View>
+          {page === 'calendar' ? (
+            <>
+              <View style={{ flexDirection: 'row', gap: desktop ? 15 : 9, flexWrap: 'wrap' }}>
+                {[
+                  [
+                    day ? String(day) : '—',
+                    'CURRENT CYCLE DAY',
+                    day ? 'Since your last period began' : 'Log a period start to begin',
+                    colors.roseSoft,
+                  ],
+                  [
+                    lastStart ? formatDay(lastStart, { month: 'short', day: 'numeric' }) : '—',
+                    'LAST PERIOD START',
+                    'From your recorded history',
+                    colors.sage,
+                  ],
+                  [
+                    String(Object.keys(journal.entries).filter((date) => date <= today).length),
+                    'DAYS WITH A NOTE OR LOG',
+                    'Small check-ins add up',
+                    colors.sand,
+                  ],
+                ]
+                  .slice(0, width < 600 ? 2 : 3)
+                  .map(([value, label, description, color]) => (
+                    <View
+                      key={label}
+                      style={{
+                        flex: 1,
+                        minWidth: desktop ? 170 : 135,
+                        padding: desktop ? 21 : 16,
+                        gap: 7,
+                        backgroundColor: color,
+                        borderRadius: 17,
+                      }}
+                    >
+                      <Text style={[common.eyebrow, { fontSize: 8, letterSpacing: 1.1 }]}>
+                        {label}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: serif,
+                          fontSize: desktop ? 34 : 27,
+                          lineHeight: 40,
+                          color: colors.ink,
+                        }}
+                      >
+                        {value}
+                      </Text>
+                      <Text style={[common.small, { fontSize: 10 }]}>{description}</Text>
+                    </View>
+                  ))}
+              </View>
+              <View style={{ flexDirection: 'row', gap: 24, alignItems: 'flex-start' }}>
+                <View style={{ flex: 1, minWidth: 0, gap: 17 }}>
+                  <Calendar journal={journal} today={today} onSelect={select} compact={!desktop} />
+                  <View
+                    style={[common.row, { paddingHorizontal: 4, alignItems: 'flex-start', gap: 9 }]}
+                  >
+                    <Heart size={15} color={colors.plum} strokeWidth={1.5} />
+                    <Text style={[common.small, { flex: 1 }]}>
+                      There’s no perfect way to track. Start with what feels helpful today.
+                    </Text>
+                  </View>
+                  {!inlineEditor && (
+                    <Button
+                      label="Open selected day"
+                      icon={Plus}
+                      onPress={() => setEditing(true)}
+                    />
+                  )}
+                </View>
+                {inlineEditor && (
+                  <View style={[common.card, { width: 340, padding: 23 }]}>
+                    {editor}
+                    <View
+                      style={{
+                        borderTopWidth: 1,
+                        borderColor: colors.line,
+                        paddingTop: 17,
+                        marginTop: 24,
+                      }}
+                    >
+                      {saveStatus}
+                    </View>
+                  </View>
+                )}
+              </View>
+            </>
+          ) : page === 'history' ? (
+            <History journal={journal} today={today} />
+          ) : (
+            <DataSettings
+              journal={journal}
+              demo={state.demo}
+              backup={state.backup}
+              lock={state.lock}
+            />
+          )}
+        </ScrollView>
+        {!desktop && (
+          <View
+            style={{
+              flexDirection: 'row',
+              borderTopWidth: 1,
+              borderColor: colors.line,
+              paddingTop: 7,
+              backgroundColor: '#FDFCFA',
+            }}
+          >
+            {NAV.map(({ id, label, icon: Icon }) => (
+              <Pressable
+                key={id}
+                accessibilityRole="tab"
+                accessibilityLabel={label}
+                accessibilityState={{ selected: page === id }}
+                onPress={() => setPage(id)}
+                style={{ flex: 1, alignItems: 'center', gap: 5, padding: 10, minHeight: 59 }}
+              >
+                <Icon
+                  size={20}
+                  color={page === id ? colors.plumDark : colors.muted}
+                  strokeWidth={1.7}
+                />
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: page === id ? '700' : '400',
+                    color: page === id ? colors.plumDark : colors.muted,
+                  }}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
+      </View>
+      <Modal
+        visible={editing && !inlineEditor && !state.obscured}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setEditing(false)}
+      >
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }}>
+          <View
+            style={[
+              common.between,
+              {
+                paddingHorizontal: 23,
+                paddingVertical: 10,
+                borderBottomWidth: 1,
+                borderColor: colors.line,
+              },
+            ]}
+          >
+            {saveStatus}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close daily journal"
+              onPress={() => setEditing(false)}
+              style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}
+            >
+              <X size={22} color={colors.ink} />
+            </Pressable>
+          </View>
+          <ScrollView
+            contentContainerStyle={{ padding: 24, paddingBottom: 55 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            {editor}
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+      {state.obscured && (
+        <View
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: colors.background,
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 16,
+          }}
+        >
+          <Brand />
+          <LockKeyhole color={colors.plum} size={24} />
+          <Text style={common.body}>Your journal is private.</Text>
+        </View>
+      )}
+      {state.busy && (
+        <View
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: '#F8F6F2EE',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 16,
+          }}
+        >
+          <ActivityIndicator color={colors.plum} />
+          <Text style={common.body}>Saving and locking…</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <StatusBar style="dark" />
+        <CycleApp />
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
+}

@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Cycle Tracker",
+    "slug": "cycle-tracker",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "scheme": "cycletracker",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.liambic.cycletracker" },
+    "android": { "package": "com.liambic.cycletracker", "allowBackup": false },
+    "web": {
+      "bundler": "metro",
+      "name": "Cycle Tracker",
+      "description": "A little more in tune with you. Your private cycle journal."
+    }
+  }
+}

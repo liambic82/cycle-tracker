@@ -1,0 +1,10 @@
+{
+  "name": "Cycle Tracker",
+  "short_name": "Cycle",
+  "description": "Your private cycle journal.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F6F2",
+  "theme_color": "#56394B",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

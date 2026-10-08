@@ -20,10 +20,10 @@ The [initial feature requirements](https://docs.google.com/document/d/1tOEpyA0x_
 
 ## Initial device testing
 
-| Device | Testing role |
-| --- | --- |
+| Device                 | Testing role                                                        |
+| ---------------------- | ------------------------------------------------------------------- |
 | Samsung Galaxy Z Flip5 | Initial user's daily use, usability feedback, and foldable behavior |
-| Google Pixel 7 | Developer-owner's functional testing and regression checks |
+| Google Pixel 7         | Developer-owner's functional testing and regression checks          |
 
 On both phones, check calendar navigation, daily logging, offline persistence, medication reminders, app locking, and backup/restore as those features become available. Check larger text settings, keyboard interaction, rotation, and returning to the app after it has been in the background.
 
@@ -31,17 +31,69 @@ For the Flip5, verify that closing and reopening the phone preserves the selecte
 
 Record the installed Android version on each phone, and the Samsung One UI version, at the first test session. These versions are not yet known; no device testing has been performed yet.
 
-## Proposed technical approach
+## Working preview: 0.1.0
 
-React Native with Expo and TypeScript is the current recommendation for sharing the app across Android, iOS, and a browser version for computers. The framework and browser delivery approach have not been finalized.
+The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
-Storage should support the offline core independently of any sync provider. Sync design will need to address conflicting edits, device pairing, encryption keys, recovery, and deletion before it is ready for release.
+- A continuously scrolling calendar with past-date entry and date navigation.
+- Daily flow, explicit period start/end markers, grouped and custom symptoms, cramp severity, and notes.
+- Recorded cycle lengths and bleeding duration, without predictions or hormone estimates.
+- A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute.
+- Encrypted backup/restore and readable CSV export.
+- A separate fictional sample journal; demo edits are never saved to the real journal.
+- Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
+
+This is a development preview, not a finished store release. Medication schedules, notifications, biometric unlock, the complete symptom catalog, PDF doctor summaries, bloodwork, and optional sync are still pending. See [the development plan](docs/development-plan.md).
+
+## Run locally
+
+Use Node.js 24 LTS and pnpm 11.19.0:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm web
+```
+
+The web development server normally opens at http://localhost:8081. Choose **Explore with sample data** to review the experience without setting up a journal. The development server needs a connection to this computer; it is not the offline production build.
+
+On this Windows workspace, if pnpm is not on PATH, `./scripts/pnpm.ps1` reuses the available desktop runtime. For example:
+
+```powershell
+.\scripts\pnpm.ps1 web
+.\scripts\pnpm.ps1 check
+```
+
+To build and preview the offline browser version:
+
+```sh
+pnpm build:web
+pnpm preview
+```
+
+Open http://127.0.0.1:4173. Load it once while connected so its app shell can be cached. Real hosting requires HTTPS for encryption APIs, browser edit locks, and the service worker. A browser vault belongs to its exact origin; localhost, 127.0.0.1, different ports, and a future public domain do not share data. Transfer it using encrypted backup/restore.
+
+## Verification and phone builds
+
+```sh
+pnpm check
+pnpm build:all
+```
+
+`check` runs TypeScript and the domain/storage tests. `build:all` verifies web JavaScript and Android/iOS Hermes bundles; it does not create or test an APK or IPA.
+
+`eas.json` defines an internal Android APK profile and a production store profile. Building an installable APK still requires an Expo account/project and EAS build setup, or a local Android SDK toolchain. No EAS project has been created and no cloud build or deployment has been requested. The application identifiers in `app.json` are provisional.
+
+## Data handling
+
+The local vault uses AES-256-GCM with a fresh secure random nonce on each save, and a key derived from the passphrase using PBKDF2-SHA256. The passphrase is not stored. Only encrypted journal content is written to AsyncStorage; there is no server or analytics integration. Browser editing is restricted to one unlocked tab to prevent conflicting writes.
+
+There is no passphrase reset. Keep the passphrase and a separate encrypted backup. CSV exports are deliberately readable. Browser storage can be cleared or evicted. This early implementation still needs native-device testing and a security review before real health data or a public launch. See [architecture and security notes](docs/architecture.md) and [the validation record](docs/validation.md).
 
 ## Decisions still open
 
-- Final framework, local storage implementation, and sync provider.
+- Native-device validation and a future sync provider.
 - Whether automatic sync ships in the first release and how it is priced.
 - Exact first-release feature scope, including the hormone estimates and clot logging dependencies noted in the brief.
 - Attachment limits and hosting budget, informed by measured use of lab-report photos and PDFs.
 
-No application scaffold or hosting service has been set up yet.
+No hosting service, paid service, or store release has been set up.

@@ -1,0 +1,48 @@
+{
+  "name": "cycle-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "build:web": "expo export --platform web && node scripts/prepare-web.mjs",
+    "build:all": "expo export --platform all && node scripts/prepare-web.mjs",
+    "preview": "node scripts/serve-preview.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "tsc --noEmit && node --experimental-strip-types --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@noble/ciphers": "2.4.0",
+    "@noble/hashes": "2.4.0",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~57.0.27",
+    "expo-crypto": "~57.0.3",
+    "expo-document-picker": "~57.0.3",
+    "expo-file-system": "~57.0.7",
+    "expo-sharing": "~57.0.22",
+    "expo-status-bar": "~57.0.1",
+    "lucide-react-native": "^1.52.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "~0.21.3"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "prettier": "^3.9.9",
+    "typescript": "~6.0.3"
+  }
+}
