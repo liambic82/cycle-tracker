@@ -8,7 +8,9 @@ The full source brief remains the feature reference. Its version labels are prov
 
 ## Milestone 2: Android daily-use build
 
-- Create and install an internal APK on the Pixel 7 and Galaxy Z Flip5.
+The first locally signed, standalone Android preview APK has been built and its package/signature checked. Installation and runtime testing on the two phones are next; the rest of this milestone remains pending.
+
+- Install the internal APK on the Pixel 7 and Galaxy Z Flip5, following [the device test guide](android-testing.md).
 - Record OS versions; test input, accessibility text sizes, storage, backup sharing, and fold/reopen state.
 - Measure passphrase unlock time and journal write performance on real hardware.
 - Verify background locking, native app-switcher privacy, keyboard behavior, and recovery after app termination.

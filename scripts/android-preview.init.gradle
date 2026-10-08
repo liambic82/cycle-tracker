@@ -1,0 +1,21 @@
+// Local preview signing only. Store builds use their own release credentials.
+gradle.beforeProject { project ->
+    project.plugins.withId('com.android.application') {
+        project.extensions.getByName('androidComponents').finalizeDsl { android ->
+            if (android.defaultConfig.applicationId != 'com.liambic.cycletracker.preview') {
+                throw new GradleException('Local preview signing requires the preview app identifier.')
+            }
+            def required = { name ->
+                def value = System.getenv(name)
+                if (!value) throw new GradleException("Missing preview signing variable: ${name}")
+                return value
+            }
+            def preview = android.signingConfigs.maybeCreate('localPreview')
+            preview.storeFile = new File(required('CYCLE_PREVIEW_KEYSTORE'))
+            preview.storePassword = required('CYCLE_PREVIEW_STORE_PASSWORD')
+            preview.keyAlias = required('CYCLE_PREVIEW_KEY_ALIAS')
+            preview.keyPassword = required('CYCLE_PREVIEW_STORE_PASSWORD')
+            android.buildTypes.getByName('release').signingConfig = preview
+        }
+    }
+}

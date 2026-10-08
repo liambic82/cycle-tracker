@@ -30,6 +30,8 @@ This preview has no delete-vault or change-passphrase UI yet. Browser data can b
 
 ## Release work
 
+`app.config.ts` selects a separate native preview app identity when `APP_VARIANT=preview`. The Windows build script produces an ARM64 release APK from a dedicated short-path build cache and signs it with a private preview key outside Git. A Gradle guard prevents this signing configuration from being used with the store identifier. This separates test installations and credentials from a future public release; it does not replace device or security validation.
+
 The cryptographic libraries are established implementations; this app's integration has not received an independent security audit. Review lifecycle behavior, import handling, key recovery UX, native backup behavior, accessibility, browser storage limits, and performance before real health data or public release. No remote service has been provisioned.
 
 ## References

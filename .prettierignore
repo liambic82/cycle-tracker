@@ -3,3 +3,7 @@ dist
 .expo
 pnpm-lock.yaml
 *.cyclevault
+.tools
+artifacts
+android
+ios

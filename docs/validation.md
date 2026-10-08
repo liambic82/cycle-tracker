@@ -50,3 +50,24 @@ Verified the rebuilt production setup screen at the user's 1102 × 884 viewport,
 ![Corrected desktop setup](screenshots/setup-desktop.jpg)
 
 ![Corrected mobile setup](screenshots/setup-mobile.jpg)
+
+## First Android APK — October 8, 2026
+
+Built a standalone release-mode APK locally with Gradle 9.3.1, JDK 22, Android build tools 36.0.0, and NDK 27.1.12297006. The short build cache and pnpm's hoisted dependency configuration resolve the Windows native compiler path limits encountered during setup.
+
+- File: `artifacts/android/cycle-tracker-preview-0.1.0-arm64-v8a.apk` (29,703,354 bytes; generated locally, excluded from Git).
+- App label: **Cycle Tracker Preview**.
+- Package: `com.liambic.cycletracker.preview`; version `0.1.0`, version code `1`.
+- Minimum Android API 24; target API 36; native architecture `arm64-v8a`.
+- `apksigner verify --verbose --print-certs` passed with the private preview certificate (RSA 3072, APK Signature Scheme v2).
+- `zipalign -c -P 16 4` passed.
+- APK contains its bundled Hermes JavaScript (`assets/index.android.bundle`, 3,055,376 bytes) and native libraries. It is a standalone build, with no development server required.
+- Package inspection reports no `application-debuggable` flag. Expo configuration preserves `allowBackup: false` and keeps preview/store identifiers separate.
+- `pnpm check` passed TypeScript and all nine existing tests; `pnpm format:check` passed after the dependency-layout correction.
+- Git ignore checks exclude the signing key, credential file, and generated APK.
+
+APK SHA-256: `267a27c00618c312e0a5cd553401561f8a44ae26b05473a7b8fcb0a37350f46e`.
+
+Preview signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+No physical phone or configured emulator was connected, so successful compilation and package checks do **not** establish native runtime behavior. Pixel 7/Flip5 installation, keyboard/folding behavior, passphrase performance, backup sharing, and background privacy remain to be exercised with fictional data using [the test guide](android-testing.md).

@@ -81,7 +81,9 @@ pnpm build:all
 
 `check` runs TypeScript and the domain/storage tests. `build:all` verifies web JavaScript and Android/iOS Hermes bundles; it does not create or test an APK or IPA.
 
-`eas.json` defines an internal Android APK profile and a production store profile. Building an installable APK still requires an Expo account/project and EAS build setup, or a local Android SDK toolchain. No EAS project has been created and no cloud build or deployment has been requested. The application identifiers in `app.json` are provisional.
+`scripts/build-android-preview.ps1` builds a standalone APK using the Android SDK installed on this Windows computer. It creates a separate **Cycle Tracker Preview** app and uses a private local preview signing key. See [Android installation and testing](docs/android-testing.md) for the build command, signing-key location, and device checklist.
+
+`eas.json` also defines a cloud preview APK profile and a production store profile for future use. No EAS project has been created and no cloud build or deployment has been requested. `app.config.ts` selects the preview identifier when `APP_VARIANT=preview`; the store identifier remains provisional.
 
 ## Data handling
 
