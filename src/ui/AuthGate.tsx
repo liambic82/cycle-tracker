@@ -67,18 +67,18 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
       }}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={{ width: '100%', maxWidth: 1150, alignSelf: 'center', flex: 1 }}>
+      <View style={{ width: '100%', maxWidth: 1150, alignSelf: 'center', flexGrow: 1 }}>
         <Brand />
         <View
           style={{
-            flex: 1,
+            flexGrow: 1,
             flexDirection: wide ? 'row' : 'column',
             gap: wide ? 90 : 36,
             alignItems: wide ? 'center' : 'stretch',
             paddingVertical: wide ? 65 : 36,
           }}
         >
-          <View style={{ flex: 1, gap: 24 }}>
+          <View style={{ flex: wide ? 1 : undefined, minWidth: 0, gap: 24 }}>
             <View style={[common.row, { gap: 7 }]}>
               <View
                 style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.sageInk }}
@@ -110,7 +110,7 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
             >
               <View style={common.row}>
                 <CalendarDays size={20} color={colors.sageInk} strokeWidth={1.6} />
-                <Text style={common.label}>See your days together</Text>
+                <Text style={[common.label, { flex: 1 }]}>See your days together</Text>
               </View>
               <Text style={common.body}>
                 A calendar that keeps flowing. A journal that meets you wherever you are in your
@@ -118,7 +118,7 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
               </Text>
               <View style={common.row}>
                 <Heart size={20} color={colors.sageInk} strokeWidth={1.6} />
-                <Text style={common.label}>Every feeling has a place</Text>
+                <Text style={[common.label, { flex: 1 }]}>Every feeling has a place</Text>
               </View>
               <Text style={common.body}>
                 Flow, symptoms, and the little things you want to remember. All on your device.
@@ -128,7 +128,8 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
           <View
             style={[
               common.card,
-              { flex: wide ? 0 : undefined, width: wide ? 390 : '100%', padding: 30, gap: 18 },
+              // flex: 0 becomes a zero flex-basis on web and collapses this fixed-width card.
+              { flexShrink: 0, width: wide ? 390 : '100%', padding: 30, gap: 18 },
             ]}
           >
             <View
@@ -247,7 +248,7 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
             )}
             <View style={[common.row, { justifyContent: 'center', paddingTop: 4 }]}>
               <ShieldCheck size={15} color={colors.sageInk} />
-              <Text style={common.small}>Encrypted here. Yours to keep.</Text>
+              <Text style={[common.small, { flexShrink: 1 }]}>Encrypted here. Yours to keep.</Text>
             </View>
           </View>
         </View>

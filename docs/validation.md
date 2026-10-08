@@ -40,3 +40,13 @@ This record separates executed checks from work still needing hardware or accoun
 ### Known preview limits
 
 The journal is a single encrypted snapshot with an 8 MB import/export limit. There is no sync, medication scheduling, notification delivery, prediction engine, full symptom catalog, PDF report, change-passphrase flow, biometric unlock, or in-app deletion flow yet. A browser vault is tied to the exact origin, so changing hostname or port requires backup/restore. Do not use this preview as the only copy of health records.
+
+## Setup layout correction — October 8, 2026
+
+The first-run setup card collapsed to 62 pixels wide in the browser because `flex: 0` set its flex basis to zero, overriding the intended 390-pixel width. Removed that shorthand, kept the card from shrinking, and allowed the stacked introduction to retain its content height. Feature labels and the privacy caption can wrap on narrow screens.
+
+Verified the rebuilt production setup screen at the user's 1102 × 884 viewport, at the 900-pixel desktop breakpoint, and at 393 × 852 for phones. The desktop card measures 390 pixels wide, the mobile card fits its available width, and the breakpoint check found no horizontal content overflow. TypeScript and the web production build passed. The normal browser viewport was restored after checking.
+
+![Corrected desktop setup](screenshots/setup-desktop.jpg)
+
+![Corrected mobile setup](screenshots/setup-mobile.jpg)
