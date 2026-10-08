@@ -18,6 +18,19 @@ The [initial feature requirements](https://docs.google.com/document/d/1tOEpyA0x_
 - Evaluate sync on a free hosting tier during development and measure actual usage.
 - Decide how to fund ongoing sync costs before public release. An upfront app purchase does not yet promise unlimited hosted sync.
 
+## Initial device testing
+
+| Device | Testing role |
+| --- | --- |
+| Samsung Galaxy Z Flip5 | Initial user's daily use, usability feedback, and foldable behavior |
+| Google Pixel 7 | Developer-owner's functional testing and regression checks |
+
+On both phones, check calendar navigation, daily logging, offline persistence, medication reminders, app locking, and backup/restore as those features become available. Check larger text settings, keyboard interaction, rotation, and returning to the app after it has been in the background.
+
+For the Flip5, verify that closing and reopening the phone preserves the selected day, calendar position, and any in-progress entry. Check the main-screen layout when fully open and partially folded, following [Android's foldable design and app continuity guidance](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/learn-about-foldables).
+
+Record the installed Android version on each phone, and the Samsung One UI version, at the first test session. These versions are not yet known; no device testing has been performed yet.
+
 ## Proposed technical approach
 
 React Native with Expo and TypeScript is the current recommendation for sharing the app across Android, iOS, and a browser version for computers. The framework and browser delivery approach have not been finalized.
