@@ -8,6 +8,20 @@ The test app is named **Cycle Tracker Preview** and uses `com.liambic.cycletrack
 
 Start with the fictional sample journal. Use invented entries and a test-only passphrase when checking persistence and recovery. Real-device behavior and security validation are still in progress.
 
+## 0.10.0 doctor summaries and PDF export
+
+Install `artifacts/android/cycle-tracker-preview-0.10.0-arm64-v8a.apk` over the existing preview after making an encrypted backup. Version code is 13; package, signing certificate, journal format 4, passphrase, and biometric credentials are unchanged. Do not uninstall or clear storage. This remains a development preview, with screenshots enabled. The following checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5.
+
+1. Confirm existing records, medication schedules, and unlock still work. Open **Your data → Create doctor summary**. The initial range is 90 days. Notes and all four sexual-health switches must be off; other general sections start on.
+2. Try an invalid/reversed/future range, more than 366 days, and all sections off. Each must show an explanation without exporting. Then choose a short range containing fictional records and preview it.
+3. Compare the preview with your records: unknown flow versus No, incomplete cycles, products/amounts, mood versus other symptoms, dated medication changes, and Taken/Skipped/Taken late. Future schedule changes outside the range must be absent. Unrecorded doses must not be called missed.
+4. Verify excluded notes and sexual-health values are absent. Enable only Libido: explicit None/High should appear without activity/orgasm/intensity values or excluded-only dated rows. Notes require a separate choice. Free-text labels may still contain sensitive wording. Use **Change report choices**, then leave/reopen the report: new-report privacy defaults must reset.
+5. Tap **Export readable PDF**, select a local file destination, and open the saved PDF. Compare all sections with the preview, including page numbers and long notes across pages. The PDF is deliberately readable and unencrypted. Confirm no text is clipped, hidden, or silently omitted. Cancel a separate share sheet and verify you return to a usable report; cancellation must not claim a file was saved.
+6. In airplane mode, generate and open a PDF, including the first export after installing this APK. Fonts are bundled and should not require a network download. Use accented fictional text; emoji/unsupported scripts should show an explicit export error without changing the journal. Large reports may request a shorter range/fewer sections.
+7. Lock or change tabs while generating a larger fictional report: generation must not open a later share sheet. Check background lock during sharing, cancellation, reopening after termination, and another export. Dedicated temporary export files should be cleaned after sharing and on next startup, without touching files saved elsewhere.
+8. In sample mode, the preview and every PDF page must identify fictional sample data. Check phone keyboard scrolling, TalkBack labels/switches, larger text, rotation, and Flip5 fold/reopen. PDF tagging and broader script coverage remain release work.
+9. Continue the **0.9.0 reminder checks below**, including actual delivery, permissions, cancellation, reboot, and time-zone changes. Earlier Flip5 creation and passphrase/biometric regressions remain pending; this build includes their fixes but does not establish a new device pass.
+
 ## 0.9.0 medication reminders
 
 Install `artifacts/android/cycle-tracker-preview-0.9.0-arm64-v8a.apk` over the existing preview after exporting an encrypted backup. Version code is 12; the signing key and package identity are unchanged. Screenshots remain enabled in previews. These checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5; record the Flip5 Android/One UI versions and actual delivery delays.

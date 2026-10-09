@@ -464,6 +464,7 @@ function CycleApp() {
             />
           ) : (
             <DataSettings
+              onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
               journal={journal}
               demo={state.demo}
               backup={state.backup}

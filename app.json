@@ -2,11 +2,12 @@
   "expo": {
     "name": "Cycle Tracker",
     "slug": "cycle-tracker",
-    "version": "0.9.0",
+    "version": "0.10.0",
     "orientation": "default",
     "userInterfaceStyle": "light",
     "scheme": "cycletracker",
     "plugins": [
+      "expo-asset",
       ["expo-notifications", { "color": "#604054" }],
       [
         "expo-secure-store",

@@ -47,8 +47,9 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Implemented in 0.8.0: dated user-entered dose/schedule changes, pauses/resumption, and schedule history. Changes start today or later and after existing dose records; latest unused schedules can be corrected on the same effective date. These are recording tools for an existing plan, not automatic titration advice. Follow [the medication checklist](android-testing.md#080-medication-schedules-and-dose-records).
 - Implemented in 0.9.0: individually enabled, discreet local medication notifications, permission and blocked-channel handling, test notification, cancellation/rescheduling after saved plan or dose changes, and cleanup on journal replacement/deletion. Choices are device-local and off after restore. The rolling queue covers up to 30 days / 60 distinct dose times, shows the refresh deadline, and includes an unlock-to-refresh notice. Local times refresh on unlock/foreground/manual refresh; actual delivery and background behavior remain [device checks](android-testing.md#090-medication-reminders). Browser and sample journals do not send alerts.
 - Later medication refinements: dedicated patch/ring/injection/refill reminders and broader retrospective schedule editing with explicit record reconciliation.
-- Doctor summary and PDF export based on recorded data, with a date range, selectable sections, and preview before export. Include medications and labs only as their records become available.
-- The clot-logging dependency is implemented in 0.6.0 as a daily Yes/No/Not logged observation. Future reports can include it as recorded; clinical interpretation and any more detailed clot measurements need separate design/review.
+- Implemented in 0.10.0: doctor summaries and locally generated PDFs, with a date range up to 366 days, independent section choices, and review before export. Includes recorded cycle/bleeding spans, flow, clot/flooding observations, products, symptoms, moods, overlapping medication plans, and recorded doses. Notes and each sexual-health field start off for each new report. Phone sharing/offline behavior remains in [the device checklist](android-testing.md#0100-doctor-summaries-and-pdf-export). No journal-format change.
+- Extend reports with lab records and reviewed discussion prompts only when those features are available. Broader font/script coverage and tagged PDF accessibility remain release work.
+- The clot-logging dependency is implemented in 0.6.0 as a daily Yes/No/Not logged observation and included in 0.10.0 reports when selected; clinical interpretation and any more detailed clot measurements need separate design/review.
 
 ## Milestone 5: predictions and everyday education
 
@@ -68,7 +69,7 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 
 ## Planned: beautification and personal appearance
 
-Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). This scope is on the roadmap, not implemented in 0.9.0.
+Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). This scope is on the roadmap, not implemented in 0.10.0.
 
 - Beautification pass across calendar, daily entry, history, medication, and settings screens: consistent spacing, typography, icons, and attractive, space-efficient decoration with daily information prominent.
 - App color theme customization, including a curated palette, light/dark appearance, and accessible text/control contrast.
@@ -77,6 +78,8 @@ Explicitly reaffirmed by the owner after medication logging, following screensho
 - Preserve the agreed modest upfront purchase model. The source’s cosmetic-premium suggestion does not authorize subscriptions, upsells, or a paid theme tier.
 
 ## Product constraints
+
+Preview numbering continues as 0.10.0, 0.11.0, and so on. Completing a development milestone does not trigger 1.0. A public 1.0 requires an explicitly agreed release scope and readiness decision after feature, device, privacy/security, accessibility, and store work. The owner reaffirmed continuing preview development after raising this concern.
 
 Android is the initial priority. Computer access uses the responsive web version. The core remains usable without an account or sync. The planned initial business model is a modest upfront app purchase; hosted sync entitlements and exact prices remain undecided.
 

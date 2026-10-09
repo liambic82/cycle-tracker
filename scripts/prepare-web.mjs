@@ -12,7 +12,7 @@ html = html.replace(
 await writeFile(indexPath, html);
 const assets = (await readdir(root, { recursive: true }))
   .filter(
-    (file) => /\.(html|js|css|svg|png|webp|woff2?|webmanifest)$/.test(file) && file !== 'sw.js',
+    (file) => /\.(html|js|css|svg|png|webp|ttf|woff2?|webmanifest)$/.test(file) && file !== 'sw.js',
   )
   .map((file) => '/' + file.split(path.sep).join('/'));
 const version = createHash('sha256')

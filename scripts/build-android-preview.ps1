@@ -67,7 +67,7 @@ try {
         New-Item -ItemType Directory -Path $taskBuildRoot | Out-Null
         @{ source = $taskRoot } | ConvertTo-Json | Set-Content -LiteralPath $taskBuildMarker -Encoding utf8
     }
-    foreach ($taskFile in @('App.tsx', 'index.ts', 'app.json', 'app.config.ts', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json')) {
+    foreach ($taskFile in @('App.tsx', 'index.ts', 'app.json', 'app.config.ts', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json', 'metro.config.cjs')) {
         Copy-Item -LiteralPath (Join-Path $taskRoot $taskFile) -Destination (Join-Path $taskBuildRoot $taskFile) -Force
     }
     foreach ($taskFolder in @('src', 'public', 'scripts', 'assets', 'plugins', 'modules')) {

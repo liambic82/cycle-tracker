@@ -13,6 +13,7 @@ import { exportText } from '../data/files';
 import { allowPreviewScreenshots } from '../data/buildSettings';
 import { Button } from './components';
 import { BiometricSettings } from './BiometricSettings';
+import { DoctorReport } from './DoctorReport';
 import { colors, common } from './theme';
 
 export function DataSettings({
@@ -25,6 +26,7 @@ export function DataSettings({
   biometricAvailable,
   setBiometricUnlock,
   setShowPerimenopause,
+  onViewChange,
 }: {
   journal: Journal;
   demo: boolean;
@@ -35,6 +37,7 @@ export function DataSettings({
   biometricAvailable: boolean;
   setBiometricUnlock: (enabled: boolean) => Promise<void>;
   setShowPerimenopause: (show: boolean) => void;
+  onViewChange: () => void;
 }) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
@@ -45,6 +48,7 @@ export function DataSettings({
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [confirmation, setConfirmation] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  const [reportOpen, setReportOpen] = useState(false);
   const deleteJournal = async () => {
     if (busy || confirmation !== 'DELETE') return;
     setBusy(true);
@@ -85,6 +89,18 @@ export function DataSettings({
       setBusy(false);
     }
   };
+  if (reportOpen)
+    return (
+      <DoctorReport
+        journal={journal}
+        demo={demo}
+        onViewChange={onViewChange}
+        close={() => {
+          setReportOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   return (
     <View style={{ gap: 22 }}>
       <View style={[common.card, { backgroundColor: colors.sage, gap: 12 }]}>
@@ -94,6 +110,21 @@ export function DataSettings({
           Your records are encrypted with your passphrase and stored on this device. This preview
           has no account, cloud sync, or analytics.
         </Text>
+      </View>
+      <View style={[common.card, { gap: 15 }]}>
+        <Text style={common.heading}>Doctor summary</Text>
+        <Text style={common.body}>
+          Build a PDF from the dates and sections you choose, then review the content before saving
+          or sharing it.
+        </Text>
+        <Button
+          secondary
+          label="Create doctor summary"
+          onPress={() => {
+            setReportOpen(true);
+            onViewChange();
+          }}
+        />
       </View>
       <View style={[common.card, { gap: 15 }]}>
         <Text style={common.heading}>Symptom preferences</Text>
@@ -334,8 +365,8 @@ export function DataSettings({
       )}
       <Text style={common.small}>
         Early preview · {app.expo.version}
-        {'\n'}Medication reminders are available in the installed mobile app. Doctor PDFs,
-        predictions, and cloud sync are planned for later milestones.
+        {'\n'}Medication reminders are available in the installed mobile app. Predictions and cloud
+        sync are planned for later milestones.
       </Text>
     </View>
   );

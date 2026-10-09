@@ -1,5 +1,27 @@
 # Validation record
 
+## 0.10.0 doctor summaries and PDFs — October 9, 2026
+
+The owner approved continuing preview development after confirming that the next milestone would not trigger 1.0. This slice implements the source document's configurable doctor report request. Release readiness remains a separate explicit decision, and beautification/themes/backgrounds remain on the roadmap.
+
+- `pnpm check`: TypeScript and all **98 tests** passed. Thirteen report tests cover fresh privacy defaults, valid/bounded dates and strict section choices, in-range cycle boundaries, unknown flow versus No, mood/symptom separation and zero severity, all 16 sexual-field combinations and excluded-only dates, overlapping medication versions and note controls, historical dose snapshots, filtered snapshot independence, report size limits, actual-font pagination and long tokens, real PDF parsing and absence of active content, and unsupported glyph errors without journal changes.
+- Production web, Android Hermes, and iOS Hermes exports passed. Initial browser execution caught a `tslib` 1.x export-wrapper interoperability error despite successful builds/tests. Added a scoped Metro resolver fallback and copied that configuration into the native build cache; rebuilt all platforms. The final browser bundle is `index-ef568f7ef21972b6eac8a4f1757c6632.js`. No new captured console errors occurred after that fix. iOS is a bundle check only.
+- Browser QA at isolated `127.0.0.1:4176` unlocked the existing fictional format-4 journal. Verified mobile 393 × 852 and desktop 1280 × 720 layouts, initial notes/sexual-health exclusions, rejection of a reversed range, report preview, independent Libido inclusion preserving None/High, and resetting report choices by leaving/reopening. The original journal remained available with its schedules, products, observations, notes, and dose records. No user records from port 4173 were accessed.
+- Actual browser downloads were parsed with pypdf: a default two-page PDF (21,997 bytes) and a Libido-enabled three-page PDF (22,712 bytes). Both preserved product quantities/amounts, Flooding No, Taken late/Skipped/as-needed outcomes, and unknown actual time. Excluded notes, activity/orgasm values, and the future medication dose change were absent; only the opted-in PDF contained Libido/None/High. Rendered and visually inspected all five pages for wrapping, spacing, footer numbers, and clipping. A separate browser sample export identified fictional data on every page.
+- Generated an additional six-page stress report using the app renderer and fictional sample data with accented text, blank lines, and long unbroken notes. Rendered and visually inspected every page; no clipping or overlaps. Automated checks bound every rendered line and confirmed Letter page size, embedded fonts, no JavaScript/attachments/actions, and readable unencrypted output. PDFs are not yet tagged; broader script/emoji support and accessibility review remain pending.
+- A native ARM64 release APK built and passed signature verification and 16 KB zip alignment. Verified `com.liambic.cycletracker.preview`, version **0.10.0**, code **13**, minimum API 24, target API 36, notification/biometric permissions, `allowBackup: false`, and no debuggable flag. Embedded configuration keeps testing screenshots enabled. The Hermes program is 4,671,564 bytes; both regular (569,208 bytes) and bold (575,740 bytes) TTF fonts are present in the APK.
+- Phone export/share/cancel behavior, first export offline, cache cleanup after native process termination, TalkBack/large text/folding, update retention, reminder delivery, and earlier Flip5 creation regressions remain in [the device guide](android-testing.md#0100-doctor-summaries-and-pdf-export). No new hardware test pass is claimed. Journal format 4 and the encrypted envelope/passphrase/biometric credentials remain unchanged.
+
+Build outputs, test PDFs, and signing material stay outside Git. The test vault was locked after QA; the temporary browser tab and isolated server were closed and viewport reset.
+
+- File: `artifacts/android/cycle-tracker-preview-0.10.0-arm64-v8a.apk` (33,445,446 bytes; excluded from Git).
+- APK SHA-256: `e7ffb1f905f112c2c38b1029257dbed197b01fb3f50ef776fa97602ef40c9473`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Report date choices in the phone-size browser](screenshots/report-options-mobile.jpg)
+
+![Doctor summary preview with fictional sample records](screenshots/report-preview-desktop.jpg)
+
 ## 0.9.0 medication reminders — October 9, 2026
 
 The owner requested completing medication reminders and explicitly tracking beautification, background images, and color themes from the source document. Reminder implementation is complete for this preview; actual phone delivery is still unverified. The appearance work is now a dedicated roadmap section tied to screenshot 6 / comment `AAACIGIsKnU`, not a claim of implemented customization.

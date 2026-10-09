@@ -11,7 +11,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     android: {
       ...config.android,
       package: preview ? 'com.liambic.cycletracker.preview' : 'com.liambic.cycletracker',
-      versionCode: 12,
+      versionCode: 13,
     },
     ios: {
       ...config.ios,
