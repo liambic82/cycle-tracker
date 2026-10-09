@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Switch, Text, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
 import { Plus } from 'lucide-react-native';
 import { addDays, type Day } from '../domain/dates';
@@ -9,6 +9,7 @@ import { saveMedicationPlan } from '../domain/medicationActions';
 import { MedicationForm } from './MedicationForm';
 import { Button } from './components';
 import { common, colors } from './theme';
+import { ReminderSettings, type ReminderControls } from './ReminderSettings';
 
 export function Medications({
   journal,
@@ -17,6 +18,7 @@ export function Medications({
   openToday,
   onViewChange,
   saveStatus,
+  reminders,
 }: {
   journal: Journal;
   today: Day;
@@ -24,6 +26,7 @@ export function Medications({
   openToday: () => void;
   onViewChange: () => void;
   saveStatus: React.ReactNode;
+  reminders: ReminderControls;
 }) {
   const [form, setForm] = useState<Medication | 'new' | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -68,12 +71,15 @@ export function Medications({
           Keep medications and supplements with your journal. Plans do not count as taken doses.
           Record what happened in each day’s dose log.
         </Text>
-        <Text style={common.small}>
-          This preview records schedules and doses. Notifications are not enabled yet.
-        </Text>
         <Button label="Open today's journal" onPress={openToday} />
       </View>
-      <Button label="Add medication or supplement" icon={Plus} onPress={() => changeForm('new')} />
+      <ReminderSettings reminders={reminders} />
+      <Button
+        label="Add medication or supplement"
+        icon={Plus}
+        disabled={reminders.busy}
+        onPress={() => changeForm('new')}
+      />
       {!journal.medications.length && (
         <Text style={common.body}>
           Nothing added yet. Start with a name and the schedule you already use.
@@ -101,9 +107,26 @@ export function Medications({
                   From {plan.startsOn}: {plan.name} · {plan.dose} · {describeSchedule(plan)}
                 </Text>
               ))}
+            <View style={[common.row, { justifyContent: 'space-between' }]}>
+              <Text style={[common.label, { flex: 1 }]}>Remind me at scheduled times</Text>
+              <Switch
+                accessibilityLabel={`Reminders for ${display.name}`}
+                value={reminders.state.enabled.includes(medication.id)}
+                disabled={!reminders.available || reminders.demo || reminders.busy}
+                trackColor={{ false: colors.line, true: colors.plum }}
+                onValueChange={(enabled) => void reminders.setEnabled(medication.id, enabled)}
+              />
+            </View>
+            {(display.mode === 'as-needed' || display.mode === 'paused') && (
+              <Text style={common.small}>
+                No alerts while this plan is {display.mode === 'paused' ? 'paused' : 'as needed'}.
+                Reminders can resume with a future scheduled plan.
+              </Text>
+            )}
             <Button
               secondary
               label={`Change schedule for ${display.name}`}
+              disabled={reminders.busy}
               onPress={() => changeForm(medication)}
             />
             <Button

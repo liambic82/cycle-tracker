@@ -1,5 +1,28 @@
 # Validation record
 
+## 0.9.0 medication reminders — October 9, 2026
+
+The owner requested completing medication reminders and explicitly tracking beautification, background images, and color themes from the source document. Reminder implementation is complete for this preview; actual phone delivery is still unverified. The appearance work is now a dedicated roadmap section tied to screenshot 6 / comment `AAACIGIsKnU`, not a claim of implemented customization.
+
+- Final `pnpm check`: strict TypeScript and all **85 tests** passed. Nineteen reminder tests cover opt-in/privacy, future-only scheduling, daily/weekday/on-off/placebo/PRN/pause behavior, dated changes, recorded-dose suppression and restoration, shared timestamps, queue bounds, DST gaps/overlaps, time-zone changes, permission denial/revocation, durable device preferences, schedule replacement, serialized cancellation, vault replacement/corrupt preferences, native/storage failures, test delivery requests, browser isolation, and rearming stable identifiers after a force-stop. These use a fake native backend and do not establish OS delivery.
+- Final `pnpm build:all`: web, Android Hermes, and iOS Hermes exports passed. The final save-failure guard is included: automatic refresh requires the current revision to have saved, and a failed save cannot trigger reminder scheduling through an error-recovery path. iOS remains a bundle check, not a native build/device result.
+- Browser QA used only the existing fictional journal on isolated `127.0.0.1:4176`. Inspected 393 × 852 and 1280 × 720 layouts, reminder explanation, accessible medication-specific switches (disabled in a browser), and preview 0.9.0. No notification prompt or native test controls appeared. Existing three medication definitions, future schedule version, product/bleeding observations, sexual-health summary, note, and Taken late/Skipped/as-needed dose records remained available.
+- Locked and reloaded the final production export, confirmed the final script bundle in the page DOM, and unlocked the fictional journal successfully. Sample mode retained its own definitions and disabled reminder switches. No captured browser console errors. Left the vault locked, closed the QA tab, reset the viewport, and stopped the isolated server. User storage on port 4173 was not used. Screenshots below show browser layout only; they are not evidence of native permission UI or notification delivery.
+- Formatting and diff whitespace checks passed. No real records, exported journals, signing credentials, build cache, or APKs enter Git. Journal format 4, encrypted envelope, passphrase, and biometric key remain unchanged. Device reminder opt-ins are not exported and reset on restore.
+- Native permission prompts and channel blocking, actual test/dose delivery and delays, locked/terminated/reboot behavior, cancellation, timezone travel, update retention, backup replacement/deletion, TalkBack/large text, and Flip5 folding remain [0.9.0 hardware checks](android-testing.md#090-medication-reminders). Earlier Flip5 setup/screenshot/passphrase checks also remain pending. No new owner hardware pass was supplied.
+
+The Android queue is intentionally inexact on Android 12+ without special alarm access; battery/notification settings can delay alerts. Both native platforms use a bounded 30-day / 60-dose-time queue plus a refresh notice and optional test. The visible renewal deadline requires unlocking to continue reminders; this preview does not promise indefinite scheduling while the journal remains locked.
+
+The final standalone ARM64 release APK built successfully and passed signature verification and 16 KB zip alignment. Package `com.liambic.cycletracker.preview`, version **0.9.0**, code **12**, minimum API 24, target API 36, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, `USE_BIOMETRIC`, native notification receiver, `allowBackup: false`, and no debuggable flag were verified. No `SCHEDULE_EXACT_ALARM` permission is declared. Embedded configuration confirms preview screenshots remain enabled; the Hermes program is 3,292,428 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.9.0-arm64-v8a.apk` (31,497,314 bytes; excluded from Git).
+- APK SHA-256: `d5a5c474f388ec9fc8aba91da2f4257113dafee0eb39851984e2b7cafa497dd6`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Medication reminder control in the phone-size browser layout](screenshots/reminders-mobile.jpg)
+
+![Private-reminder explanation in the desktop browser](screenshots/reminders-desktop.jpg)
+
 ## 0.8.0 medication schedules and dose records — October 9, 2026
 
 The owner requested moving to the next milestone after 0.7.0. This implements the medication recording foundation: definitions, daily/weekday/on-off/as-needed schedules, optional user-entered placebo labels, dated changes and pauses, daily outcomes and notes, and complete backups/exports. Notifications and doctor PDFs remain separate planned work. This request does not supply a new hardware test result.

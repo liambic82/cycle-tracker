@@ -11,6 +11,8 @@ import { demoJournal } from './demo';
 import { acquireEditLease } from './lease';
 import { biometrics } from './biometrics';
 import { derivePassphraseKey } from './passphraseKey';
+import { reminders, reminderBackend } from './reminders';
+import { emptyReminderState } from './reminderService';
 
 // Unlike the development helper getRandomBytes, getRandomValues has no Math.random fallback.
 const secureRandomBytes = (length: number) => getRandomValues(new Uint8Array(length));
@@ -27,12 +29,17 @@ export function useJournal() {
   const [obscured, setObscured] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(() => biometrics.available());
   const [biometricEnabled, setBiometricEnabled] = useState(false);
+  const [reminderState, setReminderState] = useState(() =>
+    emptyReminderState(reminderBackend.available),
+  );
+  const [reminderError, setReminderError] = useState('');
   const [deleted, setDeleted] = useState<DeletedEntry | null>(null);
   const deletedRef = useRef<DeletedEntry | null>(null);
   const current = useRef<Journal | null>(null);
   const key = useRef<VaultKey | null>(null);
   const writer = useRef<JournalWriter | null>(null);
   const revision = useRef(0);
+  const savedRevision = useRef(-1);
   const demoRef = useRef(false);
   const working = useRef(false);
   const backgroundEpoch = useRef(0);
@@ -63,6 +70,106 @@ export function useJournal() {
     current.current = value;
     setJournal(value);
   };
+
+  async function syncReminders(
+    value: Journal,
+    salt: string,
+    change = revision.current,
+    rearm = false,
+  ) {
+    try {
+      const result = await reminders.sync(salt, value, rearm);
+      if (current.current && revision.current === change && !demoRef.current) {
+        setReminderState(result);
+        setReminderError('');
+      }
+    } catch {
+      if (current.current && revision.current === change && !demoRef.current) {
+        setReminderError(
+          'Reminders could not be verified. Open Medications to retry or turn them off.',
+        );
+      }
+    }
+  }
+
+  async function refreshReminders(rearm = true) {
+    if (!current.current || !key.current || demoRef.current || working.current) return;
+    const change = revision.current;
+    try {
+      await writer.current!.flush();
+      if (
+        current.current &&
+        key.current &&
+        revision.current === change &&
+        savedRevision.current === change &&
+        !working.current
+      ) {
+        await syncReminders(current.current, key.current.salt, change, rearm);
+      }
+    } catch {
+      /* Failed saves already have a visible retry/backup message. */
+    }
+  }
+
+  async function setMedicationReminder(id: string, enabled: boolean) {
+    if (!current.current || !key.current || demoRef.current || working.current) return;
+    working.current = true;
+    setBusy(true);
+    setReminderError('');
+    let saved = false;
+    try {
+      // Persist the schedule before giving the OS any reminder for it.
+      await writer.current!.save(current.current);
+      saved = true;
+      savedRevision.current = revision.current;
+      setReminderState(await reminders.setEnabled(key.current.salt, current.current, id, enabled));
+    } catch (err) {
+      if (saved) await syncReminders(current.current, key.current.salt);
+      else {
+        setStatus('Not saved');
+        setError(
+          'Your latest changes could not be saved. Please retry saving before changing medication reminders.',
+        );
+      }
+      setReminderError(
+        !saved
+          ? 'Save your journal first, or use Turn off all reminders to cancel alerts.'
+          : err instanceof Error
+            ? err.message
+            : 'Reminders could not be changed. Please retry.',
+      );
+    } finally {
+      finishWork();
+    }
+  }
+
+  async function stopReminders() {
+    if (demoRef.current || working.current) return;
+    working.current = true;
+    setBusy(true);
+    try {
+      await reminders.clear();
+      setReminderState(emptyReminderState(reminderBackend.available));
+      setReminderError('');
+    } catch {
+      setReminderError(
+        'Some reminders could not be cancelled. Retry turning them off, or disable notifications in your phone’s settings.',
+      );
+    } finally {
+      finishWork();
+    }
+  }
+
+  async function testReminder() {
+    if (demoRef.current || working.current) return;
+    working.current = true;
+    setBusy(true);
+    try {
+      await reminders.test();
+    } finally {
+      finishWork();
+    }
+  }
 
   async function refreshBiometrics(salt: string | null) {
     setBiometricAvailable(biometrics.available());
@@ -102,6 +209,8 @@ export function useJournal() {
     demoRef.current = false;
     setDemo(false);
     setError('');
+    setReminderState(emptyReminderState(reminderBackend.available));
+    setReminderError('');
   }, []);
 
   const start = async (passphrase: string | null, create: boolean) => {
@@ -129,6 +238,7 @@ export function useJournal() {
       if (raw) salt = parseEnvelope(raw).salt;
       if (create) {
         setAuthProgress('Preparing your private journal…');
+        await reminders.clear();
         await biometrics.clear();
         setBiometricEnabled(false);
       }
@@ -162,7 +272,9 @@ export function useJournal() {
       setDemo(false);
       setExists(true);
       setCurrent(session.journal);
+      savedRevision.current = revision.current;
       setStatus('Saved on this device');
+      await syncReminders(session.journal, session.vault.salt, revision.current, true);
     } catch (err) {
       openedKey?.key.fill(0);
       release?.();
@@ -214,8 +326,12 @@ export function useJournal() {
     try {
       writer
         .current!.save(next)
-        .then(() => {
-          if (revision.current === change) setStatus('Saved on this device');
+        .then(async () => {
+          if (revision.current === change && current.current && key.current) {
+            savedRevision.current = change;
+            setStatus('Saved on this device');
+            await syncReminders(next, key.current.salt, change);
+          }
         })
         .catch(() => {
           if (revision.current === change) {
@@ -254,6 +370,8 @@ export function useJournal() {
     setBusy(true);
     setError('');
     try {
+      await reminders.clear();
+      setReminderState(emptyReminderState(reminderBackend.available));
       await biometrics.clear();
       setBiometricEnabled(false);
       await writer.current!.erase();
@@ -277,7 +395,10 @@ export function useJournal() {
     working.current = true;
     setBusy(true);
     try {
-      if (!demoRef.current) await writer.current!.save(current.current);
+      if (!demoRef.current) {
+        await writer.current!.save(current.current);
+        await syncReminders(current.current, key.current!.salt);
+      }
       endSession();
     } catch {
       setError('Your latest changes could not be saved. Please retry before locking.');
@@ -303,8 +424,13 @@ export function useJournal() {
         if (timer) clearTimeout(timer);
         if (hiddenAt && Date.now() - hiddenAt >= 60000) void lock();
         hiddenAt = 0;
+        void refreshReminders();
       }
     };
+    // Refresh while actively using the unlocked journal, including a local time-zone change.
+    const reminderTimer = setInterval(() => {
+      if (AppState.currentState === 'active') void refreshReminders(false);
+    }, 60000);
     const subscription = AppState.addEventListener('change', (state) => {
       // iOS's biometric prompt is briefly inactive; only a real background transition cancels opening.
       if (state === 'background') backgroundEpoch.current++;
@@ -317,6 +443,7 @@ export function useJournal() {
     if (Platform.OS === 'web') document.addEventListener('visibilitychange', onVisibility);
     return () => {
       subscription.remove();
+      clearInterval(reminderTimer);
       if (timer) clearTimeout(timer);
       if (Platform.OS === 'web') document.removeEventListener('visibilitychange', onVisibility);
     };
@@ -344,6 +471,8 @@ export function useJournal() {
       restoredKey = restored.vault;
       setAuthProgress('Saving your restored journal…');
       // Validate the backup before removing convenience access to the existing journal.
+      await reminders.clear();
+      setReminderState(emptyReminderState(reminderBackend.available));
       await biometrics.clear();
       setBiometricEnabled(false);
       // Replacement is allowed only in the explicit restore-confirmation flow.
@@ -359,9 +488,11 @@ export function useJournal() {
       releaseLease.current = release;
       writer.current = new JournalWriter(AsyncStorage, restored.vault, secureRandomBytes);
       setCurrent(restored.journal);
+      savedRevision.current = revision.current;
       setDemo(false);
       demoRef.current = false;
       setStatus('Backup restored');
+      await syncReminders(restored.journal, restored.vault.salt);
     } catch (err) {
       restoredKey?.key.fill(0);
       release?.();
@@ -384,6 +515,13 @@ export function useJournal() {
     biometricAvailable,
     biometricEnabled,
     setBiometricUnlock,
+    reminderState,
+    reminderError,
+    remindersAvailable: reminderBackend.available,
+    setMedicationReminder,
+    refreshReminders,
+    stopReminders,
+    testReminder,
     unlockBiometric: () => start(null, false),
     deleted,
     removeEntry,

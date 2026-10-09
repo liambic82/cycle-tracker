@@ -37,7 +37,7 @@ The owner subsequently confirmed that symptoms, visibility, and biometrics work 
 
 The owner reported that creating a journal on Galaxy Z Flip5 in 0.5.0 stayed on the creation spinner for over a minute. Preview 0.5.1 addresses the likely JavaScript key-calculation bottleneck with native Android cryptography, progress messages, and a bounded calculation. Confirmation on the Flip5 is pending; its Android/One UI versions have not been reported.
 
-## Working preview: 0.8.0
+## Working preview: 0.9.0
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
@@ -49,6 +49,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - Optional sexual activity, activity intensity, orgasm, and libido records. Each field is independent, autosaves, and distinguishes unlogged values from explicit No/None. Daily summaries say only that details are logged.
 - Medication and supplement definitions with daily, selected-weekday, repeating on/off, and as-needed schedules. Users enter dose labels and local times; on/off schedules can include a user-entered placebo/off-day label. Dated changes and pauses preserve earlier schedule history.
 - Daily dose records with Taken, Skipped, or user-marked Taken late, actual amount/date/optional time, and a reason or note. Unrecorded doses stay unknown. Records retain their original planned dose/name, can be edited, and have confirmed removal with Undo. Schedule and dose forms save explicitly.
+- Optional medication reminders in the installed mobile app, using saved schedule times and discreet text. Each medication is off initially; permission, test delivery, refresh, and turn-off controls are in Medications. Plan/dose changes update pending alerts. Reminders queue up to 30 days / 60 distinct times, show when to unlock to renew them, and send a refresh notice. Unlock after a time-zone change. Phone settings can delay or silence delivery; hardware validation is pending. Browser and sample journals do not send notifications.
 - The full source symptom catalog (99 choices), searchable categories, a dedicated less-common browser, and quick choices. Logged symptoms remain visible across categories.
 - An encrypted preference to hide curated perimenopause choices without removing existing logs or custom symptoms.
 - Cycle-length and bleeding-duration charts with average, shortest, and longest recorded values. Incomplete cycles remain unknown.
@@ -63,7 +64,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication notifications and specialized patch/ring/injection/refill reminders, the remaining structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. The app records user-entered schedules; it does not calculate or recommend dosing. The owner requested the next milestone; that instruction did not supply a new device test report. Preview 0.8.0 retains the Flip5 creation fix, testing screenshots, passphrase eyes, and safer entry deletion. Outstanding native checks and the new medication checks remain in [the device guide](docs/android-testing.md). Discreet, individually enabled medication reminders are the next development slice in [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Specialized patch/ring/injection/refill reminders, the remaining structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, beautification and personal themes/background images, and optional sync are still pending. The app records user-entered schedules; it does not calculate or recommend dosing. Preview 0.9.0 retains the Flip5 creation fix, testing screenshots, passphrase eyes, and safer entry deletion. Outstanding native checks and the reminder delivery checklist remain in [the device guide](docs/android-testing.md). Doctor summaries/PDFs are the next development slice in [the development plan](docs/development-plan.md).
 
 Journal content is now format 4 to preserve medication plans and dose records. Format 1–3 journals and backups migrate on opening, with empty medication lists and dose logs. New backups require 0.8.0 or later; update the receiving app before transferring them. The encrypted envelope, passphrase, and biometric key are unchanged.
 
@@ -109,7 +110,7 @@ pnpm build:all
 
 ## Data handling
 
-The local vault uses AES-256-GCM with a fresh secure random nonce on each save, and a key derived from the passphrase using PBKDF2-SHA256. The passphrase is not stored. AsyncStorage holds encrypted journal content and, when enabled, a non-secret biometric reference; the optional unlock key is protected separately by the OS and requires biometric authentication. There is no server or analytics integration. Browser editing is restricted to one unlocked tab to prevent conflicting writes.
+The local vault uses AES-256-GCM with a fresh secure random nonce on each save, and a key derived from the passphrase using PBKDF2-SHA256. The passphrase is not stored. AsyncStorage holds encrypted journal content, device-local reminder opt-ins (opaque medication IDs and the public vault salt, without names or schedules), and, when enabled, a non-secret biometric reference; the optional unlock key is protected separately by the OS and requires biometric authentication. Enabled reminders give the phone OS generic notification text and future timestamps, so those times exist outside the encrypted vault. No medication names, amounts, notes, or decryption keys go into notifications. Reminder choices are excluded from backups and reset on restore. There is no server or analytics integration. Browser editing is restricted to one unlocked tab to prevent conflicting writes.
 
 There is no passphrase reset. Keep the passphrase and a separate encrypted backup. CSV exports are deliberately readable. Browser storage can be cleared or evicted. This early implementation still needs native-device testing and a security review before real health data or a public launch. See [architecture and security notes](docs/architecture.md) and [the validation record](docs/validation.md).
 

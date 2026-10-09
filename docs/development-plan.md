@@ -45,7 +45,7 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Implemented in 0.8.0: medication/supplement names and dose labels; daily, selected-weekday, repeating on/off, and as-needed schedules; multiple local times; user-entered off-day/placebo labels for repeating packs. No regimen, dose, or pack length is prescribed by the app.
 - Implemented in 0.8.0: Taken, Skipped, and user-marked Taken late records, actual amount/date/optional time, as-needed reasons and dose notes, editing, confirmed removal/Undo, and complete exports. Unrecorded doses are not inferred missed or taken. No adherence percentage or lateness threshold is calculated.
 - Implemented in 0.8.0: dated user-entered dose/schedule changes, pauses/resumption, and schedule history. Changes start today or later and after existing dose records; latest unused schedules can be corrected on the same effective date. These are recording tools for an existing plan, not automatic titration advice. Follow [the medication checklist](android-testing.md#080-medication-schedules-and-dose-records).
-- Next slice: individually enabled, discreet medication notifications, with native permission handling, cancellation/rescheduling on plan changes, time-zone behavior, and real-device delivery checks. Keep the app usable when reminders are off or unavailable.
+- Implemented in 0.9.0: individually enabled, discreet local medication notifications, permission and blocked-channel handling, test notification, cancellation/rescheduling after saved plan or dose changes, and cleanup on journal replacement/deletion. Choices are device-local and off after restore. The rolling queue covers up to 30 days / 60 distinct dose times, shows the refresh deadline, and includes an unlock-to-refresh notice. Local times refresh on unlock/foreground/manual refresh; actual delivery and background behavior remain [device checks](android-testing.md#090-medication-reminders). Browser and sample journals do not send alerts.
 - Later medication refinements: dedicated patch/ring/injection/refill reminders and broader retrospective schedule editing with explicit record reconciliation.
 - Doctor summary and PDF export based on recorded data, with a date range, selectable sections, and preview before export. Include medications and labs only as their records become available.
 - The clot-logging dependency is implemented in 0.6.0 as a daily Yes/No/Not logged observation. Future reports can include it as recorded; clinical interpretation and any more detailed clot measurements need separate design/review.
@@ -62,9 +62,19 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Bloodwork with units, lab-provided reference ranges, attachments, and draw-date context.
 - Appointments, doctor questions, medical-history records, and the remaining structured symptom/lifestyle inputs identified in the source review.
 - CSV/other-app import feasibility based on actual export formats; no universal import promise.
-- Dark mode, customizable colors, and optional backgrounds that preserve legibility and useful screen space; later home-screen widget.
+- Beautification and personal appearance: see the dedicated scope below. A home-screen widget remains a separate later feature.
 - Optional end-to-end encrypted sync, initially measured on a free tier; key recovery, conflict resolution, deletion propagation, and funding must be designed before public release.
 - iOS device validation, store metadata, pricing, accessibility review, and release testing.
+
+## Planned: beautification and personal appearance
+
+Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). This scope is on the roadmap, not implemented in 0.9.0.
+
+- Beautification pass across calendar, daily entry, history, medication, and settings screens: consistent spacing, typography, icons, and attractive, space-efficient decoration with daily information prominent.
+- App color theme customization, including a curated palette, light/dark appearance, and accessible text/control contrast.
+- Optional background images, including a personal image selected on the device, with a simple reset to the default background. Keep images local; define backup/transfer handling before implementation.
+- Readable surfaces and adjustable image dimming/opacity so backgrounds do not obscure records, selection states, or actions. Check larger text, screen readers, desktop widths, Pixel 7, and Flip5 layouts.
+- Preserve the agreed modest upfront purchase model. The source’s cosmetic-premium suggestion does not authorize subscriptions, upsells, or a paid theme tier.
 
 ## Product constraints
 

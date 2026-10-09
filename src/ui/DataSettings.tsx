@@ -334,7 +334,8 @@ export function DataSettings({
       )}
       <Text style={common.small}>
         Early preview · {app.expo.version}
-        {'\n'}Reminders, doctor PDFs, predictions, and cloud sync are planned for later milestones.
+        {'\n'}Medication reminders are available in the installed mobile app. Doctor PDFs,
+        predictions, and cloud sync are planned for later milestones.
       </Text>
     </View>
   );

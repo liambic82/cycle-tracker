@@ -292,6 +292,23 @@ function CycleApp() {
             <Button secondary label="Retry saving" onPress={state.retry} />
           </View>
         )}
+        {!!state.reminderError && (
+          <View style={{ backgroundColor: colors.roseSoft, padding: 16, gap: 10 }}>
+            <Text accessibilityRole="alert" style={common.error}>
+              {state.reminderError}
+            </Text>
+            {page !== 'medications' && (
+              <Button
+                secondary
+                label="Review reminders"
+                onPress={() => {
+                  setEditing(false);
+                  setPage('medications');
+                }}
+              />
+            )}
+          </View>
+        )}
         <ScrollView
           ref={mainScroll}
           style={{ flex: 1 }}
@@ -427,6 +444,17 @@ function CycleApp() {
             <History journal={journal} today={today} openDay={showDay} />
           ) : page === 'medications' ? (
             <Medications
+              reminders={{
+                state: state.reminderState,
+                available: state.remindersAvailable,
+                demo: state.demo,
+                busy: state.busy,
+                error: state.reminderError,
+                setEnabled: state.setMedicationReminder,
+                refresh: state.refreshReminders,
+                stop: state.stopReminders,
+                test: state.testReminder,
+              }}
               journal={journal}
               today={today}
               update={state.update}

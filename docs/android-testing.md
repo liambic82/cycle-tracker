@@ -8,6 +8,23 @@ The test app is named **Cycle Tracker Preview** and uses `com.liambic.cycletrack
 
 Start with the fictional sample journal. Use invented entries and a test-only passphrase when checking persistence and recovery. Real-device behavior and security validation are still in progress.
 
+## 0.9.0 medication reminders
+
+Install `artifacts/android/cycle-tracker-preview-0.9.0-arm64-v8a.apk` over the existing preview after exporting an encrypted backup. Version code is 12; the signing key and package identity are unchanged. Screenshots remain enabled in previews. These checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5; record the Flip5 Android/One UI versions and actual delivery delays.
+
+1. Confirm the existing journal, medication plans, dose records, and biometric/passphrase unlock still work. Initial medication reminder switches should be off. Sample mode and computer browsers must not prompt for notification permission or send reminders.
+2. In your own fictional journal, open **Medications**, expand **Reminder settings and test**, and use **Send test reminder in 1 minute**. Allow notification permission. Background/lock the app and phone; check the discreet test notification and tap it. It must open the app without bypassing journal unlock. Record observed arrival time; Android battery settings can delay delivery.
+3. With a fictional medication scheduled several minutes ahead, turn on **Remind me at scheduled times**. Verify queued count/deadline and the notification “A moment for you” / “You have a reminder. Open your journal to review it.” Names, amounts, and notes must not appear on the lock screen or notification tray. The OS may show the app name.
+4. Schedule two fictional medications at the same time: expect one alert. Record one as Taken/Skipped/Taken late before the time; the other's alert should remain. Record both; it should cancel. Remove a dose record before its time to requeue, then Undo to cancel again. An already-past dose should never create an immediate catch-up alert.
+5. Change an unused upcoming time, turn one medication off, pause a plan, and exercise a future dated change. Old alerts must disappear. Check selected weekdays and a short fictional on/off cycle, with and without an off-day label. As-needed plans must never invent a dose reminder.
+6. Deny the initial permission on a separate test installation/state, or turn off app/channel notifications in system settings. Return to the app: show blocked/error state and keep editing usable. Re-enable permission, unlock/refresh, and verify delivery resumes without duplicate notifications. Try both the app-level and **Private reminders** channel controls.
+7. Test delivery while foregrounded, locked/backgrounded, swiped from recents, after reboot, and after a preview update. Android force-stop prevents delivery until reopening; unlock/refresh must rearm future alerts. Check normal battery saving and Flip5 closed/reopened behavior. Do not treat a successful schedule API response as proof of delivery.
+8. Change the phone's time zone, unlock, and verify the queued local schedule uses the new zone. The old absolute-time alarm must disappear. Test repeated/skipped DST times on a dedicated test environment if available; expected behavior is roll forward for a missing hour and once for a repeated hour.
+9. Use **Turn off all reminders** with a pending test and enabled medications: no later alert should arrive. Lock/reopen and confirm off persists. Restore a valid backup, including a backup of this same journal: reminders must remain off until explicitly re-enabled. A failed/wrong-passphrase restore must leave existing reminders intact. On a disposable fictional journal, verify whole-journal deletion also cancels pending and displayed notifications.
+10. Confirm the visible renewal deadline and refresh notice on a dense fictional schedule. Unlocking extends/reconciles the queue (up to 30 days / 60 distinct times). Leaving it locked past the deadline stops further dose reminders; this limit is intentional and visible, not an indefinite reminder promise. Retest keyboard, TalkBack labels/switch states, larger text, rotation, and biometric fallback.
+
+Actual iOS scheduling/permission/background behavior also needs an iPhone build and device validation before store release; a JavaScript bundle check does not establish native iOS delivery.
+
 ## Build on this Windows computer
 
 JDK 22 under `C:\Program Files\Java\jdk-22` and the SDK under `%LOCALAPPDATA%\Android\Sdk` are installed. From the project directory:
