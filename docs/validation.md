@@ -1,5 +1,23 @@
 # Validation record
 
+## 0.5.2 testing screenshots and passphrase visibility — October 9, 2026
+
+At the owner's request, testing previews now allow screenshots, and setup/confirmation/unlock/restore passphrase fields have independent show/hide eye controls. Store/default builds retain capture protection. Android preview Recents secure-window blanking is also off; the existing background overlay and lock remain, and iOS retains its separate app-switcher blur. Settings text reflects the preview behavior. The 0.5.1 native passphrase fix remains included; no Flip5 success report has been received yet.
+
+- `pnpm check`: strict TypeScript and all **40 existing tests** passed. Web, Android Hermes, and iOS Hermes production exports passed. No encryption, vault schema, or biometric changes were made.
+- Executed configuration checks for an absent variant, production, and preview, including an incoming extra flag set to true. Only preview retained `allowPreviewScreenshots: true`; default/production explicitly set false. The final APK's embedded `assets/app.config` confirms the preview flag is true and the package is the preview identity.
+- At 393 × 852 and 1280 × 720 on isolated `127.0.0.1:4176`, inspected the two setup fields and eye targets. Both start masked. Showing one leaves the other hidden; hiding it and showing confirmation preserves the entered fictional text. The accessibility tree exposes Show/Hide labels and pressed state.
+- Created a fictional journal after toggling visibility, then locked it. An incorrect revealed passphrase was rejected and the form returned to a cleared, masked field. Showing/hiding the correct passphrase still unlocked the journal. No captured console errors. The fictional journal was locked, test tab closed, viewport reset, and server stopped. The screenshot below uses test-only text.
+- Actual native screenshots, secure-text keyboard/cursor behavior, TalkBack, background reset, restore-field interaction, and biometric regression remain [0.5.2 device checks](android-testing.md#052-screenshots-and-passphrase-controls). Browser tests and configuration inspection do not establish a hardware pass.
+
+The standalone ARM64 release APK built successfully. Signature verification, 16 KB zip alignment, Prettier, and Git whitespace checks passed. The certificate matches previous previews. Package identity is `com.liambic.cycletracker.preview`, version **0.5.2**, version code **7**, minimum API 24, target API 36, `USE_BIOMETRIC`, `allowBackup: false`, and no debuggable flag. The bundled Hermes program is 3,123,008 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.5.2-arm64-v8a.apk` (29,927,434 bytes; excluded from Git).
+- APK SHA-256: `8df5a6aac02a712cd7c66319efee279cde445acbb9dce561daae5be34911200d`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Independent passphrase eye controls with fictional text](screenshots/passphrase-eye-mobile.jpg)
+
 ## 0.5.0 Flip5 creation failure / 0.5.1 fix — October 9, 2026
 
 The owner reported **Galaxy Z Flip5, preview 0.5.0, over a minute** on the Create my journal spinner. Android/One UI versions were not supplied. No phone was connected to ADB, so the exact stalled stage and physical-device timing could not be measured. Source inspection identified 600,000 PBKDF2 iterations running in JavaScript as a likely bottleneck; this is an inference, not a captured Flip5 trace.

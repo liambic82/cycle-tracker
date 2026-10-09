@@ -4,6 +4,7 @@ import { Download, FileSpreadsheet, LockKeyhole, ShieldCheck, Trash2 } from 'luc
 import app from '../../app.json';
 import { toCSV, type Journal } from '../domain/journal';
 import { exportText } from '../data/files';
+import { allowPreviewScreenshots } from '../data/buildSettings';
 import { Button } from './components';
 import { BiometricSettings } from './BiometricSettings';
 import { colors, common } from './theme';
@@ -158,7 +159,9 @@ export function DataSettings({
         <Text style={common.small}>
           {Platform.OS === 'web'
             ? 'Browsers cannot block screenshots. Keep your screen private when your journal is open.'
-            : 'Screen capture is blocked throughout the app, including sample mode. The app-switcher preview is hidden.'}
+            : allowPreviewScreenshots
+              ? 'Screenshots are enabled in this testing preview. Your journal still locks when you leave it in the background for a minute.'
+              : 'Screen capture is blocked throughout the app, including sample mode. The app-switcher preview is hidden.'}
         </Text>
         <Button
           secondary

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import {
   ArrowRight,
   CalendarDays,
@@ -10,6 +10,7 @@ import {
   Upload,
 } from 'lucide-react-native';
 import { Button, Brand } from './components';
+import { PassphraseField } from './PassphraseField';
 import { colors, common, serif } from './theme';
 import { readBackup } from '../data/files';
 import { parseEnvelope } from '../domain/vault';
@@ -202,43 +203,24 @@ export function AuthGate({
                 </Text>
               </View>
             )}
-            <View style={{ gap: 8 }}>
-              <Text style={common.label}>Passphrase</Text>
-              <TextInput
-                accessibilityLabel="Passphrase"
-                secureTextEntry
-                editable={!busy}
-                value={passphrase}
-                onChangeText={setPassphrase}
-                placeholder={
-                  exists || backup ? 'Your journal passphrase' : 'At least 12 characters'
-                }
-                placeholderTextColor={colors.muted}
-                style={common.input}
-                autoCapitalize="none"
-                autoCorrect={false}
-                maxLength={1024}
-                onSubmitEditing={exists || backup ? submit : undefined}
-              />
-            </View>
+            <PassphraseField
+              key={backup ? 'restore' : exists ? 'unlock' : 'create'}
+              label="Passphrase"
+              busy={busy}
+              value={passphrase}
+              onChangeText={setPassphrase}
+              placeholder={exists || backup ? 'Your journal passphrase' : 'At least 12 characters'}
+              onSubmitEditing={exists || backup ? submit : undefined}
+            />
             {!exists && !backup && (
-              <View style={{ gap: 8 }}>
-                <Text style={common.label}>Confirm passphrase</Text>
-                <TextInput
-                  accessibilityLabel="Confirm passphrase"
-                  secureTextEntry
-                  editable={!busy}
-                  value={confirm}
-                  onChangeText={setConfirm}
-                  placeholder="One more time"
-                  placeholderTextColor={colors.muted}
-                  style={common.input}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  maxLength={1024}
-                  onSubmitEditing={submit}
-                />
-              </View>
+              <PassphraseField
+                label="Confirm passphrase"
+                busy={busy}
+                value={confirm}
+                onChangeText={setConfirm}
+                placeholder="One more time"
+                onSubmitEditing={submit}
+              />
             )}
             {backup && exists && (
               <View

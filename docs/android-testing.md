@@ -43,6 +43,15 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 | October 9, 2026 | 0.4.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported symptoms working well, visibility good, and biometrics working. Individual edge-case results were not supplied. |
 | October 9, 2026 | 0.5.0       | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Owner reported Create my journal spinning for over a minute. Creation failed this test; other checks are not marked passed.    |
 
+## 0.5.2 screenshots and passphrase controls
+
+Install `cycle-tracker-preview-0.5.2-arm64-v8a.apk` over the existing app. Do not uninstall or clear storage; export a backup first if the journal opens. The preview app identity and signing key are unchanged, and this update includes the 0.5.1 native passphrase fix, which still needs the Flip5 retest below.
+
+1. Take a screenshot of setup/unlock, the sample calendar, and a sample daily editor. Capture should now succeed in preview builds. The previous screenshot-blocking expectations below are historical and do not apply to these testing previews. Android Recents may also show the screen now that the secure-window flag is off; the background overlay/automatic lock remain.
+2. During setup, type fictional text and use each eye independently. Show reveals only its own field, Hide masks it, and text should be preserved. Check long passphrases, keyboard editing/cursor position, and large text. Try a mismatch, then correct it and submit.
+3. Check the eye on unlock and backup restore. Fields start hidden and hide after submission, clearing, changing form mode, or backgrounding. Eye controls should not respond while the operation is busy. Use TalkBack to check Show/Hide labels.
+4. Repeat the 0.5.1 Flip5 creation/unlock checks below, plus Pixel 7 update retention and biometric unlock. Report the phone, OS, app version, and any remaining setup progress/error message. Do not share your passphrase in feedback screenshots.
+
 ## 0.5.1 passphrase fix checks
 
 Install `cycle-tracker-preview-0.5.1-arm64-v8a.apk` over 0.5.0. Close the stalled app before updating. **Do not uninstall or clear app storage.** If a journal already opens, export a backup first. The signing key, app identity, encryption parameters, and existing passphrases are unchanged.
@@ -128,4 +137,4 @@ Record the app version, phone model, Android version, and (on the Flip5) One UI 
 | Flip5 continuity       | Close/reopen and partially fold the phone; verify selected day, in-progress note, keyboard, and lock behavior.                                                        |
 | Unlock performance     | Note roughly how long a correct or incorrect passphrase takes; report stalls or unresponsive controls.                                                                |
 
-Report the action, expected result, and actual result for any issue. Browser screenshots using sample data can help with layout issues; native screenshots are intentionally blocked from 0.2.0 onward.
+Report the action, expected result, and actual result for any issue. Use fictional sample data in feedback screenshots. Native screenshots were blocked in previews 0.2.0–0.5.1 and are enabled in testing previews from 0.5.2; store builds retain capture prevention.

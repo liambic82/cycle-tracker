@@ -1,6 +1,6 @@
 {
   "name": "cycle-tracker",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "private": true,
   "type": "module",
   "main": "index.ts",
@@ -27,6 +27,7 @@
     "@noble/hashes": "2.4.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~57.0.27",
+    "expo-constants": "~57.0.21",
     "expo-crypto": "~57.0.3",
     "expo-document-picker": "~57.0.3",
     "expo-file-system": "~57.0.7",
