@@ -29,9 +29,9 @@ On both phones, check calendar navigation, daily logging, offline persistence, m
 
 For the Flip5, verify that closing and reopening the phone preserves the selected day, calendar position, and any in-progress entry. Check the main-screen layout when fully open and partially folded, following [Android's foldable design and app continuity guidance](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/learn-about-foldables).
 
-Record the installed Android version on each phone, and the Samsung One UI version, at the first test session. These versions are not yet known; no device testing has been performed yet.
+The owner reported that the 0.1.0 preview passed testing on the Pixel 7 running Android 17 on October 9, 2026. Individual checklist results and timings were not supplied. Flip5 testing and its Android/One UI versions are still pending.
 
-## Working preview: 0.1.0
+## Working preview: 0.2.0
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
@@ -40,6 +40,8 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - Recorded cycle lengths and bleeding duration, without predictions or hormone estimates.
 - A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute.
 - Encrypted backup/restore and readable CSV export.
+- Daily entry deletion with session-only Undo, and confirmed deletion of the whole local journal.
+- Native screen capture prevention and app-switcher protection, enabled before opening the journal. Browsers cannot prevent screenshots.
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 

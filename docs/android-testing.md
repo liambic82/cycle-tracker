@@ -31,7 +31,24 @@ The local preview signing key and credentials live in `.tools/android-signing`, 
 3. Open **Cycle Tracker Preview** and select **Explore with sample data**.
 4. For a future update signed with the same preview key, install the newer APK over the current one. Do not uninstall first; uninstalling removes the phone's local journal. Export a backup before updating.
 
-An optional developer route is `adb install -r <apk-path>` once USB debugging is enabled and the phone has authorized this computer. No phone is currently connected to the build session.
+An optional developer route is `adb install -r <apk-path>` once USB debugging is enabled and the phone has authorized this computer.
+
+## Device reports
+
+| Date            | App version | Device                 | OS                              | Result                                                                                     |
+| --------------- | ----------- | ---------------------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
+| October 9, 2026 | 0.1.0       | Google Pixel 7         | Android 17                      | Owner reported testing passed. Individual checklist results and timings were not supplied. |
+| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported | Not yet validated.                                                                         |
+
+## 0.2.0 update checks
+
+Install `cycle-tracker-preview-0.2.0-arm64-v8a.apk` over 0.1.0 with the same preview signing key. Export a backup first; do not uninstall. Confirm that the previous fictional journal still unlocks with its existing passphrase.
+
+- Delete a fictional day, then Undo: flow, symptoms, cramp rating, notes, and period markers should return. Navigate between screens and check Undo remains available until locking, dismissal, another deletion, or logging that date again.
+- Cancel entry deletion and journal deletion; the records should remain.
+- With a disposable journal and a separate encrypted backup, type `DELETE` in **Your data** and delete the journal. The app should return to setup and stay there after restart. Restore the backup to verify recovery from the separately saved copy.
+- Attempt screenshots on setup, the open journal, and the daily editor. Android should block capture. Check that Recents does not expose the journal. Screen capture is also blocked in sample mode; use the browser preview for layout screenshots.
+- Repeat backup sharing, offline restart, and background locking with the updated build. The October 9 report applies to 0.1.0, not these new features.
 
 ## First test session
 
@@ -50,4 +67,4 @@ Record the app version, phone model, Android version, and (on the Flip5) One UI 
 | Flip5 continuity       | Close/reopen and partially fold the phone; verify selected day, in-progress note, keyboard, and lock behavior.                                                        |
 | Unlock performance     | Note roughly how long a correct or incorrect passphrase takes; report stalls or unresponsive controls.                                                                |
 
-Report the action, expected result, and actual result for any issue. A screenshot using sample data is helpful for layout issues.
+Report the action, expected result, and actual result for any issue. Browser screenshots using sample data can help with layout issues; native screenshots are intentionally blocked from 0.2.0 onward.

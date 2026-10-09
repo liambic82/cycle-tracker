@@ -44,6 +44,9 @@ test('writes stay ordered and a failed write can be retried without discarding e
   let fail = false;
   const store = {
     getItem: async () => stored,
+    removeItem: async () => {
+      stored = '';
+    },
     setItem: async (_: string, value: string) => {
       await new Promise((resolve) => setTimeout(resolve, 10));
       if (fail) {

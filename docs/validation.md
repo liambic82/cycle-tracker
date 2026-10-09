@@ -1,5 +1,31 @@
 # Validation record
 
+## Pixel 7 owner report — October 9, 2026
+
+The owner reported “Testing passed on Pixel 7” and confirmed Android **17**. This records the overall functional pass of preview **0.1.0**. Individual checklist results, timings, and security/accessibility findings were not supplied. Galaxy Z Flip5 testing remains pending. Earlier pending-device statements below describe the state at the time those historical checks were recorded.
+
+## 0.2.0 privacy and data controls — October 9, 2026
+
+Implemented daily entry deletion with session-only Undo, typed confirmation for deleting the local journal, and native screen capture/app-switcher protection. The vault format and passphrase remain compatible with 0.1.0.
+
+- `pnpm check`: TypeScript and all 13 domain/storage tests passed. New tests cover complete entry restoration and history recalculation, preserving newer edits, draining pending saves before deletion, rejecting late writes, preserving unrelated storage, and recovery after failed writes/deletion.
+- Web, Android Hermes, and iOS Hermes production exports passed. iOS export is a bundle check, not an IPA build or device test.
+- Prettier formatting and Git whitespace checks passed.
+- Browser checks used a separate origin (`127.0.0.1:4174`) with fictional data, leaving the user's existing preview storage separate. Inspected the entry confirmation/cancel flow and data controls at phone width (393 × 852) and desktop width (1280 × 720).
+- Verified that whole-journal deletion is disabled in sample mode; its final button requires exactly `DELETE`, rejects lowercase input, and can be canceled. The final destructive browser action was not exercised; actual storage removal and failure paths were covered by automated tests with in-memory storage.
+- A fictional note remained after cancellation and survived lock, reload, and unlock. The inspected browser reported no captured console errors; viewport overrides were reset after testing.
+- Native source inspection confirms the screen-capture module is registered and React Native's Android modal inherits `FLAG_SECURE`. Actual screenshot blocking, Recents privacy, update-in-place data retention, deletion/Undo, and backup recovery still need a 0.2.0 device regression pass. The earlier Pixel 7 pass applies to 0.1.0.
+
+The standalone ARM64 APK built successfully with the existing local toolchain. Package checks confirm `com.liambic.cycletracker.preview`, version `0.2.0`, version code `2`, minimum API 24, target API 36, `allowBackup: false`, no debuggable flag, and a bundled Hermes program (3,071,732 bytes). APK signature and 16 KB zip-alignment verification passed. The preview signing certificate is unchanged from 0.1.0, supporting an update over the existing installation.
+
+- File: `artifacts/android/cycle-tracker-preview-0.2.0-arm64-v8a.apk` (29,719,786 bytes; excluded from Git).
+- APK SHA-256: `3624c4b7bf44304b5c5dd21a8f1a41982466e9dacd722b482dfb2faf713a69ed`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Desktop privacy controls](screenshots/privacy-controls-desktop.jpg)
+
+![Phone privacy controls](screenshots/privacy-controls-mobile.jpg)
+
 ## 0.1 preview — October 8, 2026
 
 This record separates executed checks from work still needing hardware or account access. Test journal entries are fictional.

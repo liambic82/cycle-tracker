@@ -23,6 +23,8 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { useJournal } from './src/data/useJournal';
+import { useScreenPrivacy } from './src/data/useScreenPrivacy';
+import app from './app.json';
 import { cycleDay, starts, updateEntry } from './src/domain/journal';
 import { formatDay, toDay, type Day } from './src/domain/dates';
 import { AuthGate } from './src/ui/AuthGate';
@@ -30,6 +32,7 @@ import { Calendar } from './src/ui/Calendar';
 import { DayEditor } from './src/ui/DayEditor';
 import { History } from './src/ui/History';
 import { DataSettings } from './src/ui/DataSettings';
+import { UndoNotice } from './src/ui/UndoNotice';
 import { Brand, Button } from './src/ui/components';
 import { colors, common, serif } from './src/ui/theme';
 
@@ -96,10 +99,16 @@ function CycleApp() {
     setPage('calendar');
     select(today);
   };
+  const undoNotice = state.deleted ? (
+    <UndoNotice date={state.deleted.date} undo={state.undoDelete} dismiss={state.dismissUndo} />
+  ) : null;
   const editor = (
     <DayEditor
+      key={journal.selectedDate}
       journal={journal}
       today={today}
+      undoNotice={undoNotice}
+      onDelete={() => state.removeEntry(journal.selectedDate)}
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
       onCustom={(symptom) =>
         state.update((value) => {
@@ -193,7 +202,7 @@ function CycleApp() {
             <Text style={common.small}>{state.demo ? 'Exit demo' : 'Lock journal'}</Text>
           </Pressable>
           <Text style={[common.eyebrow, { fontSize: 8, marginLeft: 12, color: '#989099' }]}>
-            EARLY PREVIEW · 0.1
+            EARLY PREVIEW · {app.expo.version}
           </Text>
         </View>
       )}
@@ -290,6 +299,7 @@ function CycleApp() {
             </View>
             {desktop && <Button label="Log today" icon={Plus} onPress={logToday} />}
           </View>
+          {(!inlineEditor || page !== 'calendar') && !(editing && !inlineEditor) && undoNotice}
           {page === 'calendar' ? (
             <>
               <View style={{ flexDirection: 'row', gap: desktop ? 15 : 9, flexWrap: 'wrap' }}>
@@ -387,6 +397,7 @@ function CycleApp() {
               demo={state.demo}
               backup={state.backup}
               lock={state.lock}
+              erase={state.erase}
             />
           )}
         </ScrollView>
@@ -492,7 +503,7 @@ function CycleApp() {
           }}
         >
           <ActivityIndicator color={colors.plum} />
-          <Text style={common.body}>Saving and locking…</Text>
+          <Text style={common.body}>Please wait…</Text>
         </View>
       )}
     </View>
@@ -500,11 +511,36 @@ function CycleApp() {
 }
 
 export default function App() {
+  const privacy = useScreenPrivacy();
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
         <StatusBar style="dark" />
-        <CycleApp />
+        {privacy.ready ? (
+          <CycleApp />
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              padding: 28,
+              gap: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Brand />
+            {privacy.error ? (
+              <>
+                <Text accessibilityRole="alert" style={common.error}>
+                  Screen privacy could not start. Try again before opening your journal.
+                </Text>
+                <Button label="Retry screen privacy" onPress={privacy.retry} />
+              </>
+            ) : (
+              <ActivityIndicator color={colors.plum} />
+            )}
+          </View>
+        )}
       </SafeAreaView>
     </SafeAreaProvider>
   );

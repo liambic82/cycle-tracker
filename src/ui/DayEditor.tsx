@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
-import { Check, Droplet, Heart, NotebookPen, Plus, Sparkles } from 'lucide-react-native';
+import { Check, Droplet, Heart, NotebookPen, Plus, Sparkles, Trash2 } from 'lucide-react-native';
 import { formatDay, type Day } from '../domain/dates';
 import {
   cycleDay,
@@ -18,11 +18,15 @@ export function DayEditor({
   today,
   onPatch,
   onCustom,
+  onDelete,
+  undoNotice,
 }: {
   journal: Journal;
   today: Day;
   onPatch: (patch: Partial<Entry>) => void;
   onCustom: (symptom: string) => void;
+  onDelete: () => void;
+  undoNotice: React.ReactNode;
 }) {
   const date = journal.selectedDate;
   const entry = journal.entries[date] ?? emptyEntry();
@@ -31,6 +35,7 @@ export function DayEditor({
   const [adding, setAdding] = useState(false);
   const [custom, setCustom] = useState('');
   const [customError, setCustomError] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const toggle = (symptom: string) =>
     onPatch({
       symptoms: entry.symptoms.includes(symptom)
@@ -287,8 +292,40 @@ export function DayEditor({
               Anything that feels relevant. Or nothing at all.
             </Text>
           </View>
+          {!!journal.entries[date] && (
+            <View style={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 20, gap: 12 }}>
+              {deleteConfirm ? (
+                <>
+                  <Text style={common.label}>Delete this day’s entry?</Text>
+                  <Text style={common.body}>
+                    This removes the flow, symptoms, note, and period markers for{' '}
+                    {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can
+                    undo the last deletion until you lock, delete another entry, or log this day
+                    again.
+                  </Text>
+                  <Button
+                    label="Delete this entry"
+                    icon={Trash2}
+                    onPress={() => {
+                      onDelete();
+                      setDeleteConfirm(false);
+                    }}
+                  />
+                  <Button secondary label="Keep entry" onPress={() => setDeleteConfirm(false)} />
+                </>
+              ) : (
+                <Button
+                  secondary
+                  label="Delete entry"
+                  icon={Trash2}
+                  onPress={() => setDeleteConfirm(true)}
+                />
+              )}
+            </View>
+          )}
         </>
       )}
+      {undoNotice}
     </View>
   );
 }

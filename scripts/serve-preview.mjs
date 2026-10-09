@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const root = path.resolve('dist');
+const port = Number(process.env.PORT ?? 4173);
 const mime = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -32,4 +33,6 @@ const server = createServer(async (req, res) => {
     res.writeHead(404).end('Not found');
   }
 });
-server.listen(4173, '127.0.0.1', () => console.log('Cycle Tracker preview: http://127.0.0.1:4173'));
+server.listen(port, '127.0.0.1', () =>
+  console.log(`Cycle Tracker preview: http://127.0.0.1:${port}`),
+);

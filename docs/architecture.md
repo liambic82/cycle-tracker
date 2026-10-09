@@ -20,13 +20,17 @@ Only encrypted snapshots enter AsyncStorage. The key is held in the unlocked ses
 
 Writes are serialized. A failed write is reported in the UI and keeps the edited in-memory journal available for retry or backup. Locking attempts to save before releasing the key. On web, a Web Locks lease prevents simultaneous unlocked editors on the same origin. Other origins and other devices are independent until an explicit restore; there is no sync implementation.
 
-The background view is obscured and a one-minute background interval triggers locking, including a resume-time check when the operating system suspends timers. Native task-switcher snapshots and fold transitions still require device testing; do not equate a JavaScript privacy overlay with an OS-level screenshot prevention guarantee.
+The background view is obscured and a one-minute background interval triggers locking, including a resume-time check when the operating system suspends timers. From 0.2.0, native startup waits for Expo screen-capture prevention before mounting the journal or passphrase form. Android uses `FLAG_SECURE`; the installed React Native modal implementation inherits that flag. iOS also enables Expo's app-switcher blur. Failure presents a retry screen without journal content. Protection remains active in sample mode. The browser retains its visibility overlay but cannot block screenshots. Native task-switcher snapshots, screenshot blocking, and fold transitions still require device validation of this version.
 
 ## Exports and recovery
 
 Encrypted backups can restore on another supported platform with the same passphrase. There is no server-held recovery key, account, or password reset. A readable CSV export needs a separate explicit action and neutralizes spreadsheet formula prefixes. Native export/import cache files are cleaned up after use. File-sharing completion, dismissal, and access behavior must be checked on the target Android devices.
 
-This preview has no delete-vault or change-passphrase UI yet. Browser data can be removed by clearing site data, and native data by uninstalling the app; an independent backup is necessary before either action. Android automatic OS backup is disabled in app configuration; iOS backup policy still needs review before a store release.
+Deleting a day removes all of that entry's fields and recalculates derived history. Only the most recently deleted entry is retained in memory for Undo; locking, dismissal, another deletion, or writing a new entry on that date clears it. Undo never overwrites a newer entry. The Undo record is not serialized into the vault or backups.
+
+Whole-journal deletion requires an unlocked real journal and typing `DELETE`. The writer rejects new saves immediately, drains previous writes (including failed ones), and removes only the vault storage key. Successful deletion clears the session key, journal, Undo record, and web edit lease. Failure reopens the writer for retry/backup and retains the in-memory journal. This is logical app-storage deletion, not a guarantee of forensic erasure of flash storage or historical memory copies. Exported backups/CSVs and journals on other devices/origins remain separate. The sample journal cannot invoke whole-vault deletion.
+
+There is no change-passphrase UI yet. Android automatic OS backup is disabled in app configuration; iOS backup policy still needs review before a store release.
 
 ## Release work
 
@@ -38,6 +42,7 @@ The cryptographic libraries are established implementations; this app's integrat
 
 - [Expo platform support](https://docs.expo.dev/)
 - [Expo Crypto](https://docs.expo.dev/versions/latest/sdk/crypto/)
+- [Expo screen capture and app-switcher protection](https://docs.expo.dev/versions/latest/sdk/screen-capture/)
 - [Noble ciphers](https://github.com/paulmillr/noble-ciphers)
 - [Noble hashes](https://github.com/paulmillr/noble-hashes)
 - [Android foldable guidance](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/learn-about-foldables)

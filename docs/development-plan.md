@@ -8,14 +8,16 @@ The full source brief remains the feature reference. Its version labels are prov
 
 ## Milestone 2: Android daily-use build
 
-The first locally signed, standalone Android preview APK has been built and its package/signature checked. Installation and runtime testing on the two phones are next; the rest of this milestone remains pending.
+The owner reported a successful Pixel 7 test on Android 17 for preview 0.1.0 on October 9, 2026. This is an overall functional report, not a per-check security or accessibility assessment. Flip5 validation remains pending.
 
-- Install the internal APK on the Pixel 7 and Galaxy Z Flip5, following [the device test guide](android-testing.md).
+Preview 0.2.0 adds entry deletion with session-only Undo, confirmed deletion of the local vault, and native screen capture/app-switcher protection. These additions need a fresh device regression pass.
+
+- Validate the 0.2.0 update on the Pixel 7 and the first installation on Galaxy Z Flip5, following [the device test guide](android-testing.md).
 - Record OS versions; test input, accessibility text sizes, storage, backup sharing, and fold/reopen state.
 - Measure passphrase unlock time and journal write performance on real hardware.
 - Verify background locking, native app-switcher privacy, keyboard behavior, and recovery after app termination.
 - Expand the symptom catalog from the source requirements; distinguish user-added labels from curated categories.
-- Add an intentional, recoverable entry-deletion flow and a tested full-data deletion flow.
+- Validate deletion/Undo and whole-journal deletion with fictional data on hardware, including updating from 0.1.0 without uninstalling.
 - Add biometric convenience unlock without removing passphrase recovery or compromising key storage.
 
 ## Milestone 3: medication and doctor records

@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getRandomValues } from 'expo-crypto';
-import { toDay } from '../domain/dates';
+import { toDay, type Day } from '../domain/dates';
+import { deleteEntry, undoEntryDeletion, type DeletedEntry } from '../domain/deletion';
 import { emptyJournal, type Journal } from '../domain/journal';
 import { newKey, openVault, seal, type VaultKey } from '../domain/vault';
 import { JournalWriter, STORAGE_KEY } from './repository';
@@ -21,6 +22,8 @@ export function useJournal() {
   const [status, setStatus] = useState('Saved on this device');
   const [error, setError] = useState('');
   const [obscured, setObscured] = useState(false);
+  const [deleted, setDeleted] = useState<DeletedEntry | null>(null);
+  const deletedRef = useRef<DeletedEntry | null>(null);
   const current = useRef<Journal | null>(null);
   const key = useRef<VaultKey | null>(null);
   const writer = useRef<JournalWriter | null>(null);
@@ -45,6 +48,27 @@ export function useJournal() {
     setJournal(value);
   };
 
+  const rememberDeletion = (value: DeletedEntry | null) => {
+    deletedRef.current = value;
+    setDeleted(value);
+  };
+
+  const endSession = useCallback(() => {
+    revision.current++;
+    key.current?.key.fill(0);
+    key.current = null;
+    writer.current = null;
+    releaseLease.current?.();
+    releaseLease.current = null;
+    current.current = null;
+    setJournal(null);
+    deletedRef.current = null;
+    setDeleted(null);
+    demoRef.current = false;
+    setDemo(false);
+    setError('');
+  }, []);
+
   const start = async (passphrase: string, create: boolean) => {
     if (working.current) return;
     working.current = true;
@@ -59,7 +83,10 @@ export function useJournal() {
         setExists(true);
         throw new Error('A journal already exists on this device. Unlock it to continue.');
       }
-      if (!create && raw === null) throw new Error('No saved journal was found on this device.');
+      if (!create && raw === null) {
+        setExists(false);
+        throw new Error('No saved journal was found. Create a new journal or restore a backup.');
+      }
       const session = create
         ? {
             vault: await newKey(passphrase, secureRandomBytes),
@@ -91,6 +118,7 @@ export function useJournal() {
   };
 
   const explore = () => {
+    if (working.current || current.current) return;
     demoRef.current = true;
     setDemo(true);
     setError('');
@@ -101,6 +129,7 @@ export function useJournal() {
   const update = (transform: (value: Journal) => Journal) => {
     if (!current.current || working.current) return;
     const next = transform(current.current);
+    if (deletedRef.current && next.entries[deletedRef.current.date]) rememberDeletion(null);
     setCurrent(next);
     if (demoRef.current) return;
     const change = ++revision.current;
@@ -126,23 +155,49 @@ export function useJournal() {
     }
   };
 
+  const removeEntry = (date: Day) => {
+    if (!current.current || working.current) return;
+    const result = deleteEntry(current.current, date);
+    if (!result) return;
+    rememberDeletion(result.deleted);
+    update(() => result.journal);
+  };
+
+  const undoDelete = () => {
+    const removed = deletedRef.current;
+    if (!removed || working.current || !current.current) return;
+    update((value) => undoEntryDeletion(value, removed));
+    rememberDeletion(null);
+  };
+
+  const erase = async (confirmation: string) => {
+    if (confirmation !== 'DELETE') throw new Error('Type DELETE to confirm.');
+    if (!current.current || demoRef.current || working.current) return;
+    working.current = true;
+    revision.current++;
+    setBusy(true);
+    setError('');
+    try {
+      await writer.current!.erase();
+      endSession();
+      setExists(false);
+    } catch {
+      // Retain the open journal and Undo on failure so retry or backup remains possible.
+      setStatus('Not saved');
+      throw new Error('Your journal could not be deleted. It is still open. Please try again.');
+    } finally {
+      working.current = false;
+      setBusy(false);
+    }
+  };
+
   const lock = useCallback(async () => {
     if (!current.current || working.current) return;
     working.current = true;
     setBusy(true);
     try {
       if (!demoRef.current) await writer.current!.save(current.current);
-      revision.current++;
-      key.current?.key.fill(0);
-      key.current = null;
-      writer.current = null;
-      releaseLease.current?.();
-      releaseLease.current = null;
-      current.current = null;
-      setJournal(null);
-      setDemo(false);
-      demoRef.current = false;
-      setError('');
+      endSession();
     } catch {
       setError('Your latest changes could not be saved. Please retry before locking.');
       setStatus('Not saved');
@@ -150,7 +205,7 @@ export function useJournal() {
       working.current = false;
       setBusy(false);
     }
-  }, []);
+  }, [endSession]);
 
   useEffect(() => {
     let hiddenAt = 0;
@@ -231,6 +286,11 @@ export function useJournal() {
     status,
     error,
     obscured,
+    deleted,
+    removeEntry,
+    undoDelete,
+    dismissUndo: () => rememberDeletion(null),
+    erase,
     start,
     explore,
     update,
