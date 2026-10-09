@@ -77,6 +77,8 @@ Explicitly reaffirmed by the owner after medication logging, following screensho
 
 **Proposals ready for review:** [Appearance proposal — October 9, 2026](design/appearance-proposal.md) presents Quiet familiar, Botanical journal, and Clear and compact, with phone/desktop examples and the proposed palette, light/dark, and device-local background options. Awaiting the owner's choice and scope approval; app implementation has not started.
 
+**Palette expansion and built-in artwork:** the owner liked the proposals and requested six additional colors and two images per color. [Twelve generated background candidates](design/backgrounds/README.md) are ready for image review: Buttercup Morning (yellow), Apricot Blossom (orange), Lavender Haze, Rosewater (pink), Bluebell Mist (pastel blue), and Silver Moon (light charcoal). These extend the original Plum/Sage/Ocean choices. Approved built-in artwork will be bundled for offline use; the candidate files are currently documentation assets only.
+
 - Beautification pass across calendar, daily entry, history, medication, and settings screens: consistent spacing, typography, icons, and attractive, space-efficient decoration with daily information prominent.
 - App color theme customization, including a curated palette, light/dark appearance, and accessible text/control contrast.
 - Optional background images, including a personal image selected on the device, with a simple reset to the default background. Keep images local; define backup/transfer handling before implementation.

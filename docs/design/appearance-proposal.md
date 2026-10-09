@@ -2,6 +2,8 @@
 
 **Status: presented for owner approval; not implemented in the app.** The app remains at preview 0.12.0. This review prepares the next appearance milestone without changing the working app or producing a new APK.
 
+**Owner feedback:** the owner likes the initial proposals and requested six additional palettes: yellow, orange, lavender, pink, pastel blue, and light charcoal, with two generated built-in backgrounds for each. [Review the twelve named background candidates](backgrounds/README.md). The image set is awaiting review and has not been bundled into the app. A single final layout direction has not been explicitly selected in the owner's message.
+
 The owner requested approval before beautification or customization is implemented. Choose one layout direction and approve the customization scope below, or request changes. Approval of a direction does not mean shipping all three layouts as a new user setting. The palette and background choices can be combined with any of the layouts.
 
 ## Three directions
