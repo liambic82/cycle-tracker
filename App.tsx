@@ -41,7 +41,9 @@ import { Medications } from './src/ui/Medications';
 import { CycleContext } from './src/ui/CycleContext';
 import { PeriodEstimate } from './src/ui/PeriodEstimate';
 import { Brand, Button } from './src/ui/components';
-import { colors, common, serif } from './src/ui/theme';
+import { useTheme, serif } from './src/ui/theme';
+import { AppearanceProvider, useAppearance } from './src/ui/AppearanceProvider';
+import { AppearanceBackdrop } from './src/ui/AppearanceBackdrop';
 
 type Page = 'calendar' | 'history' | 'medications' | 'data';
 const NAV: Array<{ id: Page; label: string; icon: LucideIcon }> = [
@@ -52,7 +54,12 @@ const NAV: Array<{ id: Page; label: string; icon: LucideIcon }> = [
 ];
 
 function CycleApp() {
+  const { colors, common } = useTheme();
   const state = useJournal();
+  const { setDemo } = useAppearance();
+  useEffect(() => {
+    setDemo(state.demo);
+  }, [state.demo, setDemo]);
   const width = useWindowDimensions().width;
   const desktop = width >= 900;
   const [calendarView, setCalendarView] = useState<CalendarView>('month');
@@ -185,7 +192,7 @@ function CycleApp() {
             width: 210,
             paddingHorizontal: 22,
             paddingVertical: 35,
-            backgroundColor: '#FDFCFA',
+            backgroundColor: colors.paper,
             borderRightWidth: 1,
             borderColor: colors.line,
           }}
@@ -213,7 +220,7 @@ function CycleApp() {
                   alignItems: 'center',
                   paddingHorizontal: 14,
                   borderRadius: 12,
-                  backgroundColor: page === id ? '#F0E7E9' : 'transparent',
+                  backgroundColor: page === id ? colors.accentSoft : 'transparent',
                 }}
               >
                 <Icon
@@ -252,12 +259,13 @@ function CycleApp() {
             <LockKeyhole size={15} color={colors.muted} />
             <Text style={common.small}>{state.demo ? 'Exit demo' : 'Lock journal'}</Text>
           </Pressable>
-          <Text style={[common.eyebrow, { fontSize: 8, marginLeft: 12, color: '#989099' }]}>
+          <Text style={[common.eyebrow, { fontSize: 8, marginLeft: 12, color: colors.muted }]}>
             EARLY PREVIEW · {app.expo.version}
           </Text>
         </View>
       )}
       <View style={{ flex: 1, minWidth: 0 }}>
+        {!state.obscured && <AppearanceBackdrop />}
         {!desktop && (
           <View
             style={[
@@ -267,7 +275,7 @@ function CycleApp() {
                 paddingVertical: 14,
                 borderBottomWidth: 1,
                 borderColor: colors.line,
-                backgroundColor: '#FDFCFA',
+                backgroundColor: colors.paper,
               },
             ]}
           >
@@ -346,7 +354,13 @@ function CycleApp() {
           }}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={[common.between, { alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }]}>
+          <View
+            style={[
+              common.between,
+              common.readable,
+              { alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 },
+            ]}
+          >
             <View style={{ gap: 8 }}>
               <Text style={common.eyebrow}>
                 {formatDay(today, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase()}
@@ -492,9 +506,7 @@ function CycleApp() {
                     }}
                     dayContent={editor}
                   />
-                  <View
-                    style={[common.row, { paddingHorizontal: 4, alignItems: 'flex-start', gap: 9 }]}
-                  >
+                  <View style={[common.row, common.readable, { alignItems: 'flex-start', gap: 9 }]}>
                     <Heart size={15} color={colors.plum} strokeWidth={1.5} />
                     <Text style={[common.small, { flex: 1 }]}>
                       There’s no perfect way to track. Start with what feels helpful today.
@@ -562,7 +574,7 @@ function CycleApp() {
               borderTopWidth: 1,
               borderColor: colors.line,
               paddingTop: 7,
-              backgroundColor: '#FDFCFA',
+              backgroundColor: colors.paper,
             }}
           >
             {NAV.map(({ id, label, icon: Icon }) => (
@@ -655,7 +667,7 @@ function CycleApp() {
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundColor: '#F8F6F2EE',
+            backgroundColor: colors.background,
             justifyContent: 'center',
             alignItems: 'center',
             gap: 16,
@@ -669,12 +681,13 @@ function CycleApp() {
   );
 }
 
-export default function App() {
+function AppShell() {
+  const { colors, common, dark } = useTheme();
   const privacy = useScreenPrivacy();
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <StatusBar style="dark" />
+        <StatusBar style={dark ? 'light' : 'dark'} />
         {privacy.ready ? (
           <CycleApp />
         ) : (
@@ -702,5 +715,13 @@ export default function App() {
         )}
       </SafeAreaView>
     </SafeAreaProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AppearanceProvider>
+      <AppShell />
+    </AppearanceProvider>
   );
 }

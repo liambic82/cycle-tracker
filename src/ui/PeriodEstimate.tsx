@@ -10,7 +10,7 @@ import {
   type EstimateStatus,
 } from '../domain/periodEstimate';
 import { Button, Chip } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 const CONTEXTS: Array<{ id: EstimateContext; label: string }> = [
   { id: 'unknown', label: 'Not sure / prefer not to say' },
@@ -53,6 +53,7 @@ export function PeriodEstimate({
   today: Day;
   done: () => void;
 }) {
+  const { colors, common } = useTheme();
   const [review, setReview] = useState(emptyEstimateReview);
   const [details, setDetails] = useState(false);
   const result = periodEstimate(journal, today, review);
@@ -61,7 +62,7 @@ export function PeriodEstimate({
   return (
     <View style={{ width: '100%', maxWidth: 850, alignSelf: 'center', gap: 20 }}>
       <Button secondary icon={ArrowLeft} label="Back to calendar" onPress={done} />
-      <View style={{ gap: 8 }}>
+      <View style={[common.readable, { gap: 8 }]}>
         <Text style={common.eyebrow}>OPTIONAL · EXPERIMENTAL</Text>
         <Text accessibilityRole="header" style={common.heading}>
           A rough idea of the next start.
@@ -85,8 +86,8 @@ export function PeriodEstimate({
             onValueChange={(enabled) =>
               setReview(enabled ? { ...review, enabled } : emptyEstimateReview())
             }
-            trackColor={{ false: '#D9D2D5', true: colors.plum }}
-            thumbColor="#fff"
+            trackColor={{ false: colors.line, true: colors.plum }}
+            thumbColor={colors.switchThumb}
           />
         </View>
         {review.enabled && (
@@ -117,8 +118,8 @@ export function PeriodEstimate({
                   accessibilityLabel="These period starts are complete and comparable"
                   value={review.complete}
                   onValueChange={(complete) => setReview({ ...review, complete })}
-                  trackColor={{ false: '#D9D2D5', true: colors.plum }}
-                  thumbColor="#fff"
+                  trackColor={{ false: colors.line, true: colors.plum }}
+                  thumbColor={colors.switchThumb}
                 />
               </View>
             )}

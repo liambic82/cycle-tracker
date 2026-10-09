@@ -9,7 +9,7 @@ import {
   type SexualHealth,
 } from '../domain/sexualHealth';
 import { Button, Chip } from './components';
-import { common } from './theme';
+import { useTheme } from './theme';
 
 export function SexualHealthEditor({
   date,
@@ -24,6 +24,7 @@ export function SexualHealthEditor({
   done: () => void;
   saveStatus: React.ReactNode;
 }) {
+  const { common } = useTheme();
   return (
     <View style={{ gap: 24 }}>
       <Button secondary label="Back to daily journal" icon={ArrowLeft} onPress={done} />

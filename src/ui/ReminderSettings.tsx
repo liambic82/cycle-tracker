@@ -3,7 +3,7 @@ import { Linking, Text, View } from 'react-native';
 import { Bell } from 'lucide-react-native';
 import type { ReminderState } from '../data/reminderService';
 import { Button, SectionLabel } from './components';
-import { common } from './theme';
+import { useTheme } from './theme';
 
 export type ReminderControls = {
   state: ReminderState;
@@ -18,6 +18,7 @@ export type ReminderControls = {
 };
 
 export function ReminderSettings({ reminders }: { reminders: ReminderControls }) {
+  const { common } = useTheme();
   const [expanded, setExpanded] = useState(false);
   const [message, setMessage] = useState('');
   const [failed, setFailed] = useState(false);

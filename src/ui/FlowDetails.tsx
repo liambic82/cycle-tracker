@@ -12,7 +12,7 @@ import {
 } from '../domain/flowDetails';
 import { ProductRecordForm } from './ProductRecordForm';
 import { Button, Chip } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function FlowDetails({
   date,
@@ -29,6 +29,7 @@ export function FlowDetails({
   onViewChange: () => void;
   saveStatus: React.ReactNode;
 }) {
+  const { colors, common } = useTheme();
   const [form, setForm] = useState<ProductRecord | 'new' | null>(null);
   const [options, setOptions] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);

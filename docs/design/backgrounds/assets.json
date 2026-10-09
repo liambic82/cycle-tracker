@@ -12,7 +12,8 @@
       "mode": "RGB",
       "bytes": 2304152,
       "sha256": "977333fbefdb19633d459cd3dcd4fd679ba83213d677aa4be1c80e36b31a5bfc",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/buttercup-morning-01-meadow-light.png"
     },
     {
       "id": "buttercup-morning-02-sunlit-petals",
@@ -25,7 +26,8 @@
       "mode": "RGB",
       "bytes": 1931831,
       "sha256": "6a7489220ce35b154f2b505fdbb2aea0d50aa6acc93fec3988b54871c2763c8a",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/buttercup-morning-02-sunlit-petals.png"
     },
     {
       "id": "apricot-blossom-01-orchard-bloom",
@@ -38,7 +40,8 @@
       "mode": "RGB",
       "bytes": 2175656,
       "sha256": "c48ac20767ef701e0da59c6e340d50c79f82fe074e105e1705a72d7854b44e3a",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/apricot-blossom-01-orchard-bloom.png"
     },
     {
       "id": "apricot-blossom-02-apricot-dawn",
@@ -51,7 +54,8 @@
       "mode": "RGB",
       "bytes": 2345330,
       "sha256": "ddd1123f06893dc6f67fa9035a11b8ffc680fb660aa252678807236ecf79cc16",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/apricot-blossom-02-apricot-dawn.png"
     },
     {
       "id": "lavender-haze-01-lavender-whisper",
@@ -64,7 +68,8 @@
       "mode": "RGB",
       "bytes": 2282426,
       "sha256": "c4c8e71963d66fd3c46d732d3a15773354106e7374097f50a74f62712ab9074d",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/lavender-haze-01-lavender-whisper.png"
     },
     {
       "id": "lavender-haze-02-lilac-dusk",
@@ -77,7 +82,8 @@
       "mode": "RGB",
       "bytes": 2419932,
       "sha256": "f2c7e75fb1170c336528fa62bbaf3ae07b58a902b7461d10f9519636224f90ba",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/lavender-haze-02-lilac-dusk.png"
     },
     {
       "id": "rosewater-01-petal-ripples",
@@ -90,7 +96,8 @@
       "mode": "RGB",
       "bytes": 1934685,
       "sha256": "75dfca571eae40911df176a040485b41215c1ace5a69e433338f16cb884e2985",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/rosewater-01-petal-ripples.png"
     },
     {
       "id": "rosewater-02-garden-reverie",
@@ -103,7 +110,8 @@
       "mode": "RGB",
       "bytes": 2720428,
       "sha256": "e6b85e5c1aedfb9fc38394b8376d0542d5e0856ecdae1c76d4fe6937ac95b8f4",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/rosewater-02-garden-reverie.png"
     },
     {
       "id": "bluebell-mist-01-bluebell-garden",
@@ -116,7 +124,8 @@
       "mode": "RGB",
       "bytes": 2454241,
       "sha256": "2bbde2532f227ec1a369faae1fe846e6923128f767c6d0be05996e92388db4ba",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/bluebell-mist-01-bluebell-garden.png"
     },
     {
       "id": "bluebell-mist-02-morning-dew",
@@ -129,7 +138,8 @@
       "mode": "RGB",
       "bytes": 1876925,
       "sha256": "43c31f0278d55e9a5a4565bd7270acacd159fa4b497720f0f1871ec040f6e456",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/bluebell-mist-02-morning-dew.png"
     },
     {
       "id": "silver-moon-01-moonlit-magnolia",
@@ -142,7 +152,8 @@
       "mode": "RGB",
       "bytes": 2508985,
       "sha256": "6b0aab714556ff0776b73e5c9fbac91272196c45c745266bf97d601e1a5fad5e",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/silver-moon-01-moonlit-magnolia.png"
     },
     {
       "id": "silver-moon-02-moonveil",
@@ -155,7 +166,10 @@
       "mode": "RGB",
       "bytes": 2358287,
       "sha256": "52b229230d594702fbd9e3da3eea01bd082fb68e7d9c48633bbbf95bba66b9ec",
-      "status": "awaiting image review"
+      "status": "approved; bundled in preview 0.13.0",
+      "runtimeFile": "assets/backgrounds/silver-moon-02-moonveil.png"
     }
-  ]
+  ],
+  "approvedOn": "2026-10-09",
+  "approval": "Owner: “Looks good, these are approved.” All twelve images and named palettes."
 }

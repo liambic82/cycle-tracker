@@ -13,7 +13,7 @@ import {
 import { formatDay, type Day } from '../domain/dates';
 import { cycleDay, emptyEntry, FLOWS, type Entry, type Journal } from '../domain/journal';
 import { Button, Chip, SectionLabel } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 import {
   QUICK_SYMPTOMS,
   symptomSelected,
@@ -53,6 +53,7 @@ export function DayEditor({
   onUpdate: (transform: (journal: Journal) => Journal) => void;
   onManageMedications: () => void;
 }) {
+  const { colors, common, dark } = useTheme();
   const date = journal.selectedDate;
   const entry = journal.entries[date] ?? emptyEntry();
   const day = date <= today ? cycleDay(journal, date) : null;
@@ -309,13 +310,13 @@ export function DayEditor({
                         borderColor: colors.plum,
                         backgroundColor: entry[field as 'periodStart' | 'periodEnd']
                           ? colors.plum
-                          : '#fff',
+                          : colors.paper,
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
                     >
                       {entry[field as 'periodStart' | 'periodEnd'] && (
-                        <Check size={14} color="#fff" />
+                        <Check size={14} color={colors.onAccent} />
                       )}
                     </View>
                     <Text style={common.body}>{label}</Text>
@@ -465,10 +466,12 @@ export function DayEditor({
           <View>
             <SectionLabel icon={NotebookPen}>A note for yourself</SectionLabel>
             <TextInput
+              keyboardAppearance={dark ? 'dark' : 'light'}
+              selectionColor={colors.plum}
               accessibilityLabel="Daily note"
               style={[
                 common.input,
-                { minHeight: 115, textAlignVertical: 'top', backgroundColor: '#FCFBF9' },
+                { minHeight: 115, textAlignVertical: 'top', backgroundColor: colors.paper },
               ]}
               multiline
               value={entry.note}

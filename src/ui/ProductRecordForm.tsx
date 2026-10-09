@@ -15,7 +15,7 @@ import {
   type ProductType,
 } from '../domain/flowDetails';
 import { Button, Chip } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function ProductRecordForm({
   date,
@@ -28,6 +28,7 @@ export function ProductRecordForm({
   save: (record: ProductRecord) => void;
   cancel: () => void;
 }) {
+  const { colors, common, dark } = useTheme();
   const [id] = useState(() => existing?.id ?? randomUUID());
   const [type, setType] = useState<ProductType>(existing?.type ?? 'pad');
   const [action, setAction] = useState<ProductAction>(existing?.action ?? 'changed');
@@ -114,6 +115,8 @@ export function ProductRecordForm({
       <View style={{ gap: 8 }}>
         <Text style={common.label}>Type, size, or absorbency · optional</Text>
         <TextInput
+          keyboardAppearance={dark ? 'dark' : 'light'}
+          selectionColor={colors.plum}
           accessibilityLabel="Product type or size"
           style={common.input}
           value={detail}
@@ -128,6 +131,9 @@ export function ProductRecordForm({
           {action === 'emptied' ? 'Number of emptyings' : 'Quantity'}
         </Text>
         <TextInput
+          keyboardAppearance={dark ? 'dark' : 'light'}
+          selectionColor={colors.plum}
+          placeholderTextColor={colors.muted}
           accessibilityLabel="Product quantity"
           style={common.input}
           keyboardType="number-pad"
@@ -144,6 +150,8 @@ export function ProductRecordForm({
       <View style={{ gap: 8 }}>
         <Text style={common.label}>Time · optional</Text>
         <TextInput
+          keyboardAppearance={dark ? 'dark' : 'light'}
+          selectionColor={colors.plum}
           accessibilityLabel="Product time"
           style={common.input}
           value={time}
@@ -162,6 +170,8 @@ export function ProductRecordForm({
         <View style={{ gap: 8 }}>
           <Text style={common.label}>Collected amount · mL · optional</Text>
           <TextInput
+            keyboardAppearance={dark ? 'dark' : 'light'}
+            selectionColor={colors.plum}
             accessibilityLabel="Collected amount in mL"
             style={common.input}
             keyboardType="decimal-pad"

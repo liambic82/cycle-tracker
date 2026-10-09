@@ -12,7 +12,7 @@ import {
   type MedicationPlan,
 } from '../domain/medications';
 import { Button, Chip } from './components';
-import { common } from './theme';
+import { useTheme } from './theme';
 
 export function MedicationField({
   label,
@@ -29,10 +29,14 @@ export function MedicationField({
   multiline?: boolean;
   maxLength?: number;
 }) {
+  const { common, colors, dark } = useTheme();
   return (
     <View style={{ gap: 7 }}>
       <Text style={common.label}>{label}</Text>
       <TextInput
+        keyboardAppearance={dark ? 'dark' : 'light'}
+        selectionColor={colors.plum}
+        placeholderTextColor={colors.muted}
         accessibilityLabel={label}
         value={value}
         onChangeText={change}
@@ -56,6 +60,7 @@ export function MedicationForm({
   save: (plan: MedicationPlan) => void;
   cancel: () => void;
 }) {
+  const { common } = useTheme();
   const [id] = useState(randomUUID);
   const [name, setName] = useState(existing?.name ?? '');
   const [kind, setKind] = useState<MedicationPlan['kind']>(existing?.kind ?? 'medication');

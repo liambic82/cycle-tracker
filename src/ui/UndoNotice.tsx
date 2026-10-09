@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { Undo2 } from 'lucide-react-native';
 import { formatDay, type Day } from '../domain/dates';
 import { Button } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function UndoNotice({
   date,
@@ -14,6 +14,7 @@ export function UndoNotice({
   undo: () => void;
   dismiss: () => void;
 }) {
+  const { colors, common } = useTheme();
   return (
     <View style={{ backgroundColor: colors.sage, padding: 16, borderRadius: 14, gap: 10 }}>
       <Text accessibilityLiveRegion="polite" style={common.body}>

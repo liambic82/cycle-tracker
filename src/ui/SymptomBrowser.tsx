@@ -10,7 +10,7 @@ import {
   type SymptomGroup,
 } from '../domain/symptoms';
 import { Button, Chip } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function SymptomBrowser({
   selected,
@@ -31,6 +31,7 @@ export function SymptomBrowser({
   done: () => void;
   error: string;
 }) {
+  const { colors, common, dark } = useTheme();
   const [filter, setFilter] = useState(initialFilter);
   const [query, setQuery] = useState('');
   const [adding, setAdding] = useState(false);
@@ -82,6 +83,8 @@ export function SymptomBrowser({
       <View style={[common.row, { gap: 8 }]}>
         <Search size={18} color={colors.plum} />
         <TextInput
+          keyboardAppearance={dark ? 'dark' : 'light'}
+          selectionColor={colors.plum}
           style={[common.input, { flex: 1, minWidth: 0 }]}
           accessibilityLabel="Search symptoms"
           placeholder="Search symptoms"
@@ -123,6 +126,8 @@ export function SymptomBrowser({
       {adding && (
         <View style={{ gap: 10 }}>
           <TextInput
+            keyboardAppearance={dark ? 'dark' : 'light'}
+            selectionColor={colors.plum}
             style={common.input}
             accessibilityLabel="Custom symptom name"
             placeholder="Name your symptom"
@@ -173,8 +178,8 @@ export function SymptomBrowser({
                     padding: 12,
                     borderRadius: 12,
                     borderWidth: 1,
-                    borderColor: checked ? '#C59BAB' : colors.line,
-                    backgroundColor: checked ? colors.roseSoft : colors.paper,
+                    borderColor: checked ? colors.plum : colors.line,
+                    backgroundColor: checked ? colors.accentSoft : colors.paper,
                     flexDirection: 'row',
                     alignItems: 'center',
                     gap: 12,
@@ -193,7 +198,7 @@ export function SymptomBrowser({
                       justifyContent: 'center',
                     }}
                   >
-                    {checked && <Check size={16} color="#fff" />}
+                    {checked && <Check size={16} color={colors.onAccent} />}
                   </View>
                   <Text
                     style={[

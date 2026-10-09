@@ -10,7 +10,7 @@ import {
   EDUCATION_SOURCES,
 } from '../domain/cycleContext';
 import { Button, Chip } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function CycleContext({
   journal,
@@ -25,6 +25,7 @@ export function CycleContext({
   done: () => void;
   doneLabel: string;
 }) {
+  const { colors, common } = useTheme();
   const context = dayContext(journal, date, today);
   const cards = educationCards(journal.preferences.showPerimenopause);
   const [topic, setTopic] = useState('cycle');
@@ -51,7 +52,7 @@ export function CycleContext({
   return (
     <View style={{ width: '100%', maxWidth: 850, alignSelf: 'center', gap: 20 }}>
       <Button secondary icon={ArrowLeft} label={doneLabel} onPress={done} />
-      <View style={{ gap: 8 }}>
+      <View style={[common.readable, { gap: 8 }]}>
         <Text accessibilityRole="header" style={common.heading}>
           Your day in context.
         </Text>
@@ -84,7 +85,7 @@ export function CycleContext({
                 : `Flow: ${context.flow}, as recorded`}
           </Text>
         )}
-        <View style={{ borderTopWidth: 1, borderColor: '#CFDACE', paddingTop: 12, gap: 6 }}>
+        <View style={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 12, gap: 6 }}>
           <Text style={common.label}>Phase: not determined</Text>
           <Text style={common.body}>
             A cycle-day count does not measure hormone levels or confirm ovulation. These records do
@@ -92,7 +93,7 @@ export function CycleContext({
           </Text>
         </View>
       </View>
-      <View style={{ gap: 12 }}>
+      <View style={[common.readable, { gap: 12 }]}>
         <View style={common.row}>
           <BookOpen size={20} color={colors.plum} />
           <Text accessibilityRole="header" style={[common.heading, { flex: 1 }]}>
@@ -184,7 +185,7 @@ export function CycleContext({
           )}
         </View>
       </View>
-      <Text style={common.small}>
+      <Text style={[common.small, common.readable]}>
         Hormonal treatments and life changes can alter cycle patterns. These cards offer general
         information, not a diagnosis or treatment plan. They must not be used to choose fertile or
         “safe” days.

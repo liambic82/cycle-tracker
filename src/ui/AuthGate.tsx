@@ -11,7 +11,7 @@ import {
 } from 'lucide-react-native';
 import { Button, Brand } from './components';
 import { PassphraseField } from './PassphraseField';
-import { colors, common, serif } from './theme';
+import { useTheme, serif } from './theme';
 import { readBackup } from '../data/files';
 import { parseEnvelope } from '../domain/vault';
 
@@ -40,6 +40,7 @@ export function AuthGate({
   biometricAvailable,
   unlockBiometric,
 }: Props) {
+  const { colors, common } = useTheme();
   const wide = useWindowDimensions().width >= 900;
   const [passphrase, setPassphrase] = useState('');
   const [confirm, setConfirm] = useState('');

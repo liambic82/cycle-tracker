@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Platform, Switch, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { BackHandler, Platform, Switch, Text, TextInput, View } from 'react-native';
 import { Download, FileSpreadsheet, LockKeyhole, ShieldCheck, Trash2 } from 'lucide-react-native';
 import app from '../../app.json';
 import { toCSV, type Journal } from '../domain/journal';
@@ -14,7 +14,8 @@ import { allowPreviewScreenshots } from '../data/buildSettings';
 import { Button } from './components';
 import { BiometricSettings } from './BiometricSettings';
 import { DoctorReport } from './DoctorReport';
-import { colors, common } from './theme';
+import { AppearanceSettings } from './AppearanceSettings';
+import { useTheme } from './theme';
 
 export function DataSettings({
   journal,
@@ -39,6 +40,7 @@ export function DataSettings({
   setShowPerimenopause: (show: boolean) => void;
   onViewChange: () => void;
 }) {
+  const { colors, common, dark } = useTheme();
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
   const [csvConfirm, setCSVConfirm] = useState(false);
@@ -49,6 +51,16 @@ export function DataSettings({
   const [confirmation, setConfirmation] = useState('');
   const [deleteError, setDeleteError] = useState('');
   const [reportOpen, setReportOpen] = useState(false);
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
+  useEffect(() => {
+    if (!appearanceOpen) return;
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      setAppearanceOpen(false);
+      onViewChange();
+      return true;
+    });
+    return () => subscription.remove();
+  }, [appearanceOpen, onViewChange]);
   const deleteJournal = async () => {
     if (busy || confirmation !== 'DELETE') return;
     setBusy(true);
@@ -89,6 +101,15 @@ export function DataSettings({
       setBusy(false);
     }
   };
+  if (appearanceOpen)
+    return (
+      <AppearanceSettings
+        close={() => {
+          setAppearanceOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (reportOpen)
     return (
       <DoctorReport
@@ -103,6 +124,20 @@ export function DataSettings({
     );
   return (
     <View style={{ gap: 22 }}>
+      <View style={[common.card, { gap: 14 }]}>
+        <Text style={common.heading}>Appearance</Text>
+        <Text style={common.body}>
+          Nine palettes, light and dark modes, and twelve soft backgrounds to make this space yours.
+        </Text>
+        <Button
+          secondary
+          label="Customize appearance"
+          onPress={() => {
+            setAppearanceOpen(true);
+            onViewChange();
+          }}
+        />
+      </View>
       <View style={[common.card, { backgroundColor: colors.sage, gap: 12 }]}>
         <ShieldCheck size={27} color={colors.sageInk} strokeWidth={1.5} />
         <Text style={common.heading}>Your journal belongs to you.</Text>
@@ -134,8 +169,8 @@ export function DataSettings({
             accessibilityLabel="Show perimenopause choices"
             value={journal.preferences.showPerimenopause}
             onValueChange={setShowPerimenopause}
-            trackColor={{ false: '#D9D2D5', true: colors.plum }}
-            thumbColor="#fff"
+            trackColor={{ false: colors.line, true: colors.plum }}
+            thumbColor={colors.switchThumb}
           />
         </View>
         <Text style={common.body}>
@@ -205,8 +240,8 @@ export function DataSettings({
                   onValueChange={(include) =>
                     setSexualExport((current) => ({ ...current, [field]: include }))
                   }
-                  trackColor={{ false: '#D9D2D5', true: colors.plum }}
-                  thumbColor="#fff"
+                  trackColor={{ false: colors.line, true: colors.plum }}
+                  thumbColor={colors.switchThumb}
                 />
               </View>
             ))}
@@ -313,6 +348,9 @@ export function DataSettings({
           <View style={{ gap: 12 }}>
             <Text style={common.label}>Type DELETE to confirm</Text>
             <TextInput
+              keyboardAppearance={dark ? 'dark' : 'light'}
+              selectionColor={colors.plum}
+              placeholderTextColor={colors.muted}
               style={common.input}
               accessibilityLabel="Type DELETE to confirm journal deletion"
               value={confirmation}
@@ -359,15 +397,15 @@ export function DataSettings({
       {!!message && (
         <Text
           accessibilityRole={error ? 'alert' : undefined}
-          style={error ? common.error : common.body}
+          style={[error ? common.error : common.body, common.readable]}
         >
           {message}
         </Text>
       )}
-      <Text style={common.small}>
+      <Text style={[common.small, common.readable]}>
         Early preview · {app.expo.version}
-        {'\n'}Medication reminders are available in the installed mobile app. Predictions and cloud
-        sync are planned for later milestones.
+        {'\n'}Medication reminders are available in the installed mobile app. Period estimates are
+        optional and experimental. Cloud sync is planned for a later milestone.
       </Text>
     </View>
   );

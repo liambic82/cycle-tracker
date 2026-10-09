@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Platform, Text, View } from 'react-native';
 import { Fingerprint } from 'lucide-react-native';
 import { Button } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function BiometricSettings({
   enabled,
@@ -15,6 +15,7 @@ export function BiometricSettings({
   demo: boolean;
   change: (enabled: boolean) => Promise<void>;
 }) {
+  const { colors, common } = useTheme();
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');

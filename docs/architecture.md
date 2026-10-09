@@ -164,6 +164,18 @@ Whole-journal deletion requires an unlocked real journal and typing `DELETE`. Th
 
 There is no change-passphrase UI yet. Android automatic OS backup is disabled in app configuration; iOS backup policy still needs review before a store release.
 
+## Appearance preferences (0.13.0)
+
+`appearance.ts` defines nine palettes, twelve stable artwork IDs, light/dark tokens, and a strictly validated version-1 preference schema. `AppearanceStore` persists only `version, palette, mode, background, visibility` at `cycle-tracker.appearance.v1` in AsyncStorage. These are non-sensitive local preferences, available before unlock, separate from the encrypted format-4 journal, backup envelope, biometric reference, reminders, CSV, and PDF. No URL, photo, health record, or credential is accepted. Journal restore/deletion leaves device appearance preferences intact; Reset appearance clears only those choices.
+
+An external-store subscription supplies a shared React theme. Writes are ordered, UI saving/errors reflect the latest write, failed queues can recover, and unreadable/future settings fall back visibly to defaults without blocking journal access. Controls wait for preference loading. Sample mode gets an independent in-memory copy and never persists its changes; exit restores device preferences. Entering sample mode during initial loading adopts saved preferences once loading finishes.
+
+All twelve unchanged approved PNGs are statically required from `assets/backgrounds` for offline native bundling; the review masters and SHA-256 manifest remain under `docs/design/backgrounds`. The decoration is centered/cover-cropped, bounded to its container, non-interactive and hidden from accessibility. It appears only in unlocked, unobscured content. Plain/zero visibility removes it; image-load failure falls back to the palette background. Text, navigation, and records retain opaque surfaces. Light/dark semantic flow colors are independent of the selected palette; meanings, labels, and recorded data do not change.
+
+System appearance is the default. React Native's Appearance API uses `unspecified` to release a native override; explicit Light/Dark updates native chrome and themed inputs/status bars. `expo-system-ui` enables Android automatic appearance. Web uses a native HTML range for mouse/touch/keyboard control; installed platforms use the SDK-compatible native slider. Personal photos and their encryption/metadata/cleanup policy are deferred. No hosting or theme purchase service is involved.
+
+References: [Expo color themes](https://docs.expo.dev/develop/user-interface/color-themes/), [Expo SystemUI](https://docs.expo.dev/versions/latest/sdk/system-ui/), [Expo slider](https://docs.expo.dev/versions/latest/sdk/slider/).
+
 ## Release work
 
 `app.config.ts` selects a separate native preview app identity when `APP_VARIANT=preview`. The Windows build script produces an ARM64 release APK from a dedicated short-path build cache and signs it with a private preview key outside Git. A Gradle guard prevents this signing configuration from being used with the store identifier. This separates test installations and credentials from a future public release; it does not replace device or security validation.

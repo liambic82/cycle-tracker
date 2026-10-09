@@ -13,7 +13,7 @@ import {
 import { editDose, recordDose, removeDose, restoreDose } from '../domain/medicationActions';
 import { DoseForm } from './DoseForm';
 import { Button } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function DoseLog({
   journal,
@@ -34,6 +34,7 @@ export function DoseLog({
   onViewChange: () => void;
   saveStatus: React.ReactNode;
 }) {
+  const { colors, common } = useTheme();
   const [form, setForm] = useState<{
     target: PlannedDose | null;
     existing: DoseRecord | null;

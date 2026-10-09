@@ -1,5 +1,30 @@
 # Validation record
 
+## 0.13.0 approved palettes and backgrounds — October 9, 2026
+
+The owner approved all twelve generated images and six additional named palettes: “Looks good, these are approved.” Preview 0.13.0 implements nine palettes, System/Light/Dark, Plain/Soft wash/twelve bundled images, visibility, reset, and local appearance preferences. The existing navigation/layout remains; personal photos and further layout beautification are later work. This is still a development preview, with no 1.0 readiness claim.
+
+- `pnpm check`: TypeScript and all **132 tests** passed. Eleven appearance tests cover persistence/reload/reset, separation from the encrypted journal key, temporary sample choices, sample entry during initial loading, corrupt/future settings, read/write failure and retry, ordered rapid writes, strict field validation, palette-independent flow colors, text contrast in all nine light/dark palettes, and integrity of all twelve bundled originals. Tested text/surface pairs meet 4.5:1; this is not a complete accessibility audit.
+- `pnpm format:check` and Git whitespace checks passed. The local pnpm 11 helper was run with `--config.verify-deps-before-run=false` to avoid its automatic install/store-location mismatch; typechecking, tests and builds themselves were not skipped. Final web, Android Hermes and iOS Hermes exports passed. The initial sandboxed Hermes execution was denied by Windows; the export succeeded with the required execution access. iOS remains a JavaScript bundle check, not a native device build.
+- Final web bundle: `index-070f07d47dcb479e7054dfba7e1817d4.js`; offline cache: `fd737d2085a55dc1`. Browser QA used only fictional sample data on isolated `127.0.0.1:4178`. The user's port-4173 journal was not accessed. All nine palette buttons and all twelve named background choices were exercised; every image loaded at its expected 1254 × 1254 intrinsic size.
+- Inspected 1280 × 720 desktop, 393 × 852 phone, and 320 × 740 narrow layouts. An initial phone check exposed the image's intrinsic dimensions expanding the document. Explicit container-relative image dimensions and clipping fixed it; final checks found document width/height equal to the viewport, with no page overflow at these sizes. Internal calendar/history scrolling remains intentional.
+- Checked Light/Dark/System selection, Plain/Soft wash/artwork, Home/End and arrow-key visibility adjustment (0, 5 and 60 percent), reset, pairing colors with another collection, calendar/day entry/modal, history charts, medication controls, education and experimental-estimate surfaces. Final status text also has opaque backing. Sample exit removes artwork from the lock/setup screen; re-entering starts from device defaults instead of the sample's previous choices. Native system appearance transitions, keyboards, TalkBack and Android Back remain device checks.
+- Closed the QA tab to activate the final service worker, stopped the isolated server, and reopened the cached final bundle. All twelve backgrounds loaded and could be selected offline. No captured browser warnings/errors in the final online or offline sessions. Exited the sample, closed QA tabs, reset the viewport, and left the isolated server stopped.
+- The final standalone ARM64 APK passed signature verification and 16 KB zip alignment. Verified package `com.liambic.cycletracker.preview`, version **0.13.0**, code **16**, minimum API 24, target API 36, no debuggable flag, and `allowBackup: false`. Embedded configuration has automatic appearance and testing screenshots enabled. The APK contains all twelve 1254 × 1254 background PNGs and a 4,736,056-byte Hermes program.
+- Package size increases to **58,736,319 bytes** because the approved masters are bundled unchanged. No image-hosting service is introduced. Native first-use offline loading, theme persistence after restart, Android system appearance, Flip5 folding, larger text/TalkBack, and prior reminder/PDF/biometric/setup regressions remain [device checks](android-testing.md#0130-approved-palettes-and-backgrounds). No new hardware pass is claimed. Journal format, encryption and export formats are unchanged.
+
+Build artifacts and signing material remain excluded from Git. Screenshots contain only the fictional sample journal.
+
+- File: `artifacts/android/cycle-tracker-preview-0.13.0-arm64-v8a.apk`.
+- APK SHA-256: `96b63ee0be5ead2412392dc819e181edadc81393028e08afc61dddd509f4c8a3`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Buttercup Morning phone calendar](screenshots/appearance-light-mobile.png)
+
+![Approved lavender gallery on a phone](screenshots/appearance-gallery-mobile.png)
+
+![Silver Moon desktop calendar in dark mode](screenshots/appearance-dark-desktop.png)
+
 ## 0.12.0 experimental period-start estimates — October 9, 2026
 
 The owner approved continuing after 0.11.0. This slice adds an explicitly experimental, session-opt-in calculation from recorded starts, with context/completeness review, unavailable states, historical spread, and chronological earlier-entry checks. It does not establish clinical accuracy or finish all prediction work. Beautification/themes/backgrounds are next as an independent development slice.

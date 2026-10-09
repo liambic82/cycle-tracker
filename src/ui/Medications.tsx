@@ -8,7 +8,7 @@ import { describeSchedule, planOn, type Medication } from '../domain/medications
 import { saveMedicationPlan } from '../domain/medicationActions';
 import { MedicationForm } from './MedicationForm';
 import { Button } from './components';
-import { common, colors } from './theme';
+import { useTheme } from './theme';
 import { ReminderSettings, type ReminderControls } from './ReminderSettings';
 
 export function Medications({
@@ -28,6 +28,7 @@ export function Medications({
   saveStatus: React.ReactNode;
   reminders: ReminderControls;
 }) {
+  const { colors, common } = useTheme();
   const [form, setForm] = useState<Medication | 'new' | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const changeForm = (next: Medication | 'new' | null) => {
@@ -81,7 +82,7 @@ export function Medications({
         onPress={() => changeForm('new')}
       />
       {!journal.medications.length && (
-        <Text style={common.body}>
+        <Text style={[common.body, common.readable]}>
           Nothing added yet. Start with a name and the schedule you already use.
         </Text>
       )}
@@ -155,7 +156,7 @@ export function Medications({
           </View>
         );
       })}
-      {saveStatus}
+      <View style={common.readable}>{saveStatus}</View>
     </View>
   );
 }

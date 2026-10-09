@@ -69,21 +69,17 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Optional end-to-end encrypted sync, initially measured on a free tier; key recovery, conflict resolution, deletion propagation, and funding must be designed before public release.
 - iOS device validation, store metadata, pricing, accessibility review, and release testing.
 
-## Planned: beautification and personal appearance
+## Beautification and personal appearance
 
-Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). This is the next independent development slice after 0.12.0; customization is not yet implemented.
+Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). The owner liked the initial visual proposals and approved all twelve background images and six additional named palettes on October 9, 2026: “Looks good, these are approved.” [Design record](design/appearance-proposal.md) · [Approved artwork](design/backgrounds/README.md).
 
-**Owner approval required before implementation:** present concrete visual proposals and the proposed customization options first, including relevant phone and desktop examples. Wait for the owner's approval of the proposed scope before changing the app. General permission to continue development does not approve an unseen design. Positive feedback on a presented proposal approves that proposal's scope.
-
-**Proposals ready for review:** [Appearance proposal — October 9, 2026](design/appearance-proposal.md) presents Quiet familiar, Botanical journal, and Clear and compact, with phone/desktop examples and the proposed palette, light/dark, and device-local background options. Awaiting the owner's choice and scope approval; app implementation has not started.
-
-**Palette expansion and built-in artwork:** the owner liked the proposals and requested six additional colors and two images per color. [Twelve generated background candidates](design/backgrounds/README.md) are ready for image review: Buttercup Morning (yellow), Apricot Blossom (orange), Lavender Haze, Rosewater (pink), Bluebell Mist (pastel blue), and Silver Moon (light charcoal). These extend the original Plum/Sage/Ocean choices. Approved built-in artwork will be bundled for offline use; the candidate files are currently documentation assets only.
-
-- Beautification pass across calendar, daily entry, history, medication, and settings screens: consistent spacing, typography, icons, and attractive, space-efficient decoration with daily information prominent.
-- App color theme customization, including a curated palette, light/dark appearance, and accessible text/control contrast.
-- Optional background images, including a personal image selected on the device, with a simple reset to the default background. Keep images local; define backup/transfer handling before implementation.
-- Readable surfaces and adjustable image dimming/opacity so backgrounds do not obscure records, selection states, or actions. Check larger text, screen readers, desktop widths, Pixel 7, and Flip5 layouts.
-- Preserve the agreed modest upfront purchase model. The source’s cosmetic-premium suggestion does not authorize subscriptions, upsells, or a paid theme tier.
+- Implemented in **preview 0.13.0**: Plum, Sage, Ocean, Buttercup Morning (yellow), Apricot Blossom (orange), Lavender Haze, Rosewater (pink), Bluebell Mist (pastel blue), and Silver Moon (light charcoal). System/Light/Dark appearance applies throughout setup, calendar, entries, history, medications, and settings.
+- Implemented: two approved images per new palette, bundled for offline use, with any palette/image pairing. Plain and Soft wash remain available; visibility runs from 0–60% in 5-point steps. Reading surfaces stay opaque, flow semantics stay independent of palette, and Reset appearance restores Plum/System/Plain/25%.
+- Implemented: versioned device-local appearance preferences separate from encrypted journal content and exports. Sample changes are temporary and restore the device's choices on exit. Read/write errors are recoverable without blocking the journal. Artwork appears only in unlocked content.
+- The existing navigation and layout remain. Broader typography/spacing/layout beautification is still open; none of the three alternative layouts has been selected as a replacement. **Present new visual choices for approval before implementation.** General permission to continue does not approve unseen designs.
+- Next appearance work: personal image selection from the device. Before implementation define format/size limits, orientation and metadata handling, encryption, replacement/removal cleanup, storage-failure behavior, and exclusion from journal backups/transfer. Do not treat the built-in collection as completion of personal-photo support.
+- Pending native validation: larger text, TalkBack, system appearance changes, persistence after restart, offline first use, Pixel 7 and Flip5 folding/rotation. See [the 0.13.0 checklist](android-testing.md#0130-approved-palettes-and-backgrounds).
+- Preserve the modest upfront purchase model. No subscription, cosmetic upsell, or paid theme tier is authorized.
 
 ## Product constraints
 

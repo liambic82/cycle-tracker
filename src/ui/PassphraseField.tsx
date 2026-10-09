@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppState, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function PassphraseField({
   label,
@@ -18,6 +18,7 @@ export function PassphraseField({
   busy: boolean;
   onSubmitEditing?: () => void;
 }) {
+  const { colors, common, dark } = useTheme();
   const [revealed, setRevealed] = useState(false);
   const visible = revealed && !busy;
   useEffect(() => {
@@ -43,6 +44,8 @@ export function PassphraseField({
       <Text style={common.label}>{label}</Text>
       <View style={{ position: 'relative' }}>
         <TextInput
+          keyboardAppearance={dark ? 'dark' : 'light'}
+          selectionColor={colors.plum}
           accessibilityLabel={label}
           secureTextEntry={!visible}
           editable={!busy}

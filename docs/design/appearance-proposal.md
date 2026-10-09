@@ -1,10 +1,10 @@
 # Appearance proposal — October 9, 2026
 
-**Status: presented for owner approval; not implemented in the app.** The app remains at preview 0.12.0. This review prepares the next appearance milestone without changing the working app or producing a new APK.
+**Status: customization approved; first implementation in preview 0.13.0.** The owner liked the initial proposals, then approved all twelve generated backgrounds and six additional named palettes on October 9, 2026. The existing app layout remains in place; no alternative layout was selected or added as a setting.
 
-**Owner feedback:** the owner likes the initial proposals and requested six additional palettes: yellow, orange, lavender, pink, pastel blue, and light charcoal, with two generated built-in backgrounds for each. [Review the twelve named background candidates](backgrounds/README.md). The image set is awaiting review and has not been bundled into the app. A single final layout direction has not been explicitly selected in the owner's message.
+**Implemented scope:** nine palettes, System/Light/Dark, Plain/Soft wash/twelve bundled backgrounds, 0–60% visibility, opaque reading surfaces, device-local preferences, temporary sample choices, and Reset appearance. Access through **Your data → Customize appearance**. Personal photo selection and broader layout changes remain later work, with the image-storage requirements below still applicable.
 
-The owner requested approval before beautification or customization is implemented. Choose one layout direction and approve the customization scope below, or request changes. Approval of a direction does not mean shipping all three layouts as a new user setting. The palette and background choices can be combined with any of the layouts.
+The original proposal below is retained as the design record. The owner requested approval before beautification or customization is implemented; new visual options still require that approval. Approval of a direction does not mean shipping all three layouts as a new user setting. The palette and background choices can be combined with any of the layouts.
 
 ## Three directions
 
@@ -18,7 +18,7 @@ All three retain Calendar, Your history, Medications, and Your data. Desktop use
 
 Daily-entry removal stays in Entry options beside the date, with confirmation. It does not return to the bottom of the form. Logging, medication reminders, locking, reporting, and experimental prediction policy retain their established behavior. This proposal does not approve changing medical content or the meaning of recorded states.
 
-## Customization scope for approval
+## Original customization proposal
 
 | Option                   | Proposed scope                                                                                                                                                                                                                                                                             |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -58,7 +58,7 @@ Open Appearance to try the palettes, modes, backgrounds, visibility slider, and 
 
 [Phone example](clear-and-compact-phone.png) · [Dark appearance controls on a phone](appearance-dark-phone.png)
 
-## Validation and next step
+## Proposal validation
 
 - Inspected all three directions in the browser, with desktop and phone screenshots. Checked browser widths of 1060, 393, and 320 pixels; the preview wrapper reduces the available content width further.
 - Exercised calendar/day navigation, entry options, history, medications, palette/mode/background changes, keyboard adjustment of visibility, photo-picker explanation, reset, and carousel switching. Fixed a narrow-screen range-input overflow and removed the duplicate phone Appearance shortcut in the content header.
@@ -66,6 +66,6 @@ Open Appearance to try the palettes, modes, backgrounds, visibility slider, and 
 - JavaScript syntax and fragment checks passed. A calculation of the three palettes' core text/surface pairs in light and dark mode found a minimum contrast ratio of 5.62:1; this is not a complete accessibility audit.
 - This is browser review of a design proposal. Native accessibility, larger system text, screen readers, personal photo import/storage, device performance, and Pixel 7 / Galaxy Z Flip5 usability still require implementation and real-device validation after approval. No new device pass is claimed.
 
-After approval, record the chosen direction and options here, implement only that scope in the app, run the relevant checks and builds, and provide a new 0.x preview for device testing. Public 1.0 readiness remains a separate decision.
+Approval and the implemented customization scope are recorded at the top of this document. Preview 0.13.0 retains the existing layout; [implementation validation](../validation.md) and [native checks](../android-testing.md#0130-approved-palettes-and-backgrounds) are separate from the proposal checks above. Public 1.0 readiness remains a separate decision.
 
-Source: [roadmap](../development-plan.md#planned-beautification-and-personal-appearance), [source review](../source-review-2026-10-09.md), screenshot 6 and comment `AAACIGIsKnU`.
+Source: [roadmap](../development-plan.md#beautification-and-personal-appearance), [source review](../source-review-2026-10-09.md), screenshot 6 and comment `AAACIGIsKnU`.

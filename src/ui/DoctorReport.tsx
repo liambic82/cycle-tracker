@@ -15,7 +15,7 @@ import { SEXUAL_HEALTH_FIELDS, SEXUAL_HEALTH_LABELS } from '../domain/sexualHeal
 import { exportDoctorReport } from '../data/reportExport';
 import { MedicationField } from './MedicationForm';
 import { Button } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
 export function DoctorReport({
   journal,
@@ -28,6 +28,7 @@ export function DoctorReport({
   close: () => void;
   onViewChange: () => void;
 }) {
+  const { colors, common } = useTheme();
   const [options, setOptions] = useState<ReportOptions>(() =>
     defaultReportOptions(toDay(new Date())),
   );
@@ -77,12 +78,12 @@ export function DoctorReport({
   const feedback = (
     <>
       {!!error && (
-        <Text accessibilityRole="alert" style={common.error}>
+        <Text accessibilityRole="alert" style={[common.error, common.readable]}>
           {error}
         </Text>
       )}
       {!!message && (
-        <Text accessibilityLiveRegion="polite" style={common.body}>
+        <Text accessibilityLiveRegion="polite" style={[common.body, common.readable]}>
           {message}
         </Text>
       )}
@@ -187,7 +188,7 @@ export function DoctorReport({
                 setOptions({ ...options, sections: { ...options.sections, [key]: include } })
               }
               trackColor={{ false: colors.line, true: colors.plum }}
-              thumbColor="#fff"
+              thumbColor={colors.switchThumb}
             />
           </View>
         ))}
@@ -217,7 +218,7 @@ export function DoctorReport({
                 })
               }
               trackColor={{ false: colors.line, true: colors.plum }}
-              thumbColor="#fff"
+              thumbColor={colors.switchThumb}
             />
           </View>
         ))}

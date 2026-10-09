@@ -5,7 +5,7 @@ import { addDays, formatDay, monthCells, monthKey, validDay, type Day } from '..
 import { hasEntry, type Journal } from '../domain/journal';
 import { cycleDayLookup, flowState } from '../domain/history';
 import { Button, Chip } from './components';
-import { colors, common, serif } from './theme';
+import { useTheme, serif } from './theme';
 
 export type CalendarView = 'year' | 'month' | 'day';
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -25,6 +25,7 @@ function DayGrid({
   dayNumber: (day: Day) => number | null;
   onOpenDay: (day: Day) => void;
 }) {
+  const { colors, common } = useTheme();
   return (
     <>
       <View style={{ flexDirection: 'row', marginBottom: 5 }}>
@@ -55,14 +56,18 @@ function DayGrid({
                 : state === 'none'
                   ? colors.sage
                   : 'transparent';
-          const textColor = chosen ? '#fff' : state === 'bleeding' ? colors.roseInk : colors.ink;
+          const textColor = chosen
+            ? colors.onAccent
+            : state === 'bleeding'
+              ? colors.roseInk
+              : colors.ink;
           const content = day && (
             <>
               {!mini && (
                 <Text
                   style={{
                     fontSize: 9,
-                    color: chosen ? '#E9DEE3' : colors.muted,
+                    color: chosen ? colors.onAccent : colors.muted,
                     textAlign: 'center',
                   }}
                 >
@@ -86,7 +91,7 @@ function DayGrid({
                         width: entry?.periodStart ? 9 : 4,
                         height: 4,
                         borderRadius: 2,
-                        backgroundColor: chosen ? '#fff' : colors.plum,
+                        backgroundColor: chosen ? colors.onAccent : colors.plum,
                       }}
                     />
                   )}
@@ -163,6 +168,7 @@ export function Calendar({
   changeView: (view: CalendarView) => void;
   dayContent: React.ReactNode;
 }) {
+  const { colors, common, dark } = useTheme();
   const selected = journal.selectedDate;
   const [first, setFirst] = useState(monthKey(selected));
   const [count, setCount] = useState(3);
@@ -279,6 +285,9 @@ export function Calendar({
           <View style={{ gap: 8 }}>
             <View style={common.row}>
               <TextInput
+                keyboardAppearance={dark ? 'dark' : 'light'}
+                selectionColor={colors.plum}
+                placeholderTextColor={colors.muted}
                 accessibilityLabel="Jump to date"
                 placeholder="YYYY-MM-DD"
                 value={dateInput}

@@ -8,7 +8,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { Flower2, type LucideIcon } from 'lucide-react-native';
-import { colors, common, serif } from './theme';
+import { useTheme, serif } from './theme';
 
 export function Button({
   label,
@@ -29,9 +29,16 @@ export function Button({
   busy?: boolean;
   style?: StyleProp<ViewStyle>;
 }) {
+  const { colors } = useTheme();
   const accent = danger ? colors.error : colors.plumDark;
-  const foreground = secondary ? (danger ? colors.error : colors.ink) : '#fff';
-  const iconColor = secondary ? (danger ? colors.error : colors.plum) : '#fff';
+  const foreground = secondary
+    ? danger
+      ? colors.error
+      : colors.ink
+    : danger
+      ? colors.onError
+      : colors.onAccent;
+  const iconColor = secondary ? (danger ? colors.error : colors.plum) : foreground;
   return (
     <Pressable
       accessibilityRole="button"
@@ -80,21 +87,25 @@ export function Chip({
   label,
   accessibilityLabel,
   selected,
+  disabled = false,
   onPress,
   icon: Icon,
 }: {
   label: string;
   accessibilityLabel?: string;
   selected?: boolean;
+  disabled?: boolean;
   onPress: () => void;
   icon?: LucideIcon;
 }) {
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
-      accessibilityState={{ selected: !!selected }}
+      accessibilityState={{ selected: !!selected, disabled }}
       aria-pressed={!!selected}
+      disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => ({
         minHeight: 42,
@@ -102,22 +113,22 @@ export function Chip({
         paddingHorizontal: 12,
         paddingVertical: 9,
         borderWidth: 1,
-        borderColor: selected ? '#C59BAB' : colors.line,
+        borderColor: selected ? colors.plum : colors.line,
         borderRadius: 10,
-        backgroundColor: selected ? colors.roseSoft : colors.paper,
-        opacity: pressed ? 0.65 : 1,
+        backgroundColor: selected ? colors.accentSoft : colors.paper,
+        opacity: disabled ? 0.5 : pressed ? 0.65 : 1,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
       })}
     >
-      {Icon && <Icon size={15} color={selected ? colors.roseInk : colors.muted} />}
+      {Icon && <Icon size={15} color={selected ? colors.plum : colors.muted} />}
       <Text
         style={{
           fontSize: 12,
           flexShrink: 1,
           lineHeight: 20,
-          color: selected ? colors.roseInk : colors.muted,
+          color: selected ? colors.plum : colors.muted,
           fontWeight: selected ? '600' : '400',
         }}
       >
@@ -128,6 +139,7 @@ export function Chip({
 }
 
 export function Brand({ small = false }: { small?: boolean }) {
+  const { colors, common } = useTheme();
   return (
     <View style={[common.row, { gap: 10 }]}>
       <View
@@ -140,7 +152,7 @@ export function Brand({ small = false }: { small?: boolean }) {
           alignItems: 'center',
         }}
       >
-        <Flower2 color="#F0DED8" size={small ? 22 : 27} strokeWidth={1.4} />
+        <Flower2 color={colors.onAccent} size={small ? 22 : 27} strokeWidth={1.4} />
       </View>
       <Text style={{ fontFamily: serif, color: colors.ink, fontSize: small ? 23 : 27 }}>
         Cycle<Text style={{ color: colors.plum }}>.</Text>
@@ -156,6 +168,7 @@ export function SectionLabel({
   children: React.ReactNode;
   icon?: LucideIcon;
 }) {
+  const { colors, common } = useTheme();
   return (
     <View style={[common.row, { marginBottom: 12 }]}>
       {Icon && <Icon size={16} color={colors.plum} strokeWidth={1.6} />}

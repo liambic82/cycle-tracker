@@ -37,7 +37,7 @@ The owner subsequently confirmed that symptoms, visibility, and biometrics work 
 
 The owner reported that creating a journal on Galaxy Z Flip5 in 0.5.0 stayed on the creation spinner for over a minute. Preview 0.5.1 addresses the likely JavaScript key-calculation bottleneck with native Android cryptography, progress messages, and a bounded calculation. Confirmation on the Flip5 is pending; its Android/One UI versions have not been reported.
 
-## Working preview: 0.12.0
+## Working preview: 0.13.0
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
@@ -67,11 +67,13 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Versions can continue through 0.13.0 and beyond; **1.0 requires an explicitly agreed release scope and readiness decision**, including device, security, accessibility, and store preparation. Broader prediction validation, personal ovulation/phase estimates, specialized patch/ring/injection/refill reminders, the remaining structured symptom/lifestyle fields, bloodwork, beautification and personal themes/background images, and optional sync are still pending. The app records user-entered schedules; it does not calculate or recommend dosing. Preview 0.12.0 retains the Flip5 creation fix, testing screenshots, passphrase eyes, and safer entry deletion. Outstanding native checks, reminder delivery, PDF sharing, and estimate controls remain in [the device guide](docs/android-testing.md). See [the development plan](docs/development-plan.md) and [education sources and prediction boundaries](docs/cycle-education.md).
+This is a development preview, not a finished store release. Versions can continue through 0.13.0 and beyond; **1.0 requires an explicitly agreed release scope and readiness decision**, including device, security, accessibility, and store preparation. Broader prediction validation, personal ovulation/phase estimates, specialized patch/ring/injection/refill reminders, the remaining structured symptom/lifestyle fields, bloodwork, further layout beautification, personal-photo backgrounds, and optional sync are still pending. The app records user-entered schedules; it does not calculate or recommend dosing. Preview 0.13.0 retains the Flip5 creation fix, testing screenshots, passphrase eyes, and safer entry deletion. Outstanding native checks, reminder delivery, PDF sharing, and estimate controls remain in [the device guide](docs/android-testing.md). See [the development plan](docs/development-plan.md) and [education sources and prediction boundaries](docs/cycle-education.md).
 
 Doctor reports support up to 366 days per export. Excessively large reports request a shorter range or fewer sections rather than silently dropping records. The bundled font supports Latin, Greek, and Cyrillic text; unsupported scripts or emoji stop PDF export with an explanation. Journal content and CSV export remain intact. Reports include recorded information only, with no predictions, clinical interpretation, or lab results yet. Free-text labels and selected notes are not automatically redacted.
 
 Journal content is now format 4 to preserve medication plans and dose records. Format 1–3 journals and backups migrate on opening, with empty medication lists and dose logs. New backups require 0.8.0 or later; update the receiving app before transferring them. The encrypted envelope, passphrase, and biometric key are unchanged.
+
+Appearance is available under **Your data → Customize appearance** in preview **0.13.0**: nine palettes, System/Light/Dark, twelve approved built-in backgrounds, Plain/Soft wash, a visibility slider, and reset. Choices save on this device; sample choices are temporary. Installed artwork works offline. Appearance stays out of journal backups and reports, and personal-photo selection remains planned. [Artwork gallery](docs/design/backgrounds/README.md) · [Device checklist](docs/android-testing.md#0130-approved-palettes-and-backgrounds).
 
 ## Run locally
 

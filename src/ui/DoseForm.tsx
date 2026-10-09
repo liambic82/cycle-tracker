@@ -11,7 +11,7 @@ import {
 } from '../domain/medications';
 import { MedicationField } from './MedicationForm';
 import { Button, Chip } from './components';
-import { common } from './theme';
+import { useTheme } from './theme';
 
 export function DoseForm({
   date,
@@ -28,6 +28,7 @@ export function DoseForm({
   save: (input: DoseInput) => void;
   cancel: () => void;
 }) {
+  const { common } = useTheme();
   const plannedDose = existing?.plannedDose ?? target!.dose;
   const name = existing?.name ?? target!.plan.name;
   const asNeeded = (existing?.phase ?? target!.phase) === 'as-needed';

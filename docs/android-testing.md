@@ -8,6 +8,20 @@ The test app is named **Cycle Tracker Preview** and uses `com.liambic.cycletrack
 
 Start with the fictional sample journal. Use invented entries and a test-only passphrase when checking persistence and recovery. Real-device behavior and security validation are still in progress.
 
+## 0.13.0 approved palettes and backgrounds
+
+Install `artifacts/android/cycle-tracker-preview-0.13.0-arm64-v8a.apk` over the existing preview after an encrypted backup. Version code is 16; the preview identity, signing certificate, journal format 4, passphrase and biometric credentials are unchanged. Do not uninstall or clear storage. These checks are pending on **Pixel 7 / Android 17** and **Galaxy Z Flip5**.
+
+1. Open **Your data → Customize appearance**. Try all nine palettes and both named images in each of the six collections. Pair an image with a different palette. Calendar flow states must keep their meaning, and all text, controls and selected states must remain readable. Android Back returns to Your data.
+2. Try **Light**, **Dark**, and **System**. With System selected, change the phone's system appearance, background/reopen the app, and verify the new mode. With an explicit mode selected, it should remain selected. Check the keyboard, status/navigation bars, setup/unlock fields, entry sheet, symptoms, medication forms, history, education and reports.
+3. Test **Plain**, **Soft wash**, both slider endpoints and intermediate values. Zero hides decoration; 60% is strongest. Text stays on opaque surfaces and artwork never intercepts taps. Reset restores Plum/System/Plain/25% without changing entries.
+4. In a saved fictional journal, choose a palette/image/mode, lock and reopen, then fully restart the app: choices should persist. Artwork must not appear on the lock screen or background privacy cover. Journal content and biometric unlock must remain intact. Appearance is local and excluded from encrypted backups, CSV, and PDFs; restoring a journal retains this device's existing appearance.
+5. Exit to sample mode, try different appearance choices and reset, then leave the sample: the saved journal's appearance must return. Sample appearance changes must disappear after restart. The sample must never request notification or biometric setup.
+6. In airplane mode, open every artwork collection, select all twelve images, navigate entries and restart. The installed app needs no download for its backgrounds. Check scrolling and touch targets in portrait/landscape, Flip5 folded/reopened, large system text and TalkBack. The slider should announce percentages and permit adjustment.
+7. Retest fictional record saving, passphrase/biometric unlock, backup/restore, PDF sharing, and medication notifications. Earlier hardware checklists remain outstanding; automated/browser validation is not a new device pass.
+
+The original PNGs are bundled unchanged for this preview (about 26 MiB of artwork). Asset compression can be considered after appearance/device review without changing the approved art. Personal-photo selection remains later work.
+
 ## 0.12.0 experimental period estimates
 
 Install `artifacts/android/cycle-tracker-preview-0.12.0-arm64-v8a.apk` over the existing preview after an encrypted backup. Version code is 15; package/signing identity and journal format 4 are unchanged. Do not uninstall or clear storage. These checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5.

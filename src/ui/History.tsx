@@ -5,14 +5,8 @@ import { addDays, formatDay, type Day } from '../domain/dates';
 import { history, type Journal } from '../domain/journal';
 import { flowTimeline, statistics, type FlowState } from '../domain/history';
 import { Button } from './components';
-import { colors, common } from './theme';
+import { useTheme } from './theme';
 
-const FLOW_COLORS: Record<FlowState, string> = {
-  bleeding: colors.roseInk,
-  spotting: '#A57B4B',
-  none: colors.sageInk,
-  unknown: colors.soft,
-};
 const FLOW_LABELS: Record<FlowState, string> = {
   bleeding: 'Bleeding',
   spotting: 'Spotting',
@@ -33,6 +27,7 @@ function TrendChart({
   color: string;
   explanation: string;
 }) {
+  const { colors, common } = useTheme();
   const latest = points.slice(-12);
   const maximum = Math.max(1, ...latest.map((point) => point.value ?? 0));
   return (
@@ -112,7 +107,14 @@ export function History({
   today: Day;
   openDay: (day: Day) => void;
 }) {
+  const { colors, common } = useTheme();
   const cycles = useMemo(() => history(journal, today), [journal, today]);
+  const FLOW_COLORS: Record<FlowState, string> = {
+    bleeding: colors.roseInk,
+    spotting: colors.spotInk,
+    none: colors.sageInk,
+    unknown: colors.soft,
+  };
   const [limit, setLimit] = useState(12);
   const lengths = statistics(cycles.map((cycle) => cycle.length));
   const durations = statistics(cycles.map((cycle) => cycle.duration));
@@ -236,7 +238,7 @@ export function History({
           />
         )}
       </View>
-      <Text style={common.small}>
+      <Text style={[common.small, common.readable]}>
         Your journal records observations. These charts do not diagnose a condition or predict
         ovulation.
       </Text>
