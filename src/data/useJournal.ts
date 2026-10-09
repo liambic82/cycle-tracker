@@ -5,10 +5,11 @@ import { getRandomValues } from 'expo-crypto';
 import { toDay, type Day } from '../domain/dates';
 import { deleteEntry, undoEntryDeletion, type DeletedEntry } from '../domain/deletion';
 import { emptyJournal, type Journal } from '../domain/journal';
-import { newKey, openVault, seal, type VaultKey } from '../domain/vault';
+import { newKey, openVault, parseEnvelope, seal, type VaultKey } from '../domain/vault';
 import { JournalWriter, STORAGE_KEY } from './repository';
 import { demoJournal } from './demo';
 import { acquireEditLease } from './lease';
+import { biometrics } from './biometrics';
 
 // Unlike the development helper getRandomBytes, getRandomValues has no Math.random fallback.
 const secureRandomBytes = (length: number) => getRandomValues(new Uint8Array(length));
@@ -22,6 +23,8 @@ export function useJournal() {
   const [status, setStatus] = useState('Saved on this device');
   const [error, setError] = useState('');
   const [obscured, setObscured] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(() => biometrics.available());
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
   const [deleted, setDeleted] = useState<DeletedEntry | null>(null);
   const deletedRef = useRef<DeletedEntry | null>(null);
   const current = useRef<Journal | null>(null);
@@ -30,11 +33,22 @@ export function useJournal() {
   const revision = useRef(0);
   const demoRef = useRef(false);
   const working = useRef(false);
+  const backgroundEpoch = useRef(0);
+  const lockPending = useRef(false);
   const releaseLease = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
-      .then((value) => setExists(value !== null))
+      .then(async (value) => {
+        setExists(value !== null);
+        let salt: string | null = null;
+        try {
+          if (value) salt = parseEnvelope(value).salt;
+        } catch {
+          /* Passphrase/restore reports a damaged vault. */
+        }
+        await refreshBiometrics(salt);
+      })
       .catch(() => setError('Local storage could not be read. Reload the app to try again.'))
       .finally(() => setLoading(false));
     return () => {
@@ -47,6 +61,24 @@ export function useJournal() {
     current.current = value;
     setJournal(value);
   };
+
+  async function refreshBiometrics(salt: string | null) {
+    setBiometricAvailable(biometrics.available());
+    try {
+      setBiometricEnabled(await biometrics.enabled(salt));
+    } catch {
+      setBiometricEnabled(false);
+    } // Optional metadata must not block passphrase access.
+  }
+
+  function finishWork() {
+    working.current = false;
+    setBusy(false);
+    if (lockPending.current) {
+      lockPending.current = false;
+      void lock();
+    }
+  }
 
   const rememberDeletion = (value: DeletedEntry | null) => {
     deletedRef.current = value;
@@ -69,12 +101,15 @@ export function useJournal() {
     setError('');
   }, []);
 
-  const start = async (passphrase: string, create: boolean) => {
-    if (working.current) return;
+  const start = async (passphrase: string | null, create: boolean) => {
+    if (working.current || current.current) return;
     working.current = true;
     setBusy(true);
     setError('');
     let release: (() => void) | null = null;
+    let openedKey: VaultKey | null = null;
+    let salt: string | null = null;
+    const openingEpoch = backgroundEpoch.current;
     try {
       release = await acquireEditLease();
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
@@ -87,20 +122,29 @@ export function useJournal() {
         setExists(false);
         throw new Error('No saved journal was found. Create a new journal or restore a backup.');
       }
+      if (raw) salt = parseEnvelope(raw).salt;
+      if (create) {
+        await biometrics.clear();
+        setBiometricEnabled(false);
+      }
       const session = create
         ? {
-            vault: await newKey(passphrase, secureRandomBytes),
+            vault: await newKey(passphrase!, secureRandomBytes),
             journal: emptyJournal(toDay(new Date())),
           }
-        : await openVault(raw!, passphrase);
+        : passphrase === null
+          ? await biometrics.unlock(raw!)
+          : await openVault(raw!, passphrase);
+      openedKey = session.vault;
+      salt = session.vault.salt;
       const nextWriter = new JournalWriter(AsyncStorage, session.vault, secureRandomBytes);
-      try {
-        if (create) await nextWriter.save(session.journal);
-      } catch (err) {
-        session.vault.key.fill(0);
-        throw err;
+      if (create) await nextWriter.save(session.journal);
+      setExists(true);
+      if (openingEpoch !== backgroundEpoch.current || lockPending.current) {
+        throw new Error('The app moved to the background. Unlock your journal again to continue.');
       }
       key.current = session.vault;
+      openedKey = null;
       writer.current = nextWriter;
       releaseLease.current = release;
       demoRef.current = false;
@@ -109,11 +153,31 @@ export function useJournal() {
       setCurrent(session.journal);
       setStatus('Saved on this device');
     } catch (err) {
+      openedKey?.key.fill(0);
       release?.();
       setError(err instanceof Error ? err.message : 'Unable to open your journal.');
     } finally {
-      working.current = false;
-      setBusy(false);
+      await refreshBiometrics(salt);
+      finishWork();
+    }
+  };
+
+  const setBiometricUnlock = async (enabled: boolean) => {
+    if (!current.current || !key.current || demoRef.current || working.current) return;
+    working.current = true;
+    setBusy(true);
+    try {
+      if (enabled) await biometrics.enable(key.current);
+      else await biometrics.clear();
+    } catch (err) {
+      throw new Error(
+        enabled && err instanceof Error
+          ? err.message
+          : 'Biometric access could not be removed. Please try again.',
+      );
+    } finally {
+      await refreshBiometrics(key.current?.salt ?? null);
+      finishWork();
     }
   };
 
@@ -178,6 +242,8 @@ export function useJournal() {
     setBusy(true);
     setError('');
     try {
+      await biometrics.clear();
+      setBiometricEnabled(false);
       await writer.current!.erase();
       endSession();
       setExists(false);
@@ -186,13 +252,16 @@ export function useJournal() {
       setStatus('Not saved');
       throw new Error('Your journal could not be deleted. It is still open. Please try again.');
     } finally {
-      working.current = false;
-      setBusy(false);
+      finishWork();
     }
   };
 
   const lock = useCallback(async () => {
-    if (!current.current || working.current) return;
+    if (working.current) {
+      lockPending.current = true;
+      return;
+    }
+    if (!current.current) return;
     working.current = true;
     setBusy(true);
     try {
@@ -202,8 +271,7 @@ export function useJournal() {
       setError('Your latest changes could not be saved. Please retry before locking.');
       setStatus('Not saved');
     } finally {
-      working.current = false;
-      setBusy(false);
+      finishWork();
     }
   }, [endSession]);
 
@@ -219,15 +287,21 @@ export function useJournal() {
           void lock();
         }, 60000);
       } else {
+        setBiometricAvailable(biometrics.available());
         if (timer) clearTimeout(timer);
         if (hiddenAt && Date.now() - hiddenAt >= 60000) void lock();
         hiddenAt = 0;
       }
     };
-    const subscription = AppState.addEventListener('change', (state) =>
-      visibility(state !== 'active'),
-    );
-    const onVisibility = () => visibility(document.hidden);
+    const subscription = AppState.addEventListener('change', (state) => {
+      // iOS's biometric prompt is briefly inactive; only a real background transition cancels opening.
+      if (state === 'background') backgroundEpoch.current++;
+      visibility(state !== 'active');
+    });
+    const onVisibility = () => {
+      if (document.hidden) backgroundEpoch.current++;
+      visibility(document.hidden);
+    };
     if (Platform.OS === 'web') document.addEventListener('visibilitychange', onVisibility);
     return () => {
       subscription.remove();
@@ -250,16 +324,23 @@ export function useJournal() {
     setError('');
     let restoredKey: VaultKey | null = null;
     let release: (() => void) | null = null;
+    const openingEpoch = backgroundEpoch.current;
     try {
       release = await acquireEditLease();
       const restored = await openVault(raw, passphrase);
       restoredKey = restored.vault;
+      // Validate the backup before removing convenience access to the existing journal.
+      await biometrics.clear();
+      setBiometricEnabled(false);
       // Replacement is allowed only in the explicit restore-confirmation flow.
       await AsyncStorage.setItem(
         STORAGE_KEY,
         seal(restored.journal, restored.vault, secureRandomBytes),
       );
       setExists(true);
+      if (openingEpoch !== backgroundEpoch.current || lockPending.current) {
+        throw new Error('Backup restored. Unlock your journal again to continue.');
+      }
       key.current = restored.vault;
       releaseLease.current = release;
       writer.current = new JournalWriter(AsyncStorage, restored.vault, secureRandomBytes);
@@ -272,8 +353,7 @@ export function useJournal() {
       release?.();
       setError(err instanceof Error ? err.message : 'Could not restore this backup.');
     } finally {
-      working.current = false;
-      setBusy(false);
+      finishWork();
     }
   };
 
@@ -286,6 +366,10 @@ export function useJournal() {
     status,
     error,
     obscured,
+    biometricAvailable,
+    biometricEnabled,
+    setBiometricUnlock,
+    unlockBiometric: () => start(null, false),
     deleted,
     removeEntry,
     undoDelete,

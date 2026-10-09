@@ -1,6 +1,6 @@
 {
   "name": "cycle-tracker",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "main": "index.ts",
@@ -31,6 +31,7 @@
     "expo-document-picker": "~57.0.3",
     "expo-file-system": "~57.0.7",
     "expo-screen-capture": "~57.0.4",
+    "expo-secure-store": "~57.0.4",
     "expo-sharing": "~57.0.22",
     "expo-status-bar": "~57.0.1",
     "lucide-react-native": "^1.52.0",

@@ -8,17 +8,17 @@ The full source brief remains the feature reference. Its version labels are prov
 
 ## Milestone 2: Android daily-use build
 
-The owner reported a successful Pixel 7 test on Android 17 for preview 0.1.0 on October 9, 2026. This is an overall functional report, not a per-check security or accessibility assessment. Flip5 validation remains pending.
+The owner reported successful Pixel 7 testing on Android 17 for previews 0.1.0 and 0.2.0 on October 9, 2026. The 0.2.0 response was “Testing complete, all pass.” Flip5 validation remains pending.
 
-Preview 0.2.0 adds entry deletion with session-only Undo, confirmed deletion of the local vault, and native screen capture/app-switcher protection. These additions need a fresh device regression pass.
+Preview 0.2.0 added entry deletion with session-only Undo, confirmed deletion of the local vault, and native screen capture/app-switcher protection. Preview 0.3.0 adds optional biometric unlock using an OS-protected key, with passphrase fallback, cancellation/invalidation handling, and cleanup during restore/deletion.
 
-- Validate the 0.2.0 update on the Pixel 7 and the first installation on Galaxy Z Flip5, following [the device test guide](android-testing.md).
+- Validate the 0.3.0 update on the Pixel 7 and the first installation on Galaxy Z Flip5, following [the device test guide](android-testing.md).
 - Record OS versions; test input, accessibility text sizes, storage, backup sharing, and fold/reopen state.
 - Measure passphrase unlock time and journal write performance on real hardware.
 - Verify background locking, native app-switcher privacy, keyboard behavior, and recovery after app termination.
 - Expand the symptom catalog from the source requirements; distinguish user-added labels from curated categories.
-- Validate deletion/Undo and whole-journal deletion with fictional data on hardware, including updating from 0.1.0 without uninstalling.
-- Add biometric convenience unlock without removing passphrase recovery or compromising key storage.
+- Keep deletion/Undo, whole-journal deletion, backups, and update-in-place retention in the regression pass.
+- Validate native biometric enrollment, cancellation, invalidation, disable, restart, and passphrase fallback on hardware. The full symptom catalog is the next feature slice.
 
 ## Milestone 3: medication and doctor records
 

@@ -5,6 +5,7 @@ import app from '../../app.json';
 import { toCSV, type Journal } from '../domain/journal';
 import { exportText } from '../data/files';
 import { Button } from './components';
+import { BiometricSettings } from './BiometricSettings';
 import { colors, common } from './theme';
 
 export function DataSettings({
@@ -13,12 +14,18 @@ export function DataSettings({
   backup,
   lock,
   erase,
+  biometricEnabled,
+  biometricAvailable,
+  setBiometricUnlock,
 }: {
   journal: Journal;
   demo: boolean;
   backup: () => string;
   lock: () => Promise<void>;
   erase: (confirmation: string) => Promise<void>;
+  biometricEnabled: boolean;
+  biometricAvailable: boolean;
+  setBiometricUnlock: (enabled: boolean) => Promise<void>;
 }) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
@@ -136,6 +143,12 @@ export function DataSettings({
           onPress={lock}
         />
       </View>
+      <BiometricSettings
+        enabled={biometricEnabled}
+        available={biometricAvailable}
+        demo={demo}
+        change={setBiometricUnlock}
+      />
       <View style={[common.card, { gap: 15 }]}>
         <Text style={common.heading}>Delete your journal</Text>
         <Text style={common.body}>
@@ -203,8 +216,7 @@ export function DataSettings({
       )}
       <Text style={common.small}>
         Early preview · {app.expo.version}
-        {'\n'}Medication tracking, predictions, biometrics, and cloud sync are planned for later
-        milestones.
+        {'\n'}Medication tracking, predictions, and cloud sync are planned for later milestones.
       </Text>
     </View>
   );

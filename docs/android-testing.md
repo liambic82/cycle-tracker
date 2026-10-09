@@ -35,12 +35,27 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 
 ## Device reports
 
-| Date            | App version | Device                 | OS                              | Result                                                                                     |
-| --------------- | ----------- | ---------------------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
-| October 9, 2026 | 0.1.0       | Google Pixel 7         | Android 17                      | Owner reported testing passed. Individual checklist results and timings were not supplied. |
-| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported | Not yet validated.                                                                         |
+| Date            | App version | Device                 | OS                                    | Result                                                                                     |
+| --------------- | ----------- | ---------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------ |
+| October 9, 2026 | 0.1.0       | Google Pixel 7         | Android 17                            | Owner reported testing passed. Individual checklist results and timings were not supplied. |
+| October 9, 2026 | 0.2.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported “Testing complete, all pass” after the 0.2.0 update checklist.              |
+| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Not yet validated.                                                                         |
 
-## 0.2.0 update checks
+## 0.3.0 biometric unlock checks
+
+Install `cycle-tracker-preview-0.3.0-arm64-v8a.apk` over the existing preview. Export a backup first; do not uninstall. Your existing passphrase and journal should continue to work, with biometrics initially off.
+
+1. Unlock using the passphrase. In **Your data → An easier way to unlock**, select **Enable biometric unlock**, review the explanation, then **Enable on this device**. Complete the fingerprint prompt on Pixel 7. Verify the setting reports on.
+2. Lock the journal, then select **Unlock with biometrics**. Successful authentication should show the same entries. Restart the app and repeat, including in airplane mode.
+3. Cancel the system prompt. The journal must remain locked; retry and passphrase unlock must still work. A wrong fingerprint must not expose entries.
+4. Turn biometric unlock off. After locking/restarting, only passphrase unlock should be offered. Turn it on again to check the full cycle.
+5. Restore an encrypted backup while biometric unlock is enabled. Restore still requires the backup's passphrase and turns biometric unlock off. Enable it explicitly again if wanted. A failed passphrase for restore should leave the current journal and its setting intact.
+6. Delete a disposable fictional journal after exporting a backup. A new journal must not inherit the deleted journal's biometric access. Restore the backup using its passphrase.
+7. Switch apps while an unlock request is in progress. It should not unexpectedly open on return. Also keep the existing one-minute background lock and Recents/screenshot checks in the regression pass.
+
+If you independently change enrolled fingerprints, use the passphrase afterward and re-enable biometric unlock. The app handles invalidated OS credentials, but do not change device enrollment solely for this test if you prefer to leave your phone settings alone. On devices without a supported enrolled biometric, the passphrase remains available and settings explain how to enable the option. iOS and Flip5 biometric behavior still need separate hardware validation.
+
+## 0.2.0 update checks (owner reported passed)
 
 Install `cycle-tracker-preview-0.2.0-arm64-v8a.apk` over 0.1.0 with the same preview signing key. Export a backup first; do not uninstall. Confirm that the previous fictional journal still unlocks with its existing passphrase.
 
@@ -48,7 +63,7 @@ Install `cycle-tracker-preview-0.2.0-arm64-v8a.apk` over 0.1.0 with the same pre
 - Cancel entry deletion and journal deletion; the records should remain.
 - With a disposable journal and a separate encrypted backup, type `DELETE` in **Your data** and delete the journal. The app should return to setup and stay there after restart. Restore the backup to verify recovery from the separately saved copy.
 - Attempt screenshots on setup, the open journal, and the daily editor. Android should block capture. Check that Recents does not expose the journal. Screen capture is also blocked in sample mode; use the browser preview for layout screenshots.
-- Repeat backup sharing, offline restart, and background locking with the updated build. The October 9 report applies to 0.1.0, not these new features.
+- Repeat backup sharing, offline restart, and background locking with the updated build.
 
 ## First test session
 

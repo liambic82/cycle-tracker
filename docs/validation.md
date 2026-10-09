@@ -1,5 +1,30 @@
 # Validation record
 
+## 0.3.0 biometric unlock — October 9, 2026
+
+Implemented optional native biometric unlock, explicit opt-in/disable controls, authenticated OS key storage, passphrase fallback, and credential cleanup during journal creation, restore, and deletion. The portable encrypted-vault format is unchanged.
+
+- TypeScript and all **22** tests passed. Nine new tests cover biometric round-trip and separation of key material from ordinary storage; cancellation/retry; missing or invalidated credentials with passphrase recovery; absent/malformed/mismatched references; stale/tampered protected keys; unsupported devices and canceled setup; persistence/cleanup failures; orphan cleanup without removing the journal; and key-based vault authentication.
+- These biometric tests use a mocked protected-storage interface. They exercise the app's key-handling and recovery logic, not a physical biometric sensor or native prompt.
+- Web, Android Hermes, and iOS Hermes production exports passed. Prettier and Git whitespace checks passed. The installed Expo dependency map reports compatible packages in offline mode; no fresh remote dependency audit was performed.
+- Browser regression on the isolated `127.0.0.1:4174` origin confirmed a wrong passphrase stays locked and the existing fictional 0.2.0 journal still opens with its correct passphrase and note intact. Browser unlock remains passphrase-only. Settings were visually checked at 393 × 852 and 1280 × 720; no captured console errors. The test journal was locked, the test tab closed, and the viewport reset afterward.
+- Native source/configuration checks confirm `SecureStoreModule` registration, authenticated reads/writes using a dedicated service, the iOS Face ID usage message, `USE_BIOMETRIC`, and Android backup rules excluding SecureStore. Native enrollment/prompt behavior, cancellation, app-background races, disabling, and restore/delete cleanup need the 0.3.0 hardware checklist.
+- A standalone ARM64 release APK built successfully. Signature verification and 16 KB zip alignment passed. Package identity remains `com.liambic.cycletracker.preview`, version `0.3.0`, version code `3`, minimum API 24, target API 36, `allowBackup: false`, and no debuggable flag. The bundled Hermes program is 3,093,676 bytes. The signing certificate matches earlier previews, supporting installation as an update.
+
+File: `artifacts/android/cycle-tracker-preview-0.3.0-arm64-v8a.apk` (29,898,086 bytes; excluded from Git).
+
+APK SHA-256: `0d3fa4a24975e84d36fc258b450bf4588a65ed2c9205617b88e19b66eb152f6d`.
+
+Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Browser settings regression](screenshots/biometric-browser-desktop.jpg)
+
+![Browser settings at phone width](screenshots/biometric-browser-mobile.jpg)
+
+## 0.2.0 owner test result — October 9, 2026
+
+After receiving the 0.2.0 APK and its device regression checklist, the owner reported “Testing complete, all pass.” This is recorded as a pass for 0.2.0 in the established Pixel 7 / Android 17 test context. No additional device or timing measurements were supplied. Flip5 validation remains pending; this report does not establish iOS validation or an independent security audit.
+
 ## Pixel 7 owner report — October 9, 2026
 
 The owner reported “Testing passed on Pixel 7” and confirmed Android **17**. This records the overall functional pass of preview **0.1.0**. Individual checklist results, timings, and security/accessibility findings were not supplied. Galaxy Z Flip5 testing remains pending. Earlier pending-device statements below describe the state at the time those historical checks were recorded.

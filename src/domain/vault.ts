@@ -94,20 +94,34 @@ export async function openVault(
 ): Promise<{ journal: Journal; vault: VaultKey }> {
   const envelope = parseEnvelope(raw);
   const vault = await deriveKey(passphrase, envelope.salt);
+  try {
+    return { journal: decryptEnvelope(envelope, vault), vault };
+  } catch (error) {
+    vault.key.fill(0);
+    throw error;
+  }
+}
+
+// The caller owns the key and must wipe it if opening fails or the session ends.
+export function openVaultWithKey(raw: string, vault: VaultKey): Journal {
+  const envelope = parseEnvelope(raw);
+  if (vault.key.length !== 32 || vault.salt !== envelope.salt) {
+    throw new Error('The saved unlock key does not match this journal. Use your passphrase.');
+  }
+  return decryptEnvelope(envelope, vault);
+}
+
+function decryptEnvelope(envelope: Envelope, vault: VaultKey): Journal {
   let plain: Uint8Array;
   try {
     plain = gcm(vault.key, hexToBytes(envelope.nonce), AAD).decrypt(
       hexToBytes(envelope.ciphertext),
     );
   } catch {
-    vault.key.fill(0);
     throw new Error('The passphrase is incorrect, or this backup has been damaged.');
   }
   try {
-    return { journal: parseJournal(JSON.parse(new TextDecoder().decode(plain))), vault };
-  } catch (error) {
-    vault.key.fill(0);
-    throw error;
+    return parseJournal(JSON.parse(new TextDecoder().decode(plain)));
   } finally {
     plain.fill(0);
   }

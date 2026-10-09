@@ -86,6 +86,9 @@ function CycleApp() {
         start={state.start}
         explore={state.explore}
         restore={state.restore}
+        biometricEnabled={state.biometricEnabled}
+        biometricAvailable={state.biometricAvailable}
+        unlockBiometric={state.unlockBiometric}
       />
     );
   const journal = state.journal;
@@ -398,6 +401,9 @@ function CycleApp() {
               backup={state.backup}
               lock={state.lock}
               erase={state.erase}
+              biometricEnabled={state.biometricEnabled}
+              biometricAvailable={state.biometricAvailable}
+              setBiometricUnlock={state.setBiometricUnlock}
             />
           )}
         </ScrollView>

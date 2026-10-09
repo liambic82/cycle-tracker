@@ -2,10 +2,19 @@
   "expo": {
     "name": "Cycle Tracker",
     "slug": "cycle-tracker",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "orientation": "default",
     "userInterfaceStyle": "light",
     "scheme": "cycletracker",
+    "plugins": [
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Use Face ID to unlock your Cycle journal when you enable biometric unlock."
+        }
+      ]
+    ],
     "ios": { "supportsTablet": true, "bundleIdentifier": "com.liambic.cycletracker" },
     "android": { "package": "com.liambic.cycletracker", "allowBackup": false },
     "web": {

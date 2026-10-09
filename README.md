@@ -29,9 +29,9 @@ On both phones, check calendar navigation, daily logging, offline persistence, m
 
 For the Flip5, verify that closing and reopening the phone preserves the selected day, calendar position, and any in-progress entry. Check the main-screen layout when fully open and partially folded, following [Android's foldable design and app continuity guidance](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/learn-about-foldables).
 
-The owner reported that the 0.1.0 preview passed testing on the Pixel 7 running Android 17 on October 9, 2026. Individual checklist results and timings were not supplied. Flip5 testing and its Android/One UI versions are still pending.
+The owner reported that previews 0.1.0 and 0.2.0 passed testing on the Pixel 7 running Android 17 on October 9, 2026. The 0.2.0 response was “Testing complete, all pass.” Timings were not supplied. Flip5 testing and its Android/One UI versions are still pending.
 
-## Working preview: 0.2.0
+## Working preview: 0.3.0
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
@@ -42,10 +42,11 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - Encrypted backup/restore and readable CSV export.
 - Daily entry deletion with session-only Undo, and confirmed deletion of the whole local journal.
 - Native screen capture prevention and app-switcher protection, enabled before opening the journal. Browsers cannot prevent screenshots.
+- Optional biometric unlock in the installed mobile app, using an OS-protected copy of the encryption key. Passphrase fallback and backup recovery remain available; browsers continue to use the passphrase.
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication schedules, notifications, biometric unlock, the complete symptom catalog, PDF doctor summaries, bloodwork, and optional sync are still pending. See [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Medication schedules, notifications, the complete symptom catalog, PDF doctor summaries, bloodwork, and optional sync are still pending. Biometric unlock needs a fresh device regression pass for 0.3.0. See [the development plan](docs/development-plan.md).
 
 ## Run locally
 
@@ -89,7 +90,7 @@ pnpm build:all
 
 ## Data handling
 
-The local vault uses AES-256-GCM with a fresh secure random nonce on each save, and a key derived from the passphrase using PBKDF2-SHA256. The passphrase is not stored. Only encrypted journal content is written to AsyncStorage; there is no server or analytics integration. Browser editing is restricted to one unlocked tab to prevent conflicting writes.
+The local vault uses AES-256-GCM with a fresh secure random nonce on each save, and a key derived from the passphrase using PBKDF2-SHA256. The passphrase is not stored. AsyncStorage holds encrypted journal content and, when enabled, a non-secret biometric reference; the optional unlock key is protected separately by the OS and requires biometric authentication. There is no server or analytics integration. Browser editing is restricted to one unlocked tab to prevent conflicting writes.
 
 There is no passphrase reset. Keep the passphrase and a separate encrypted backup. CSV exports are deliberately readable. Browser storage can be cleared or evicted. This early implementation still needs native-device testing and a security review before real health data or a public launch. See [architecture and security notes](docs/architecture.md) and [the validation record](docs/validation.md).
 

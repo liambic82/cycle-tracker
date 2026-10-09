@@ -4,6 +4,7 @@ import {
   ArrowRight,
   CalendarDays,
   Heart,
+  Fingerprint,
   LockKeyhole,
   ShieldCheck,
   Upload,
@@ -20,9 +21,22 @@ interface Props {
   start: (passphrase: string, create: boolean) => Promise<void>;
   explore: () => void;
   restore: (raw: string, passphrase: string) => Promise<void>;
+  biometricEnabled: boolean;
+  biometricAvailable: boolean;
+  unlockBiometric: () => Promise<void>;
 }
 
-export function AuthGate({ exists, busy, error, start, explore, restore }: Props) {
+export function AuthGate({
+  exists,
+  busy,
+  error,
+  start,
+  explore,
+  restore,
+  biometricEnabled,
+  biometricAvailable,
+  unlockBiometric,
+}: Props) {
   const wide = useWindowDimensions().width >= 900;
   const [passphrase, setPassphrase] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -46,6 +60,7 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
     setConfirm('');
   };
   const choose = async () => {
+    if (busy) return;
     try {
       const raw = await readBackup();
       if (!raw) return;
@@ -158,11 +173,31 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
                     : 'Choose a passphrase to encrypt your journal. No account or email needed.'}
               </Text>
             </View>
+            {exists && !backup && biometricEnabled && (
+              <View style={{ gap: 10 }}>
+                <Button
+                  label="Unlock with biometrics"
+                  icon={Fingerprint}
+                  disabled={busy || !biometricAvailable}
+                  onPress={() => {
+                    setMessage('');
+                    setPassphrase('');
+                    void unlockBiometric();
+                  }}
+                />
+                <Text style={common.small}>
+                  {biometricAvailable
+                    ? 'Or enter your passphrase below.'
+                    : 'Biometrics are unavailable right now. Your passphrase still works.'}
+                </Text>
+              </View>
+            )}
             <View style={{ gap: 8 }}>
               <Text style={common.label}>Passphrase</Text>
               <TextInput
                 accessibilityLabel="Passphrase"
                 secureTextEntry
+                editable={!busy}
                 value={passphrase}
                 onChangeText={setPassphrase}
                 placeholder={
@@ -182,6 +217,7 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
                 <TextInput
                   accessibilityLabel="Confirm passphrase"
                   secureTextEntry
+                  editable={!busy}
                   value={confirm}
                   onChangeText={setConfirm}
                   placeholder="One more time"
@@ -205,6 +241,7 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
                 <Button
                   secondary
                   label={acknowledged ? 'Replacement confirmed' : 'I have saved what I need'}
+                  disabled={busy}
                   onPress={() => setAcknowledged(true)}
                 />
               </View>
@@ -235,6 +272,7 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
               <Button
                 secondary
                 label="Cancel restore"
+                disabled={busy}
                 onPress={() => {
                   setBackup(null);
                   setPassphrase('');
@@ -242,8 +280,19 @@ export function AuthGate({ exists, busy, error, start, explore, restore }: Props
               />
             ) : (
               <>
-                <Button secondary label="Explore with sample data" onPress={explore} />
-                <Button secondary label="Restore a backup" icon={Upload} onPress={choose} />
+                <Button
+                  secondary
+                  label="Explore with sample data"
+                  disabled={busy}
+                  onPress={explore}
+                />
+                <Button
+                  secondary
+                  label="Restore a backup"
+                  disabled={busy}
+                  icon={Upload}
+                  onPress={choose}
+                />
               </>
             )}
             <View style={[common.row, { justifyContent: 'center', paddingTop: 4 }]}>
