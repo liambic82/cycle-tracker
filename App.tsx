@@ -86,6 +86,7 @@ function CycleApp() {
       <AuthGate
         exists={state.exists}
         busy={state.busy}
+        authProgress={state.authProgress}
         error={state.error}
         start={state.start}
         explore={state.explore}

@@ -41,7 +41,19 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 | October 9, 2026 | 0.2.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported “Testing complete, all pass” after the 0.2.0 update checklist.                                                  |
 | October 9, 2026 | 0.3.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported biometrics functioning as expected; individual edge-case results were not supplied.                             |
 | October 9, 2026 | 0.4.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported symptoms working well, visibility good, and biometrics working. Individual edge-case results were not supplied. |
-| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Not yet validated.                                                                                                             |
+| October 9, 2026 | 0.5.0       | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Owner reported Create my journal spinning for over a minute. Creation failed this test; other checks are not marked passed.    |
+
+## 0.5.1 passphrase fix checks
+
+Install `cycle-tracker-preview-0.5.1-arm64-v8a.apk` over 0.5.0. Close the stalled app before updating. **Do not uninstall or clear app storage.** If a journal already opens, export a backup first. The signing key, app identity, encryption parameters, and existing passphrases are unchanged.
+
+1. On Flip5, try **Create my journal** again with matching passphrases. Record the approximate time and whether it opens the calendar. If the previous attempt completed in the background and the app shows **Welcome back**, unlock using that attempt's passphrase instead of deleting anything.
+2. If it does not complete, report the displayed stage or error and elapsed time, plus Android/One UI versions. Do not share the passphrase. Key calculation should either complete or report a timeout at about 30 seconds; storage/OS prompts have separate progress stages.
+3. Once created, add a fictional note, lock, force-close, reopen, and unlock using the passphrase. Confirm the note remains. Try an incorrect passphrase and then the correct one. Repeat offline.
+4. On Pixel 7, install over the existing app and verify the old journal opens with its existing passphrase and with biometrics. On Flip5, enable biometrics after setup and verify lock/unlock and passphrase fallback.
+5. With a fictional test journal, verify encrypted backup/restore across the new Android build and browser, including a backup produced before 0.5.1. Restore still disables biometrics until explicitly re-enabled. Keep existing calendar/history and privacy checks in the regression pass.
+
+The Java helper's compatibility checks and browser first-run test passed on the development computer. They do not establish a fixed creation time or a successful creation on Flip5; that retest is pending.
 
 ## 0.5.0 calendar and history checks
 

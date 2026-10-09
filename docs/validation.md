@@ -1,5 +1,25 @@
 # Validation record
 
+## 0.5.0 Flip5 creation failure / 0.5.1 fix — October 9, 2026
+
+The owner reported **Galaxy Z Flip5, preview 0.5.0, over a minute** on the Create my journal spinner. Android/One UI versions were not supplied. No phone was connected to ADB, so the exact stalled stage and physical-device timing could not be measured. Source inspection identified 600,000 PBKDF2 iterations running in JavaScript as a likely bottleneck; this is an inference, not a captured Flip5 trace.
+
+Preview **0.5.1** uses the Android platform PBKDF2-SHA256 provider on a background worker for API 26+, and Web Crypto in browsers. iOS and Android API 24–25 retain the portable implementation. All paths retain the existing iteration count, UTF-8 semantics, salt/key sizes, encrypted-vault format, and biometric key. Setup reports its current stage and elapsed time for longer operations. Key calculation has a 30-second deadline; late keys are wiped and cannot continue into opening or saving. Storage mutations are not timed out or retried behind the user's back.
+
+- `pnpm check`: strict TypeScript and all **40 tests** passed. Five new tests cover fixed-vector compatibility, old/new vault interoperability and incorrect-passphrase rejection, timeouts with late-key disposal, failed/malformed result handling, and exact UTF-8 input plus owned-buffer cleanup.
+- The actual Java helper used by the Android module compiled and passed all **four shared compatibility vectors** on JDK 22. Cases include ASCII, Unicode/emoji/NUL, decomposed text/whitespace, and a long password with a replacement character. All four took 1,107 ms together on the desktop JVM; this is not a phone timing or an Android provider/bridge test. Run `$env:JAVA_HOME='C:\Program Files\Java\jdk-22'; node scripts/check-android-kdf.mjs` to repeat.
+- Web, Android Hermes, and iOS Hermes exports passed. The iOS result remains a bundle check only. Expo autolinking discovers the new Android module; the build cache now copies the local `modules` directory.
+- Browser first-run regression at 393 × 852 used a fresh isolated `127.0.0.1:4175` origin and a fictional passphrase. Create my journal opened the calendar. A fictional note survived lock/reload/unlock; an incorrect passphrase left the app locked, and the correct passphrase reopened it. No captured console errors. The journal was locked, test tab closed, viewport reset, and test server stopped. No real journal was erased or used for this test.
+- Native creation/unlock speed, update retention, existing biometrics, and cross-platform backup restore need the [0.5.1 focused retest](android-testing.md#051-passphrase-fix-checks). The Flip5 issue is **awaiting owner confirmation**, not marked resolved on hardware.
+
+The final standalone ARM64 release APK built successfully after correcting the local module's Gradle metadata and coroutine import. Generated Expo registration includes `CyclePassphraseCryptoModule`. Signature verification, 16 KB zip alignment, Prettier, and Git whitespace checks passed. Package identity remains `com.liambic.cycletracker.preview`, version **0.5.1**, version code **6**, minimum API 24, target API 36, `USE_BIOMETRIC`, `allowBackup: false`, and no debuggable flag. The bundled Hermes program is 3,121,016 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.5.1-arm64-v8a.apk` (29,925,422 bytes; excluded from Git).
+- APK SHA-256: `fcc3dd6debfa01eca8f9cedb1037812d21c54b3e4347250ad607abbb45fe20df`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Fictional note retained after first-run creation and restart](screenshots/passphrase-recovery-mobile.jpg)
+
 ## 0.4.0 owner report — October 9, 2026
 
 The owner reported “Symptoms work well, visibility is good, and biometric is working.” This records a functional pass for those features in preview **0.4.0**, using the established Pixel 7 / Android 17 context. The report did not enumerate individual cancellation, import, accessibility, or other edge cases. Flip5 and iOS hardware validation remain pending. Earlier pending-device statements below describe the state when those checks were recorded.

@@ -10,6 +10,7 @@ import { JournalWriter, STORAGE_KEY } from './repository';
 import { demoJournal } from './demo';
 import { acquireEditLease } from './lease';
 import { biometrics } from './biometrics';
+import { derivePassphraseKey } from './passphraseKey';
 
 // Unlike the development helper getRandomBytes, getRandomValues has no Math.random fallback.
 const secureRandomBytes = (length: number) => getRandomValues(new Uint8Array(length));
@@ -19,6 +20,7 @@ export function useJournal() {
   const [exists, setExists] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [authProgress, setAuthProgress] = useState('');
   const [demo, setDemo] = useState(false);
   const [status, setStatus] = useState('Saved on this device');
   const [error, setError] = useState('');
@@ -74,6 +76,7 @@ export function useJournal() {
   function finishWork() {
     working.current = false;
     setBusy(false);
+    setAuthProgress('');
     if (lockPending.current) {
       lockPending.current = false;
       void lock();
@@ -106,6 +109,7 @@ export function useJournal() {
     working.current = true;
     setBusy(true);
     setError('');
+    setAuthProgress('Checking this device…');
     let release: (() => void) | null = null;
     let openedKey: VaultKey | null = null;
     let salt: string | null = null;
@@ -124,21 +128,28 @@ export function useJournal() {
       }
       if (raw) salt = parseEnvelope(raw).salt;
       if (create) {
+        setAuthProgress('Preparing your private journal…');
         await biometrics.clear();
         setBiometricEnabled(false);
       }
+      setAuthProgress(
+        passphrase === null ? 'Waiting for biometric unlock…' : 'Securing your journal…',
+      );
       const session = create
         ? {
-            vault: await newKey(passphrase!, secureRandomBytes),
+            vault: await newKey(passphrase!, secureRandomBytes, derivePassphraseKey),
             journal: emptyJournal(toDay(new Date())),
           }
         : passphrase === null
           ? await biometrics.unlock(raw!)
-          : await openVault(raw!, passphrase);
+          : await openVault(raw!, passphrase, derivePassphraseKey);
       openedKey = session.vault;
       salt = session.vault.salt;
       const nextWriter = new JournalWriter(AsyncStorage, session.vault, secureRandomBytes);
-      if (create) await nextWriter.save(session.journal);
+      if (create) {
+        setAuthProgress('Saving your encrypted journal…');
+        await nextWriter.save(session.journal);
+      }
       setExists(true);
       if (openingEpoch !== backgroundEpoch.current || lockPending.current) {
         throw new Error('The app moved to the background. Unlock your journal again to continue.');
@@ -157,6 +168,7 @@ export function useJournal() {
       release?.();
       setError(err instanceof Error ? err.message : 'Unable to open your journal.');
     } finally {
+      setAuthProgress('Finishing up…');
       await refreshBiometrics(salt);
       finishWork();
     }
@@ -322,13 +334,15 @@ export function useJournal() {
     working.current = true;
     setBusy(true);
     setError('');
+    setAuthProgress('Opening your encrypted backup…');
     let restoredKey: VaultKey | null = null;
     let release: (() => void) | null = null;
     const openingEpoch = backgroundEpoch.current;
     try {
       release = await acquireEditLease();
-      const restored = await openVault(raw, passphrase);
+      const restored = await openVault(raw, passphrase, derivePassphraseKey);
       restoredKey = restored.vault;
+      setAuthProgress('Saving your restored journal…');
       // Validate the backup before removing convenience access to the existing journal.
       await biometrics.clear();
       setBiometricEnabled(false);
@@ -362,6 +376,7 @@ export function useJournal() {
     exists,
     loading,
     busy,
+    authProgress,
     demo,
     status,
     error,

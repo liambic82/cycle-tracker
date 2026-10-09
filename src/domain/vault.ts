@@ -1,10 +1,14 @@
 import { gcm } from '@noble/ciphers/aes.js';
-import { pbkdf2Async } from '@noble/hashes/pbkdf2.js';
-import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js';
 import { parseJournal, type Journal } from './journal.ts';
+import {
+  boundedKeyDerivation,
+  KDF_ITERATIONS,
+  portableKeyDeriver,
+  type KeyDeriver,
+} from './keyDerivation.ts';
 
-const ITERATIONS = 600000;
+const ITERATIONS = KDF_ITERATIONS;
 const AAD = new TextEncoder().encode('cycle-tracker:vault:1');
 export const MAX_BACKUP_BYTES = 8 * 1024 * 1024;
 export interface Envelope {
@@ -22,19 +26,32 @@ export interface VaultKey {
 }
 export type RandomBytes = (length: number) => Uint8Array;
 
-export async function deriveKey(passphrase: string, salt: string): Promise<VaultKey> {
+export async function deriveKey(
+  passphrase: string,
+  salt: string,
+  derive: KeyDeriver = portableKeyDeriver,
+): Promise<VaultKey> {
   if (passphrase.length > 1024) throw new Error('The passphrase is too long.');
-  const key = await pbkdf2Async(sha256, new TextEncoder().encode(passphrase), hexToBytes(salt), {
-    c: ITERATIONS,
-    dkLen: 32,
-    asyncTick: 20,
+  const passwordBytes = new TextEncoder().encode(passphrase);
+  const saltBytes = hexToBytes(salt);
+  const key = await boundedKeyDerivation(async () => {
+    try {
+      return await derive(passwordBytes, saltBytes);
+    } finally {
+      passwordBytes.fill(0);
+      saltBytes.fill(0);
+    }
   });
   return { key, salt };
 }
 
-export async function newKey(passphrase: string, random: RandomBytes): Promise<VaultKey> {
+export async function newKey(
+  passphrase: string,
+  random: RandomBytes,
+  derive: KeyDeriver = portableKeyDeriver,
+): Promise<VaultKey> {
   if (passphrase.length < 12) throw new Error('Use a passphrase with at least 12 characters.');
-  return deriveKey(passphrase, bytesToHex(random(16)));
+  return deriveKey(passphrase, bytesToHex(random(16)), derive);
 }
 
 export function seal(journal: Journal, vault: VaultKey, random: RandomBytes): string {
@@ -91,9 +108,10 @@ export function parseEnvelope(raw: string): Envelope {
 export async function openVault(
   raw: string,
   passphrase: string,
+  derive: KeyDeriver = portableKeyDeriver,
 ): Promise<{ journal: Journal; vault: VaultKey }> {
   const envelope = parseEnvelope(raw);
-  const vault = await deriveKey(passphrase, envelope.salt);
+  const vault = await deriveKey(passphrase, envelope.salt, derive);
   try {
     return { journal: decryptEnvelope(envelope, vault), vault };
   } catch (error) {

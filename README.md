@@ -35,7 +35,9 @@ The owner reported that previews 0.1.0 and 0.2.0 passed testing on the Pixel 7 r
 
 The owner subsequently confirmed that symptoms, visibility, and biometrics work in 0.4.0 in the same Pixel 7 / Android 17 context. This functional report does not individually validate every edge case in the device checklist.
 
-## Working preview: 0.5.0
+The owner reported that creating a journal on Galaxy Z Flip5 in 0.5.0 stayed on the creation spinner for over a minute. Preview 0.5.1 addresses the likely JavaScript key-calculation bottleneck with native Android cryptography, progress messages, and a bounded calculation. Confirmation on the Flip5 is pending; its Android/One UI versions have not been reported.
+
+## Working preview: 0.5.1
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
@@ -45,7 +47,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - An encrypted preference to hide curated perimenopause choices without removing existing logs or custom symptoms.
 - Cycle-length and bleeding-duration charts with average, shortest, and longest recorded values. Incomplete cycles remain unknown.
 - Flow strips inside each cycle, distinguishing bleeding, spotting, explicitly recorded no flow, and unlogged days. Clearing a flow log preserves other daily details.
-- A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute.
+- A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute. Android 8+ uses background native passphrase key calculation; browsers use Web Crypto. Existing passphrases and backup format are preserved.
 - Encrypted backup/restore and readable CSV export.
 - Daily entry deletion with session-only Undo, and confirmed deletion of the whole local journal.
 - Native screen capture prevention and app-switcher protection, enabled before opening the journal. Browsers cannot prevent screenshots.
@@ -53,7 +55,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication schedules, notifications, additional structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. Preview 0.5.0 needs device validation. Symptoms, visibility, and biometrics in 0.4.0 have an owner-reported functional pass; keep them in regression testing. See [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Medication schedules, notifications, additional structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. Preview 0.5.1 needs a creation/unlock retest on Flip5 and regression on Pixel 7. Symptoms, visibility, and biometrics in 0.4.0 have an owner-reported functional pass; keep them in regression testing. See [the development plan](docs/development-plan.md).
 
 ## Run locally
 

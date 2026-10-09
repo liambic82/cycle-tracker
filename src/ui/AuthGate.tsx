@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import {
   ArrowRight,
@@ -17,6 +17,7 @@ import { parseEnvelope } from '../domain/vault';
 interface Props {
   exists: boolean;
   busy: boolean;
+  authProgress: string;
   error: string;
   start: (passphrase: string, create: boolean) => Promise<void>;
   explore: () => void;
@@ -29,6 +30,7 @@ interface Props {
 export function AuthGate({
   exists,
   busy,
+  authProgress,
   error,
   start,
   explore,
@@ -43,6 +45,14 @@ export function AuthGate({
   const [message, setMessage] = useState('');
   const [backup, setBackup] = useState<string | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    setElapsed(0);
+    if (!busy) return;
+    const started = Date.now();
+    const timer = setInterval(() => setElapsed(Math.floor((Date.now() - started) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, [busy]);
   const submit = async () => {
     setMessage('');
     if (busy) return;
@@ -267,6 +277,16 @@ export function AuthGate({
                 Keep your passphrase somewhere safe. There is no password reset, and a backup needs
                 this same passphrase.
               </Text>
+            )}
+            {busy && (
+              <View style={{ gap: 5 }}>
+                <Text accessibilityLiveRegion="polite" style={common.small}>
+                  {authProgress || 'Working…'}
+                </Text>
+                {elapsed >= 10 && (
+                  <Text style={common.small}>Still working · {elapsed} seconds</Text>
+                )}
+              </View>
             )}
             {backup ? (
               <Button

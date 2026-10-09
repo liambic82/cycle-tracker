@@ -70,7 +70,7 @@ try {
     foreach ($taskFile in @('App.tsx', 'index.ts', 'app.json', 'app.config.ts', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.json')) {
         Copy-Item -LiteralPath (Join-Path $taskRoot $taskFile) -Destination (Join-Path $taskBuildRoot $taskFile) -Force
     }
-    foreach ($taskFolder in @('src', 'public', 'scripts', 'assets', 'plugins')) {
+    foreach ($taskFolder in @('src', 'public', 'scripts', 'assets', 'plugins', 'modules')) {
         $taskTarget = [IO.Path]::GetFullPath((Join-Path $taskBuildRoot $taskFolder))
         if (!$taskTarget.StartsWith($taskBuildRoot + '\', [StringComparison]::OrdinalIgnoreCase)) { throw 'Unsafe build cache target.' }
         if (Test-Path -LiteralPath $taskTarget) { Remove-Item -LiteralPath $taskTarget -Recurse -Force }
