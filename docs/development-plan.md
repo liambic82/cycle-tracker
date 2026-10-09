@@ -24,7 +24,7 @@ Preview 0.2.0 added entry deletion with session-only Undo, confirmed deletion of
 
 ## Milestone 3: visual history and daily detail
 
-The first visual-history portion is implemented in preview 0.5.0. Product logging and clot/flooding observations are implemented in 0.6.0. Sexual-health records are the next daily-detail slice; outstanding native checks remain in the device guide.
+The first visual-history portion is implemented in preview 0.5.0. Product logging and clot/flooding observations are implemented in 0.6.0. Optional sexual-health records and a visible flooding explanation are implemented in 0.7.0. Outstanding native checks remain in the device guide. The next development slice is medication/supplement definitions, user-entered schedules, and dose logging; notification delivery follows that foundation.
 
 The owner reported a creation spinner lasting over a minute on Galaxy Z Flip5 with 0.5.0. Native Android key calculation and setup progress/deadline handling are implemented in 0.5.1; the device retest remains pending. The owner subsequently approved the 0.5.3 layout and explicitly requested continuing development. Continue the planned work while retaining [the focused Flip5 checklist](android-testing.md#051-passphrase-fix-checks); approval to proceed is not a device-validation result.
 
@@ -36,7 +36,8 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Implemented in 0.5.0: cycle-length and bleeding-duration charts with average, shortest, and longest values. Incomplete records remain unknown and are excluded from statistics.
 - Implemented in 0.5.0: chronological flow strips within cycle-history rows, with separate treatment for bleeding, spotting, explicitly recorded no flow, and unlogged days. Older entries without explicit flow information remain unknown.
 - Implemented in 0.6.0: optional product records with type/detail, count, use/change/emptying, optional local time and observed cup/disc amount, plus independent Yes/No/Not logged clot/flooding observations. Included in entry summaries, encrypted backups, CSV, and entry deletion/Undo. Journal version 2 safely migrates earlier journals; older apps reject the new content version. Follow [the 0.6.0 checklist](android-testing.md#060-product-records-and-bleeding-observations).
-- Add optional sexual-activity, intensity, orgasm, and libido fields with independent report inclusion controls.
+- Implemented in 0.7.0: independent optional sexual-activity, intensity, orgasm, and libido fields, plus one switch per field in readable CSV exports, all off for each new export. Excluded-only dates are omitted; free-text notes and symptom labels still export. Full encrypted backups preserve everything. Journal version 3 migrates versions 1/2 and requires 0.7.0+ to restore new backups. PDF-specific report controls remain part of milestone 4. Follow [the 0.7.0 checklist](android-testing.md#070-flooding-explanation-and-sexual-health-records).
+- Implemented in 0.7.0: the owner-approved plain-language flooding definition, shown beside its choices. The instruction to add it and move forward authorizes this milestone; it does not establish another hardware test pass.
 - Keep recorded data separate from prediction overlays, which require the later prediction work.
 
 ## Milestone 4: medication and doctor records

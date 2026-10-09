@@ -3,6 +3,11 @@ import { Platform, Switch, Text, TextInput, View } from 'react-native';
 import { Download, FileSpreadsheet, LockKeyhole, ShieldCheck, Trash2 } from 'lucide-react-native';
 import app from '../../app.json';
 import { toCSV, type Journal } from '../domain/journal';
+import {
+  emptySexualHealthExport,
+  SEXUAL_HEALTH_FIELDS,
+  SEXUAL_HEALTH_LABELS,
+} from '../domain/sexualHealth';
 import { exportText } from '../data/files';
 import { allowPreviewScreenshots } from '../data/buildSettings';
 import { Button } from './components';
@@ -33,6 +38,7 @@ export function DataSettings({
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
   const [csvConfirm, setCSVConfirm] = useState(false);
+  const [sexualExport, setSexualExport] = useState(emptySexualHealthExport);
   const [busy, setBusy] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [confirmation, setConfirmation] = useState('');
@@ -55,7 +61,7 @@ export function DataSettings({
     setError(false);
     try {
       await exportText(
-        csv ? toCSV(journal) : backup(),
+        csv ? toCSV(journal, sexualExport) : backup(),
         csv ? 'cycle-tracker-journal.csv' : 'cycle-tracker-backup.cyclevault',
         csv ? 'text/csv' : 'application/octet-stream',
       );
@@ -112,8 +118,9 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          Backups made in 0.6.0 or later need an app version that supports product records. Update
-          the receiving app before restoring. Earlier backups still open here.
+          New backups need preview 0.7.0 or later. Update the receiving app before restoring.
+          Earlier backups still open here. Encrypted backups include all sexual-health fields,
+          regardless of your CSV choices.
         </Text>
         <Button
           label="Download encrypted backup"
@@ -141,20 +148,51 @@ export function DataSettings({
         </Text>
         {csvConfirm ? (
           <View style={{ gap: 10 }}>
+            <Text style={common.label}>Optional sexual-health columns</Text>
+            <Text style={common.small}>
+              Choose for this export only. All four start off each time.
+            </Text>
+            {SEXUAL_HEALTH_FIELDS.map((field) => (
+              <View key={field} style={[common.between, { minHeight: 48 }]}>
+                <Text style={[common.label, { flex: 1 }]}>{SEXUAL_HEALTH_LABELS[field]}</Text>
+                <Switch
+                  accessibilityLabel={`Include ${SEXUAL_HEALTH_LABELS[field].toLowerCase()} in CSV`}
+                  value={sexualExport[field]}
+                  disabled={busy}
+                  onValueChange={(include) =>
+                    setSexualExport((current) => ({ ...current, [field]: include }))
+                  }
+                  trackColor={{ false: '#D9D2D5', true: colors.plum }}
+                  thumbColor="#fff"
+                />
+              </View>
+            ))}
+            <Text style={common.small}>
+              Excluded columns and days with only excluded details are omitted. Notes and symptoms
+              are still included, even if you wrote about sexual health there.
+            </Text>
             <Button
               label="Export readable CSV"
               icon={FileSpreadsheet}
               onPress={() => download(true)}
               busy={busy}
             />
-            <Button secondary label="Cancel export" onPress={() => setCSVConfirm(false)} />
+            <Button
+              secondary
+              label="Cancel export"
+              disabled={busy}
+              onPress={() => setCSVConfirm(false)}
+            />
           </View>
         ) : (
           <Button
             secondary
             label="Export CSV"
             icon={FileSpreadsheet}
-            onPress={() => setCSVConfirm(true)}
+            onPress={() => {
+              setSexualExport(emptySexualHealthExport());
+              setCSVConfirm(true);
+            }}
           />
         )}
       </View>

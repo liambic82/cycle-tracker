@@ -75,6 +75,12 @@ export function FlowDetails({
           return (
             <View key={field} style={{ gap: 10 }}>
               <Text style={common.label}>{label} noticed?</Text>
+              {field === 'flooding' && (
+                <Text style={common.small}>
+                  A sudden gush of heavy menstrual bleeding, which may overwhelm your period
+                  products and leak onto clothes or bedding.
+                </Text>
+              )}
               <View style={common.wrap}>
                 {([null, false, true] as const).map((value) => {
                   const choice = value === null ? 'Not logged' : value ? 'Yes' : 'No';

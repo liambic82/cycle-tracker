@@ -1,5 +1,15 @@
 import { daysBetween, validDay, type Day } from './dates.ts';
 import {
+  emptySexualHealth,
+  hasSexualHealth,
+  parseSexualHealth,
+  sexualHealthLabel,
+  SEXUAL_HEALTH_FIELDS,
+  SEXUAL_HEALTH_LABELS,
+  type SexualHealth,
+  type SexualHealthExport,
+} from './sexualHealth.ts';
+import {
   describeProduct,
   orderedProducts,
   parseProductRecords,
@@ -26,10 +36,11 @@ export interface Entry {
   productRecords: ProductRecord[];
   clots: boolean | null;
   flooding: boolean | null;
+  sexualHealth: SexualHealth;
 }
 
 export interface Journal {
-  version: 2;
+  version: 3;
   entries: Record<Day, Entry>;
   customSymptoms: string[];
   selectedDate: Day;
@@ -48,12 +59,13 @@ export function emptyEntry(): Entry {
     productRecords: [],
     clots: null,
     flooding: null,
+    sexualHealth: emptySexualHealth(),
   };
 }
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 2,
+    version: 3,
     entries: {},
     customSymptoms: [],
     selectedDate: today,
@@ -62,6 +74,10 @@ export function emptyJournal(today: Day): Journal {
 }
 
 export function hasEntry(entry: Entry | undefined): boolean {
+  return !!entry && (hasGeneralEntry(entry) || hasSexualHealth(entry.sexualHealth));
+}
+
+function hasGeneralEntry(entry: Entry): boolean {
   return (
     !!entry &&
     (entry.flowRecorded ||
@@ -80,6 +96,7 @@ export function updateEntry(journal: Journal, date: Day, patch: Partial<Entry>):
   const entry = { ...(journal.entries[date] ?? emptyEntry()), ...patch };
   if (patch.productRecords !== undefined)
     entry.productRecords = parseProductRecords(patch.productRecords);
+  if (patch.sexualHealth !== undefined) entry.sexualHealth = parseSexualHealth(patch.sexualHealth);
   if (![null, true, false].includes(entry.clots) || ![null, true, false].includes(entry.flooding))
     throw new Error('Choose Yes, No, or Not logged for bleeding observations.');
   if (patch.flow !== undefined) entry.flowRecorded = patch.flowRecorded ?? true;
@@ -160,7 +177,9 @@ function symptomList(value: unknown): value is string[] {
 
 export function parseJournal(value: unknown): Journal {
   assert(
-    record(value) && (value.version === 1 || value.version === 2) && validDay(value.selectedDate),
+    record(value) &&
+      (value.version === 1 || value.version === 2 || value.version === 3) &&
+      validDay(value.selectedDate),
   );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
   assert(
@@ -218,10 +237,12 @@ export function parseJournal(value: unknown): Journal {
       productRecords,
       clots,
       flooding,
+      sexualHealth:
+        value.version === 3 ? parseSexualHealth(entry.sexualHealth) : emptySexualHealth(),
     };
   }
   return {
-    version: 2,
+    version: 3,
     entries,
     customSymptoms: [...value.customSymptoms],
     selectedDate: value.selectedDate,
@@ -234,7 +255,9 @@ export function parseJournal(value: unknown): Journal {
   };
 }
 
-export function toCSV(journal: Journal): string {
+export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {}): string {
+  // Explicit opt-in only. Omitted columns and dates with only excluded data reveal no structured details.
+  const sexualFields = SEXUAL_HEALTH_FIELDS.filter((field) => include[field] === true);
   // Prefix formula-like values before quoting to prevent spreadsheet formula execution.
   const cell = (value: string) =>
     `"${(/^[\s]*[=+@\-\t\r]/.test(value) ? `'${value}` : value).replaceAll('"', '""')}"`;
@@ -251,10 +274,13 @@ export function toCSV(journal: Journal): string {
       'Clots noticed',
       'Flooding noticed',
       'Product records',
+      ...sexualFields.map((field) => SEXUAL_HEALTH_LABELS[field]),
     ],
   ];
   for (const day of Object.keys(journal.entries).sort()) {
     const e = journal.entries[day]!;
+    if (!hasGeneralEntry(e) && !sexualFields.some((field) => e.sexualHealth[field] !== null))
+      continue;
     rows.push([
       day,
       e.flow,
@@ -267,6 +293,7 @@ export function toCSV(journal: Journal): string {
       e.clots === null ? '' : e.clots ? 'Yes' : 'No',
       e.flooding === null ? '' : e.flooding ? 'Yes' : 'No',
       orderedProducts(e.productRecords).map(describeProduct).join('\n'),
+      ...sexualFields.map((field) => sexualHealthLabel(e.sexualHealth[field])),
     ]);
   }
   return rows.map((row) => row.map(cell).join(',')).join('\r\n');

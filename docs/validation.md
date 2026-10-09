@@ -1,5 +1,31 @@
 # Validation record
 
+## 0.7.0 flooding explanation and sexual-health records — October 9, 2026
+
+The owner requested adding the approved flooding definition and moving to the next development step. This preview adds the visible definition, optional independent sexual-health fields, and individual CSV inclusion choices. It does not record a new device test pass. Medication/supplement definitions, schedules, and dose logging are next; PDF report configuration remains later work.
+
+- `pnpm check`: strict TypeScript and all **55 tests** passed. Seven new tests cover version 1/2 migration, malformed and future-version rejection, explicit No/None versus unlogged values, independent clearing and lack of flow/cycle inference, immutable deletion/Undo, encrypted full-data round trips, all 16 CSV inclusion combinations, excluded-only date omission, formula-prefix neutralization, and the intentional inclusion of free-text notes/symptoms. Existing biometric, key-derivation, persistence, product, symptom, and history tests still pass.
+- `pnpm build:all`: web, Android Hermes, and iOS Hermes production exports passed. The iOS result is a bundle check only. The standalone Android ARM64 release APK also built successfully.
+- Browser QA used isolated `127.0.0.1:4176` and only fictional records. The existing version 2 QA vault opened with its original passphrase, note, two product records, Clots Yes, and Flooding No intact. All four new fields initially showed Not logged. At 393 × 852, inspected the visible flooding definition and optional editor in Month view's sheet. Recorded Yes/Gentle/No/High; clearing only intensity retained the other three. The daily summary displayed only that details were logged.
+- Added a separate libido-only date with explicit None. Inspected the default export screen, enabled only Libido, canceled, and reopened: all four switches reset off. Two actual downloaded CSVs were inspected. The default retained the original eleven columns and omitted the libido-only date. The Libido-only export appended just that column, included the extra date with None, retained High on the other date, and left unlogged libido blank. Original note and product records were unchanged. The browser download-event listener timed out, but the downloads completed; the resulting local files were read directly to verify their contents.
+- Locked, reloaded, and unlocked the fictional journal. Activity Yes, intensity unlogged, orgasm No, libido High, the separate None-only date, old notes/products, and selected date persisted. Inspected phone Day view and wrapped choices, plus the desktop side panel at 1280 × 720. No captured browser console errors. Locked the fictional vault, closed the QA tab, reset the viewport, and stopped the isolated server afterward. User storage on port 4173 was not used.
+- Encrypted migration/round-trip fidelity and complete Undo were exercised in domain/storage tests. Native file sharing and backup transfer, TalkBack, large text, keyboard, folding, rotation, and biometric regression remain [0.7.0 device checks](android-testing.md#070-flooding-explanation-and-sexual-health-records). The earlier Flip5 setup retest remains pending.
+- Content version 3 accepts versions 1/2 with unlogged defaults. New backups require 0.7.0+; envelope version 1, KDF, passphrase, and biometric key are unchanged. The approved flooding copy is grounded in the NHS sources linked in [architecture notes](architecture.md#flooding-explanation-and-sexual-health-records-070), not an independent clinical review.
+
+APK signature verification and 16 KB zip alignment passed. Package identity is `com.liambic.cycletracker.preview`, version **0.7.0**, version code **10**, minimum API 24, target API 36, `USE_BIOMETRIC`, `allowBackup: false`, and no debuggable flag. Embedded configuration confirms testing screenshots remain enabled. The bundled Hermes program is 3,149,508 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.7.0-arm64-v8a.apk` (29,953,938 bytes; excluded from Git).
+- APK SHA-256: `238e7f0a0914ecbfcc0278a655e464ccff20667d2531d92b14cb957e0d09c757`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Flooding definition above its choices](screenshots/flooding-definition-mobile.jpg)
+
+![Optional sexual-health fields with fictional observations](screenshots/sexual-health-mobile.jpg)
+
+![Separate CSV inclusion choices](screenshots/sexual-health-export-mobile.jpg)
+
+![Sexual-health editor in the desktop side panel](screenshots/sexual-health-desktop.jpg)
+
 ## 0.6.0 product records and bleeding observations — October 9, 2026
 
 The owner approved the 0.5.3 layout and explicitly requested continuing. That is authorization to proceed, not another device-specific test report. This slice adds optional product records and daily clot/flooding observations. Sexual-health records and clinical interpretation remain separate later work.

@@ -65,7 +65,7 @@ test('version 1 journals migrate without inventing product or bleeding observati
   };
   const original = JSON.stringify(legacy);
   const migrated = parseJournal(legacy);
-  assert.equal(migrated.version, 2);
+  assert.equal(migrated.version, 3);
   assert.equal(migrated.entries[date]?.flowRecorded, false);
   assert.deepEqual(migrated.entries[date]?.productRecords, []);
   assert.equal(migrated.entries[date]?.clots, null);
@@ -75,7 +75,7 @@ test('version 1 journals migrate without inventing product or bleeding observati
   assert.equal(migrated.preferences.showPerimenopause, true);
   assert.equal(JSON.stringify(legacy), original);
   assert.throws(() => parseJournal({ ...legacy, version: 2 }));
-  assert.throws(() => parseJournal({ ...migrated, version: 3 }));
+  assert.throws(() => parseJournal({ ...migrated, version: 4 }));
   for (const bad of [undefined, '', 'No', 0, [], {}]) {
     const invalid = journalWith([]);
     invalid.entries[date]!.clots = bad;
@@ -227,7 +227,7 @@ test('new records and legacy journals open through the same encrypted envelope a
   } = journal.entries[date]!;
   const legacy = { ...journal, version: 1, entries: { [date]: legacyEntry } };
   const migrated = openVaultWithKey(seal(legacy as unknown as Journal, vault, randomBytes), vault);
-  assert.equal(migrated.version, 2);
+  assert.equal(migrated.version, 3);
   assert.deepEqual(migrated.entries[date], {
     ...legacyEntry,
     productRecords: [],

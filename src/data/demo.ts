@@ -41,6 +41,11 @@ export function demoJournal(today: Day): Journal {
     symptoms: ['Sleep disruption'],
     note: 'Woke up early. A gentle walk felt good.',
   };
-  journal.entries[today] = { ...emptyEntry(), symptoms: ['Bloating'], note: '' };
+  journal.entries[today] = {
+    ...emptyEntry(),
+    symptoms: ['Bloating'],
+    note: '',
+    sexualHealth: { activity: null, intensity: null, orgasm: null, libido: 'moderate' },
+  };
   return journal;
 }

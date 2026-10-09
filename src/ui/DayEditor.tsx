@@ -21,6 +21,8 @@ import {
 } from '../domain/symptoms';
 import { SymptomBrowser } from './SymptomBrowser';
 import { FlowDetails } from './FlowDetails';
+import { SexualHealthEditor } from './SexualHealthEditor';
+import { hasSexualHealth } from '../domain/sexualHealth';
 
 export function DayEditor({
   journal,
@@ -51,6 +53,7 @@ export function DayEditor({
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
   const [flowDetailsOpen, setFlowDetailsOpen] = useState(false);
+  const [sexualHealthOpen, setSexualHealthOpen] = useState(false);
   const closeActions = () => {
     setActionsOpen(false);
     setDeleteConfirm(false);
@@ -69,6 +72,19 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (sexualHealthOpen && date <= today)
+    return (
+      <SexualHealthEditor
+        date={date}
+        value={entry.sexualHealth}
+        change={(sexualHealth) => onPatch({ sexualHealth })}
+        saveStatus={saveStatus}
+        done={() => {
+          setSexualHealthOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (flowDetailsOpen && date <= today)
     return (
       <FlowDetails
@@ -147,7 +163,7 @@ export function DayEditor({
               <Text style={common.label}>Delete this day’s entry?</Text>
               <Text style={common.body}>
                 This removes all daily details, including flow, product records, bleeding
-                observations, symptoms, notes, and period markers for{' '}
+                observations, sexual-health details, symptoms, notes, and period markers for{' '}
                 {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
                 the last deletion until you lock, delete another entry, or log this day again.
               </Text>
@@ -362,6 +378,20 @@ export function DayEditor({
             )}
           </View>
           <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View>
+            <Button
+              secondary
+              label="Sexual health · optional"
+              onPress={() => {
+                closeActions();
+                setSexualHealthOpen(true);
+                onViewChange();
+              }}
+            />
+            {hasSexualHealth(entry.sexualHealth) && (
+              <Text style={[common.small, { marginTop: 9 }]}>Details logged for this day.</Text>
+            )}
+          </View>
           <View>
             <SectionLabel icon={NotebookPen}>A note for yourself</SectionLabel>
             <TextInput
