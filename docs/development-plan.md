@@ -75,6 +75,8 @@ Explicitly reaffirmed by the owner after medication logging, following screensho
 
 **Owner approval required before implementation:** present concrete visual proposals and the proposed customization options first, including relevant phone and desktop examples. Wait for the owner's approval of the proposed scope before changing the app. General permission to continue development does not approve an unseen design. Positive feedback on a presented proposal approves that proposal's scope.
 
+**Proposals ready for review:** [Appearance proposal — October 9, 2026](design/appearance-proposal.md) presents Quiet familiar, Botanical journal, and Clear and compact, with phone/desktop examples and the proposed palette, light/dark, and device-local background options. Awaiting the owner's choice and scope approval; app implementation has not started.
+
 - Beautification pass across calendar, daily entry, history, medication, and settings screens: consistent spacing, typography, icons, and attractive, space-efficient decoration with daily information prominent.
 - App color theme customization, including a curated palette, light/dark appearance, and accessible text/control contrast.
 - Optional background images, including a personal image selected on the device, with a simple reset to the default background. Keep images local; define backup/transfer handling before implementation.

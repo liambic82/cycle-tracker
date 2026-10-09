@@ -1,0 +1,1060 @@
+<div id="cycle-design-review" aria-label="Cycle appearance proposals">
+  <div class="viz-carousel" aria-label="Cycle design directions">
+    <section data-variant="Quiet familiar" aria-label="Quiet familiar proposal">
+      <div class="ct-stage" data-direction="familiar" aria-label="Quiet familiar app preview">
+        <div class="ct-app"></div>
+      </div>
+    </section>
+    <section data-variant="Botanical journal" aria-label="Botanical journal proposal" hidden>
+      <div class="ct-stage" data-direction="botanical" aria-label="Botanical journal app preview">
+        <div class="ct-app"></div>
+      </div>
+    </section>
+    <section data-variant="Clear and compact" aria-label="Clear and compact proposal" hidden>
+      <div class="ct-stage" data-direction="compact" aria-label="Clear and compact app preview">
+        <div class="ct-app"></div>
+      </div>
+    </section>
+  </div>
+</div>
+<style>
+  #cycle-design-review .ct-stage {
+    --ct-bg: light-dark(#f8f6f2, #1d1b20);
+    --ct-paper: light-dark(#ffffff, #28252c);
+    --ct-ink: light-dark(#302b32, #f3edf2);
+    --ct-muted: light-dark(#665e68, #c1b7c4);
+    --ct-line: light-dark(#ddd5db, #554b59);
+    --ct-accent: light-dark(#684256, #e6b3cf);
+    --ct-on: light-dark(#ffffff, #30232c);
+    --ct-soft: light-dark(#f3e8ef, #42303d);
+    --ct-flow: light-dark(#f3dce2, #5a303e);
+    --ct-flow-ink: light-dark(#783d51, #f5ccda);
+    --ct-none: light-dark(#e6eee6, #293e32);
+    --ct-none-ink: light-dark(#34533c, #c2e2c9);
+    --ct-spot: light-dark(#f1e6ce, #493c23);
+    --ct-spot-ink: light-dark(#665020, #edd5a0);
+    --ct-danger: light-dark(#983b48, #ffb2bf);
+    --ct-radius: 19px;
+    --ct-heading: Georgia, 'Times New Roman', serif;
+    --ct-image: 0.3;
+    min-height: 1000px;
+    padding: 14px 0 24px;
+    font:
+      14px/1.5 -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      sans-serif;
+    color: var(--ct-ink);
+    container-type: inline-size;
+  }
+  #cycle-design-review .ct-stage[data-theme='sage'] {
+    --ct-bg: light-dark(#f3f5ee, #191f1b);
+    --ct-paper: light-dark(#fffffb, #242d27);
+    --ct-ink: light-dark(#28382e, #edf3e9);
+    --ct-muted: light-dark(#536356, #b8c7bb);
+    --ct-line: light-dark(#d2dbcf, #495b4c);
+    --ct-accent: light-dark(#365d45, #afd4b6);
+    --ct-on: light-dark(#ffffff, #1b3022);
+    --ct-soft: light-dark(#e3eddd, #304638);
+  }
+  #cycle-design-review .ct-stage[data-theme='ocean'] {
+    --ct-bg: light-dark(#f1f5f7, #182027);
+    --ct-paper: light-dark(#ffffff, #222e38);
+    --ct-ink: light-dark(#273841, #eaf1f7);
+    --ct-muted: light-dark(#506472, #b8c9d6);
+    --ct-line: light-dark(#cbd8df, #465d6c);
+    --ct-accent: light-dark(#285f78, #a2cde3);
+    --ct-on: light-dark(#ffffff, #163344);
+    --ct-soft: light-dark(#e1eef4, #2c4555);
+  }
+  #cycle-design-review .ct-stage[data-direction='compact'] {
+    --ct-radius: 11px;
+    --ct-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  #cycle-design-review .ct-stage * {
+    box-sizing: border-box;
+  }
+  #cycle-design-review .ct-app {
+    width: 100%;
+    background: var(--ct-bg);
+    border: 1px solid var(--ct-line);
+    border-radius: 20px;
+    overflow: clip;
+    position: relative;
+    isolation: isolate;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-app {
+    max-width: 393px;
+    margin: auto;
+  }
+  #cycle-design-review .ct-app::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: var(--ct-image);
+  }
+  #cycle-design-review .ct-stage[data-background='wash'] .ct-app::before {
+    background:
+      radial-gradient(ellipse at 90% 15%, var(--ct-accent), transparent 55%),
+      radial-gradient(ellipse at 10% 70%, var(--ct-soft), transparent 60%);
+  }
+  #cycle-design-review .ct-stage[data-background='image'] .ct-app::before {
+    background:
+      radial-gradient(ellipse 110% 45% at 60% 115%, var(--ct-accent) 68%, transparent 69%),
+      radial-gradient(ellipse 130% 40% at -15% 72%, var(--ct-accent) 68%, transparent 69%),
+      linear-gradient(170deg, var(--ct-soft), var(--ct-bg));
+  }
+  #cycle-design-review .ct-proposal-bar {
+    background: var(--ct-paper);
+    color: var(--ct-muted);
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--ct-line);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #cycle-design-review .ct-shell {
+    display: grid;
+    grid-template-columns: 168px minmax(0, 1fr);
+  }
+  #cycle-design-review .ct-sidebar {
+    background: var(--ct-paper);
+    border-right: 1px solid var(--ct-line);
+    padding: 24px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+  #cycle-design-review .ct-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font:
+      26px/1.3 Georgia,
+      serif;
+    color: var(--ct-ink);
+  }
+  #cycle-design-review .ct-brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 12px;
+    background: var(--ct-accent);
+    color: var(--ct-on);
+    flex-shrink: 0;
+  }
+  #cycle-design-review .ct-sidebar nav {
+    display: grid;
+    gap: 5px;
+  }
+  #cycle-design-review .ct-lock {
+    margin-top: auto;
+  }
+  #cycle-design-review .ct-body {
+    min-width: 0;
+  }
+  #cycle-design-review .ct-mobile-header {
+    display: none;
+    background: var(--ct-paper);
+    padding: 13px 17px;
+    border-bottom: 1px solid var(--ct-line);
+    align-items: center;
+    justify-content: space-between;
+  }
+  #cycle-design-review .ct-content {
+    padding: 26px;
+    min-height: 810px;
+  }
+  #cycle-design-review .ct-content > header {
+    background: var(--ct-bg);
+    padding: 14px;
+    border-radius: var(--ct-radius);
+  }
+  #cycle-design-review .ct-content > .ct-summary {
+    background: var(--ct-bg);
+    padding: 13px 14px;
+    border-radius: var(--ct-radius);
+  }
+  #cycle-design-review .ct-content > .ct-footnote {
+    background: var(--ct-bg);
+    padding: 10px;
+    border-radius: 8px;
+  }
+  #cycle-design-review .ct-mobile-nav {
+    display: none;
+    background: var(--ct-paper);
+    border-top: 1px solid var(--ct-line);
+  }
+  #cycle-design-review .ct-kicker {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ct-muted);
+    margin: 0 0 5px;
+  }
+  #cycle-design-review .ct-title {
+    font: 32px/1.2 var(--ct-heading);
+    margin: 0 0 6px;
+    font-weight: 400;
+  }
+  #cycle-design-review .ct-sub {
+    margin: 0;
+    color: var(--ct-muted);
+    font-size: 13px;
+  }
+  #cycle-design-review .ct-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  #cycle-design-review .ct-stack {
+    display: grid;
+    gap: 16px;
+  }
+  #cycle-design-review .ct-gap {
+    margin-top: 20px;
+  }
+  #cycle-design-review .ct-panel {
+    border: 1px solid var(--ct-line);
+    border-radius: var(--ct-radius);
+    background: var(--ct-paper);
+    padding: 20px;
+    min-width: 0;
+  }
+  #cycle-design-review .ct-panel h3,
+  #cycle-design-review .ct-panel h2 {
+    font: 22px/1.3 var(--ct-heading);
+    margin: 0 0 8px;
+  }
+  #cycle-design-review .ct-panel p {
+    margin: 0;
+  }
+  #cycle-design-review .ct-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 20px;
+    padding: 13px 0 16px;
+    border-bottom: 1px solid var(--ct-line);
+    color: var(--ct-muted);
+    font-size: 13px;
+  }
+  #cycle-design-review .ct-summary b {
+    color: var(--ct-ink);
+    font-size: 18px;
+    font-weight: 500;
+  }
+  #cycle-design-review .ct-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 250px;
+    align-items: start;
+    gap: 17px;
+    margin-top: 18px;
+  }
+  #cycle-design-review .ct-month-title {
+    font: 23px/1.3 var(--ct-heading);
+  }
+  #cycle-design-review .ct-weekdays,
+  #cycle-design-review .ct-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+  }
+  #cycle-design-review .ct-weekdays {
+    margin: 17px 0 6px;
+    color: var(--ct-muted);
+    text-align: center;
+    font-size: 12px;
+  }
+  #cycle-design-review .ct-calendar button {
+    padding: 4px 0;
+    min-height: 49px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--ct-ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  #cycle-design-review .ct-calendar button small {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ct-muted);
+  }
+  #cycle-design-review .ct-calendar .ct-bleed {
+    background: var(--ct-flow);
+    color: var(--ct-flow-ink);
+  }
+  #cycle-design-review .ct-calendar .ct-no-flow {
+    background: var(--ct-none);
+    color: var(--ct-none-ink);
+  }
+  #cycle-design-review .ct-calendar .ct-spotting {
+    background: var(--ct-spot);
+    color: var(--ct-spot-ink);
+  }
+  #cycle-design-review .ct-calendar .ct-selected {
+    background: var(--ct-accent);
+    color: var(--ct-on);
+    border-color: var(--ct-accent);
+  }
+  #cycle-design-review .ct-calendar .ct-selected small {
+    color: var(--ct-on);
+  }
+  #cycle-design-review .ct-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    font-size: 11px;
+    color: var(--ct-muted);
+    margin-top: 14px;
+  }
+  #cycle-design-review .ct-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+    background: var(--ct-flow-ink);
+  }
+  #cycle-design-review .ct-dot.none {
+    background: var(--ct-none-ink);
+  }
+  #cycle-design-review .ct-dot.spot {
+    background: var(--ct-spot-ink);
+  }
+  #cycle-design-review .ct-dot.unknown {
+    background: transparent;
+    border: 1px solid var(--ct-muted);
+  }
+  #cycle-design-review .ct-button,
+  #cycle-design-review .ct-chip,
+  #cycle-design-review .ct-nav-button {
+    font: inherit;
+    border: 1px solid var(--ct-line);
+    color: var(--ct-ink);
+    background: var(--ct-paper);
+    border-radius: 11px;
+    min-height: 44px;
+    padding: 10px 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-align: center;
+  }
+  #cycle-design-review .ct-button.ct-primary {
+    background: var(--ct-accent);
+    color: var(--ct-on);
+    border-color: var(--ct-accent);
+  }
+  #cycle-design-review .ct-wide {
+    width: 100%;
+  }
+  #cycle-design-review .ct-button.ct-quiet {
+    border-color: transparent;
+    background: transparent;
+    color: var(--ct-accent);
+  }
+  #cycle-design-review .ct-nav-button {
+    justify-content: flex-start;
+    border-color: transparent;
+    background: transparent;
+    font-size: 12px;
+    width: 100%;
+    padding: 11px 9px;
+  }
+  #cycle-design-review .ct-nav-button[aria-pressed='true'] {
+    color: var(--ct-accent);
+    background: var(--ct-soft);
+  }
+  #cycle-design-review .ct-chip[aria-pressed='true'] {
+    border-color: var(--ct-accent);
+    background: var(--ct-soft);
+    color: var(--ct-accent);
+  }
+  #cycle-design-review .ct-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  #cycle-design-review .ct-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  #cycle-design-review .ct-small {
+    font-size: 12px;
+    color: var(--ct-muted);
+  }
+  #cycle-design-review .ct-divider {
+    border: 0;
+    border-top: 1px solid var(--ct-line);
+    margin: 17px 0;
+  }
+  #cycle-design-review .ct-detail-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--ct-line);
+    font-size: 13px;
+  }
+  #cycle-design-review .ct-detail-line span {
+    color: var(--ct-muted);
+  }
+  #cycle-design-review .ct-detail-line:last-of-type {
+    border: 0;
+  }
+  #cycle-design-review .ct-footnote {
+    font-size: 12px;
+    color: var(--ct-muted);
+    margin-top: 18px;
+  }
+  #cycle-design-review .ct-link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 15px;
+  }
+  #cycle-design-review .ct-link-row .ct-button {
+    flex: 1;
+    font-size: 12px;
+  }
+  #cycle-design-review .ct-journal-hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    background: var(--ct-paper);
+    border-radius: var(--ct-radius);
+    padding: 21px;
+    border: 1px solid var(--ct-line);
+    gap: 16px;
+    margin: 19px 0;
+  }
+  #cycle-design-review .ct-journal-hero strong {
+    font:
+      48px/1.1 Georgia,
+      serif;
+    color: var(--ct-accent);
+    font-weight: 400;
+  }
+  #cycle-design-review .ct-leaf {
+    width: 52px;
+    height: 76px;
+    border-radius: 90% 10% 85% 15%;
+    background: var(--ct-soft);
+    transform: rotate(-25deg);
+    position: relative;
+  }
+  #cycle-design-review .ct-leaf::after {
+    content: '';
+    position: absolute;
+    left: 26px;
+    top: 12px;
+    width: 1px;
+    height: 58px;
+    background: var(--ct-accent);
+    transform: rotate(12deg);
+    opacity: 0.45;
+  }
+  #cycle-design-review .ct-stage[data-direction='botanical'] .ct-workspace {
+    grid-template-columns: minmax(0, 1fr) 260px;
+  }
+  #cycle-design-review .ct-stage[data-direction='botanical'] .ct-selected-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  #cycle-design-review .ct-stage[data-direction='botanical'] .ct-calendar-panel {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 14px;
+  }
+  #cycle-design-review .ct-stage[data-direction='compact'] .ct-content {
+    padding: 22px;
+  }
+  #cycle-design-review .ct-stage[data-direction='compact'] .ct-title {
+    font-size: 26px;
+    font-weight: 500;
+  }
+  #cycle-design-review .ct-stage[data-direction='compact'] .ct-panel {
+    padding: 15px;
+  }
+  #cycle-design-review .ct-stage[data-direction='compact'] .ct-workspace {
+    gap: 12px;
+  }
+  #cycle-design-review .ct-stage[data-direction='compact'] .ct-summary {
+    padding: 9px 0;
+  }
+  #cycle-design-review .ct-settings {
+    max-width: 640px;
+    margin: 20px auto 0;
+  }
+  #cycle-design-review .ct-swatch {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: inline-block;
+    background: var(--swatch);
+  }
+  #cycle-design-review .ct-form-row {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--ct-line);
+  }
+  #cycle-design-review .ct-form-row:first-of-type {
+    padding-top: 0;
+  }
+  #cycle-design-review .ct-form-row:last-of-type {
+    border: 0;
+  }
+  #cycle-design-review input[type='range'] {
+    width: 100%;
+    margin: 0;
+    accent-color: var(--ct-accent);
+    min-height: 30px;
+  }
+  #cycle-design-review .ct-setting-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+  }
+  #cycle-design-review .ct-history-row {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr) 54px;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ct-line);
+    font-size: 13px;
+  }
+  #cycle-design-review .ct-bar-track {
+    height: 10px;
+    background: var(--ct-soft);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  #cycle-design-review .ct-bar {
+    height: 100%;
+    background: var(--ct-accent);
+  }
+  #cycle-design-review .ct-med-row {
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    padding: 17px 0;
+    border-bottom: 1px solid var(--ct-line);
+  }
+  #cycle-design-review .ct-med-row .ct-med-main {
+    flex: 1;
+  }
+  #cycle-design-review .ct-med-time {
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+  }
+  #cycle-design-review .ct-textarea {
+    display: block;
+    resize: vertical;
+    width: 100%;
+    min-height: 94px;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 12px;
+    border: 1px solid var(--ct-line);
+    background: var(--ct-paper);
+    color: var(--ct-ink);
+    border-radius: 11px;
+  }
+  #cycle-design-review .ct-notice {
+    background: var(--ct-paper);
+    color: var(--ct-muted);
+    font-size: 12px;
+    min-height: 40px;
+    padding: 10px 18px;
+    border-top: 1px solid var(--ct-line);
+  }
+  #cycle-design-review .ct-stage [data-lucide],
+  #cycle-design-review .ct-stage svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  #cycle-design-review .ct-mobile-nav .ct-nav-button {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+    padding: 10px 2px;
+    border-radius: 0;
+    min-width: 0;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-shell {
+    display: block;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-sidebar {
+    display: none;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-mobile-header {
+    display: flex;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-content {
+    padding: 20px 15px;
+    min-height: 810px;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-workspace {
+    display: flex;
+    flex-direction: column;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-workspace > * {
+    width: 100%;
+  }
+  #cycle-design-review
+    .ct-stage[data-device='phone'][data-direction='botanical']
+    .ct-selected-panel {
+    order: -1;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-title {
+    font-size: 28px;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-panel {
+    padding: 17px;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-hide-phone {
+    display: none;
+  }
+  #cycle-design-review .ct-stage[data-device='phone'] .ct-content > header [data-page='data'] {
+    display: none;
+  }
+  @container (max-width: 710px) {
+    #cycle-design-review .ct-shell {
+      display: block;
+    }
+    #cycle-design-review .ct-sidebar {
+      display: none;
+    }
+    #cycle-design-review .ct-mobile-header {
+      display: flex;
+    }
+    #cycle-design-review .ct-mobile-nav {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    #cycle-design-review .ct-content,
+    #cycle-design-review .ct-stage[data-direction='compact'] .ct-content {
+      padding: 20px 14px;
+    }
+    #cycle-design-review .ct-workspace,
+    #cycle-design-review .ct-stage[data-direction='botanical'] .ct-workspace {
+      display: flex;
+      flex-direction: column;
+    }
+    #cycle-design-review .ct-workspace > * {
+      width: 100%;
+    }
+    #cycle-design-review .ct-stage[data-direction='botanical'] .ct-selected-panel {
+      order: -1;
+    }
+    #cycle-design-review .ct-title {
+      font-size: 28px;
+    }
+    #cycle-design-review .ct-panel {
+      padding: 16px;
+    }
+    #cycle-design-review .ct-hide-phone {
+      display: none;
+    }
+    #cycle-design-review .ct-content > header [data-page='data'] {
+      display: none;
+    }
+  }
+</style>
+<script>
+  (() => {
+    const root = document.getElementById('cycle-design-review');
+    const directions = ['familiar', 'botanical', 'compact'];
+    const defaults = {
+      familiar: {
+        theme: 'plum',
+        mode: 'system',
+        background: 'plain',
+        strength: 25,
+      },
+      botanical: {
+        theme: 'sage',
+        mode: 'system',
+        background: 'wash',
+        strength: 25,
+      },
+      compact: {
+        theme: 'ocean',
+        mode: 'system',
+        background: 'plain',
+        strength: 25,
+      },
+    };
+    const settings = Object.fromEntries(
+      directions.map((id) => [
+        id,
+        {
+          ...defaults[id],
+          page: 'calendar',
+          selected: 9,
+          flow: 'None',
+          monthOpen: false,
+          notice: 'Design proposal · fictional records · changes stay in this preview.',
+        },
+      ]),
+    );
+    const preview = { device: 'desktop' };
+    let heightFrame;
+    function sizeStages() {
+      cancelAnimationFrame(heightFrame);
+      heightFrame = requestAnimationFrame(() => {
+        const stages = directions.map((id) => root.querySelector(`[data-direction="${id}"]`));
+        const width = root.getBoundingClientRect().width;
+        let height = 0;
+        stages.forEach((stage) => {
+          const measure = stage.cloneNode(true);
+          measure.setAttribute('aria-hidden', 'true');
+          measure.inert = true;
+          Object.assign(measure.style, {
+            position: 'absolute',
+            visibility: 'hidden',
+            pointerEvents: 'none',
+            width: `${width}px`,
+            minHeight: '0',
+            top: '0',
+            left: '0',
+          });
+          root.append(measure);
+          height = Math.max(height, measure.getBoundingClientRect().height);
+          measure.remove();
+        });
+        stages.forEach((stage) => (stage.style.minHeight = `${Math.ceil(height)}px`));
+      });
+    }
+    function restore(saved) {
+      const state = saved?.modelContent;
+      if (!state || state.kind !== 'cycle-appearance-proposals') return;
+      if (['phone', 'desktop'].includes(state.device)) preview.device = state.device;
+      directions.forEach((id) => {
+        const incoming = state.choices?.[id];
+        if (!incoming) return;
+        for (const [key, allowed] of Object.entries({
+          theme: ['plum', 'sage', 'ocean'],
+          mode: ['system', 'light', 'dark'],
+          background: ['plain', 'wash', 'image'],
+        })) {
+          if (allowed.includes(incoming[key])) settings[id][key] = incoming[key];
+        }
+        if (Number.isFinite(incoming.strength))
+          settings[id].strength = Math.max(0, Math.min(60, incoming.strength));
+      });
+    }
+    restore(window.openai?.widgetState);
+    function persist() {
+      const choices = Object.fromEntries(
+        directions.map((id) => [
+          id,
+          Object.fromEntries(
+            ['theme', 'mode', 'background', 'strength'].map((key) => [key, settings[id][key]]),
+          ),
+        ]),
+      );
+      window.openai
+        ?.setWidgetState?.({
+          modelContent: {
+            kind: 'cycle-appearance-proposals',
+            device: preview.device,
+            choices,
+          },
+          privateContent: null,
+        })
+        .catch(() => {});
+    }
+    const icon = (name) => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+    const button = (label, attrs = '', klass = '') =>
+      `<button type="button" class="ct-button cursor-interaction ${klass}" ${attrs}>${label}</button>`;
+    function nav(s) {
+      return [
+        ['calendar', 'calendar-days', 'Calendar'],
+        ['history', 'chart-no-axes-combined', 'Your history'],
+        ['medications', 'pill', 'Medications'],
+        ['data', 'sliders-horizontal', 'Your data'],
+      ]
+        .map(
+          ([id, ic, label]) =>
+            `<button type="button" class="ct-nav-button cursor-interaction" data-page="${id}" aria-pressed="${s.page === id || (s.page === 'day' && id === 'calendar')}">${icon(ic)}<span>${label}</span></button>`,
+        )
+        .join('');
+    }
+    const brand = `<div class="ct-brand"><span class="ct-brand-mark">${icon('flower-2')}</span>Cycle.</div>`;
+    function calendar(s, id) {
+      let cells = '<span></span>'.repeat(4);
+      for (let d = 1; d <= 31; d++) {
+        const kind =
+          d <= 3 ? 'bleed' : d === 4 ? 'spotting' : [5, 6, 7, 8, 9].includes(d) ? 'no-flow' : '';
+        const status =
+          kind === 'bleed'
+            ? 'recorded flow'
+            : kind === 'spotting'
+              ? 'spotting'
+              : kind === 'no-flow'
+                ? 'no flow'
+                : 'not logged';
+        cells += `<button type="button" class="cursor-interaction ${kind ? 'ct-' + kind : ''} ${s.selected === d ? 'ct-selected' : ''}" data-day="${d}" aria-label="October ${d}, ${status}" aria-pressed="${s.selected === d}"><small>${d <= 9 ? 'C' + (d + 2) : '·'}</small>${d}${kind === 'bleed' ? '<small>●</small>' : ''}</button>`;
+      }
+      const panel = `<div class="ct-row"><span class="ct-month-title">October 2026</span>${button('Today', 'data-today', 'ct-quiet')}</div><div class="ct-weekdays" aria-hidden="true">${['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((v) => `<span>${v}</span>`).join('')}</div><div class="ct-calendar">${cells}</div><div class="ct-legend"><span><i class="ct-dot"></i>Flow</span><span><i class="ct-dot spot"></i>Spotting</span><span><i class="ct-dot none"></i>No flow</span><span><i class="ct-dot unknown"></i>Unlogged</span></div><p class="ct-footnote">C = recorded cycle day · Sample month</p>`;
+      if (id === 'botanical' && !s.monthOpen)
+        return `<section class="ct-panel ct-calendar-panel"><p class="ct-kicker">Your calendar</p><h3>October 2026</h3><p class="ct-small">Your recorded days, close at hand.</p><div class="ct-gap">${button(icon('calendar-days') + ' Open month', 'data-open-month', 'ct-wide')}</div></section>`;
+      return `<section class="ct-panel ct-calendar-panel"><div class="ct-chips" aria-label="Calendar view">${['Year', 'Month', 'Day'].map((view) => `<button type="button" class="ct-chip cursor-interaction" data-view="${view}" aria-pressed="${view === 'Month'}">${view}</button>`).join('')}</div><div class="ct-gap">${panel}</div></section>`;
+    }
+    function selected(s, id) {
+      const logged = s.selected === 9;
+      const flow =
+        s.selected <= 3
+          ? 'Medium recorded'
+          : s.selected === 4
+            ? 'Spotting'
+            : s.selected <= 9
+              ? 'None recorded'
+              : 'Not logged';
+      return `<section class="ct-panel ct-selected-panel"><div class="ct-row"><p class="ct-kicker">${logged ? 'Today’s journal' : 'Selected day'}</p>${button(icon('ellipsis'), 'data-entry-options aria-label="Entry options"', 'ct-quiet')}</div><h3>October ${s.selected}</h3><p class="ct-small">${s.selected <= 9 ? 'Recorded cycle day ' + (s.selected + 2) : 'Future day · no recorded cycle day'}</p><hr class="ct-divider"><div class="ct-detail-line"><span>Flow</span>${flow}</div><div class="ct-detail-line"><span>Symptoms</span>${logged ? 'Bloating' : 'Not logged'}</div><div class="ct-detail-line"><span>Phase</span>Not determined</div>${id === 'botanical' ? '<p class="ct-footnote">Make room for what you notice today.</p>' : ''}<div class="ct-gap">${button(icon('square-pen') + ' Open daily journal', 'data-page="day"', 'ct-primary ct-wide')}</div><p class="ct-footnote">Changes save as you log.</p></section>`;
+    }
+    function calendarPage(s, id) {
+      const heading =
+        id === 'compact'
+          ? 'Your calendar'
+          : id === 'botanical'
+            ? 'A moment for yourself.'
+            : 'Your days, together.';
+      return `<header><p class="ct-kicker">Friday, October 9</p><div class="ct-row"><h1 class="ct-title">${heading}</h1>${button(icon('sliders-horizontal') + ' Appearance', 'data-page="data"')}</div>${id !== 'compact' ? '<p class="ct-sub">A little awareness. A little more care.</p>' : ''}</header>${id === 'botanical' ? '<div class="ct-journal-hero"><div><p class="ct-kicker">Recorded cycle day</p><strong>11</strong><p class="ct-small">Last start · September 29</p></div><div class="ct-leaf" aria-hidden="true"></div></div>' : '<div class="ct-summary"><span><b>Day 11</b> recorded</span><span>Last start <b>Sep 29</b></span></div>'}<div class="ct-workspace">${calendar(s, id)}${selected(s, id)}</div><div class="ct-link-row">${button(icon('book-open') + ' Cycle context', 'data-context="education"')}${button(icon('calendar-range') + ' Period estimate', 'data-context="estimate"')}</div>`;
+    }
+    function appearance(s) {
+      const choice = (field, value, label, extra = '') =>
+        `<button type="button" class="ct-chip cursor-interaction" data-choice="${field}" data-value="${value}" aria-pressed="${s[field] === value}">${extra}${label}</button>`;
+      return `<header><p class="ct-kicker">Your data</p><h1 class="ct-title">Make it feel like you.</h1><p class="ct-sub">Appearance · proposed options</p></header><section class="ct-panel ct-settings"><div class="ct-form-row"><span class="ct-label">Color palette</span><div class="ct-chips">${[
+        ['plum', 'Plum', '#684256'],
+        ['sage', 'Sage', '#365d45'],
+        ['ocean', 'Ocean', '#285f78'],
+      ]
+        .map(([v, l, c]) =>
+          choice(
+            'theme',
+            v,
+            l,
+            `<span class="ct-swatch" style="--swatch:${c}" aria-hidden="true"></span>`,
+          ),
+        )
+        .join(
+          '',
+        )}</div></div><div class="ct-form-row"><span class="ct-label">Appearance</span><div class="ct-chips">${['system', 'light', 'dark'].map((v) => choice('mode', v, v[0].toUpperCase() + v.slice(1))).join('')}</div></div><div class="ct-form-row"><span class="ct-label">Background</span><div class="ct-chips">${choice('background', 'plain', 'Plain')}${choice('background', 'wash', 'Soft wash')}${choice('background', 'image', 'Image example')}</div>${s.background === 'image' ? `<p class="ct-footnote">Illustrated placeholder for a personal photo. Text stays on solid surfaces.</p><div class="ct-gap">${button(icon('image') + ' Choose from this device', 'data-photo')}</div>` : ''}${s.background !== 'plain' ? `<div class="ct-gap"><label class="ct-label">Background visibility <output>${s.strength}%</output><input aria-label="Background visibility" type="range" min="0" max="60" step="5" value="${s.strength}" data-strength></label><p class="ct-small">Lower is quieter. Cards stay opaque.</p></div>` : ''}</div><p class="ct-small">Proposed storage: appearance stays on this device. Personal photos stay out of journal backups and reports.</p><div class="ct-setting-actions">${button('Preview calendar', 'data-page="calendar"', 'ct-primary')}${button('Reset appearance', 'data-reset')}</div></section><section class="ct-panel ct-settings"><div class="ct-row"><div><h3>Your journal, still yours.</h3><p class="ct-small">Backup, reports, and privacy controls stay here.</p></div>${icon('shield-check')}</div></section>`;
+    }
+    function daily(s) {
+      return `${button(icon('arrow-left') + ' Calendar', 'data-page="calendar"', 'ct-quiet')}<header class="ct-gap"><div class="ct-row"><h1 class="ct-title">October ${s.selected}</h1>${button(icon('ellipsis'), 'data-entry-options aria-label="Entry options"', 'ct-quiet')}</div><p class="ct-sub">Your daily journal · fictional entry</p></header><section class="ct-panel ct-gap"><span class="ct-label">Flow</span><div class="ct-chips">${['None', 'Spotting', 'Light', 'Medium', 'Heavy'].map((v) => `<button type="button" class="ct-chip cursor-interaction" data-flow="${v}" aria-pressed="${s.flow === v}">${v}</button>`).join('')}</div><hr class="ct-divider"><span class="ct-label">How are you feeling?</span><div class="ct-chips">${['Bloating', 'Cramps', 'Fatigue'].map((v, i) => `<button type="button" class="ct-chip cursor-interaction" data-symptom="${v}" aria-pressed="${i === 0}">${v}</button>`).join('')}</div><div class="ct-gap">${button('Browse all symptoms', 'data-demo="Full symptom browser keeps its existing choices."', 'ct-quiet')}</div><hr class="ct-divider"><label class="ct-label">A note for yourself<textarea class="ct-textarea" aria-label="Fictional sample note" placeholder="Anything you want to remember…"></textarea></label><div class="ct-link-row">${button('Products & details', 'data-demo="Product and bleeding records keep their current fields."')}${button('Medication records', 'data-page="medications"')}</div></section><p class="ct-footnote">${icon('check')} App proposal: autosave status stays beside your entry. Preview changes are not saved.</p>`;
+    }
+    function historyPage() {
+      return `<header><p class="ct-kicker">Your history</p><h1 class="ct-title">A picture of your patterns.</h1><p class="ct-sub">Recorded information · fictional sample</p></header><section class="ct-panel ct-gap"><h3>Cycle lengths</h3><p class="ct-small">Completed cycles · days</p>${[
+        ['Jun 3', 30],
+        ['Jul 3', 29],
+        ['Aug 1', 30],
+        ['Aug 31', 29],
+      ]
+        .map(
+          ([d, n]) =>
+            `<div class="ct-history-row"><span>${d}</span><div class="ct-bar-track"><div class="ct-bar" style="width:${(n / 35) * 100}%"></div></div><span>${n} days</span></div>`,
+        )
+        .join(
+          '',
+        )}<p class="ct-footnote">Incomplete cycles stay out of these statistics.</p></section><section class="ct-panel ct-gap"><h3>Recorded bleeding</h3><div class="ct-detail-line"><span>Last start</span>September 29</div><div class="ct-detail-line"><span>Recorded duration</span>5 days</div></section>`;
+    }
+    function medicationPage() {
+      return `<header><p class="ct-kicker">Medications</p><h1 class="ct-title">A place for your routine.</h1><p class="ct-sub">Friday, October 9 · fictional sample</p></header><section class="ct-panel ct-gap"><h3>Today’s records</h3><div class="ct-med-row"><span class="ct-med-time">08:00</span><div class="ct-med-main">Sample supplement<p class="ct-small">1 sample tablet</p></div><span class="ct-small">${icon('check')} Taken</span></div><div class="ct-med-row"><span class="ct-med-time">PRN</span><div class="ct-med-main">Sample as-needed medicine<p class="ct-small">No dose recorded</p></div></div><div class="ct-gap">${button('Open dose records', 'data-demo="Dose recording keeps the existing Taken, Skipped, and Taken late choices."', 'ct-primary')}</div></section><section class="ct-panel ct-gap"><div class="ct-row"><h3>Reminders</h3>${icon('bell')}</div><p class="ct-small">Discreet notifications. Each medicine stays off until you choose to enable it.</p><div class="ct-gap">${button('Manage reminders', 'data-demo="Reminder settings keep their existing permission and scheduling behavior."')}</div></section>`;
+    }
+    function paint(stage, s) {
+      stage.dataset.theme = s.theme;
+      stage.dataset.background = s.background;
+      stage.dataset.device = preview.device;
+      stage.style.colorScheme = s.mode === 'system' ? 'inherit' : s.mode;
+      stage.style.setProperty('--ct-image', String(s.strength / 100));
+    }
+    function render(id) {
+      const s = settings[id],
+        stage = root.querySelector(`[data-direction="${id}"]`),
+        app = stage.querySelector('.ct-app');
+      paint(stage, s);
+      const page =
+        s.page === 'data'
+          ? appearance(s)
+          : s.page === 'day'
+            ? daily(s)
+            : s.page === 'history'
+              ? historyPage()
+              : s.page === 'medications'
+                ? medicationPage()
+                : calendarPage(s, id);
+      app.innerHTML = `<div class="ct-proposal-bar"><span>Design proposal · sample data</span><span>${id === 'familiar' ? 'Quiet familiar' : id === 'botanical' ? 'Botanical journal' : 'Clear and compact'}</span></div><div class="ct-shell"><aside class="ct-sidebar">${brand}<nav aria-label="App navigation">${nav(s)}</nav><div class="ct-lock">${button(icon('lock-keyhole') + ' Lock', 'data-demo="The existing passphrase and biometric lock behavior stays in place."', 'ct-quiet')}</div></aside><div class="ct-body"><div class="ct-mobile-header">${brand}${button(icon('sliders-horizontal'), 'data-page="data" aria-label="Appearance"', 'ct-quiet')}</div><main class="ct-content">${page}</main><nav class="ct-mobile-nav" aria-label="App navigation">${nav(s)}</nav></div></div><div class="ct-notice" role="status">${s.notice}</div>`;
+      app.querySelectorAll('[data-page]').forEach((el) =>
+        el.addEventListener('click', () => {
+          s.page = el.dataset.page;
+          render(id);
+        }),
+      );
+      app.querySelectorAll('[data-day]').forEach((el) =>
+        el.addEventListener('click', () => {
+          s.selected = Number(el.dataset.day);
+          s.flow =
+            s.selected <= 3
+              ? 'Medium'
+              : s.selected === 4
+                ? 'Spotting'
+                : s.selected <= 9
+                  ? 'None'
+                  : '';
+          render(id);
+        }),
+      );
+      app.querySelectorAll('[data-today]').forEach((el) =>
+        el.addEventListener('click', () => {
+          s.selected = 9;
+          s.flow = 'None';
+          render(id);
+        }),
+      );
+      app.querySelectorAll('[data-choice]').forEach((el) =>
+        el.addEventListener('click', () => {
+          s[el.dataset.choice] = el.dataset.value;
+          render(id);
+          persist();
+        }),
+      );
+      app.querySelector('[data-strength]')?.addEventListener('input', (event) => {
+        s.strength = Number(event.target.value);
+        paint(stage, s);
+        app.querySelector('output').textContent = s.strength + '%';
+      });
+      app.querySelector('[data-strength]')?.addEventListener('change', persist);
+      app.querySelector('[data-reset]')?.addEventListener('click', () => {
+        Object.assign(s, defaults[id]);
+        render(id);
+        persist();
+      });
+      app
+        .querySelector('[data-photo]')
+        ?.addEventListener('click', () =>
+          notice('Photo picker is proposed. No files are accessed in this mockup.'),
+        );
+      app.querySelector('[data-open-month]')?.addEventListener('click', () => {
+        s.monthOpen = true;
+        render(id);
+      });
+      app.querySelectorAll('[data-view]').forEach((el) =>
+        el.addEventListener('click', () => {
+          if (el.dataset.view === 'Day') {
+            s.page = 'day';
+            render(id);
+          } else
+            notice(
+              el.dataset.view === 'Year'
+                ? 'The existing year overview stays available in the proposed app.'
+                : 'Month view is shown in this proposal.',
+            );
+        }),
+      );
+      app
+        .querySelectorAll('[data-entry-options]')
+        .forEach((el) =>
+          el.addEventListener('click', () =>
+            notice(
+              'Entry options stay beside the date. Delete remains here with confirmation, away from the entry footer.',
+            ),
+          ),
+        );
+      app
+        .querySelectorAll('[data-context]')
+        .forEach((el) =>
+          el.addEventListener('click', () =>
+            notice(
+              el.dataset.context === 'education'
+                ? 'The nine offline education topics keep their existing content.'
+                : 'Experimental period estimates keep their existing opt-in and limits.',
+            ),
+          ),
+        );
+      app
+        .querySelectorAll('[data-demo]')
+        .forEach((el) => el.addEventListener('click', () => notice(el.dataset.demo)));
+      app.querySelectorAll('[data-flow]').forEach((el) =>
+        el.addEventListener('click', () => {
+          s.flow = el.dataset.flow;
+          render(id);
+        }),
+      );
+      app
+        .querySelectorAll('[data-symptom]')
+        .forEach((el) =>
+          el.addEventListener('click', () =>
+            el.setAttribute('aria-pressed', String(el.getAttribute('aria-pressed') !== 'true')),
+          ),
+        );
+      function notice(text) {
+        s.notice = text;
+        app.querySelector('.ct-notice').textContent = text;
+      }
+      if (globalThis.lucide) lucide.createIcons({ attrs: { width: 18, height: 18 } });
+      sizeStages();
+    }
+    const renderAll = () => directions.forEach(render);
+    renderAll();
+    let lastWidth = 0;
+    new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width !== lastWidth) {
+        lastWidth = entry.contentRect.width;
+        sizeStages();
+      }
+    }).observe(root);
+    window.addEventListener('openai:set_globals', (event) => {
+      if (event.detail?.globals?.widgetState) {
+        restore(event.detail.globals.widgetState);
+        renderAll();
+      }
+    });
+    if (globalThis.Tweak) {
+      const tweak = new Tweak({
+        container: root,
+        onChange: () => {
+          renderAll();
+          persist();
+        },
+      });
+      tweak.addSelect(preview, 'device', {
+        label: 'Preview size',
+        options: [
+          { label: 'Computer', value: 'desktop' },
+          { label: 'Phone', value: 'phone' },
+        ],
+      });
+    }
+  })();
+</script>
