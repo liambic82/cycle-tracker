@@ -37,7 +37,7 @@ The owner subsequently confirmed that symptoms, visibility, and biometrics work 
 
 The owner reported that creating a journal on Galaxy Z Flip5 in 0.5.0 stayed on the creation spinner for over a minute. Preview 0.5.1 addresses the likely JavaScript key-calculation bottleneck with native Android cryptography, progress messages, and a bounded calculation. Confirmation on the Flip5 is pending; its Android/One UI versions have not been reported.
 
-## Working preview: 0.7.0
+## Working preview: 0.8.0
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
@@ -47,12 +47,15 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - Clot and flooding observations distinguish Yes, No, and Not logged. These details do not infer flow, cycle boundaries, or blood-loss estimates, and clearing flow preserves them.
 - A short explanation beneath **Flooding noticed?** defines the term where it is logged.
 - Optional sexual activity, activity intensity, orgasm, and libido records. Each field is independent, autosaves, and distinguishes unlogged values from explicit No/None. Daily summaries say only that details are logged.
+- Medication and supplement definitions with daily, selected-weekday, repeating on/off, and as-needed schedules. Users enter dose labels and local times; on/off schedules can include a user-entered placebo/off-day label. Dated changes and pauses preserve earlier schedule history.
+- Daily dose records with Taken, Skipped, or user-marked Taken late, actual amount/date/optional time, and a reason or note. Unrecorded doses stay unknown. Records retain their original planned dose/name, can be edited, and have confirmed removal with Undo. Schedule and dose forms save explicitly.
 - The full source symptom catalog (99 choices), searchable categories, a dedicated less-common browser, and quick choices. Logged symptoms remain visible across categories.
 - An encrypted preference to hide curated perimenopause choices without removing existing logs or custom symptoms.
 - Cycle-length and bleeding-duration charts with average, shortest, and longest recorded values. Incomplete cycles remain unknown.
 - Flow strips inside each cycle, distinguishing bleeding, spotting, explicitly recorded no flow, and unlogged days. Clearing a flow log preserves other daily details.
 - A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute. Android 8+ uses background native passphrase key calculation; browsers use Web Crypto. Existing passphrases and backup format are preserved.
 - Encrypted backup/restore and readable CSV export. Each sexual-health column requires a separate choice for each CSV export, with all four off initially. Dates containing only excluded fields are omitted; notes and symptom labels remain included. Encrypted backups always retain the full journal.
+- Journal CSV includes recorded doses and their notes. A separate readable CSV contains complete dated medication schedule history; encrypted backups retain both.
 - Daily entry deletion inside the date header’s Entry options menu, with confirmation and session-only Undo. The entry footer explains autosave and shows the actual save status. Whole-journal deletion remains separately confirmed.
 - Screenshots enabled in testing previews, as requested by the owner. Store builds retain native capture prevention; browsers cannot prevent screenshots.
 - Show/hide eye controls for passphrase setup, confirmation, unlock, and restore. Each field starts hidden and hides again on submission or backgrounding.
@@ -60,9 +63,9 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication schedules, notifications, the remaining structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. The owner approved adding the flooding explanation and continuing with the next development step; that feedback did not supply a new device test report. Preview 0.7.0 retains the Flip5 creation fix, testing screenshots, passphrase eyes, and safer entry deletion. Outstanding native checks and the new sexual-health checks remain in [the device guide](docs/android-testing.md). Medication/supplement records are next in [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Medication notifications and specialized patch/ring/injection/refill reminders, the remaining structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. The app records user-entered schedules; it does not calculate or recommend dosing. The owner requested the next milestone; that instruction did not supply a new device test report. Preview 0.8.0 retains the Flip5 creation fix, testing screenshots, passphrase eyes, and safer entry deletion. Outstanding native checks and the new medication checks remain in [the device guide](docs/android-testing.md). Discreet, individually enabled medication reminders are the next development slice in [the development plan](docs/development-plan.md).
 
-Journal content is now format 3 to preserve sexual-health records. Format 1 and 2 journals and backups migrate on opening, with unlogged defaults for the new fields. New backups require 0.7.0 or later; update the receiving app before transferring them. The encrypted envelope, passphrase, and biometric key are unchanged.
+Journal content is now format 4 to preserve medication plans and dose records. Format 1–3 journals and backups migrate on opening, with empty medication lists and dose logs. New backups require 0.8.0 or later; update the receiving app before transferring them. The encrypted envelope, passphrase, and biometric key are unchanged.
 
 ## Run locally
 

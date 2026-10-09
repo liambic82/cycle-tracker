@@ -23,6 +23,8 @@ import { SymptomBrowser } from './SymptomBrowser';
 import { FlowDetails } from './FlowDetails';
 import { SexualHealthEditor } from './SexualHealthEditor';
 import { hasSexualHealth } from '../domain/sexualHealth';
+import { DoseLog } from './DoseLog';
+import { plannedDoses } from '../domain/medications';
 
 export function DayEditor({
   journal,
@@ -34,6 +36,8 @@ export function DayEditor({
   saveStatus,
   demo,
   onViewChange,
+  onUpdate,
+  onManageMedications,
 }: {
   journal: Journal;
   today: Day;
@@ -44,6 +48,8 @@ export function DayEditor({
   saveStatus: React.ReactNode;
   demo: boolean;
   onViewChange: () => void;
+  onUpdate: (transform: (journal: Journal) => Journal) => void;
+  onManageMedications: () => void;
 }) {
   const date = journal.selectedDate;
   const entry = journal.entries[date] ?? emptyEntry();
@@ -54,6 +60,7 @@ export function DayEditor({
   const [actionsOpen, setActionsOpen] = useState(false);
   const [flowDetailsOpen, setFlowDetailsOpen] = useState(false);
   const [sexualHealthOpen, setSexualHealthOpen] = useState(false);
+  const [dosesOpen, setDosesOpen] = useState(false);
   const closeActions = () => {
     setActionsOpen(false);
     setDeleteConfirm(false);
@@ -72,6 +79,22 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (dosesOpen && date <= today)
+    return (
+      <DoseLog
+        journal={journal}
+        date={date}
+        today={today}
+        update={onUpdate}
+        manage={onManageMedications}
+        saveStatus={saveStatus}
+        onViewChange={onViewChange}
+        done={() => {
+          setDosesOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (sexualHealthOpen && date <= today)
     return (
       <SexualHealthEditor
@@ -163,9 +186,10 @@ export function DayEditor({
               <Text style={common.label}>Delete this day’s entry?</Text>
               <Text style={common.body}>
                 This removes all daily details, including flow, product records, bleeding
-                observations, sexual-health details, symptoms, notes, and period markers for{' '}
-                {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
-                the last deletion until you lock, delete another entry, or log this day again.
+                observations, sexual-health details, dose records, symptoms, notes, and period
+                markers for {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}.
+                You can undo the last deletion until you lock, delete another entry, or log this day
+                again. Medication schedules are kept.
               </Text>
               <Button label="Keep entry" onPress={closeActions} />
               <Button
@@ -304,6 +328,26 @@ export function DayEditor({
             </View>
           </View>
           <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ gap: 9 }}>
+            <Button
+              secondary
+              label="Medications & supplements"
+              onPress={() => {
+                closeActions();
+                setDosesOpen(true);
+                onViewChange();
+              }}
+            />
+            <Text style={common.small}>
+              {entry.doseRecords.length} dose{' '}
+              {entry.doseRecords.length === 1 ? 'record' : 'records'} ·{' '}
+              {
+                plannedDoses(journal.medications, date).filter((dose) => dose.phase !== 'as-needed')
+                  .length
+              }{' '}
+              scheduled for this day
+            </Text>
+          </View>
           <View>
             <SectionLabel icon={Heart}>How are you feeling?</SectionLabel>
             <Text style={[common.small, { marginBottom: 13 }]}>

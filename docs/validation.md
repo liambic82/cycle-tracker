@@ -1,5 +1,30 @@
 # Validation record
 
+## 0.8.0 medication schedules and dose records — October 9, 2026
+
+The owner requested moving to the next milestone after 0.7.0. This implements the medication recording foundation: definitions, daily/weekday/on-off/as-needed schedules, optional user-entered placebo labels, dated changes and pauses, daily outcomes and notes, and complete backups/exports. Notifications and doctor PDFs remain separate planned work. This request does not supply a new hardware test result.
+
+- `pnpm check`: strict TypeScript and all **66 tests** passed. Eleven new tests cover version 1–3 migration, bounded/strict schedule validation, identity/time/date errors, daily/weekday/start/pause boundaries, on/off repetition across leap days and DST, optional off-day labels, immutable dated changes, protection of existing dose records, duplicate/stale/future dose rejection, overnight actual dates, independent as-needed events, outcome validation, deletion/Undo, encrypted snapshots, and readable export completeness/formula escaping. The final compatibility adjustment to plan lookup passed the focused eleven-test suite; the final dose-card layout passed TypeScript.
+- Final `pnpm build:all` passed for web, Android Hermes, and iOS Hermes. The Android preview APK was rebuilt after the final readability changes. iOS remains a bundle check only; no IPA/device run is claimed. Formatting and Git whitespace checks passed.
+- Browser QA used isolated `127.0.0.1:4176` with a previously saved fictional version 3 vault. It opened with the existing passphrase and an empty medication list. Earlier note, products, bleeding observations, and sexual-health records remained. In the 393 × 852 layout, added a backdated fictional daily supplement with two times; `25:00` was rejected, valid times saved, and a canceled named draft added nothing. Added a separate as-needed definition.
+- In phone Day view and the Month-view sheet, a new dose had no status selected; Save rejected it until an outcome was chosen. Recorded a Taken dose with time and note, edited it to Taken late, canceled removal, then removed and restored it with Undo. It appeared once, and the scheduled slot returned only while it was removed. Added a Skipped dose without actual amount/time and an as-needed Taken record with unknown time and reason. Final cards separate status, planned amount, recorded amount/date/time, and note for scanning.
+- After dose records existed, a schedule change suggested the following day. Trying the recorded date was rejected. A later dose-label change saved while today's label and snapshots stayed unchanged; history displayed both dated versions. Added a fictional two-on/one-off pack with an explicit placebo label. October 9 displayed its off-day label; October 8 displayed its on-day label. This is fictional schedule-entry QA, not a dosing recommendation.
+- Inspected the medication tab and daily side panel at 1280 × 720. Locked, reloaded, and unlocked the final build: definitions, future change, selected date, and all three recorded dose outcomes persisted with earlier journal fields. The separate sample journal showed its own two fictional definitions, with no QA-vault entries. No captured browser console errors. Exited sample mode, left the vault locked, closed the QA tab, reset the viewport, and stopped the isolated server. User storage on port 4173 was not used.
+- Inspected actual downloaded CSVs: daily export included complete Taken late/Skipped/as-needed records and notes, did not manufacture missed-dose rows, preserved product records, and left sexual-health columns off. The separate schedule CSV included all four plan versions, the future transition boundary, on/off/placebo label, times, and notes. Downloaded an encrypted backup through the UI and decrypted it with the fictional test passphrase in a local verification script: content version 4, three medications, the dated change, three dose records, older products, and excluded-from-CSV sexual-health data all survived. No export, passphrase, or decrypted journal was committed.
+- Native update retention, keyboard/TalkBack/large text, fold/rotation, sharing/restore, and biometric behavior remain [0.8.0 device checks](android-testing.md#080-medication-schedules-and-dose-records). Earlier Flip5 creation and screenshot/eye-control retests remain pending. No notification delivery was tested because this version does not implement reminders.
+
+The final standalone ARM64 release APK passed signature verification and 16 KB zip alignment. Package identity is `com.liambic.cycletracker.preview`, version **0.8.0**, version code **11**, minimum API 24, target API 36, `USE_BIOMETRIC`, `allowBackup: false`, and no debuggable flag. Embedded configuration confirms testing screenshots remain enabled. The bundled Hermes program is 3,186,464 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.8.0-arm64-v8a.apk` (29,990,898 bytes; excluded from Git).
+- APK SHA-256: `884b7f91246bd8e93854ea0926c0b86c0a3d38b5074b22a0069722826095816e`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Medication tab with a fictional routine](screenshots/medications-mobile.jpg)
+
+![Recorded dose in the phone daily sheet](screenshots/dose-log-mobile.jpg)
+
+![Medication plans and a future change on desktop](screenshots/medications-desktop.jpg)
+
 ## 0.7.0 flooding explanation and sexual-health records — October 9, 2026
 
 The owner requested adding the approved flooding definition and moving to the next development step. This preview adds the visible definition, optional independent sexual-health fields, and individual CSV inclusion choices. It does not record a new device test pass. Medication/supplement definitions, schedules, and dose logging are next; PDF report configuration remains later work.

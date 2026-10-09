@@ -19,6 +19,7 @@ import {
   Heart,
   LockKeyhole,
   Plus,
+  Pill,
   ShieldCheck,
   X,
   type LucideIcon,
@@ -34,13 +35,15 @@ import { DayEditor } from './src/ui/DayEditor';
 import { History } from './src/ui/History';
 import { DataSettings } from './src/ui/DataSettings';
 import { UndoNotice } from './src/ui/UndoNotice';
+import { Medications } from './src/ui/Medications';
 import { Brand, Button } from './src/ui/components';
 import { colors, common, serif } from './src/ui/theme';
 
-type Page = 'calendar' | 'history' | 'data';
+type Page = 'calendar' | 'history' | 'medications' | 'data';
 const NAV: Array<{ id: Page; label: string; icon: LucideIcon }> = [
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
   { id: 'history', label: 'Your history', icon: ChartNoAxesCombined },
+  { id: 'medications', label: 'Medications', icon: Pill },
   { id: 'data', label: 'Your data', icon: ShieldCheck },
 ];
 
@@ -146,6 +149,12 @@ function CycleApp() {
       onDelete={() => state.removeEntry(journal.selectedDate)}
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
       onCustom={(symptom) => state.update((value) => addCustomSymptom(value, symptom))}
+      onUpdate={state.update}
+      onManageMedications={() => {
+        setEditing(false);
+        setPage('medications');
+        mainScroll.current?.scrollTo({ y: 0, animated: false });
+      }}
     />
   );
   return (
@@ -306,14 +315,18 @@ function CycleApp() {
                   ? 'Your cycle, at a glance.'
                   : page === 'history'
                     ? 'A picture of your patterns.'
-                    : 'Your space. Your choice.'}
+                    : page === 'medications'
+                      ? 'A place for your routine.'
+                      : 'Your space. Your choice.'}
               </Text>
               <Text style={common.body}>
                 {page === 'calendar'
                   ? 'A little awareness. A little more care for yourself.'
                   : page === 'history'
                     ? 'Getting to know your own kind of normal.'
-                    : 'Keep your records close, and in your control.'}
+                    : page === 'medications'
+                      ? 'Your schedules, and what you choose to record.'
+                      : 'Keep your records close, and in your control.'}
               </Text>
             </View>
             {desktop && <Button label="Log today" icon={Plus} onPress={logToday} />}
@@ -412,6 +425,15 @@ function CycleApp() {
             </>
           ) : page === 'history' ? (
             <History journal={journal} today={today} openDay={showDay} />
+          ) : page === 'medications' ? (
+            <Medications
+              journal={journal}
+              today={today}
+              update={state.update}
+              openToday={logToday}
+              saveStatus={saveStatus}
+              onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
+            />
           ) : (
             <DataSettings
               journal={journal}

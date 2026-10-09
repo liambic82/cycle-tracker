@@ -3,6 +3,7 @@ import { Platform, Switch, Text, TextInput, View } from 'react-native';
 import { Download, FileSpreadsheet, LockKeyhole, ShieldCheck, Trash2 } from 'lucide-react-native';
 import app from '../../app.json';
 import { toCSV, type Journal } from '../domain/journal';
+import { medicationCSV } from '../domain/medications';
 import {
   emptySexualHealthExport,
   SEXUAL_HEALTH_FIELDS,
@@ -38,6 +39,7 @@ export function DataSettings({
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
   const [csvConfirm, setCSVConfirm] = useState(false);
+  const [medicationConfirm, setMedicationConfirm] = useState(false);
   const [sexualExport, setSexualExport] = useState(emptySexualHealthExport);
   const [busy, setBusy] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -55,18 +57,27 @@ export function DataSettings({
       setBusy(false);
     }
   };
-  const download = async (csv: boolean) => {
+  const download = async (kind: 'journal' | 'schedules' | 'backup') => {
     setBusy(true);
     setMessage('');
     setError(false);
     try {
       await exportText(
-        csv ? toCSV(journal, sexualExport) : backup(),
-        csv ? 'cycle-tracker-journal.csv' : 'cycle-tracker-backup.cyclevault',
-        csv ? 'text/csv' : 'application/octet-stream',
+        kind === 'journal'
+          ? toCSV(journal, sexualExport)
+          : kind === 'schedules'
+            ? medicationCSV(journal.medications)
+            : backup(),
+        kind === 'journal'
+          ? 'cycle-tracker-journal.csv'
+          : kind === 'schedules'
+            ? 'cycle-tracker-medication-schedules.csv'
+            : 'cycle-tracker-backup.cyclevault',
+        kind === 'backup' ? 'application/octet-stream' : 'text/csv',
       );
       setMessage('Your export is ready. Check your downloads or the location you selected.');
       setCSVConfirm(false);
+      setMedicationConfirm(false);
     } catch (err) {
       setError(true);
       setMessage(err instanceof Error ? err.message : 'Could not export your journal.');
@@ -118,14 +129,14 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          New backups need preview 0.7.0 or later. Update the receiving app before restoring.
+          New backups need preview 0.8.0 or later. Update the receiving app before restoring.
           Earlier backups still open here. Encrypted backups include all sexual-health fields,
-          regardless of your CSV choices.
+          regardless of your CSV choices, plus all medication schedules and dose records.
         </Text>
         <Button
           label="Download encrypted backup"
           icon={Download}
-          onPress={() => download(false)}
+          onPress={() => download('backup')}
           busy={busy}
           disabled={demo}
         />
@@ -140,8 +151,8 @@ export function DataSettings({
           your doctor.
         </Text>
         <Text style={common.small}>
-          Includes product records and clot/flooding observations. Blank observations mean not
-          logged, not No.
+          Includes dose records with notes, product records, and clot/flooding observations. Blank
+          observations mean not logged, not No.
         </Text>
         <Text style={common.small}>
           CSV files are readable and are not encrypted. Only share them with people you choose.
@@ -174,7 +185,7 @@ export function DataSettings({
             <Button
               label="Export readable CSV"
               icon={FileSpreadsheet}
-              onPress={() => download(true)}
+              onPress={() => download('journal')}
               busy={busy}
             />
             <Button
@@ -193,6 +204,39 @@ export function DataSettings({
               setSexualExport(emptySexualHealthExport());
               setCSVConfirm(true);
             }}
+          />
+        )}
+      </View>
+      <View style={[common.card, { gap: 15 }]}>
+        <Text style={common.heading}>Medication schedule history</Text>
+        <Text style={common.body}>
+          Export your medication and supplement names, planned doses, dated schedule changes, and
+          schedule notes. Daily dose records are in the journal CSV above.
+        </Text>
+        <Text style={common.small}>
+          This CSV is readable and not encrypted. It contains every saved schedule, including paused
+          and future plans.
+        </Text>
+        {medicationConfirm ? (
+          <View style={{ gap: 10 }}>
+            <Button
+              label="Export readable schedules"
+              busy={busy}
+              onPress={() => download('schedules')}
+            />
+            <Button
+              secondary
+              label="Cancel schedule export"
+              disabled={busy}
+              onPress={() => setMedicationConfirm(false)}
+            />
+          </View>
+        ) : (
+          <Button
+            secondary
+            label="Export medication schedules"
+            disabled={busy || !journal.medications.length}
+            onPress={() => setMedicationConfirm(true)}
           />
         )}
       </View>
@@ -225,8 +269,9 @@ export function DataSettings({
       <View style={[common.card, { gap: 15 }]}>
         <Text style={common.heading}>Delete your journal</Text>
         <Text style={common.body}>
-          Remove all entries and custom symptoms stored by this app on this device. This cannot be
-          undone. Export an encrypted backup first if you want to keep a copy.
+          Remove all entries, medication schedules, and custom symptoms stored by this app on this
+          device. This cannot be undone. Export an encrypted backup first if you want to keep a
+          copy.
         </Text>
         <Text style={common.small}>
           Backups, CSV files, and journals on other devices or browser addresses are separate and
@@ -289,7 +334,7 @@ export function DataSettings({
       )}
       <Text style={common.small}>
         Early preview · {app.expo.version}
-        {'\n'}Medication tracking, predictions, and cloud sync are planned for later milestones.
+        {'\n'}Reminders, doctor PDFs, predictions, and cloud sync are planned for later milestones.
       </Text>
     </View>
   );

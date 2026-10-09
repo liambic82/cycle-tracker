@@ -24,7 +24,7 @@ Preview 0.2.0 added entry deletion with session-only Undo, confirmed deletion of
 
 ## Milestone 3: visual history and daily detail
 
-The first visual-history portion is implemented in preview 0.5.0. Product logging and clot/flooding observations are implemented in 0.6.0. Optional sexual-health records and a visible flooding explanation are implemented in 0.7.0. Outstanding native checks remain in the device guide. The next development slice is medication/supplement definitions, user-entered schedules, and dose logging; notification delivery follows that foundation.
+The first visual-history portion is implemented in preview 0.5.0. Product logging and clot/flooding observations are implemented in 0.6.0. Optional sexual-health records and a visible flooding explanation are implemented in 0.7.0. Medication/supplement definitions, user-entered schedules, and dose logging are implemented in 0.8.0. Outstanding native checks remain in the device guide; notification delivery follows the medication recording foundation.
 
 The owner reported a creation spinner lasting over a minute on Galaxy Z Flip5 with 0.5.0. Native Android key calculation and setup progress/deadline handling are implemented in 0.5.1; the device retest remains pending. The owner subsequently approved the 0.5.3 layout and explicitly requested continuing development. Continue the planned work while retaining [the focused Flip5 checklist](android-testing.md#051-passphrase-fix-checks); approval to proceed is not a device-validation result.
 
@@ -42,9 +42,11 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 
 ## Milestone 4: medication and doctor records
 
-- Medication and supplement definitions, dose times, on/off schedules, birth-control packs, and as-needed doses.
-- Taken/skipped/late logging and individually controlled, discreet reminders.
-- User-entered titration/dose-change schedules, side-effect notes, and later patch/ring/injection/refill reminders.
+- Implemented in 0.8.0: medication/supplement names and dose labels; daily, selected-weekday, repeating on/off, and as-needed schedules; multiple local times; user-entered off-day/placebo labels for repeating packs. No regimen, dose, or pack length is prescribed by the app.
+- Implemented in 0.8.0: Taken, Skipped, and user-marked Taken late records, actual amount/date/optional time, as-needed reasons and dose notes, editing, confirmed removal/Undo, and complete exports. Unrecorded doses are not inferred missed or taken. No adherence percentage or lateness threshold is calculated.
+- Implemented in 0.8.0: dated user-entered dose/schedule changes, pauses/resumption, and schedule history. Changes start today or later and after existing dose records; latest unused schedules can be corrected on the same effective date. These are recording tools for an existing plan, not automatic titration advice. Follow [the medication checklist](android-testing.md#080-medication-schedules-and-dose-records).
+- Next slice: individually enabled, discreet medication notifications, with native permission handling, cancellation/rescheduling on plan changes, time-zone behavior, and real-device delivery checks. Keep the app usable when reminders are off or unavailable.
+- Later medication refinements: dedicated patch/ring/injection/refill reminders and broader retrospective schedule editing with explicit record reconciliation.
 - Doctor summary and PDF export based on recorded data, with a date range, selectable sections, and preview before export. Include medications and labs only as their records become available.
 - The clot-logging dependency is implemented in 0.6.0 as a daily Yes/No/Not logged observation. Future reports can include it as recorded; clinical interpretation and any more detailed clot measurements need separate design/review.
 

@@ -1,5 +1,12 @@
 import { daysBetween, validDay, type Day } from './dates.ts';
 import {
+  describeDose,
+  parseDoseRecords,
+  parseMedications,
+  type DoseRecord,
+  type Medication,
+} from './medications.ts';
+import {
   emptySexualHealth,
   hasSexualHealth,
   parseSexualHealth,
@@ -37,10 +44,12 @@ export interface Entry {
   clots: boolean | null;
   flooding: boolean | null;
   sexualHealth: SexualHealth;
+  doseRecords: DoseRecord[];
 }
 
 export interface Journal {
-  version: 3;
+  version: 4;
+  medications: Medication[];
   entries: Record<Day, Entry>;
   customSymptoms: string[];
   selectedDate: Day;
@@ -60,12 +69,14 @@ export function emptyEntry(): Entry {
     clots: null,
     flooding: null,
     sexualHealth: emptySexualHealth(),
+    doseRecords: [],
   };
 }
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 3,
+    version: 4,
+    medications: [],
     entries: {},
     customSymptoms: [],
     selectedDate: today,
@@ -86,6 +97,7 @@ function hasGeneralEntry(entry: Entry): boolean {
       entry.periodEnd ||
       entry.symptoms.length > 0 ||
       entry.productRecords.length > 0 ||
+      entry.doseRecords.length > 0 ||
       entry.clots !== null ||
       entry.flooding !== null ||
       entry.note.length > 0)
@@ -97,6 +109,7 @@ export function updateEntry(journal: Journal, date: Day, patch: Partial<Entry>):
   if (patch.productRecords !== undefined)
     entry.productRecords = parseProductRecords(patch.productRecords);
   if (patch.sexualHealth !== undefined) entry.sexualHealth = parseSexualHealth(patch.sexualHealth);
+  if (patch.doseRecords !== undefined) entry.doseRecords = parseDoseRecords(patch.doseRecords);
   if (![null, true, false].includes(entry.clots) || ![null, true, false].includes(entry.flooding))
     throw new Error('Choose Yes, No, or Not logged for bleeding observations.');
   if (patch.flow !== undefined) entry.flowRecorded = patch.flowRecorded ?? true;
@@ -178,7 +191,7 @@ function symptomList(value: unknown): value is string[] {
 export function parseJournal(value: unknown): Journal {
   assert(
     record(value) &&
-      (value.version === 1 || value.version === 2 || value.version === 3) &&
+      (value.version === 1 || value.version === 2 || value.version === 3 || value.version === 4) &&
       validDay(value.selectedDate),
   );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
@@ -238,11 +251,13 @@ export function parseJournal(value: unknown): Journal {
       clots,
       flooding,
       sexualHealth:
-        value.version === 3 ? parseSexualHealth(entry.sexualHealth) : emptySexualHealth(),
+        value.version >= 3 ? parseSexualHealth(entry.sexualHealth) : emptySexualHealth(),
+      doseRecords: value.version === 4 ? parseDoseRecords(entry.doseRecords) : [],
     };
   }
   return {
-    version: 3,
+    version: 4,
+    medications: value.version === 4 ? parseMedications(value.medications) : [],
     entries,
     customSymptoms: [...value.customSymptoms],
     selectedDate: value.selectedDate,
@@ -274,6 +289,7 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       'Clots noticed',
       'Flooding noticed',
       'Product records',
+      'Dose records',
       ...sexualFields.map((field) => SEXUAL_HEALTH_LABELS[field]),
     ],
   ];
@@ -293,6 +309,7 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       e.clots === null ? '' : e.clots ? 'Yes' : 'No',
       e.flooding === null ? '' : e.flooding ? 'Yes' : 'No',
       orderedProducts(e.productRecords).map(describeProduct).join('\n'),
+      e.doseRecords.map(describeDose).join('\n'),
       ...sexualFields.map((field) => sexualHealthLabel(e.sexualHealth[field])),
     ]);
   }

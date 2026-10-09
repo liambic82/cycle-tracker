@@ -1,8 +1,41 @@
 import { addDays, type Day } from '../domain/dates.ts';
 import { emptyEntry, emptyJournal, type Journal } from '../domain/journal.ts';
+import { parseMedications, plannedDoses } from '../domain/medications.ts';
+import { recordDose } from '../domain/medicationActions.ts';
 
 export function demoJournal(today: Day): Journal {
   const journal = emptyJournal(today);
+  const samplePlan = {
+    startsOn: addDays(today, -10),
+    kind: 'supplement',
+    dose: '1 sample tablet',
+    instructions: 'Fictional sample only.',
+    mode: 'daily',
+    times: ['08:00'],
+    weekdays: [],
+    onDays: null,
+    offDays: null,
+    offDose: null,
+  };
+  journal.medications = parseMedications([
+    {
+      id: 'sample-supplement',
+      plans: [{ ...samplePlan, id: 'sample-daily-plan', name: 'Sample supplement' }],
+    },
+    {
+      id: 'sample-as-needed',
+      plans: [
+        {
+          ...samplePlan,
+          id: 'sample-prn-plan',
+          kind: 'medication',
+          name: 'Sample as-needed medicine',
+          mode: 'as-needed',
+          times: [],
+        },
+      ],
+    },
+  ]);
   for (const offset of [-69, -39, -10]) {
     for (let day = 0; day < 5; day++) {
       journal.entries[addDays(today, offset + day)] = {
@@ -47,5 +80,18 @@ export function demoJournal(today: Day): Journal {
     note: '',
     sexualHealth: { activity: null, intensity: null, orgasm: null, libido: 'moderate' },
   };
-  return journal;
+  return recordDose(
+    journal,
+    today,
+    today,
+    plannedDoses(journal.medications, today)[0]!,
+    'sample-dose-today',
+    {
+      status: 'taken',
+      actualDose: '1 sample tablet',
+      takenOn: today,
+      actualTime: '08:15',
+      note: 'Invented example.',
+    },
+  );
 }
