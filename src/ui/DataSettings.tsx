@@ -139,8 +139,9 @@ export function DataSettings({
           />
         </View>
         <Text style={common.body}>
-          Hide the perimenopause category if it isn’t useful to you. Previously logged symptoms and
-          your custom labels stay available, and nothing is removed from your records or exports.
+          Hide the perimenopause category and its education topic if they aren’t useful to you.
+          Previously logged symptoms and your custom labels stay available, and nothing is removed
+          from your records or exports.
         </Text>
         <Text style={common.small}>
           {demo

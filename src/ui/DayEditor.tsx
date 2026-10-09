@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import {
   Check,
+  BookOpen,
   Droplet,
   Ellipsis,
   Heart,
@@ -25,6 +26,7 @@ import { SexualHealthEditor } from './SexualHealthEditor';
 import { hasSexualHealth } from '../domain/sexualHealth';
 import { DoseLog } from './DoseLog';
 import { plannedDoses } from '../domain/medications';
+import { CycleContext } from './CycleContext';
 
 export function DayEditor({
   journal,
@@ -53,7 +55,8 @@ export function DayEditor({
 }) {
   const date = journal.selectedDate;
   const entry = journal.entries[date] ?? emptyEntry();
-  const day = cycleDay(journal, date);
+  const day = date <= today ? cycleDay(journal, date) : null;
+  const [contextOpen, setContextOpen] = useState(false);
   const [browsing, setBrowsing] = useState<SymptomFilter | null>(null);
   const [symptomError, setSymptomError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -79,6 +82,19 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (contextOpen)
+    return (
+      <CycleContext
+        journal={journal}
+        date={date}
+        today={today}
+        doneLabel="Back to daily journal"
+        done={() => {
+          setContextOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (dosesOpen && date <= today)
     return (
       <DoseLog
@@ -171,6 +187,16 @@ export function DayEditor({
           </Pressable>
         )}
       </View>
+      <Button
+        secondary
+        icon={BookOpen}
+        label="Explore this day’s cycle context"
+        onPress={() => {
+          closeActions();
+          setContextOpen(true);
+          onViewChange();
+        }}
+      />
       {actionsOpen && date <= today && !!journal.entries[date] && (
         <View
           style={{

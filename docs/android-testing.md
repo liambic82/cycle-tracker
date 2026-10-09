@@ -8,6 +8,20 @@ The test app is named **Cycle Tracker Preview** and uses `com.liambic.cycletrack
 
 Start with the fictional sample journal. Use invented entries and a test-only passphrase when checking persistence and recovery. Real-device behavior and security validation are still in progress.
 
+## 0.11.0 daily context and education
+
+Install `artifacts/android/cycle-tracker-preview-0.11.0-arm64-v8a.apk` over the existing preview after an encrypted backup. Version code is 14; package/signing identity, journal format 4, passphrase, and biometric credentials are unchanged. Do not uninstall or clear storage. These checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5.
+
+1. From **Calendar → Explore cycle context**, verify the selected date, most recent recorded start, cycle day, and flow. A missing start must show unknown context; an unlogged flow must differ from explicitly None. Personal phase must always say **not determined**. A future date must not project a cycle day or flow.
+2. Open a daily entry and choose **Explore this day’s cycle context**. Check it in Month's sheet and Day view. Return with **Back to daily journal**; date, flow, symptoms, and notes must remain unchanged. Android Back in a phone sheet dismisses the sheet; Android Back in the full calendar context view returns to the calendar.
+3. Browse all nine topics using both the horizontal topic strip and Previous/Next. Boundaries should disable the corresponding button. Selecting a hormone or ovulation topic must not change the selected date's unknown phase or assign hormone levels. Medication content must remain general regardless of your saved medication names.
+4. Under **Your data**, turn off **Show perimenopause choices**, then reopen context. Only the dedicated perimenopause topic should be absent (eight topics); saved perimenopause symptoms must remain. Turn the preference back on afterward if desired.
+5. In airplane mode after installing the APK, browse the cards, including first use. Text should be available without a download. When connected, tap a source: it should open the named public webpage and return normally to the app. If away for over a minute, the normal journal lock should apply. Source links contain no journal details.
+6. Test large text, TalkBack reading order/selected topic/disabled buttons/link labels, rotation, the Flip5 folded/reopened layout, and horizontal scrolling without trapping vertical scrolling. Full text, navigation buttons, and sources must stay reachable. Lock/reopen should reset topic browsing while retaining the journal and visibility preference.
+7. Continue pending 0.10.0 PDF-sharing/offline checks and 0.9.0 real notification-delivery checks below, plus the earlier Flip5 creation retest. No new hardware pass has been reported for these versions.
+
+The education is source-checked general information, not independently clinically validated personal guidance. Personal predictions and phase-specific advice are not implemented in this build.
+
 ## 0.10.0 doctor summaries and PDF export
 
 Install `artifacts/android/cycle-tracker-preview-0.10.0-arm64-v8a.apk` over the existing preview after making an encrypted backup. Version code is 13; package, signing certificate, journal format 4, passphrase, and biometric credentials are unchanged. Do not uninstall or clear storage. This remains a development preview, with screenshots enabled. The following checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5.

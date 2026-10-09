@@ -8,6 +8,16 @@
 - `App.tsx`: navigation, current-day context, responsive composition, and daily editor.
 - `scripts/prepare-web.mjs`: production service worker generation. Only public application assets are cached; journal contents never pass through the service worker.
 
+## Daily context and education (0.11.0)
+
+`src/domain/cycleContext.ts` derives a small observation-only snapshot: selected date, latest explicit period start on/before it, elapsed days, inclusive recorded cycle day, recorded flow or unknown, and an always-unknown personal phase. Future dates return no projected values. A note, symptom, product, or medication never creates a start marker or a phase. Long gaps retain their arithmetic count with a missing-record explanation, without a menopause/late-period/ovulation inference. The daily editor no longer displays a projected cycle day on future dates.
+
+The same module bundles nine short educational topics and public source metadata. Content is not dynamically generated or personalized from journal details. The existing encrypted `showPerimenopause` preference filters only the dedicated topic, without removing records. The library has no saved read history, new preference, schema migration, telemetry, or network fetch. All text is present in the production app bundle and browser offline shell. Source links open fixed HTTPS URLs only when tapped; no journal values are added. External pages follow their own data practices.
+
+`CycleContext` is reachable from a calendar subview and inside the existing DayEditor sheet/card. Returning preserves the selected date and records. Topic chips scroll horizontally, and Previous/Next buttons provide a non-swipe alternative with labeled boundaries. The source section provides readable link names, external-site context, and an open-failure message. Text has no fixed-height clipping. Navigation/locking unmounts the session view; Android Back closes the full calendar context subview. In a phone daily sheet, Android Back retains the existing behavior of dismissing the sheet.
+
+This is the education portion of milestone 5. No personal period/phase/ovulation prediction, hormone curve, symptom-cause inference, or clinical alert is added. The [source record and next prediction criteria](cycle-education.md) distinguish factual source checks from independent clinical validation. Journal content remains format 4; exports and backups keep their existing behavior.
+
 ## Doctor summaries and PDFs (0.10.0)
 
 `src/domain/report.ts` builds a filtered, immutable text snapshot shared by the on-screen preview and PDF renderer. A report selects an inclusive date range ending today or earlier (up to 366 days), independent general sections, and four independent sexual-health fields. Notes and sexual-health fields default off every time the report screen is reopened. Only strict `true` selects a field. Excluded-only records leave no dated placeholder; explicit No/None remains distinct from unlogged. Free-text names, symptoms, and product descriptions are included with their section and are not semantically redacted; the controls explain this.

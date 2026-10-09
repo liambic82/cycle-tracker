@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  BackHandler,
   Modal,
   Pressable,
   ScrollView,
@@ -12,6 +13,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import {
   CalendarDays,
+  BookOpen,
   ChartNoAxesCombined,
   Check,
   CircleAlert,
@@ -36,6 +38,7 @@ import { History } from './src/ui/History';
 import { DataSettings } from './src/ui/DataSettings';
 import { UndoNotice } from './src/ui/UndoNotice';
 import { Medications } from './src/ui/Medications';
+import { CycleContext } from './src/ui/CycleContext';
 import { Brand, Button } from './src/ui/components';
 import { colors, common, serif } from './src/ui/theme';
 
@@ -55,6 +58,7 @@ function CycleApp() {
   const inlineEditor = width >= 1180 && calendarView !== 'day';
   const [page, setPage] = useState<Page>('calendar');
   const [editing, setEditing] = useState(false);
+  const [learning, setLearning] = useState(false);
   const mainScroll = useRef<ScrollView>(null);
   const editorScroll = useRef<ScrollView>(null);
   const [today, setToday] = useState(toDay(new Date()));
@@ -65,10 +69,20 @@ function CycleApp() {
   useEffect(() => {
     if (!state.journal) {
       setEditing(false);
+      setLearning(false);
       setPage('calendar');
       setCalendarView('month');
     }
   }, [!!state.journal]);
+  useEffect(() => {
+    if (!learning || page !== 'calendar') return;
+    const listener = BackHandler.addEventListener('hardwareBackPress', () => {
+      setLearning(false);
+      mainScroll.current?.scrollTo({ y: 0, animated: false });
+      return true;
+    });
+    return () => listener.remove();
+  }, [learning, page]);
 
   if (state.loading)
     return (
@@ -108,6 +122,7 @@ function CycleApp() {
     if (!inlineEditor && calendarView !== 'day') setEditing(true);
   };
   const showDay = (date: Day) => {
+    setLearning(false);
     setPage('calendar');
     setCalendarView('day');
     setEditing(false);
@@ -181,7 +196,10 @@ function CycleApp() {
                 accessibilityRole="tab"
                 accessibilityLabel={label}
                 accessibilityState={{ selected: page === id }}
-                onPress={() => setPage(id)}
+                onPress={() => {
+                  setLearning(false);
+                  setPage(id);
+                }}
                 style={{
                   minHeight: 49,
                   flexDirection: 'row',
@@ -328,29 +346,44 @@ function CycleApp() {
                 {formatDay(today, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase()}
               </Text>
               <Text style={[common.title, { fontSize: desktop ? 35 : 29 }]}>
-                {page === 'calendar'
-                  ? 'Your cycle, at a glance.'
-                  : page === 'history'
-                    ? 'A picture of your patterns.'
-                    : page === 'medications'
-                      ? 'A place for your routine.'
-                      : 'Your space. Your choice.'}
+                {page === 'calendar' && learning
+                  ? 'A little understanding.'
+                  : page === 'calendar'
+                    ? 'Your cycle, at a glance.'
+                    : page === 'history'
+                      ? 'A picture of your patterns.'
+                      : page === 'medications'
+                        ? 'A place for your routine.'
+                        : 'Your space. Your choice.'}
               </Text>
               <Text style={common.body}>
-                {page === 'calendar'
-                  ? 'A little awareness. A little more care for yourself.'
-                  : page === 'history'
-                    ? 'Getting to know your own kind of normal.'
-                    : page === 'medications'
-                      ? 'Your schedules, and what you choose to record.'
-                      : 'Keep your records close, and in your control.'}
+                {page === 'calendar' && learning
+                  ? 'Your records, with room to learn.'
+                  : page === 'calendar'
+                    ? 'A little awareness. A little more care for yourself.'
+                    : page === 'history'
+                      ? 'Getting to know your own kind of normal.'
+                      : page === 'medications'
+                        ? 'Your schedules, and what you choose to record.'
+                        : 'Keep your records close, and in your control.'}
               </Text>
             </View>
             {desktop && <Button label="Log today" icon={Plus} onPress={logToday} />}
           </View>
           {(page !== 'calendar' || (!inlineEditor && calendarView !== 'day' && !editing)) &&
             undoNotice}
-          {page === 'calendar' ? (
+          {page === 'calendar' && learning ? (
+            <CycleContext
+              journal={journal}
+              date={journal.selectedDate}
+              today={today}
+              doneLabel="Back to calendar"
+              done={() => {
+                setLearning(false);
+                mainScroll.current?.scrollTo({ y: 0, animated: false });
+              }}
+            />
+          ) : page === 'calendar' ? (
             <>
               <View style={{ flexDirection: 'row', gap: desktop ? 15 : 9, flexWrap: 'wrap' }}>
                 {[
@@ -405,6 +438,16 @@ function CycleApp() {
               </View>
               <View style={{ flexDirection: 'row', gap: 24, alignItems: 'flex-start' }}>
                 <View style={{ flex: 1, minWidth: 0, gap: 17 }}>
+                  <Button
+                    secondary
+                    icon={BookOpen}
+                    label="Explore cycle context"
+                    onPress={() => {
+                      setEditing(false);
+                      setLearning(true);
+                      mainScroll.current?.scrollTo({ y: 0, animated: false });
+                    }}
+                  />
                   <Calendar
                     journal={journal}
                     today={today}
@@ -498,7 +541,10 @@ function CycleApp() {
                 accessibilityRole="tab"
                 accessibilityLabel={label}
                 accessibilityState={{ selected: page === id }}
-                onPress={() => setPage(id)}
+                onPress={() => {
+                  setLearning(false);
+                  setPage(id);
+                }}
                 style={{ flex: 1, alignItems: 'center', gap: 5, padding: 10, minHeight: 59 }}
               >
                 <Icon

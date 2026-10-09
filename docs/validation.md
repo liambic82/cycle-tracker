@@ -1,5 +1,28 @@
 # Validation record
 
+## 0.11.0 recorded cycle context and education — October 9, 2026
+
+The owner requested continued preview development. This implements the educational portion of milestone 5: recorded daily context and nine manually browsable topics. Personal period/ovulation predictions remain separate upcoming work, and 1.0 still requires an explicit readiness decision.
+
+- `pnpm check`: TypeScript and all **107 tests** passed. Nine new tests cover missing starts, historical start boundaries and inclusive counts, leap/DST arithmetic, long gaps and sensitive-field exclusion, future imported entries, all recorded flow choices versus unknown, clearing a start without losing other fields, perimenopause filtering, and static source-link completeness. Symptoms and elapsed time never establish a personal phase. The only subsequent code change clarified the settings description; final production exports include it.
+- Final production web, Android Hermes, and iOS Hermes exports passed. The final web bundle is `index-d3cea291627ab128dbb746800494edab.js`, and the offline cache version is `96c62905b7ced2ba`. iOS remains a bundle check only. Formatting and Git whitespace checks passed.
+- Browser QA used fictional records on isolated `127.0.0.1:4176`, without accessing user storage on port 4173. Verified full calendar context, Month-view sheet and Day-view return paths, preserved selected dates, sample recorded cycle day 11 / elapsed 10, a past explicit No-flow day, a future date with no projected cycle day, and the existing fictional vault's no-start/unknown-flow state. Earlier notes, product/observation summaries, and three dose records remained available after unlocking.
+- Browsed all nine topics and their headings; checked first/last navigation boundaries and selected-topic state. Turning off perimenopause visibility in sample mode left eight topics and retained the general medication topic. Inspected 393 × 852, 320 × 740, and 1280 × 720 layouts, including the longer hormonal-medicines card, wrapped controls, readable sources, and keyboard focus on a source link. These are browser checks, not native font-scaling or screen-reader validation.
+- The NHS PMS link opened the exact public URL without query parameters in a separate tab. The bundled copy was checked against the seven official sources listed in [the education notes](cycle-education.md); this is developer source checking, not independent clinical approval. No journal data selects topics or enters source URLs.
+- Stopped the isolated server and reloaded the final bundle, unlocked the existing fictional journal, and browsed context and education successfully. An initial offline reload used the previous service worker while an old tab remained open; loading online and closing all app tabs allowed the waiting update to activate. The final offline pass retained the new bundle and preview 0.11.0. This normal browser-update step is now documented in the README. No captured errors or warnings occurred in the final QA tab.
+- The standalone ARM64 release APK passed signature verification and 16 KB zip alignment. Verified `com.liambic.cycletracker.preview`, version **0.11.0**, code **14**, minimum API 24, target API 36, notification/biometric permissions, `allowBackup: false`, and no debuggable flag. Embedded configuration keeps testing screenshots enabled; the Hermes program is 4,685,988 bytes.
+- Real-phone update retention, context navigation/Android Back, airplane-mode reading and source return, TalkBack/large text/Flip5 folding, plus earlier reminder delivery, PDF sharing, and Flip5 setup checks remain in [the device guide](android-testing.md#0110-daily-context-and-education). No new hardware pass is claimed. Journal format 4, encrypted envelope, passphrase, and biometric credentials remain unchanged.
+
+The fictional vault was left locked, the temporary tabs closed, viewport reset, and isolated server stopped. Build outputs and signing material remain outside Git. Screenshots contain only the fictional sample journal.
+
+- File: `artifacts/android/cycle-tracker-preview-0.11.0-arm64-v8a.apk` (33,459,870 bytes; excluded from Git).
+- APK SHA-256: `a1426dfd3b717c1c367f50052e46abf5b5eb930c62aeadb3058ea21c7a3d3eba`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Recorded daily context in the phone-size browser](screenshots/cycle-context-mobile.jpg)
+
+![General education and source links on desktop](screenshots/cycle-context-desktop.jpg)
+
 ## 0.10.0 doctor summaries and PDFs — October 9, 2026
 
 The owner approved continuing preview development after confirming that the next milestone would not trigger 1.0. This slice implements the source document's configurable doctor report request. Release readiness remains a separate explicit decision, and beautification/themes/backgrounds remain on the roadmap.

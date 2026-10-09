@@ -53,9 +53,10 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 
 ## Milestone 5: predictions and everyday education
 
-- Carefully labeled typical/personal prediction ranges, with agreed minimum history, outlier handling, and validation for irregular cycles.
-- Everyday tip cards for cycle-day/phase context, possible hormone changes, and tentative explanations of mood, energy, sleep, and appetite. Unknown phase must remain possible; calendar estimates are not measured hormone levels.
-- Review educational copy and medication effects before release. The source feedback prioritizes self-understanding and empathy; it does not authorize partner access or sharing.
+- Implemented in 0.11.0: recorded selected-day context and nine browsable, offline education topics covering cycle/hormone basics, symptoms, hormonal-treatment limitations, and perimenopause. Each topic links to its public health sources. Personal phase remains undetermined, and future dates receive no projected day count. The perimenopause preference hides its dedicated topic. This completes the first educational slice, not all of milestone 5.
+- Next: carefully labeled period-start estimation, with explicit user controls, context, agreed minimum history, missing-log/outlier handling, and validation for irregular cycles. Define the method and validate error/coverage before shipping personal date windows. See [education sources and prediction boundaries](cycle-education.md#next-prediction-work).
+- Later in this milestone: personal phase/ovulation estimates and phase-specific daily context only with appropriate evidence and clear unknown states. General education cards do not establish a user's phase, hormone level, mood, or energy.
+- Educational copy was checked against public health sources for 0.11.0; independent clinical/editorial review and medication-context validation remain required before release. The source feedback prioritizes self-understanding and empathy; it does not authorize partner access or sharing.
 - Offer measured lab results alone or beside clearly labeled typical curves when available, preserving hormonal-medication context. Resolve the brief's dashboard/visual staging mismatch before presenting estimates.
 
 ## Later milestones
@@ -69,7 +70,7 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 
 ## Planned: beautification and personal appearance
 
-Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). This scope is on the roadmap, not implemented in 0.10.0.
+Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). This scope is on the roadmap, not implemented in 0.11.0.
 
 - Beautification pass across calendar, daily entry, history, medication, and settings screens: consistent spacing, typography, icons, and attractive, space-efficient decoration with daily information prominent.
 - App color theme customization, including a curated palette, light/dark appearance, and accessible text/control contrast.
