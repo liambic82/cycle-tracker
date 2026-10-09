@@ -15,6 +15,7 @@ export function Button({
   onPress,
   icon: Icon,
   secondary = false,
+  danger = false,
   disabled = false,
   busy = false,
   style,
@@ -23,10 +24,14 @@ export function Button({
   onPress: () => void;
   icon?: LucideIcon;
   secondary?: boolean;
+  danger?: boolean;
   disabled?: boolean;
   busy?: boolean;
   style?: StyleProp<ViewStyle>;
 }) {
+  const accent = danger ? colors.error : colors.plumDark;
+  const foreground = secondary ? (danger ? colors.error : colors.ink) : '#fff';
+  const iconColor = secondary ? (danger ? colors.error : colors.plum) : '#fff';
   return (
     <Pressable
       accessibilityRole="button"
@@ -43,8 +48,8 @@ export function Button({
           gap: 9,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: secondary ? colors.paper : colors.plumDark,
-          borderColor: secondary ? colors.line : colors.plumDark,
+          backgroundColor: secondary ? colors.paper : accent,
+          borderColor: secondary && !danger ? colors.line : accent,
           borderWidth: 1,
           opacity: disabled ? 0.4 : pressed ? 0.75 : 1,
         },
@@ -52,16 +57,16 @@ export function Button({
       ]}
     >
       {busy ? (
-        <ActivityIndicator size="small" color={secondary ? colors.plum : '#fff'} />
+        <ActivityIndicator size="small" color={iconColor} />
       ) : (
-        Icon && <Icon size={17} color={secondary ? colors.plum : '#fff'} strokeWidth={1.7} />
+        Icon && <Icon size={17} color={iconColor} strokeWidth={1.7} />
       )}
       <Text
         style={{
           fontSize: 13,
           flexShrink: 1,
           fontWeight: '600',
-          color: secondary ? colors.ink : '#fff',
+          color: foreground,
           textAlign: 'center',
         }}
       >

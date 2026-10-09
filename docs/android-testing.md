@@ -43,6 +43,17 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 | October 9, 2026 | 0.4.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported symptoms working well, visibility good, and biometrics working. Individual edge-case results were not supplied. |
 | October 9, 2026 | 0.5.0       | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Owner reported Create my journal spinning for over a minute. Creation failed this test; other checks are not marked passed.    |
 
+## 0.5.3 entry options and autosave
+
+Install `cycle-tracker-preview-0.5.3-arm64-v8a.apk` over the current preview. Export a backup first if the journal opens, and **do not uninstall or clear storage**. The app identity and signing key are unchanged. This update includes the 0.5.1 passphrase fix and 0.5.2 screenshot/eye controls; their native checks are still pending.
+
+1. In sample mode, open a day without an entry. There should be no Delete button or Entry options control. Add a note or symptom; the ellipsis appears beside the date, while Delete stays hidden. The footer describes session-only sample changes.
+2. Open **Entry options → Delete entry**. Verify the date and scope in the confirmation. **Keep entry** must close the panel without changing any fields. Open it again, confirm deletion, then use **Undo deletion** near the date. All flow, symptoms, notes, and period markers should return.
+3. Close and reopen the options panel, change dates, and open/return from the symptom browser. Confirmation must not carry over to another date or return from the browser. Future dates must not offer deletion.
+4. In a fictional saved journal, add a note. The footer should say **Changes save automatically** and show **Saved on this device** when writing finishes. Check persistence after closing the sheet, locking, and reopening. No Save or Delete action is required to finish a normal entry.
+5. Check Month view’s daily sheet and Day view on Pixel 7 and Flip5, plus the desktop side panel. Use TalkBack to check the **Entry options** label and expanded/collapsed state, the dated confirmation, and save status. Verify large text, keyboard access, rotation, and fold/reopen.
+6. Continue the Flip5 creation retest and preview screenshot/passphrase-eye checks below. Report the device, OS, and app version with results. This UX feedback does not establish a successful Flip5 setup retest.
+
 ## 0.5.2 screenshots and passphrase controls
 
 Install `cycle-tracker-preview-0.5.2-arm64-v8a.apk` over the existing app. Do not uninstall or clear storage; export a backup first if the journal opens. The preview app identity and signing key are unchanged, and this update includes the 0.5.1 native passphrase fix, which still needs the Flip5 retest below.

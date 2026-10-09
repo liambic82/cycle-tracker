@@ -14,6 +14,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   Check,
+  CircleAlert,
   Flower2,
   Heart,
   LockKeyhole,
@@ -114,12 +115,28 @@ function CycleApp() {
   const undoNotice = state.deleted ? (
     <UndoNotice date={state.deleted.date} undo={state.undoDelete} dismiss={state.dismissUndo} />
   ) : null;
+  const saveStatus = (
+    <View style={[common.row, { gap: 6 }]}>
+      {state.status === 'Saving…' ? (
+        <ActivityIndicator size="small" color={colors.plum} />
+      ) : state.status === 'Not saved' ? (
+        <CircleAlert size={15} color={colors.error} />
+      ) : (
+        <Check size={15} color={colors.sageInk} />
+      )}
+      <Text accessibilityLiveRegion="polite" style={[common.small, { flexShrink: 1 }]}>
+        {state.status}
+      </Text>
+    </View>
+  );
   const editor = (
     <DayEditor
       key={journal.selectedDate}
       journal={journal}
       today={today}
       undoNotice={undoNotice}
+      saveStatus={saveStatus}
+      demo={state.demo}
       onViewChange={() =>
         (inlineEditor || calendarView === 'day' ? mainScroll : editorScroll).current?.scrollTo({
           y: 0,
@@ -130,14 +147,6 @@ function CycleApp() {
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
       onCustom={(symptom) => state.update((value) => addCustomSymptom(value, symptom))}
     />
-  );
-  const saveStatus = (
-    <View style={[common.row, { gap: 6 }]}>
-      <Check size={13} color={state.status === 'Not saved' ? colors.error : colors.sageInk} />
-      <Text accessibilityLiveRegion="polite" style={[common.small, { fontSize: 11 }]}>
-        {state.status}
-      </Text>
-    </View>
   );
   return (
     <View style={{ flex: 1, flexDirection: 'row', backgroundColor: colors.background }}>
@@ -378,12 +387,7 @@ function CycleApp() {
                       setEditing(false);
                       mainScroll.current?.scrollTo({ y: 0, animated: false });
                     }}
-                    dayContent={
-                      <>
-                        {saveStatus}
-                        {editor}
-                      </>
-                    }
+                    dayContent={editor}
                   />
                   <View
                     style={[common.row, { paddingHorizontal: 4, alignItems: 'flex-start', gap: 9 }]}
@@ -402,19 +406,7 @@ function CycleApp() {
                   )}
                 </View>
                 {inlineEditor && (
-                  <View style={[common.card, { width: 340, padding: 23 }]}>
-                    {editor}
-                    <View
-                      style={{
-                        borderTopWidth: 1,
-                        borderColor: colors.line,
-                        paddingTop: 17,
-                        marginTop: 24,
-                      }}
-                    >
-                      {saveStatus}
-                    </View>
-                  </View>
+                  <View style={[common.card, { width: 340, padding: 23 }]}>{editor}</View>
                 )}
               </View>
             </>

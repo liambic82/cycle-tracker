@@ -30,6 +30,8 @@ Before extending daily detail, validate the 0.5.1 passphrase fix. The owner repo
 
 Preview 0.5.2 additionally enables testing screenshots and adds passphrase show/hide controls at the owner's request. It includes the 0.5.1 fix; test both with [the 0.5.2 checklist](android-testing.md#052-screenshots-and-passphrase-controls).
 
+Preview 0.5.3 addresses the owner’s concern about accidental deletion from the entry footer. Deletion now requires opening Entry options beside the date, then confirming; the footer explains autosave and displays its current status. Follow [the 0.5.3 checklist](android-testing.md#053-entry-options-and-autosave) alongside the outstanding Flip5 setup and 0.5.2 checks before continuing daily-detail features.
+
 - Implemented in 0.5.0: year/month/day navigation with a consistent selected date, compact annual overview, recorded cycle-day context, and continuous month scrolling.
 - Implemented in 0.5.0: cycle-length and bleeding-duration charts with average, shortest, and longest values. Incomplete records remain unknown and are excluded from statistics.
 - Implemented in 0.5.0: chronological flow strips within cycle-history rows, with separate treatment for bleeding, spotting, explicitly recorded no flow, and unlogged days. Older entries without explicit flow information remain unknown.

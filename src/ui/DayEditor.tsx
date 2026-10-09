@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
-import { Check, Droplet, Heart, NotebookPen, Sparkles, Trash2 } from 'lucide-react-native';
+import {
+  Check,
+  Droplet,
+  Ellipsis,
+  Heart,
+  NotebookPen,
+  Sparkles,
+  Trash2,
+} from 'lucide-react-native';
 import { formatDay, type Day } from '../domain/dates';
 import { cycleDay, emptyEntry, FLOWS, type Entry, type Journal } from '../domain/journal';
 import { Button, Chip, SectionLabel } from './components';
@@ -20,6 +28,8 @@ export function DayEditor({
   onCustom,
   onDelete,
   undoNotice,
+  saveStatus,
+  demo,
   onViewChange,
 }: {
   journal: Journal;
@@ -28,6 +38,8 @@ export function DayEditor({
   onCustom: (symptom: string) => void;
   onDelete: () => void;
   undoNotice: React.ReactNode;
+  saveStatus: React.ReactNode;
+  demo: boolean;
   onViewChange: () => void;
 }) {
   const date = journal.selectedDate;
@@ -36,7 +48,13 @@ export function DayEditor({
   const [browsing, setBrowsing] = useState<SymptomFilter | null>(null);
   const [symptomError, setSymptomError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const closeActions = () => {
+    setActionsOpen(false);
+    setDeleteConfirm(false);
+  };
   const browse = (filter: SymptomFilter | null) => {
+    closeActions();
     setBrowsing(filter);
     setSymptomError('');
     onViewChange();
@@ -64,14 +82,85 @@ export function DayEditor({
     );
   return (
     <View style={{ gap: 26 }}>
-      <View style={{ gap: 6 }}>
-        <Text style={common.eyebrow}>{date === today ? 'TODAY’S JOURNAL' : 'DAILY JOURNAL'}</Text>
-        <Text style={common.heading}>{formatDay(date, { month: 'long', day: 'numeric' })}</Text>
-        <Text style={common.body}>
-          {formatDay(date, { weekday: 'long', year: 'numeric' })}
-          {day ? `  ·  Cycle day ${day}` : ''}
-        </Text>
+      <View style={[common.between, { alignItems: 'flex-start' }]}>
+        <View style={{ flex: 1, gap: 6 }}>
+          <Text style={common.eyebrow}>{date === today ? 'TODAY’S JOURNAL' : 'DAILY JOURNAL'}</Text>
+          <Text style={common.heading}>{formatDay(date, { month: 'long', day: 'numeric' })}</Text>
+          <Text style={common.body}>
+            {formatDay(date, { weekday: 'long', year: 'numeric' })}
+            {day ? `  ·  Cycle day ${day}` : ''}
+          </Text>
+        </View>
+        {date <= today && !!journal.entries[date] && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Entry options"
+            accessibilityState={{ expanded: actionsOpen }}
+            aria-expanded={actionsOpen}
+            onPress={() => {
+              setActionsOpen(!actionsOpen);
+              setDeleteConfirm(false);
+            }}
+            style={({ pressed }) => ({
+              width: 48,
+              height: 48,
+              borderRadius: 12,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: actionsOpen || pressed ? colors.roseSoft : colors.paper,
+              borderWidth: 1,
+              borderColor: colors.line,
+            })}
+          >
+            <Ellipsis size={22} color={colors.plum} />
+          </Pressable>
+        )}
       </View>
+      {actionsOpen && date <= today && !!journal.entries[date] && (
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: colors.line,
+            borderRadius: 14,
+            padding: 16,
+            gap: 12,
+          }}
+        >
+          {deleteConfirm ? (
+            <>
+              <Text style={common.label}>Delete this day’s entry?</Text>
+              <Text style={common.body}>
+                This removes the flow, symptoms, note, and period markers for{' '}
+                {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
+                the last deletion until you lock, delete another entry, or log this day again.
+              </Text>
+              <Button label="Keep entry" onPress={closeActions} />
+              <Button
+                secondary
+                danger
+                label="Delete this entry"
+                icon={Trash2}
+                onPress={() => {
+                  onDelete();
+                  closeActions();
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <Text style={common.label}>Entry options</Text>
+              <Button
+                secondary
+                danger
+                label="Delete entry"
+                icon={Trash2}
+                onPress={() => setDeleteConfirm(true)}
+              />
+            </>
+          )}
+        </View>
+      )}
+      {undoNotice}
       {date > today ? (
         <View style={{ backgroundColor: colors.sage, padding: 20, borderRadius: 14, gap: 10 }}>
           <Sparkles size={24} color={colors.sageInk} />
@@ -249,40 +338,14 @@ export function DayEditor({
               Anything that feels relevant. Or nothing at all.
             </Text>
           </View>
-          {!!journal.entries[date] && (
-            <View style={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 20, gap: 12 }}>
-              {deleteConfirm ? (
-                <>
-                  <Text style={common.label}>Delete this day’s entry?</Text>
-                  <Text style={common.body}>
-                    This removes the flow, symptoms, note, and period markers for{' '}
-                    {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can
-                    undo the last deletion until you lock, delete another entry, or log this day
-                    again.
-                  </Text>
-                  <Button
-                    label="Delete this entry"
-                    icon={Trash2}
-                    onPress={() => {
-                      onDelete();
-                      setDeleteConfirm(false);
-                    }}
-                  />
-                  <Button secondary label="Keep entry" onPress={() => setDeleteConfirm(false)} />
-                </>
-              ) : (
-                <Button
-                  secondary
-                  label="Delete entry"
-                  icon={Trash2}
-                  onPress={() => setDeleteConfirm(true)}
-                />
-              )}
-            </View>
-          )}
+          <View style={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 20, gap: 8 }}>
+            <Text style={common.small}>
+              {demo ? 'You’re exploring a sample journal.' : 'Changes save automatically.'}
+            </Text>
+            {saveStatus}
+          </View>
         </>
       )}
-      {undoNotice}
     </View>
   );
 }

@@ -1,5 +1,27 @@
 # Validation record
 
+## 0.5.3 entry options and autosave — October 9, 2026
+
+The owner identified the bottom-of-entry Delete button as easy to confuse with Save. Deletion now sits behind **Entry options** beside the date and a separate dated confirmation. **Keep entry** is the prominent confirmation action; destructive controls have red outlines. Undo appears near the date after deletion. The footer explains autosave and displays the actual journal save state, or clearly identifies session-only sample changes. Screenshot availability, passphrase eyes, cryptography, and deletion/Undo storage rules are unchanged.
+
+- Strict TypeScript and all **40 existing tests** passed, including complete-entry deletion/Undo and failed-write recovery. These are the commands from `pnpm check`, run directly after the local pnpm wrapper attempted an unnecessary noninteractive modules refresh. The final accessibility adjustment also passed TypeScript. Web, Android Hermes, and iOS Hermes production exports passed using the installed compiler outside the execution sandbox.
+- Browser QA used isolated `127.0.0.1:4176`, fictional sample data, and the previously created fictional QA vault. At 393 × 852, Month view’s daily sheet initially had no visible Delete button. Entry options exposed Delete; Keep entry closed confirmation without changing the selected symptom. Confirming deletion removed the sample entry and immediately offered Undo near the header; Undo restored the symptom. At 1280 × 720, visually checked the same options panel beside the entry date in the desktop side panel.
+- An empty saved-journal day had no options control. Entering a fictional note made Entry options available without exposing Delete, and the footer showed **Changes save automatically** / **Saved on this device**. The note survived locking, page reload, and passphrase unlock. Checked the footer in phone Day view; sample mode instead described session-only changes.
+- The final web build exposes `aria-expanded=false/true` when toggling options. Opening the symptom browser cleared pending confirmation; returning left options closed. Changing dates also reset confirmation, and empty/future dates had no deletion action. No captured browser console errors. Locked the fictional vault, closed the QA tab, reset the viewport, and stopped the isolated server afterward.
+- Actual Android input, TalkBack, large text, fold/reopen, and update retention remain [0.5.3 device checks](android-testing.md#053-entry-options-and-autosave). The earlier Flip5 creation retest and native screenshot/passphrase-eye checks remain pending; this feedback is not a hardware pass.
+
+The final standalone ARM64 release APK built successfully. Signature verification, 16 KB zip alignment, formatting, and Git whitespace checks passed. Package identity remains `com.liambic.cycletracker.preview`, version **0.5.3**, version code **8**, minimum API 24, target API 36, `USE_BIOMETRIC`, `allowBackup: false`, and no debuggable flag. Embedded configuration confirms testing screenshots remain enabled. The bundled Hermes program is 3,124,060 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.5.3-arm64-v8a.apk` (29,928,486 bytes; excluded from Git).
+- APK SHA-256: `ea7fb83e4f3113941dbd7d6cf5a2b297c115dfee4d818b88ef9e16a543729b66`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Entry footer with autosave status and fictional test text](screenshots/entry-autosave-mobile.jpg)
+
+![Deletion available only after opening Entry options](screenshots/entry-options-mobile.jpg)
+
+![Entry options in the desktop side panel](screenshots/entry-options-desktop.jpg)
+
 ## 0.5.2 testing screenshots and passphrase visibility — October 9, 2026
 
 At the owner's request, testing previews now allow screenshots, and setup/confirmation/unlock/restore passphrase fields have independent show/hide eye controls. Store/default builds retain capture protection. Android preview Recents secure-window blanking is also off; the existing background overlay and lock remain, and iOS retains its separate app-switcher blur. Settings text reflects the preview behavior. The 0.5.1 native passphrase fix remains included; no Flip5 success report has been received yet.

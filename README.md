@@ -37,7 +37,7 @@ The owner subsequently confirmed that symptoms, visibility, and biometrics work 
 
 The owner reported that creating a journal on Galaxy Z Flip5 in 0.5.0 stayed on the creation spinner for over a minute. Preview 0.5.1 addresses the likely JavaScript key-calculation bottleneck with native Android cryptography, progress messages, and a bounded calculation. Confirmation on the Flip5 is pending; its Android/One UI versions have not been reported.
 
-## Working preview: 0.5.2
+## Working preview: 0.5.3
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
@@ -49,14 +49,14 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - Flow strips inside each cycle, distinguishing bleeding, spotting, explicitly recorded no flow, and unlogged days. Clearing a flow log preserves other daily details.
 - A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute. Android 8+ uses background native passphrase key calculation; browsers use Web Crypto. Existing passphrases and backup format are preserved.
 - Encrypted backup/restore and readable CSV export.
-- Daily entry deletion with session-only Undo, and confirmed deletion of the whole local journal.
+- Daily entry deletion inside the date header’s Entry options menu, with confirmation and session-only Undo. The entry footer explains autosave and shows the actual save status. Whole-journal deletion remains separately confirmed.
 - Screenshots enabled in testing previews, as requested by the owner. Store builds retain native capture prevention; browsers cannot prevent screenshots.
 - Show/hide eye controls for passphrase setup, confirmation, unlock, and restore. Each field starts hidden and hides again on submission or backgrounding.
 - Optional biometric unlock in the installed mobile app, using an OS-protected copy of the encryption key. Passphrase fallback and backup recovery remain available; browsers continue to use the passphrase.
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication schedules, notifications, additional structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. Preview 0.5.2 includes the 0.5.1 creation fix, whose Flip5 retest is still pending, and needs native screenshot/eye-control checks. Symptoms, visibility, and biometrics in 0.4.0 have an owner-reported functional pass; keep them in regression testing. See [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Medication schedules, notifications, additional structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. Preview 0.5.3 includes the 0.5.1 creation fix, whose Flip5 retest is still pending, plus testing screenshots and passphrase eyes from 0.5.2. Native entry-options, screenshot, and eye-control checks remain pending. Symptoms, visibility, and biometrics in 0.4.0 have an owner-reported functional pass; keep them in regression testing. See [the development plan](docs/development-plan.md).
 
 ## Run locally
 
