@@ -73,6 +73,8 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 
 Explicitly reaffirmed by the owner after medication logging, following screenshot 6 and source comment `AAACIGIsKnU` in [the source review](source-review-2026-10-09.md). This is the next independent development slice after 0.12.0; customization is not yet implemented.
 
+**Owner approval required before implementation:** present concrete visual proposals and the proposed customization options first, including relevant phone and desktop examples. Wait for the owner's approval of the proposed scope before changing the app. General permission to continue development does not approve an unseen design. Positive feedback on a presented proposal approves that proposal's scope.
+
 - Beautification pass across calendar, daily entry, history, medication, and settings screens: consistent spacing, typography, icons, and attractive, space-efficient decoration with daily information prominent.
 - App color theme customization, including a curated palette, light/dark appearance, and accessible text/control contrast.
 - Optional background images, including a personal image selected on the device, with a simple reset to the default background. Keep images local; define backup/transfer handling before implementation.
