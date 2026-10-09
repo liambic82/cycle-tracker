@@ -42,6 +42,21 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 | October 9, 2026 | 0.3.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported biometrics functioning as expected; individual edge-case results were not supplied. |
 | Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Not yet validated.                                                                                 |
 
+## 0.4.0 symptom browser checks
+
+Install `cycle-tracker-preview-0.4.0-arm64-v8a.apk` over 0.3.0. Export an encrypted backup first and do not uninstall. This build uses the same preview identity and signing key; the passphrase and biometric key are unchanged.
+
+1. Unlock the updated app, including biometric unlock if already enabled. Verify existing symptoms, custom labels, cramp scores, and notes remain.
+2. Open a fictional day. Use **Browse all symptoms** to search `aura`, `lower back`, or another term; switch categories and use **Clear search**. Try **Less common symptoms**, select a new item, and return with **Back to daily journal**. All selected symptoms should appear together.
+3. Add a custom symptom in the browser. Verify it is immediately logged under **Your symptoms**, survives lock/restart, and can be selected on another day. Duplicate names should be rejected regardless of capitalization or surrounding spaces.
+4. Log a perimenopause symptom, then turn off **Your data → Symptom preferences → Show perimenopause choices**. The category and its curated search choices should disappear. The previously logged symptom must remain in that day's summary and exports. Turn the setting back on and verify the choices return.
+5. Lock, force-close/reopen, and unlock offline. The preference and selected symptoms must persist. Use a disposable fictional journal to verify encrypted backup/restore keeps them; restore still turns off biometric access until explicitly re-enabled. Older backups should open with perimenopause choices visible by default.
+6. Check Cramps and its 0–10 score, then remove Cramps from the day; the score should disappear. Check that selecting a symptom called Spotting or Skipped periods does not create a period-start marker or alter Flow.
+7. Test the symptom browser with the keyboard, large system text, portrait/landscape, and TalkBack. Controls and long labels should remain reachable. The browser uses the existing daily sheet; its **Back to daily journal** button returns to the entry, while Android Back closes the sheet. On Flip5, also fold/reopen during selection.
+8. Keep existing lock/privacy, deletion/Undo, and update-in-place retention checks in the regression pass. Changes to sample symptoms and preferences should disappear when leaving sample mode.
+
+Report the device, OS, and build version with results. The automated and browser checks do not establish a native-device pass for 0.4.0.
+
 ## 0.3.0 biometric unlock checks
 
 The owner reported a functional biometric pass on October 9, 2026. Keep the checklist below for regression testing; that report does not separately confirm every cancellation, invalidation, or recovery scenario.

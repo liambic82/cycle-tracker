@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
-import { Check, Droplet, Heart, NotebookPen, Plus, Sparkles, Trash2 } from 'lucide-react-native';
+import { Check, Droplet, Heart, NotebookPen, Sparkles, Trash2 } from 'lucide-react-native';
 import { formatDay, type Day } from '../domain/dates';
-import {
-  cycleDay,
-  emptyEntry,
-  FLOWS,
-  SYMPTOM_GROUPS,
-  type Entry,
-  type Journal,
-} from '../domain/journal';
+import { cycleDay, emptyEntry, FLOWS, type Entry, type Journal } from '../domain/journal';
 import { Button, Chip, SectionLabel } from './components';
 import { colors, common } from './theme';
+import {
+  QUICK_SYMPTOMS,
+  symptomSelected,
+  toggleSymptom,
+  type SymptomFilter,
+} from '../domain/symptoms';
+import { SymptomBrowser } from './SymptomBrowser';
 
 export function DayEditor({
   journal,
@@ -20,6 +20,7 @@ export function DayEditor({
   onCustom,
   onDelete,
   undoNotice,
+  onViewChange,
 }: {
   journal: Journal;
   today: Day;
@@ -27,41 +28,40 @@ export function DayEditor({
   onCustom: (symptom: string) => void;
   onDelete: () => void;
   undoNotice: React.ReactNode;
+  onViewChange: () => void;
 }) {
   const date = journal.selectedDate;
   const entry = journal.entries[date] ?? emptyEntry();
   const day = cycleDay(journal, date);
-  const [group, setGroup] = useState<keyof typeof SYMPTOM_GROUPS>('Body & cycle');
-  const [adding, setAdding] = useState(false);
-  const [custom, setCustom] = useState('');
-  const [customError, setCustomError] = useState('');
+  const [browsing, setBrowsing] = useState<SymptomFilter | null>(null);
+  const [symptomError, setSymptomError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(false);
-  const toggle = (symptom: string) =>
-    onPatch({
-      symptoms: entry.symptoms.includes(symptom)
-        ? entry.symptoms.filter((s) => s !== symptom)
-        : [...entry.symptoms, symptom],
-    });
-  const saveCustom = () => {
-    const name = custom.trim();
-    const all = [...Object.values(SYMPTOM_GROUPS).flat(), ...journal.customSymptoms];
-    if (!name) {
-      setCustomError('Give your symptom a name.');
-      return;
-    }
-    if (all.some((s) => s.toLowerCase() === name.toLowerCase())) {
-      setCustomError('That symptom is already available.');
-      return;
-    }
-    if (journal.customSymptoms.length >= 100) {
-      setCustomError('You can add up to 100 custom symptoms.');
-      return;
-    }
-    onCustom(name);
-    setCustom('');
-    setAdding(false);
-    setCustomError('');
+  const browse = (filter: SymptomFilter | null) => {
+    setBrowsing(filter);
+    setSymptomError('');
+    onViewChange();
   };
+  const toggle = (symptom: string) => {
+    try {
+      onPatch({ symptoms: toggleSymptom(entry.symptoms, symptom) });
+      setSymptomError('');
+    } catch (err) {
+      setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
+    }
+  };
+  if (browsing !== null && date <= today)
+    return (
+      <SymptomBrowser
+        selected={entry.symptoms}
+        custom={journal.customSymptoms}
+        showPerimenopause={journal.preferences.showPerimenopause}
+        initialFilter={browsing}
+        toggle={toggle}
+        onCustom={onCustom}
+        done={() => browse(null)}
+        error={symptomError}
+      />
+    );
   return (
     <View style={{ gap: 26 }}>
       <View style={{ gap: 6 }}>
@@ -107,6 +107,7 @@ export function DayEditor({
                     accessibilityRole="checkbox"
                     accessibilityLabel={label}
                     accessibilityState={{ checked: !!entry[field as 'periodStart' | 'periodEnd'] }}
+                    aria-checked={!!entry[field as 'periodStart' | 'periodEnd']}
                     onPress={() =>
                       onPatch({ [field!]: !entry[field as 'periodStart' | 'periodEnd'] })
                     }
@@ -145,106 +146,47 @@ export function DayEditor({
             <Text style={[common.small, { marginBottom: 13 }]}>
               Choose anything you notice. Every day counts.
             </Text>
-            <View style={[common.wrap, { gap: 5, marginBottom: 14 }]}>
-              {(Object.keys(SYMPTOM_GROUPS) as Array<keyof typeof SYMPTOM_GROUPS>).map((name) => (
-                <Pressable
-                  key={name}
-                  accessibilityRole="tab"
-                  accessibilityLabel={name}
-                  accessibilityState={{ selected: group === name }}
-                  onPress={() => setGroup(name)}
-                  style={{
-                    minHeight: 40,
-                    paddingHorizontal: 9,
-                    paddingVertical: 9,
-                    borderBottomWidth: group === name ? 2 : 0,
-                    borderColor: colors.plum,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: group === name ? colors.plumDark : colors.muted,
-                      fontSize: 11,
-                      fontWeight: group === name ? '700' : '400',
-                    }}
-                  >
-                    {name}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-            <View style={common.wrap}>
-              {SYMPTOM_GROUPS[group].map((symptom) => (
-                <Chip
-                  key={symptom}
-                  label={symptom}
-                  selected={entry.symptoms.includes(symptom)}
-                  onPress={() => toggle(symptom)}
-                />
-              ))}
-            </View>
-            {journal.customSymptoms.length > 0 && (
-              <View style={{ gap: 9, marginTop: 15 }}>
-                <Text style={common.small}>Your symptoms</Text>
+            {entry.symptoms.length > 0 && (
+              <View style={{ gap: 9, marginBottom: 18 }}>
+                <Text style={common.label}>Logged this day · {entry.symptoms.length}</Text>
+                <Text style={common.small}>Tap a selected symptom to remove it from this day.</Text>
                 <View style={common.wrap}>
-                  {journal.customSymptoms.map((symptom) => (
+                  {entry.symptoms.map((symptom) => (
                     <Chip
                       key={symptom}
                       label={symptom}
-                      selected={entry.symptoms.includes(symptom)}
+                      selected
+                      icon={Check}
                       onPress={() => toggle(symptom)}
                     />
                   ))}
                 </View>
               </View>
             )}
-            {entry.symptoms.filter(
-              (s) => ![...SYMPTOM_GROUPS[group], ...journal.customSymptoms].includes(s as never),
-            ).length > 0 && (
-              <View style={{ gap: 8, marginTop: 14 }}>
-                <Text style={common.small}>Also logged</Text>
-                <View style={common.wrap}>
-                  {entry.symptoms
-                    .filter(
-                      (s) =>
-                        ![...SYMPTOM_GROUPS[group], ...journal.customSymptoms].includes(s as never),
-                    )
-                    .map((symptom) => (
-                      <Chip
-                        key={symptom}
-                        label={symptom}
-                        selected
-                        onPress={() => toggle(symptom)}
-                      />
-                    ))}
-                </View>
-              </View>
-            )}
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => setAdding(!adding)}
-              style={[common.row, { minHeight: 46, marginTop: 6 }]}
-            >
-              <Plus size={14} color={colors.plum} />
-              <Text style={{ fontSize: 12, color: colors.plum, fontWeight: '600' }}>
-                Add your own symptom
-              </Text>
-            </Pressable>
-            {adding && (
-              <View style={{ gap: 8 }}>
-                <TextInput
-                  style={common.input}
-                  accessibilityLabel="Custom symptom name"
-                  value={custom}
-                  onChangeText={setCustom}
-                  placeholder="Name your symptom"
-                  maxLength={60}
-                  onSubmitEditing={saveCustom}
+            <Text style={[common.small, { marginBottom: 9 }]}>Quick choices</Text>
+            <View style={common.wrap}>
+              {QUICK_SYMPTOMS.map((symptom) => (
+                <Chip
+                  key={symptom}
+                  label={symptom}
+                  selected={symptomSelected(entry.symptoms, symptom)}
+                  onPress={() => toggle(symptom)}
                 />
-                <Button secondary label="Add symptom" onPress={saveCustom} />
-                {!!customError && <Text style={common.error}>{customError}</Text>}
-              </View>
-            )}
+              ))}
+            </View>
+            <View style={{ gap: 10, marginTop: 16 }}>
+              <Button label="Browse all symptoms" onPress={() => browse('All')} />
+              <Button
+                secondary
+                label="Less common symptoms"
+                onPress={() => browse('More symptoms')}
+              />
+              {!!symptomError && (
+                <Text accessibilityRole="alert" style={common.error}>
+                  {symptomError}
+                </Text>
+              )}
+            </View>
             {entry.symptoms.includes('Cramps') && (
               <View
                 style={{

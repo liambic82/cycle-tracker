@@ -33,12 +33,14 @@ For the Flip5, verify that closing and reopening the phone preserves the selecte
 
 The owner reported that previews 0.1.0 and 0.2.0 passed testing on the Pixel 7 running Android 17 on October 9, 2026. The 0.2.0 response was “Testing complete, all pass.” The owner then confirmed biometrics functioning as expected in 0.3.0 in the same test context. Individual biometric edge-case results and timings were not supplied. Flip5 testing and its Android/One UI versions are still pending.
 
-## Working preview: 0.3.0
+## Working preview: 0.4.0
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
 - A continuously scrolling calendar with past-date entry and date navigation.
 - Daily flow, explicit period start/end markers, grouped and custom symptoms, cramp severity, and notes.
+- The full source symptom catalog (99 choices), searchable categories, a dedicated less-common browser, and quick choices. Logged symptoms remain visible across categories.
+- An encrypted preference to hide curated perimenopause choices without removing existing logs or custom symptoms.
 - Recorded cycle lengths and bleeding duration, without predictions or hormone estimates.
 - A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute.
 - Encrypted backup/restore and readable CSV export.
@@ -48,7 +50,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication schedules, notifications, the complete symptom catalog, PDF doctor summaries, bloodwork, and optional sync are still pending. Biometric function has an owner-reported Pixel 7 pass; the detailed hardware regression checklist remains available. See [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Medication schedules, notifications, additional structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. Preview 0.4.0 needs device validation. Biometric function in 0.3.0 has an owner-reported Pixel 7 pass; keep that flow in regression testing. See [the development plan](docs/development-plan.md).
 
 ## Run locally
 

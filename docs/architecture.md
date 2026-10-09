@@ -10,7 +10,17 @@
 
 ## Journal rules
 
-Dates are local calendar keys (`YYYY-MM-DD`), not midnight UTC timestamps. Cycle intervals use UTC day numbers to avoid daylight-saving errors. A new cycle requires an explicit period-start marker. Changing flow to none or spotting clears that day's start/end markers. Bleeding duration requires a recorded end before the next period start. Unfinished cycles have no inferred length. The first symptom catalog is a subset of the brief, with custom symptoms available.
+Dates are local calendar keys (`YYYY-MM-DD`), not midnight UTC timestamps. Cycle intervals use UTC day numbers to avoid daylight-saving errors. A new cycle requires an explicit period-start marker. Changing flow to none or spotting clears that day's start/end markers. Bleeding duration requires a recorded end before the next period start. Unfinished cycles have no inferred length.
+
+## Symptom catalog and preferences (0.4.0)
+
+`src/domain/symptoms.ts` contains 99 curated choices covering all four symptom reference lists in the source brief. Compound source items are split where useful (for example oily/dry skin), while all 30 original labels remain unchanged. Search includes a small set of alternate terms. Categories describe browsing organization, not a diagnosis; selecting a symptom called Spotting or Skipped periods does not create flow or cycle markers.
+
+Entry symptom arrays remain strings. Unknown/imported labels are retained. Search and selection compare trimmed, case-insensitive identities without rewriting saved values; existing custom labels take precedence over new catalog matches in the browser. Curated categories and user-created labels stay distinct. Logging is capped at 200 symptoms per day, including custom labels, matching backup validation; adding a definition and logging it fail together at the limit. New custom definitions retain the 100-label limit, while older valid imports remain readable.
+
+Journal format 1 now includes `preferences.showPerimenopause`. Imports without preferences default to `true`; a supplied malformed preference is rejected. This preference lives inside the encrypted snapshot and encrypted backups, not separate plain storage. Hiding the curated category affects its browse/search choices only: selected symptoms remain in the daily summary, CSV, and backups, and custom labels remain available even if their wording overlaps that category. Sample preferences remain session-only. The vault envelope, passphrase, and biometric key do not change.
+
+The daily editor shows selected symptoms and compact quick choices. Its symptom browser replaces the editor content within the existing phone sheet or desktop card, so there is no second native modal. Changing views resets the parent scroll position. Checkbox/pressed states are explicit for browser accessibility as well as native accessibility state. Native keyboard, Android Back, large text, and TalkBack behavior still require device checks.
 
 ## Encrypted vault format 1
 

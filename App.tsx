@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
@@ -25,7 +25,7 @@ import {
 import { useJournal } from './src/data/useJournal';
 import { useScreenPrivacy } from './src/data/useScreenPrivacy';
 import app from './app.json';
-import { cycleDay, starts, updateEntry } from './src/domain/journal';
+import { addCustomSymptom, cycleDay, starts, updateEntry } from './src/domain/journal';
 import { formatDay, toDay, type Day } from './src/domain/dates';
 import { AuthGate } from './src/ui/AuthGate';
 import { Calendar } from './src/ui/Calendar';
@@ -50,6 +50,8 @@ function CycleApp() {
   const inlineEditor = width >= 1180;
   const [page, setPage] = useState<Page>('calendar');
   const [editing, setEditing] = useState(false);
+  const mainScroll = useRef<ScrollView>(null);
+  const editorScroll = useRef<ScrollView>(null);
   const [today, setToday] = useState(toDay(new Date()));
   useEffect(() => {
     const timer = setInterval(() => setToday(toDay(new Date())), 30000);
@@ -111,18 +113,12 @@ function CycleApp() {
       journal={journal}
       today={today}
       undoNotice={undoNotice}
+      onViewChange={() =>
+        (inlineEditor ? mainScroll : editorScroll).current?.scrollTo({ y: 0, animated: false })
+      }
       onDelete={() => state.removeEntry(journal.selectedDate)}
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
-      onCustom={(symptom) =>
-        state.update((value) => {
-          const entry = value.entries[value.selectedDate];
-          return updateEntry(
-            { ...value, customSymptoms: [...value.customSymptoms, symptom] },
-            value.selectedDate,
-            { symptoms: [...(entry?.symptoms ?? []), symptom] },
-          );
-        })
-      }
+      onCustom={(symptom) => state.update((value) => addCustomSymptom(value, symptom))}
     />
   );
   const saveStatus = (
@@ -269,6 +265,7 @@ function CycleApp() {
           </View>
         )}
         <ScrollView
+          ref={mainScroll}
           style={{ flex: 1 }}
           contentContainerStyle={{
             padding: desktop ? 32 : 20,
@@ -404,6 +401,12 @@ function CycleApp() {
               biometricEnabled={state.biometricEnabled}
               biometricAvailable={state.biometricAvailable}
               setBiometricUnlock={state.setBiometricUnlock}
+              setShowPerimenopause={(showPerimenopause) =>
+                state.update((value) => ({
+                  ...value,
+                  preferences: { ...value.preferences, showPerimenopause },
+                }))
+              }
             />
           )}
         </ScrollView>
@@ -474,6 +477,7 @@ function CycleApp() {
             </Pressable>
           </View>
           <ScrollView
+            ref={editorScroll}
             contentContainerStyle={{ padding: 24, paddingBottom: 55 }}
             keyboardShouldPersistTaps="handled"
           >

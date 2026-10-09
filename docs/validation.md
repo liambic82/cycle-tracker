@@ -1,5 +1,26 @@
 # Validation record
 
+## 0.4.0 symptom catalog and preferences — October 9, 2026
+
+Implemented 99 curated symptoms covering the source's four reference lists, category/search browsing, a less-common browser, selected-symptom summaries, quick choices, and an encrypted perimenopause visibility preference. All 30 original labels remain supported. Existing custom labels are retained when they overlap additions to the catalog. The preference defaults on for older backups; vault format, passphrase, and biometric key are unchanged.
+
+- `pnpm check`: TypeScript and all **28 tests** passed. Six new tests cover old catalog labels, search/category visibility, case-insensitive custom collisions, older journal imports and malformed preferences, encrypted preference/entry round-trip with CSV retention, and selection limits without partial custom additions.
+- Web, Android Hermes, and iOS Hermes production exports passed. TypeScript and the production exports were repeated after a browser accessibility correction; checkbox state and button pressed state are now explicitly exposed on web. Prettier and Git whitespace checks passed.
+- Browser checks used the isolated `127.0.0.1:4174` test origin with fictional data. The previous preview's journal opened with its passphrase and original note intact. Logged Hot flashes, Itchy ears, and a custom fictional symptom; the selected-day summary retained all three and the note after locking/reloading/unlocking.
+- Turning off perimenopause choices survived lock/reload/unlock, removed the curated category and its search results, and left the existing Hot flashes entry visible in the daily summary. Turning it on restored the category. Sample mode's visibility change disappeared after exiting/re-entering sample mode.
+- Visually checked the symptom browser at 393 × 852 and 1280 × 720. Confirmed scoped uncommon-symptom search, custom creation, empty search feedback, separate migraine-with/without-aura results, and checkbox checked/pressed states in the browser accessibility tree. No captured console errors. The test session was locked, its tab closed, the viewport restored, and the isolated preview server stopped.
+- Encrypted restore and CSV retention for hidden symptoms were exercised in automated tests. Native keyboard, Android Back, TalkBack, large text, fold transitions, native backup sharing/restore, and biometric regression still require the [0.4.0 hardware checklist](android-testing.md#040-symptom-browser-checks). No owner device pass is claimed for this build.
+
+The signed ARM64 release APK built successfully. APK signature and 16 KB zip-alignment verification passed; the certificate matches previous previews. Package identity is `com.liambic.cycletracker.preview`, version **0.4.0**, version code **4**, minimum API 24, target API 36, `allowBackup: false`, and no debuggable flag. The bundled Hermes program is 3,104,148 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.4.0-arm64-v8a.apk` (29,908,558 bytes; excluded from Git).
+- APK SHA-256: `88fb090ca31d1833b6ff9b8cc73bcfce7f373624e7b3a95f76f7c18e22e0260e`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Symptom browser at phone width](screenshots/symptoms-mobile.jpg)
+
+![Symptom browser on desktop](screenshots/symptoms-desktop.jpg)
+
 ## 0.3.0 owner biometric report — October 9, 2026
 
 The owner reported “Verified biometrics are functioning as expected.” This records a functional biometric pass for preview **0.3.0** in the established Pixel 7 / Android 17 test context. The report did not enumerate cancellation, changed enrollment, background races, restore/deletion, or other individual checklist results; those are not independently marked passed. Flip5 and iOS hardware validation remain pending. Earlier pending-device statements below describe the state when those checks were recorded.

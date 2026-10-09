@@ -18,11 +18,13 @@ Preview 0.2.0 added entry deletion with session-only Undo, confirmed deletion of
 - Record OS versions; test input, accessibility text sizes, storage, backup sharing, and fold/reopen state.
 - Measure passphrase unlock time and journal write performance on real hardware.
 - Verify background locking, native app-switcher privacy, keyboard behavior, and recovery after app termination.
-- Next feature slice: complete the symptom catalog, improve access to the extended list, and let users hide perimenopause choices. Preserve existing/custom labels and all logged values when choices are hidden; keep backups compatible.
+- Implemented in 0.4.0: the complete 99-choice catalog, search and category browsing, a less-common browser, custom-label handling, and optional perimenopause visibility. Existing labels and older backups remain supported. Validate the update on hardware with [the 0.4.0 checklist](android-testing.md#040-symptom-browser-checks).
 - Keep deletion/Undo, whole-journal deletion, backups, and update-in-place retention in the regression pass.
 - Keep native biometric enrollment, cancellation, invalidation, disable, restart, and passphrase fallback in hardware regression testing.
 
 ## Milestone 3: visual history and daily detail
+
+This is the next feature milestone following the 0.4.0 symptom-browser preview.
 
 - Add year/month/day navigation with a consistent selected date, compact annual overview, and cycle-day context. Keep continuous month scrolling.
 - Add cycle-length and bleeding-duration charts with average, shortest, and longest values. Distinguish incomplete records from complete intervals.

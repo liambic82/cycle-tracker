@@ -86,9 +86,11 @@ export function Chip({
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected: !!selected }}
+      aria-pressed={!!selected}
       onPress={onPress}
       style={({ pressed }) => ({
         minHeight: 42,
+        maxWidth: '100%',
         paddingHorizontal: 12,
         paddingVertical: 9,
         borderWidth: 1,
@@ -105,6 +107,7 @@ export function Chip({
       <Text
         style={{
           fontSize: 12,
+          flexShrink: 1,
           lineHeight: 20,
           color: selected ? colors.roseInk : colors.muted,
           fontWeight: selected ? '600' : '400',

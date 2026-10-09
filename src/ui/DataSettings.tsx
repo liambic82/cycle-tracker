@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, Text, TextInput, View } from 'react-native';
+import { Platform, Switch, Text, TextInput, View } from 'react-native';
 import { Download, FileSpreadsheet, LockKeyhole, ShieldCheck, Trash2 } from 'lucide-react-native';
 import app from '../../app.json';
 import { toCSV, type Journal } from '../domain/journal';
@@ -17,6 +17,7 @@ export function DataSettings({
   biometricEnabled,
   biometricAvailable,
   setBiometricUnlock,
+  setShowPerimenopause,
 }: {
   journal: Journal;
   demo: boolean;
@@ -26,6 +27,7 @@ export function DataSettings({
   biometricEnabled: boolean;
   biometricAvailable: boolean;
   setBiometricUnlock: (enabled: boolean) => Promise<void>;
+  setShowPerimenopause: (show: boolean) => void;
 }) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
@@ -73,6 +75,28 @@ export function DataSettings({
         <Text style={common.body}>
           Your records are encrypted with your passphrase and stored on this device. This preview
           has no account, cloud sync, or analytics.
+        </Text>
+      </View>
+      <View style={[common.card, { gap: 15 }]}>
+        <Text style={common.heading}>Symptom preferences</Text>
+        <View style={common.between}>
+          <Text style={[common.label, { flex: 1 }]}>Show perimenopause choices</Text>
+          <Switch
+            accessibilityLabel="Show perimenopause choices"
+            value={journal.preferences.showPerimenopause}
+            onValueChange={setShowPerimenopause}
+            trackColor={{ false: '#D9D2D5', true: colors.plum }}
+            thumbColor="#fff"
+          />
+        </View>
+        <Text style={common.body}>
+          Hide the perimenopause category if it isn’t useful to you. Previously logged symptoms and
+          your custom labels stay available, and nothing is removed from your records or exports.
+        </Text>
+        <Text style={common.small}>
+          {demo
+            ? 'In sample mode, this preference lasts only for this session.'
+            : 'This preference saves with your encrypted journal and travels with your backup.'}
         </Text>
       </View>
       <View style={[common.card, { gap: 15 }]}>

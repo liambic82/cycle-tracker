@@ -1,47 +1,13 @@
 import { daysBetween, validDay, type Day } from './dates.ts';
+import {
+  MAX_DAILY_SYMPTOMS,
+  symptomSelected,
+  toggleSymptom,
+  validateCustomSymptom,
+} from './symptoms.ts';
 
 export const FLOWS = ['none', 'spotting', 'light', 'medium', 'heavy'] as const;
 export type Flow = (typeof FLOWS)[number];
-export const SYMPTOM_GROUPS = {
-  'Body & cycle': [
-    'Cramps',
-    'Bloating',
-    'Headache',
-    'Breast tenderness',
-    'Fatigue',
-    'Back pain',
-    'Nausea',
-    'Migraine',
-    'Pelvic pressure',
-  ],
-  'Mood & mind': [
-    'Mood swings',
-    'Irritability',
-    'Anxiety',
-    'Low mood',
-    'Brain fog',
-    'Trouble concentrating',
-    'Overwhelm',
-  ],
-  Perimenopause: [
-    'Hot flashes',
-    'Night sweats',
-    'Sleep disruption',
-    'Joint aches',
-    'Vaginal dryness',
-    'Heart palpitations',
-  ],
-  'More symptoms': [
-    'Itchy skin',
-    'Dry eyes',
-    'Tingling',
-    'Restless legs',
-    'Dizziness',
-    'Acid reflux',
-    'Ringing in ears',
-    'Hair changes',
-  ],
-} as const;
 
 export interface Entry {
   flow: Flow;
@@ -57,6 +23,7 @@ export interface Journal {
   entries: Record<Day, Entry>;
   customSymptoms: string[];
   selectedDate: Day;
+  preferences: { showPerimenopause: boolean };
 }
 
 export function emptyEntry(): Entry {
@@ -71,7 +38,13 @@ export function emptyEntry(): Entry {
 }
 
 export function emptyJournal(today: Day): Journal {
-  return { version: 1, entries: {}, customSymptoms: [], selectedDate: today };
+  return {
+    version: 1,
+    entries: {},
+    customSymptoms: [],
+    selectedDate: today,
+    preferences: { showPerimenopause: true },
+  };
 }
 
 export function hasEntry(entry: Entry | undefined): boolean {
@@ -102,6 +75,20 @@ export function starts(journal: Journal, through: Day): Day[] {
   return Object.keys(journal.entries)
     .filter((day) => day <= through && journal.entries[day]?.periodStart)
     .sort();
+}
+
+export function addCustomSymptom(journal: Journal, input: string): Journal {
+  const label = validateCustomSymptom(input, journal.customSymptoms);
+  const selected = journal.entries[journal.selectedDate]?.symptoms ?? [];
+  // Guard the daily limit before adding the definition so a failed log changes neither.
+  const symptoms = symptomSelected(selected, label)
+    ? [...selected]
+    : toggleSymptom(selected, label);
+  return updateEntry(
+    { ...journal, customSymptoms: [...journal.customSymptoms, label] },
+    journal.selectedDate,
+    { symptoms },
+  );
 }
 
 export function cycleDay(journal: Journal, day: Day): number | null {
@@ -136,7 +123,7 @@ function record(value: unknown): value is Record<string, unknown> {
 function symptomList(value: unknown): value is string[] {
   return (
     Array.isArray(value) &&
-    value.length <= 200 &&
+    value.length <= MAX_DAILY_SYMPTOMS &&
     value.every((s) => typeof s === 'string' && s.trim().length > 0 && s.length <= 60) &&
     new Set(value).size === value.length
   );
@@ -144,6 +131,11 @@ function symptomList(value: unknown): value is string[] {
 
 export function parseJournal(value: unknown): Journal {
   assert(record(value) && value.version === 1 && validDay(value.selectedDate));
+  // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
+  assert(
+    value.preferences === undefined ||
+      (record(value.preferences) && typeof value.preferences.showPerimenopause === 'boolean'),
+  );
   assert(
     record(value.entries) &&
       Object.keys(value.entries).length <= 40000 &&
@@ -187,6 +179,12 @@ export function parseJournal(value: unknown): Journal {
     entries,
     customSymptoms: [...value.customSymptoms],
     selectedDate: value.selectedDate,
+    preferences: {
+      showPerimenopause:
+        value.preferences === undefined
+          ? true
+          : (value.preferences as { showPerimenopause: boolean }).showPerimenopause,
+    },
   };
 }
 
