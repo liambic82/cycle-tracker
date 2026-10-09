@@ -8,6 +8,7 @@ export function demoJournal(today: Day): Journal {
       journal.entries[addDays(today, offset + day)] = {
         ...emptyEntry(),
         flow: day < 2 ? 'medium' : 'light',
+        flowRecorded: true,
         periodStart: day === 0,
         periodEnd: day === 4,
         symptoms: day < 2 ? ['Cramps', 'Fatigue'] : [],
@@ -15,6 +16,9 @@ export function demoJournal(today: Day): Journal {
         note: day === 0 ? 'A quiet evening and a heating pad helped.' : '',
       };
     }
+  }
+  for (const offset of [-63, -62, -33, -32, -4]) {
+    journal.entries[addDays(today, offset)] = { ...emptyEntry(), flowRecorded: true };
   }
   journal.entries[addDays(today, -3)] = {
     ...emptyEntry(),

@@ -90,12 +90,27 @@ export function DayEditor({
                 <Chip
                   key={flow}
                   label={flow[0]!.toUpperCase() + flow.slice(1)}
-                  selected={entry.flow === flow}
+                  selected={entry.flowRecorded && entry.flow === flow}
                   onPress={() => onPatch({ flow })}
                   icon={flow !== 'none' ? Droplet : undefined}
                 />
               ))}
             </View>
+            <Text style={[common.small, { marginTop: 10 }]}>
+              {entry.flowRecorded
+                ? entry.flow === 'none'
+                  ? 'Recorded: no flow.'
+                  : 'Flow recorded for this day.'
+                : 'Flow not logged yet. Choose None to record a day without flow.'}
+            </Text>
+            {entry.flowRecorded && (
+              <Button
+                secondary
+                label="Clear flow log"
+                style={{ marginTop: 10 }}
+                onPress={() => onPatch({ flow: 'none', flowRecorded: false })}
+              />
+            )}
             {entry.flow !== 'none' && entry.flow !== 'spotting' && (
               <View style={{ marginTop: 13, gap: 5 }}>
                 {[

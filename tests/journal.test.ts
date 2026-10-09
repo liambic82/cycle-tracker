@@ -53,7 +53,7 @@ test('clearing a start recalculates history; clearing cramps removes severity', 
     symptoms: ['Cramps'],
     cramps: 7,
   });
-  journal = updateEntry(journal, '2026-10-01', { flow: 'none', symptoms: [] });
+  journal = updateEntry(journal, '2026-10-01', { flow: 'none', flowRecorded: false, symptoms: [] });
   assert.equal(cycleDay(journal, '2026-10-08'), null);
   assert.deepEqual(journal.entries, {});
 });

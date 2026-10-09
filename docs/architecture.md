@@ -12,6 +12,16 @@
 
 Dates are local calendar keys (`YYYY-MM-DD`), not midnight UTC timestamps. Cycle intervals use UTC day numbers to avoid daylight-saving errors. A new cycle requires an explicit period-start marker. Changing flow to none or spotting clears that day's start/end markers. Bleeding duration requires a recorded end before the next period start. Unfinished cycles have no inferred length.
 
+## Calendar and visual history (0.5.0)
+
+Entries now include `flowRecorded`. Choosing any flow option sets it to true; explicitly choosing None is a saved observation. Clearing flow sets it to false, removes period boundaries, and retains symptoms and notes. An otherwise empty unlogged entry is removed. On import, older positive-flow and spotting entries infer true; older None entries infer false because previous versions did not distinguish an explicit choice from the default. Inconsistent or malformed flags are rejected. Journal format 1 and the vault envelope remain compatible for old-to-new imports; the passphrase and biometric key are unchanged. Downgrading to an older app is not a supported way to preserve new fields. CSV adds a final `Flow recorded` column so consumers can distinguish None from unknown.
+
+Year, month, and day views share the journal's selected date. Annual month tiles open a continuous month calendar without changing selection; selecting a date opens the editor. Miniature dates are visual context within a single accessible month button, not tiny individual touch targets. The daily view has previous/next controls and a full editor; compact month view retains its daily sheet. Calendar labels show recorded cycle-day counts only through today. There are no prediction overlays.
+
+History statistics use all recorded cycles and exclude unknown lengths/durations. Charts show the latest twelve cycles oldest to newest with date, year, numeric value, and accessible labels; an incomplete value is a dash, not zero. Bleeding duration is the inclusive span from period start to the first recorded end within the same cycle, not a claim that every intervening day had bleeding. History rows initially show twelve cycles, with an option to reveal older rows.
+
+Each chronological flow strip ends before the next start or at today. It distinguishes bleeding, spotting, explicit None, and missing flow observations, with accompanying text counts. Notes or symptoms alone do not supply flow information. Sparse dates become compact runs so long gaps do not generate a UI element per day. Cycle-day lookup uses sorted starts; history scans sorted entries once for end markers.
+
 ## Symptom catalog and preferences (0.4.0)
 
 `src/domain/symptoms.ts` contains 99 curated choices covering all four symptom reference lists in the source brief. Compound source items are split where useful (for example oily/dry skin), while all 30 original labels remain unchanged. Search includes a small set of alternate terms. Categories describe browsing organization, not a diagnosis; selecting a symptom called Spotting or Skipped periods does not create flow or cycle markers.

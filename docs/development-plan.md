@@ -18,17 +18,17 @@ Preview 0.2.0 added entry deletion with session-only Undo, confirmed deletion of
 - Record OS versions; test input, accessibility text sizes, storage, backup sharing, and fold/reopen state.
 - Measure passphrase unlock time and journal write performance on real hardware.
 - Verify background locking, native app-switcher privacy, keyboard behavior, and recovery after app termination.
-- Implemented in 0.4.0: the complete 99-choice catalog, search and category browsing, a less-common browser, custom-label handling, and optional perimenopause visibility. Existing labels and older backups remain supported. Validate the update on hardware with [the 0.4.0 checklist](android-testing.md#040-symptom-browser-checks).
+- Implemented in 0.4.0: the complete 99-choice catalog, search and category browsing, a less-common browser, custom-label handling, and optional perimenopause visibility. Existing labels and older backups remain supported. The owner reported symptoms, visibility, and biometrics working on October 9 in the established Pixel 7 / Android 17 context. Keep [the 0.4.0 checklist](android-testing.md#040-symptom-browser-checks) for regression; individual edge-case results were not supplied.
 - Keep deletion/Undo, whole-journal deletion, backups, and update-in-place retention in the regression pass.
 - Keep native biometric enrollment, cancellation, invalidation, disable, restart, and passphrase fallback in hardware regression testing.
 
 ## Milestone 3: visual history and daily detail
 
-This is the next feature milestone following the 0.4.0 symptom-browser preview.
+The first visual-history portion is implemented in preview 0.5.0 and awaits hardware validation. Daily-detail extensions remain the next development slice.
 
-- Add year/month/day navigation with a consistent selected date, compact annual overview, and cycle-day context. Keep continuous month scrolling.
-- Add cycle-length and bleeding-duration charts with average, shortest, and longest values. Distinguish incomplete records from complete intervals.
-- Show bleeding within cycle-history rows, with separate treatment for explicitly recorded no-flow and unlogged days.
+- Implemented in 0.5.0: year/month/day navigation with a consistent selected date, compact annual overview, recorded cycle-day context, and continuous month scrolling.
+- Implemented in 0.5.0: cycle-length and bleeding-duration charts with average, shortest, and longest values. Incomplete records remain unknown and are excluded from statistics.
+- Implemented in 0.5.0: chronological flow strips within cycle-history rows, with separate treatment for bleeding, spotting, explicitly recorded no flow, and unlogged days. Older entries without explicit flow information remain unknown.
 - Add optional product-event records (type, amount/count, changes or cup emptying, and time), plus clots/flooding where appropriate.
 - Add optional sexual-activity, intensity, orgasm, and libido fields with independent report inclusion controls.
 - Keep recorded data separate from prediction overlays, which require the later prediction work.

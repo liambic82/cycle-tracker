@@ -35,14 +35,30 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 
 ## Device reports
 
-| Date            | App version | Device                 | OS                                    | Result                                                                                             |
-| --------------- | ----------- | ---------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| October 9, 2026 | 0.1.0       | Google Pixel 7         | Android 17                            | Owner reported testing passed. Individual checklist results and timings were not supplied.         |
-| October 9, 2026 | 0.2.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported “Testing complete, all pass” after the 0.2.0 update checklist.                      |
-| October 9, 2026 | 0.3.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported biometrics functioning as expected; individual edge-case results were not supplied. |
-| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Not yet validated.                                                                                 |
+| Date            | App version | Device                 | OS                                    | Result                                                                                                                         |
+| --------------- | ----------- | ---------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| October 9, 2026 | 0.1.0       | Google Pixel 7         | Android 17                            | Owner reported testing passed. Individual checklist results and timings were not supplied.                                     |
+| October 9, 2026 | 0.2.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported “Testing complete, all pass” after the 0.2.0 update checklist.                                                  |
+| October 9, 2026 | 0.3.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported biometrics functioning as expected; individual edge-case results were not supplied.                             |
+| October 9, 2026 | 0.4.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported symptoms working well, visibility good, and biometrics working. Individual edge-case results were not supplied. |
+| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Not yet validated.                                                                                                             |
+
+## 0.5.0 calendar and history checks
+
+Install `cycle-tracker-preview-0.5.0-arm64-v8a.apk` over the current preview. Export an encrypted backup first and do not uninstall. This build retains the preview identity, signing key, passphrase, and biometric key. Hardware validation of 0.5.0 is pending.
+
+1. Unlock with biometrics if enabled, then check existing notes, symptoms, custom labels, preferences, and period boundaries. Older days without recorded bleeding/spotting should say flow is not logged; they must not be silently counted as no-flow days.
+2. In sample mode, switch between **Year view**, **Month view**, and **Day view**. Tap a year-view month to open its calendar; the selected day should stay unchanged until you select another date. Try previous/next year, earlier/later months, Today, and Jump to date. A leap date such as `2024-02-29` should work; `2026-02-29` should be rejected.
+3. Navigate previous/next day across month and year boundaries. Check cycle-day labels against recorded start dates. Month-view date taps should open the daily sheet; Day view should show the full editor. Search symptoms and return to the editor in both views.
+4. In **Your history**, the unchanged sample has cycle lengths 30 and 29 days (average 29.5), with the latest cycle incomplete. Its three bleeding spans are 5 days. Check text counts and colored strips; open a cycle to inspect its starting day. Your own incomplete intervals should remain dashes, not zeros.
+5. On a fictional day, choose **None**. It should become an explicit no-flow observation and appear as such in the calendar/history. **Clear flow log** should restore unknown flow while retaining symptoms and notes. Positive flow can have start/end markers; clearing it removes those markers and recalculates history.
+6. Lock, force-close, and reopen offline. Explicit None, selected date, and other saved details must persist. Export and restore an encrypted backup using a disposable fictional journal; it must preserve the distinction. CSV's final `Flow recorded` column should be true for explicitly logged flow and false for unknown flow. Restore still disables biometrics until explicitly re-enabled.
+7. Test both chart and calendar scrolling, keyboard input, large system text, rotation, and TalkBack. Long labels and all controls should stay reachable. On Flip5, also fold/reopen while navigating or editing.
+8. Keep biometric cancellation/passphrase fallback, background locking, screenshot/Recents protection, deletion/Undo, and backup sharing in regression testing. Report the device, OS, and version with results.
 
 ## 0.4.0 symptom browser checks
+
+The owner reported symptoms, visibility, and biometrics working on October 9, 2026 in the established Pixel 7 / Android 17 context. Retain these checks for regression; individual edge-case outcomes were not separately reported.
 
 Install `cycle-tracker-preview-0.4.0-arm64-v8a.apk` over 0.3.0. Export an encrypted backup first and do not uninstall. This build uses the same preview identity and signing key; the passphrase and biometric key are unchanged.
 
@@ -55,7 +71,7 @@ Install `cycle-tracker-preview-0.4.0-arm64-v8a.apk` over 0.3.0. Export an encryp
 7. Test the symptom browser with the keyboard, large system text, portrait/landscape, and TalkBack. Controls and long labels should remain reachable. The browser uses the existing daily sheet; its **Back to daily journal** button returns to the entry, while Android Back closes the sheet. On Flip5, also fold/reopen during selection.
 8. Keep existing lock/privacy, deletion/Undo, and update-in-place retention checks in the regression pass. Changes to sample symptoms and preferences should disappear when leaving sample mode.
 
-Report the device, OS, and build version with results. The automated and browser checks do not establish a native-device pass for 0.4.0.
+Report the device, OS, and build version with results. Automated and browser checks supplement the owner's functional report and do not establish a Flip5 or iOS pass.
 
 ## 0.3.0 biometric unlock checks
 

@@ -59,6 +59,7 @@ export function Button({
       <Text
         style={{
           fontSize: 13,
+          flexShrink: 1,
           fontWeight: '600',
           color: secondary ? colors.ink : '#fff',
           textAlign: 'center',

@@ -11,6 +11,7 @@ export type Flow = (typeof FLOWS)[number];
 
 export interface Entry {
   flow: Flow;
+  flowRecorded: boolean;
   periodStart: boolean;
   periodEnd: boolean;
   symptoms: string[];
@@ -29,6 +30,7 @@ export interface Journal {
 export function emptyEntry(): Entry {
   return {
     flow: 'none',
+    flowRecorded: false,
     periodStart: false,
     periodEnd: false,
     symptoms: [],
@@ -50,7 +52,8 @@ export function emptyJournal(today: Day): Journal {
 export function hasEntry(entry: Entry | undefined): boolean {
   return (
     !!entry &&
-    (entry.flow !== 'none' ||
+    (entry.flowRecorded ||
+      entry.flow !== 'none' ||
       entry.periodStart ||
       entry.periodEnd ||
       entry.symptoms.length > 0 ||
@@ -60,6 +63,8 @@ export function hasEntry(entry: Entry | undefined): boolean {
 
 export function updateEntry(journal: Journal, date: Day, patch: Partial<Entry>): Journal {
   const entry = { ...(journal.entries[date] ?? emptyEntry()), ...patch };
+  if (patch.flow !== undefined) entry.flowRecorded = patch.flowRecorded ?? true;
+  if (!entry.flowRecorded) entry.flow = 'none';
   if (entry.flow === 'none' || entry.flow === 'spotting') {
     entry.periodStart = false;
     entry.periodEnd = false;
@@ -98,13 +103,18 @@ export function cycleDay(journal: Journal, day: Day): number | null {
 
 export function history(journal: Journal, through: Day) {
   const dates = starts(journal, through);
-  const allDays = Object.keys(journal.entries).sort();
+  const allDays = Object.keys(journal.entries)
+    .filter((day) => day <= through)
+    .sort();
+  let cursor = 0;
   return dates.map((start, index) => {
     const next = dates[index + 1];
-    const end = allDays.find(
-      (day) =>
-        day >= start && day <= through && (!next || day < next) && journal.entries[day]?.periodEnd,
-    );
+    while (cursor < allDays.length && allDays[cursor]! < start) cursor++;
+    let end: Day | null = null;
+    while (cursor < allDays.length && (!next || allDays[cursor]! < next)) {
+      const day = allDays[cursor++]!;
+      if (!end && journal.entries[day]?.periodEnd) end = day;
+    }
     return {
       start,
       end: end ?? null,
@@ -149,6 +159,10 @@ export function parseJournal(value: unknown): Journal {
         typeof entry.periodStart === 'boolean' &&
         typeof entry.periodEnd === 'boolean',
     );
+    // Older 'none' values also mean an untouched default; never infer an explicit no-flow log.
+    const flowRecorded =
+      entry.flowRecorded === undefined ? entry.flow !== 'none' : entry.flowRecorded;
+    assert(typeof flowRecorded === 'boolean' && (flowRecorded || entry.flow === 'none'));
     assert(
       symptomList(entry.symptoms) && typeof entry.note === 'string' && entry.note.length <= 10000,
     );
@@ -167,6 +181,7 @@ export function parseJournal(value: unknown): Journal {
     );
     entries[day] = {
       flow: entry.flow as Flow,
+      flowRecorded,
       periodStart: entry.periodStart,
       periodEnd: entry.periodEnd,
       symptoms: [...entry.symptoms],
@@ -193,7 +208,16 @@ export function toCSV(journal: Journal): string {
   const cell = (value: string) =>
     `"${(/^[\s]*[=+@\-\t\r]/.test(value) ? `'${value}` : value).replaceAll('"', '""')}"`;
   const rows = [
-    ['Date', 'Flow', 'Period start', 'Period end', 'Symptoms', 'Cramp severity (0-10)', 'Note'],
+    [
+      'Date',
+      'Flow',
+      'Period start',
+      'Period end',
+      'Symptoms',
+      'Cramp severity (0-10)',
+      'Note',
+      'Flow recorded',
+    ],
   ];
   for (const day of Object.keys(journal.entries).sort()) {
     const e = journal.entries[day]!;
@@ -205,6 +229,7 @@ export function toCSV(journal: Journal): string {
       e.symptoms.join('; '),
       e.cramps === null ? '' : String(e.cramps),
       e.note,
+      String(e.flowRecorded),
     ]);
   }
   return rows.map((row) => row.map(cell).join(',')).join('\r\n');

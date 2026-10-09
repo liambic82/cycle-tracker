@@ -1,5 +1,33 @@
 # Validation record
 
+## 0.4.0 owner report — October 9, 2026
+
+The owner reported “Symptoms work well, visibility is good, and biometric is working.” This records a functional pass for those features in preview **0.4.0**, using the established Pixel 7 / Android 17 context. The report did not enumerate individual cancellation, import, accessibility, or other edge cases. Flip5 and iOS hardware validation remain pending. Earlier pending-device statements below describe the state when those checks were recorded.
+
+## 0.5.0 calendar and visual history — October 9, 2026
+
+Implemented year/month/day navigation, recorded cycle-day labels, cycle-length and bleeding-duration charts, all-history statistics, and chronological flow strips. Explicit no-flow observations are now separate from missing logs. Old positive-flow/spotting entries retain their observations; old default None values remain unknown. Vault envelope, passphrase, and biometric key are unchanged. CSV adds a final `Flow recorded` column.
+
+- `pnpm check`: TypeScript and all **35 tests** passed. Seven new tests cover explicit None/clear-flow behavior, old journal migration and invalid flags, chronological run boundaries, long gaps/leap dates, actual-start cycle-day lookup, statistics with incomplete values and bounded end markers, and encrypted restore/CSV retention of the new distinction.
+- Web, Android Hermes, and iOS Hermes production exports passed, including a rebuild after clarifying no-flow labels. TypeScript was checked after the final copy changes. Prettier and Git whitespace checks passed. The iOS result is a bundle check, not an IPA or device test.
+- Browser checks used isolated `127.0.0.1:4174` and fictional data at 393 × 852 and 1280 × 720. Inspected mobile charts, annual tiles, desktop charts, desktop calendar/editor, and empty-history states. Sample cycle lengths were 30 and 29 days (average 29.5); the latest length remained incomplete. All three sample bleeding spans were 5 days.
+- Verified year-month drilldown leaves the selected date unchanged, switching to Day view restores that selection, Today returns to today, invalid `2026-02-29` is rejected, and stepping forward from `2024-02-29` reaches March 1. Mobile month cells open the daily sheet. History-row buttons open the starting date in Day view. The symptom browser returns to the daily editor in that view.
+- The previous fictional encrypted journal opened with its existing passphrase, three symptoms, and note intact. Its legacy default None correctly appeared as flow not logged. Explicit None survived lock/reload/unlock; clearing flow retained all symptoms and the note. Encrypted backup restore and CSV semantics were checked in automated tests; native file sharing/restore remain hardware checks.
+- No captured browser console errors. The fictional vault was locked, sample mode exited, the test tab closed, viewport reset, and isolated preview server stopped. User storage on port 4173 was not used for these checks.
+- Native update retention, biometrics, keyboard, TalkBack, large text, fold transitions, and offline restart need the [0.5.0 hardware checklist](android-testing.md#050-calendar-and-history-checks). No device pass is claimed for 0.5.0.
+
+The signed ARM64 release APK built successfully. Signature and 16 KB zip-alignment verification passed; its signing certificate matches previous previews. Package identity is `com.liambic.cycletracker.preview`, version **0.5.0**, version code **5**, minimum API 24, target API 36, `USE_BIOMETRIC`, `allowBackup: false`, and no debuggable flag. The bundled Hermes program is 3,115,660 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.5.0-arm64-v8a.apk` (29,920,070 bytes; excluded from Git).
+- APK SHA-256: `222f7c6cf1c917278024bd8fa4064446f0a2566ae688c2bfcc0d2b4be956fd26`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Cycle-length chart at phone width](screenshots/history-mobile.jpg)
+
+![Annual calendar at phone width](screenshots/calendar-year-mobile.jpg)
+
+![Cycle-length chart on desktop](screenshots/history-desktop.jpg)
+
 ## 0.4.0 symptom catalog and preferences — October 9, 2026
 
 Implemented 99 curated symptoms covering the source's four reference lists, category/search browsing, a less-common browser, selected-symptom summaries, quick choices, and an encrypted perimenopause visibility preference. All 30 original labels remain supported. Existing custom labels are retained when they overlap additions to the catalog. The preference defaults on for older backups; vault format, passphrase, and biometric key are unchanged.

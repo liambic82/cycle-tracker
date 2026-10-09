@@ -28,7 +28,7 @@ import app from './app.json';
 import { addCustomSymptom, cycleDay, starts, updateEntry } from './src/domain/journal';
 import { formatDay, toDay, type Day } from './src/domain/dates';
 import { AuthGate } from './src/ui/AuthGate';
-import { Calendar } from './src/ui/Calendar';
+import { Calendar, type CalendarView } from './src/ui/Calendar';
 import { DayEditor } from './src/ui/DayEditor';
 import { History } from './src/ui/History';
 import { DataSettings } from './src/ui/DataSettings';
@@ -47,7 +47,8 @@ function CycleApp() {
   const state = useJournal();
   const width = useWindowDimensions().width;
   const desktop = width >= 900;
-  const inlineEditor = width >= 1180;
+  const [calendarView, setCalendarView] = useState<CalendarView>('month');
+  const inlineEditor = width >= 1180 && calendarView !== 'day';
   const [page, setPage] = useState<Page>('calendar');
   const [editing, setEditing] = useState(false);
   const mainScroll = useRef<ScrollView>(null);
@@ -61,6 +62,7 @@ function CycleApp() {
     if (!state.journal) {
       setEditing(false);
       setPage('calendar');
+      setCalendarView('month');
     }
   }, [!!state.journal]);
 
@@ -98,12 +100,16 @@ function CycleApp() {
   const lastStart = starts(journal, today).at(-1);
   const select = (date: Day) => {
     state.update((value) => ({ ...value, selectedDate: date }));
-    if (!inlineEditor) setEditing(true);
+    if (!inlineEditor && calendarView !== 'day') setEditing(true);
   };
-  const logToday = () => {
+  const showDay = (date: Day) => {
     setPage('calendar');
-    select(today);
+    setCalendarView('day');
+    setEditing(false);
+    state.update((value) => ({ ...value, selectedDate: date }));
+    mainScroll.current?.scrollTo({ y: 0, animated: false });
   };
+  const logToday = () => showDay(today);
   const undoNotice = state.deleted ? (
     <UndoNotice date={state.deleted.date} undo={state.undoDelete} dismiss={state.dismissUndo} />
   ) : null;
@@ -114,7 +120,10 @@ function CycleApp() {
       today={today}
       undoNotice={undoNotice}
       onViewChange={() =>
-        (inlineEditor ? mainScroll : editorScroll).current?.scrollTo({ y: 0, animated: false })
+        (inlineEditor || calendarView === 'day' ? mainScroll : editorScroll).current?.scrollTo({
+          y: 0,
+          animated: false,
+        })
       }
       onDelete={() => state.removeEntry(journal.selectedDate)}
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
@@ -299,7 +308,8 @@ function CycleApp() {
             </View>
             {desktop && <Button label="Log today" icon={Plus} onPress={logToday} />}
           </View>
-          {(!inlineEditor || page !== 'calendar') && !(editing && !inlineEditor) && undoNotice}
+          {(page !== 'calendar' || (!inlineEditor && calendarView !== 'day' && !editing)) &&
+            undoNotice}
           {page === 'calendar' ? (
             <>
               <View style={{ flexDirection: 'row', gap: desktop ? 15 : 9, flexWrap: 'wrap' }}>
@@ -355,7 +365,25 @@ function CycleApp() {
               </View>
               <View style={{ flexDirection: 'row', gap: 24, alignItems: 'flex-start' }}>
                 <View style={{ flex: 1, minWidth: 0, gap: 17 }}>
-                  <Calendar journal={journal} today={today} onSelect={select} compact={!desktop} />
+                  <Calendar
+                    journal={journal}
+                    today={today}
+                    onSelect={(date) => state.update((value) => ({ ...value, selectedDate: date }))}
+                    onOpenDay={select}
+                    compact={!desktop}
+                    view={calendarView}
+                    changeView={(view) => {
+                      setCalendarView(view);
+                      setEditing(false);
+                      mainScroll.current?.scrollTo({ y: 0, animated: false });
+                    }}
+                    dayContent={
+                      <>
+                        {saveStatus}
+                        {editor}
+                      </>
+                    }
+                  />
                   <View
                     style={[common.row, { paddingHorizontal: 4, alignItems: 'flex-start', gap: 9 }]}
                   >
@@ -364,11 +392,11 @@ function CycleApp() {
                       There’s no perfect way to track. Start with what feels helpful today.
                     </Text>
                   </View>
-                  {!inlineEditor && (
+                  {!inlineEditor && calendarView !== 'day' && (
                     <Button
                       label="Open selected day"
                       icon={Plus}
-                      onPress={() => setEditing(true)}
+                      onPress={() => showDay(journal.selectedDate)}
                     />
                   )}
                 </View>
@@ -390,7 +418,7 @@ function CycleApp() {
               </View>
             </>
           ) : page === 'history' ? (
-            <History journal={journal} today={today} />
+            <History journal={journal} today={today} openDay={showDay} />
           ) : (
             <DataSettings
               journal={journal}
