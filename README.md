@@ -6,6 +6,8 @@ A personal period and perimenopause tracker centered on a continuously scrolling
 
 The [initial feature requirements](https://docs.google.com/document/d/1tOEpyA0x_Q6Up33TXy3rcdgS_-YiQC6e1BDU2acZduM/edit) are the starting point for planning. The document's version labels are suggestions, not a fixed release scope.
 
+The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all ten comments and nine reference screenshots, including calendar view choices, richer daily logging, configurable doctor reports, and everyday education.
+
 ## Agreed direction
 
 - Prioritize Android for the initial user.
@@ -29,7 +31,7 @@ On both phones, check calendar navigation, daily logging, offline persistence, m
 
 For the Flip5, verify that closing and reopening the phone preserves the selected day, calendar position, and any in-progress entry. Check the main-screen layout when fully open and partially folded, following [Android's foldable design and app continuity guidance](https://developer.android.com/develop/ui/compose/layouts/adaptive/foldables/learn-about-foldables).
 
-The owner reported that previews 0.1.0 and 0.2.0 passed testing on the Pixel 7 running Android 17 on October 9, 2026. The 0.2.0 response was “Testing complete, all pass.” Timings were not supplied. Flip5 testing and its Android/One UI versions are still pending.
+The owner reported that previews 0.1.0 and 0.2.0 passed testing on the Pixel 7 running Android 17 on October 9, 2026. The 0.2.0 response was “Testing complete, all pass.” The owner then confirmed biometrics functioning as expected in 0.3.0 in the same test context. Individual biometric edge-case results and timings were not supplied. Flip5 testing and its Android/One UI versions are still pending.
 
 ## Working preview: 0.3.0
 
@@ -46,7 +48,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication schedules, notifications, the complete symptom catalog, PDF doctor summaries, bloodwork, and optional sync are still pending. Biometric unlock needs a fresh device regression pass for 0.3.0. See [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Medication schedules, notifications, the complete symptom catalog, PDF doctor summaries, bloodwork, and optional sync are still pending. Biometric function has an owner-reported Pixel 7 pass; the detailed hardware regression checklist remains available. See [the development plan](docs/development-plan.md).
 
 ## Run locally
 

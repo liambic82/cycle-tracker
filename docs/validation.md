@@ -1,5 +1,9 @@
 # Validation record
 
+## 0.3.0 owner biometric report — October 9, 2026
+
+The owner reported “Verified biometrics are functioning as expected.” This records a functional biometric pass for preview **0.3.0** in the established Pixel 7 / Android 17 test context. The report did not enumerate cancellation, changed enrollment, background races, restore/deletion, or other individual checklist results; those are not independently marked passed. Flip5 and iOS hardware validation remain pending. Earlier pending-device statements below describe the state when those checks were recorded.
+
 ## 0.3.0 biometric unlock — October 9, 2026
 
 Implemented optional native biometric unlock, explicit opt-in/disable controls, authenticated OS key storage, passphrase fallback, and credential cleanup during journal creation, restore, and deletion. The portable encrypted-vault format is unchanged.

@@ -35,13 +35,16 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 
 ## Device reports
 
-| Date            | App version | Device                 | OS                                    | Result                                                                                     |
-| --------------- | ----------- | ---------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------ |
-| October 9, 2026 | 0.1.0       | Google Pixel 7         | Android 17                            | Owner reported testing passed. Individual checklist results and timings were not supplied. |
-| October 9, 2026 | 0.2.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported “Testing complete, all pass” after the 0.2.0 update checklist.              |
-| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Not yet validated.                                                                         |
+| Date            | App version | Device                 | OS                                    | Result                                                                                             |
+| --------------- | ----------- | ---------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| October 9, 2026 | 0.1.0       | Google Pixel 7         | Android 17                            | Owner reported testing passed. Individual checklist results and timings were not supplied.         |
+| October 9, 2026 | 0.2.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported “Testing complete, all pass” after the 0.2.0 update checklist.                      |
+| October 9, 2026 | 0.3.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported biometrics functioning as expected; individual edge-case results were not supplied. |
+| Pending         | —           | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Not yet validated.                                                                                 |
 
 ## 0.3.0 biometric unlock checks
+
+The owner reported a functional biometric pass on October 9, 2026. Keep the checklist below for regression testing; that report does not separately confirm every cancellation, invalidation, or recovery scenario.
 
 Install `cycle-tracker-preview-0.3.0-arm64-v8a.apk` over the existing preview. Export a backup first; do not uninstall. Your existing passphrase and journal should continue to work, with biometrics initially off.
 
