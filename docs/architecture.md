@@ -8,6 +8,14 @@
 - `App.tsx`: navigation, current-day context, responsive composition, and daily editor.
 - `scripts/prepare-web.mjs`: production service worker generation. Only public application assets are cached; journal contents never pass through the service worker.
 
+## Experimental period estimates (0.12.0)
+
+`src/domain/periodEstimate.ts` is a pure derived calculation from explicit starts and today's date. `PeriodEstimate` supplies session-only opt-in, context, and completeness review. It is a full-width Calendar subview; returning, primary navigation, Log today, locking, and Android Back exit it. Neither answers nor estimated values enter journal state, exports, notifications, or calendar cell rendering. No schema or security change is needed.
+
+The latest seven starts within 365 days provide six complete intervals. Future starts, unsupported/variable intervals, stale or insufficient history, poor earlier-entry fit, expired results, and unsupported output dates produce named unavailable states. The median is fixed; shortest/longest dates are historical spread only. `backtestIntervals` holds each target out chronologically and compares median, mean, last interval, and a fixed-28 example on identical eligible folds; targets outside training limits remain in scoring. It never silently imputes a skipped start. See [the exact rules and validation limits](period-estimates.md).
+
+The fictional sample now has seven starts. Existing journals and format-4 backups remain unchanged. Independent clinical and full-policy external-data validation are still pending; synthetic checks and descriptive personal-history errors are not population accuracy.
+
 ## Daily context and education (0.11.0)
 
 `src/domain/cycleContext.ts` derives a small observation-only snapshot: selected date, latest explicit period start on/before it, elapsed days, inclusive recorded cycle day, recorded flow or unknown, and an always-unknown personal phase. Future dates return no projected values. A note, symptom, product, or medication never creates a start marker or a phase. Long gaps retain their arithmetic count with a missing-record explanation, without a menopause/late-period/ovulation inference. The daily editor no longer displays a projected cycle day on future dates.

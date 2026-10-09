@@ -36,7 +36,7 @@ export function demoJournal(today: Day): Journal {
       ],
     },
   ]);
-  for (const offset of [-69, -39, -10]) {
+  for (const offset of [-187, -157, -128, -98, -69, -39, -10]) {
     for (let day = 0; day < 5; day++) {
       journal.entries[addDays(today, offset + day)] = {
         ...emptyEntry(),

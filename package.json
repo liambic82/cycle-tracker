@@ -1,6 +1,6 @@
 {
   "name": "cycle-tracker",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "type": "module",
   "main": "index.ts",
@@ -15,6 +15,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "validate:estimates": "node --experimental-strip-types scripts/validate-period-estimates.ts",
     "build:web": "expo export --platform web && node scripts/prepare-web.mjs",
     "build:all": "expo export --platform all && node scripts/prepare-web.mjs",
     "preview": "node scripts/serve-preview.mjs",

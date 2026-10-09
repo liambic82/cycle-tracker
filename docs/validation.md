@@ -1,5 +1,29 @@
 # Validation record
 
+## 0.12.0 experimental period-start estimates — October 9, 2026
+
+The owner approved continuing after 0.11.0. This slice adds an explicitly experimental, session-opt-in calculation from recorded starts, with context/completeness review, unavailable states, historical spread, and chronological earlier-entry checks. It does not establish clinical accuracy or finish all prediction work. Beautification/themes/backgrounds are next as an independent development slice.
+
+- `pnpm check`: TypeScript and all **121 tests** passed. Fourteen new tests cover opt-in and all withholding contexts, exact start-to-start arithmetic, minimum history, recency boundary and latest-window selection, unusual intervals without trimming, variability and poor fit, future starts, expiry without roll-forward, start edits/removal, no target/future leakage, matching comparison folds and withheld folds, malformed inputs, leap/DST/calendar limits, sensitive-field independence, unchanged journal/CSV serialization, and the expanded fictional sample. An initial manually calculated expected test error was corrected from 2/3 to 1 day; the full suite passed afterward.
+- `pnpm validate:estimates` produced the eight reproducible synthetic scenarios and comparison table in [the method record](period-estimates.md). Results include poor performance on trends and surprise gaps, plus complete withholding for one highly variable scenario. These test candidate calculation behavior, not clinical accuracy or full-policy population performance. The live earlier-entry check is also small-sample/retrospective. External-data and independent clinical/editorial validation remain pending.
+- Final web, Android Hermes, and iOS Hermes exports passed. The final web bundle is `index-861feb7233c24a88acfde1765c4e5b4d.js`; offline cache `84ddb38277f39e22`. The final builds include a singular/plural copy correction. The only subsequent source adjustment was formatter whitespace. iOS remains a bundle check only. Formatting and Git whitespace checks passed.
+- Browser QA used fictional data on isolated `127.0.0.1:4176`; no records on port 4173 were accessed. In sample mode, confirmed off-by-default, context and completeness gates, all four withholding choices, cleared confirmation after changing context, and the expected October 29 estimate anchored to September 29 with an October 28–29 historical spread. The sample's three earlier checks showed median/mean error 0.7 days, last-interval error 1.0, fixed-28 error 1.3, and 3/3 within the earlier spread.
+- Confirmed Back to calendar and switching primary tabs discard answers; Log today exits into Day view. Turning estimates off and on resets context to unknown and removes confirmation. Opened calculation details; contributing intervals, baseline explanations, and all three holdout rows are accessible. Inspected 393 × 852, 320 × 740, and 1280 × 720 layouts and keyboard focus. These are browser observations, not TalkBack or native font-scaling/folding results.
+- Unlocked the existing fictional format-4 vault with its original passphrase. Earlier note, two product records, clot/flooding summary, and three dose records remained. Its lack of period starts produced the seven-start requirement and 0/0 historical checks, with no date estimate even after session confirmation. No records were edited by these checks.
+- After activating the updated service worker by closing the QA tab, stopped the isolated server and reloaded the final bundle. Sample mode, gates, estimate, and reset behavior worked offline. No captured errors or warnings in the final QA sessions. Exited sample mode, left the saved vault locked, closed the QA tabs, reset viewport, and stopped the isolated server.
+- The standalone ARM64 release APK built successfully, passed signature verification and 16 KB zip alignment, and contains the unchanged preview signing certificate. Verified `com.liambic.cycletracker.preview`, version **0.12.0**, code **15**, minimum API 24, target API 36, notification/biometric permissions, `allowBackup: false`, no debuggable flag, and testing screenshots enabled. Embedded Hermes program: 4,701,008 bytes.
+- Native update retention, Android Back, first-use airplane-mode calculation, TalkBack/large text/Flip5 folding, plus earlier reminder delivery, PDF sharing, and Flip5 setup checks remain in [the device guide](android-testing.md#0120-experimental-period-estimates). No new hardware pass is claimed. Journal format 4, encryption, passphrase, biometric credentials, and exports remain unchanged; review answers and estimates are never persisted.
+
+Build artifacts and signing credentials remain outside Git. Screenshots show fictional sample data only.
+
+- File: `artifacts/android/cycle-tracker-preview-0.12.0-arm64-v8a.apk` (33,474,890 bytes; excluded from Git).
+- APK SHA-256: `d61a0e9774cf79ee6742357d5883675c91e86d4da574a139f7af1c7cfd0e24a3`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Experimental sample estimate and its limits in the phone-size browser](screenshots/period-estimate-mobile.jpg)
+
+![Earlier-entry checks and method comparisons on desktop](screenshots/period-estimate-desktop.jpg)
+
 ## 0.11.0 recorded cycle context and education — October 9, 2026
 
 The owner requested continued preview development. This implements the educational portion of milestone 5: recorded daily context and nine manually browsable topics. Personal period/ovulation predictions remain separate upcoming work, and 1.0 still requires an explicit readiness decision.

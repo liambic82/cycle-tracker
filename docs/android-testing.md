@@ -8,6 +8,17 @@ The test app is named **Cycle Tracker Preview** and uses `com.liambic.cycletrack
 
 Start with the fictional sample journal. Use invented entries and a test-only passphrase when checking persistence and recovery. Real-device behavior and security validation are still in progress.
 
+## 0.12.0 experimental period estimates
+
+Install `artifacts/android/cycle-tracker-preview-0.12.0-arm64-v8a.apk` over the existing preview after an encrypted backup. Version code is 15; package/signing identity and journal format 4 are unchanged. Do not uninstall or clear storage. These checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5.
+
+1. Open **Calendar → Explore period estimate**. Estimates must start off, and no dates should appear until you enable the session switch, select a comparable situation, and confirm the displayed starts are complete. All other context choices keep dates unavailable. Context changes clear the completeness confirmation. Use the fictional sample to exercise a sufficient-history case without altering real records.
+2. In sample mode, the latest start is ten days before today; six intervals alternate 30/29 days. After review, the median estimate should be 30 days after that start, with a 29–30-day historical spread and three earlier-entry checks. Open calculation details and inspect the comparisons. This is a demonstration, not clinical validation.
+3. Return to the calendar, switch tabs, use Log today, lock/unlock, and use Android Back. Reopening must start off with no retained answers. The selected date and recorded entries must stay intact. No predicted bleeding colors or automatic period starts should appear.
+4. With a fictional sparse journal, the view should explain that seven recent starts are needed. In a disposable test journal, a large gap/variable history or changed start should recalculate without trimming records or moving the estimate forward. Unit tests cover expiry and date boundaries; do not alter the phone's clock or real journal to simulate them.
+5. In airplane mode, test first use, toggles, details, and navigation. Try TalkBack, large text, rotation, keyboard focus where applicable, and Flip5 folding/reopening. All context choices, dates, explanations, and history rows must remain readable and reachable.
+6. Confirm existing journal retention, passphrase/biometric unlock, recording, backup, PDF sharing, and medication reminders. Earlier hardware checks below remain outstanding; approval to develop 0.12.0 is not a new hardware pass.
+
 ## 0.11.0 daily context and education
 
 Install `artifacts/android/cycle-tracker-preview-0.11.0-arm64-v8a.apk` over the existing preview after an encrypted backup. Version code is 14; package/signing identity, journal format 4, passphrase, and biometric credentials are unchanged. Do not uninstall or clear storage. These checks are pending on Pixel 7 / Android 17 and Galaxy Z Flip5.

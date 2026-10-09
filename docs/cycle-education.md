@@ -25,7 +25,7 @@ The UI's unknown-phase rule and contraception limitation are product boundaries,
 
 ## Next prediction work
 
-The next slice should begin with period-start estimates, kept separate from this educational library. Before presenting dates:
+Preview 0.12.0 now provides an explicitly experimental period-start calculation, separate from this educational library. Its session controls, fixed method, product limits, earlier-entry checks, and synthetic comparison results are in [period estimates](period-estimates.md). No general-release accuracy or calibrated interval is claimed. The following criteria continue to govern prediction development:
 
 1. Specify the estimation method, minimum completed history, recency window, and treatment of missing logs, unusual intervals, and irregular cycles. Label any thresholds as product rules unless clinically supported. Do not silently delete unusual records.
 2. Provide explicit user control and relevant context for hormonal treatment, pregnancy/postpartum/breastfeeding, and changing cycles. Medication names alone cannot establish that context. Define when the result stays unknown.
