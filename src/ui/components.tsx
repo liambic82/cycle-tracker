@@ -78,11 +78,13 @@ export function Button({
 
 export function Chip({
   label,
+  accessibilityLabel,
   selected,
   onPress,
   icon: Icon,
 }: {
   label: string;
+  accessibilityLabel?: string;
   selected?: boolean;
   onPress: () => void;
   icon?: LucideIcon;
@@ -90,7 +92,7 @@ export function Chip({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ selected: !!selected }}
       aria-pressed={!!selected}
       onPress={onPress}

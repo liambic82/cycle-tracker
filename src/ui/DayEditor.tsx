@@ -20,6 +20,7 @@ import {
   type SymptomFilter,
 } from '../domain/symptoms';
 import { SymptomBrowser } from './SymptomBrowser';
+import { FlowDetails } from './FlowDetails';
 
 export function DayEditor({
   journal,
@@ -49,6 +50,7 @@ export function DayEditor({
   const [symptomError, setSymptomError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
+  const [flowDetailsOpen, setFlowDetailsOpen] = useState(false);
   const closeActions = () => {
     setActionsOpen(false);
     setDeleteConfirm(false);
@@ -67,6 +69,20 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (flowDetailsOpen && date <= today)
+    return (
+      <FlowDetails
+        date={date}
+        entry={entry}
+        onPatch={onPatch}
+        saveStatus={saveStatus}
+        onViewChange={onViewChange}
+        done={() => {
+          setFlowDetailsOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (browsing !== null && date <= today)
     return (
       <SymptomBrowser
@@ -130,7 +146,8 @@ export function DayEditor({
             <>
               <Text style={common.label}>Delete this day’s entry?</Text>
               <Text style={common.body}>
-                This removes the flow, symptoms, note, and period markers for{' '}
+                This removes all daily details, including flow, product records, bleeding
+                observations, symptoms, notes, and period markers for{' '}
                 {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
                 the last deletion until you lock, delete another entry, or log this day again.
               </Text>
@@ -243,6 +260,32 @@ export function DayEditor({
             <Text style={[common.small, { marginTop: 10 }]}>
               Spotting is recorded separately and won’t start a new cycle.
             </Text>
+            <View style={{ marginTop: 16, gap: 9 }}>
+              <Button
+                secondary
+                label="Products & bleeding details"
+                onPress={() => {
+                  closeActions();
+                  setFlowDetailsOpen(true);
+                  onViewChange();
+                }}
+              />
+              {(entry.productRecords.length > 0 ||
+                entry.clots !== null ||
+                entry.flooding !== null) && (
+                <Text style={common.small}>
+                  {[
+                    entry.productRecords.length
+                      ? `${entry.productRecords.length} product ${entry.productRecords.length === 1 ? 'record' : 'records'}`
+                      : null,
+                    entry.clots === null ? null : `Clots: ${entry.clots ? 'Yes' : 'No'}`,
+                    entry.flooding === null ? null : `Flooding: ${entry.flooding ? 'Yes' : 'No'}`,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </Text>
+              )}
+            </View>
           </View>
           <View style={{ height: 1, backgroundColor: colors.line }} />
           <View>

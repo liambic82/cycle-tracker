@@ -111,6 +111,10 @@ export function DataSettings({
           service. Browser data can be removed when you clear site storage, so keep a separate
           backup.
         </Text>
+        <Text style={common.small}>
+          Backups made in 0.6.0 or later need an app version that supports product records. Update
+          the receiving app before restoring. Earlier backups still open here.
+        </Text>
         <Button
           label="Download encrypted backup"
           icon={Download}
@@ -127,6 +131,10 @@ export function DataSettings({
         <Text style={common.body}>
           Export daily entries as a spreadsheet-friendly CSV for your own records or to share with
           your doctor.
+        </Text>
+        <Text style={common.small}>
+          Includes product records and clot/flooding observations. Blank observations mean not
+          logged, not No.
         </Text>
         <Text style={common.small}>
           CSV files are readable and are not encrypted. Only share them with people you choose.

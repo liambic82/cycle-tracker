@@ -24,18 +24,18 @@ Preview 0.2.0 added entry deletion with session-only Undo, confirmed deletion of
 
 ## Milestone 3: visual history and daily detail
 
-The first visual-history portion is implemented in preview 0.5.0 and awaits hardware validation. Daily-detail extensions remain the next development slice.
+The first visual-history portion is implemented in preview 0.5.0. Product logging and clot/flooding observations are implemented in 0.6.0. Sexual-health records are the next daily-detail slice; outstanding native checks remain in the device guide.
 
-Before extending daily detail, validate the 0.5.1 passphrase fix. The owner reported a creation spinner lasting over a minute on Galaxy Z Flip5 with 0.5.0. Native Android key calculation and setup progress/deadline handling are implemented in 0.5.1; the device retest remains pending. Use [the focused checklist](android-testing.md#051-passphrase-fix-checks) before resuming new features.
+The owner reported a creation spinner lasting over a minute on Galaxy Z Flip5 with 0.5.0. Native Android key calculation and setup progress/deadline handling are implemented in 0.5.1; the device retest remains pending. The owner subsequently approved the 0.5.3 layout and explicitly requested continuing development. Continue the planned work while retaining [the focused Flip5 checklist](android-testing.md#051-passphrase-fix-checks); approval to proceed is not a device-validation result.
 
 Preview 0.5.2 additionally enables testing screenshots and adds passphrase show/hide controls at the owner's request. It includes the 0.5.1 fix; test both with [the 0.5.2 checklist](android-testing.md#052-screenshots-and-passphrase-controls).
 
-Preview 0.5.3 addresses the owner’s concern about accidental deletion from the entry footer. Deletion now requires opening Entry options beside the date, then confirming; the footer explains autosave and displays its current status. Follow [the 0.5.3 checklist](android-testing.md#053-entry-options-and-autosave) alongside the outstanding Flip5 setup and 0.5.2 checks before continuing daily-detail features.
+Preview 0.5.3 addresses the owner’s concern about accidental deletion from the entry footer. Deletion now requires opening Entry options beside the date, then confirming; the footer explains autosave and displays its current status. The owner responded “Looks good, move forward.” Keep [the 0.5.3 checklist](android-testing.md#053-entry-options-and-autosave) alongside the outstanding Flip5 setup and 0.5.2 checks in regression testing.
 
 - Implemented in 0.5.0: year/month/day navigation with a consistent selected date, compact annual overview, recorded cycle-day context, and continuous month scrolling.
 - Implemented in 0.5.0: cycle-length and bleeding-duration charts with average, shortest, and longest values. Incomplete records remain unknown and are excluded from statistics.
 - Implemented in 0.5.0: chronological flow strips within cycle-history rows, with separate treatment for bleeding, spotting, explicitly recorded no flow, and unlogged days. Older entries without explicit flow information remain unknown.
-- Add optional product-event records (type, amount/count, changes or cup emptying, and time), plus clots/flooding where appropriate.
+- Implemented in 0.6.0: optional product records with type/detail, count, use/change/emptying, optional local time and observed cup/disc amount, plus independent Yes/No/Not logged clot/flooding observations. Included in entry summaries, encrypted backups, CSV, and entry deletion/Undo. Journal version 2 safely migrates earlier journals; older apps reject the new content version. Follow [the 0.6.0 checklist](android-testing.md#060-product-records-and-bleeding-observations).
 - Add optional sexual-activity, intensity, orgasm, and libido fields with independent report inclusion controls.
 - Keep recorded data separate from prediction overlays, which require the later prediction work.
 
@@ -45,7 +45,7 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Taken/skipped/late logging and individually controlled, discreet reminders.
 - User-entered titration/dose-change schedules, side-effect notes, and later patch/ring/injection/refill reminders.
 - Doctor summary and PDF export based on recorded data, with a date range, selectable sections, and preview before export. Include medications and labs only as their records become available.
-- Resolve the brief's clot-logging/doctor-summary dependency before including structured clot data.
+- The clot-logging dependency is implemented in 0.6.0 as a daily Yes/No/Not logged observation. Future reports can include it as recorded; clinical interpretation and any more detailed clot measurements need separate design/review.
 
 ## Milestone 5: predictions and everyday education
 

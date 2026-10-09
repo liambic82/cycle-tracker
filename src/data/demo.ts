@@ -14,6 +14,22 @@ export function demoJournal(today: Day): Journal {
         symptoms: day < 2 ? ['Cramps', 'Fatigue'] : [],
         cramps: day < 2 ? 4 : null,
         note: day === 0 ? 'A quiet evening and a heating pad helped.' : '',
+        productRecords:
+          day === 0
+            ? [
+                {
+                  id: `sample-pad-${-offset}`,
+                  type: 'pad',
+                  action: 'changed',
+                  quantity: 1,
+                  time: '08:30',
+                  detail: 'Regular',
+                  collectedMl: null,
+                },
+              ]
+            : [],
+        clots: day === 0 ? false : null,
+        flooding: day === 0 ? false : null,
       };
     }
   }

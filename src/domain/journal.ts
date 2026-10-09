@@ -1,5 +1,11 @@
 import { daysBetween, validDay, type Day } from './dates.ts';
 import {
+  describeProduct,
+  orderedProducts,
+  parseProductRecords,
+  type ProductRecord,
+} from './flowDetails.ts';
+import {
   MAX_DAILY_SYMPTOMS,
   symptomSelected,
   toggleSymptom,
@@ -17,10 +23,13 @@ export interface Entry {
   symptoms: string[];
   cramps: number | null;
   note: string;
+  productRecords: ProductRecord[];
+  clots: boolean | null;
+  flooding: boolean | null;
 }
 
 export interface Journal {
-  version: 1;
+  version: 2;
   entries: Record<Day, Entry>;
   customSymptoms: string[];
   selectedDate: Day;
@@ -36,12 +45,15 @@ export function emptyEntry(): Entry {
     symptoms: [],
     cramps: null,
     note: '',
+    productRecords: [],
+    clots: null,
+    flooding: null,
   };
 }
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 1,
+    version: 2,
     entries: {},
     customSymptoms: [],
     selectedDate: today,
@@ -57,12 +69,19 @@ export function hasEntry(entry: Entry | undefined): boolean {
       entry.periodStart ||
       entry.periodEnd ||
       entry.symptoms.length > 0 ||
+      entry.productRecords.length > 0 ||
+      entry.clots !== null ||
+      entry.flooding !== null ||
       entry.note.length > 0)
   );
 }
 
 export function updateEntry(journal: Journal, date: Day, patch: Partial<Entry>): Journal {
   const entry = { ...(journal.entries[date] ?? emptyEntry()), ...patch };
+  if (patch.productRecords !== undefined)
+    entry.productRecords = parseProductRecords(patch.productRecords);
+  if (![null, true, false].includes(entry.clots) || ![null, true, false].includes(entry.flooding))
+    throw new Error('Choose Yes, No, or Not logged for bleeding observations.');
   if (patch.flow !== undefined) entry.flowRecorded = patch.flowRecorded ?? true;
   if (!entry.flowRecorded) entry.flow = 'none';
   if (entry.flow === 'none' || entry.flow === 'spotting') {
@@ -140,7 +159,9 @@ function symptomList(value: unknown): value is string[] {
 }
 
 export function parseJournal(value: unknown): Journal {
-  assert(record(value) && value.version === 1 && validDay(value.selectedDate));
+  assert(
+    record(value) && (value.version === 1 || value.version === 2) && validDay(value.selectedDate),
+  );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
   assert(
     value.preferences === undefined ||
@@ -179,6 +200,13 @@ export function parseJournal(value: unknown): Journal {
         (entry.periodStart || entry.periodEnd)
       ),
     );
+    const productRecords = value.version === 1 ? [] : parseProductRecords(entry.productRecords);
+    const clots = value.version === 1 ? null : entry.clots;
+    const flooding = value.version === 1 ? null : entry.flooding;
+    assert(
+      (clots === null || typeof clots === 'boolean') &&
+        (flooding === null || typeof flooding === 'boolean'),
+    );
     entries[day] = {
       flow: entry.flow as Flow,
       flowRecorded,
@@ -187,10 +215,13 @@ export function parseJournal(value: unknown): Journal {
       symptoms: [...entry.symptoms],
       cramps: entry.cramps as number | null,
       note: entry.note,
+      productRecords,
+      clots,
+      flooding,
     };
   }
   return {
-    version: 1,
+    version: 2,
     entries,
     customSymptoms: [...value.customSymptoms],
     selectedDate: value.selectedDate,
@@ -217,6 +248,9 @@ export function toCSV(journal: Journal): string {
       'Cramp severity (0-10)',
       'Note',
       'Flow recorded',
+      'Clots noticed',
+      'Flooding noticed',
+      'Product records',
     ],
   ];
   for (const day of Object.keys(journal.entries).sort()) {
@@ -230,6 +264,9 @@ export function toCSV(journal: Journal): string {
       e.cramps === null ? '' : String(e.cramps),
       e.note,
       String(e.flowRecorded),
+      e.clots === null ? '' : e.clots ? 'Yes' : 'No',
+      e.flooding === null ? '' : e.flooding ? 'Yes' : 'No',
+      orderedProducts(e.productRecords).map(describeProduct).join('\n'),
     ]);
   }
   return rows.map((row) => row.map(cell).join(',')).join('\r\n');

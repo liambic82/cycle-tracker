@@ -43,6 +43,21 @@ An optional developer route is `adb install -r <apk-path>` once USB debugging is
 | October 9, 2026 | 0.4.0       | Google Pixel 7         | Android 17 (established test context) | Owner reported symptoms working well, visibility good, and biometrics working. Individual edge-case results were not supplied. |
 | October 9, 2026 | 0.5.0       | Samsung Galaxy Z Flip5 | Android/One UI not yet reported       | Owner reported Create my journal spinning for over a minute. Creation failed this test; other checks are not marked passed.    |
 
+## 0.6.0 product records and bleeding observations
+
+Install `cycle-tracker-preview-0.6.0-arm64-v8a.apk` over the current preview. Export an encrypted backup first if the journal opens. **Do not uninstall or clear storage.** The app identity, signing certificate, passphrase, and biometric key are unchanged. Journal content upgrades to version 2; **new backups need 0.6.0 or later on the receiving app**. Older backups still open in this version. Do not downgrade after adding new records.
+
+1. Open an existing journal and verify old notes, symptoms, flow, and preferences. **Products & bleeding details** should show no product records and **Not logged** observations on older entries. Existing biometrics and passphrase unlock should still work.
+2. On a fictional day, open that section and select Clots Yes / Flooding No. Return to the daily entry; the compact summary should reflect both. Change either to Not logged and confirm it clears only that observation. Product-only or No-only days still count as logged, without creating flow or period markers.
+3. Add pad/tampon/underwear records with quantities, a type/size description, and optional 24-hour time. Add a cup/disc emptying with observed mL. Test blank time/amount, zero mL, decimal comma/point, midnight, and invalid time/quantity. Counts must not produce automatic mL estimates. Older dates must not receive today's time automatically.
+4. Edit a record through its options menu. Verify quantity/time/amount changes replace that record without duplicating it. Cancel a draft and ensure no partial record appears. Records with times should sort chronologically; untimed records appear last. Cup/disc amounts must not carry into a pad or a non-emptying action.
+5. Through a record’s options menu, try Remove, then Keep. Confirm removal once and use **Undo product removal**. Other daily fields must be preserved. Separately, test whole-entry Delete/Undo in sample mode and verify all products and observations return. Clearing the Flow log must also preserve them.
+6. Lock, force-close/reopen, and unlock offline. Verify new details and existing notes persist. Use a fictional journal to export/restore a new backup between updated browser/Android apps, and import a pre-0.6 backup. Check the last three CSV columns for explicit Yes/No, blank unlogged observations, and complete product details.
+7. Check Month view’s sheet, Day view, and desktop side panel. Test keyboard editing (including colon and decimal entry), scrolling to Add/Save, large text, TalkBack labels/selected/expanded states, rotation, and Flip5 fold/reopen. Product forms are drafts until Add/Save; leaving a date/view or locking may discard an unsubmitted draft. Observation choices save immediately.
+8. Retain screenshot/eye-control, biometric fallback, and background-lock regression checks. The earlier Flip5 setup retest remains pending. Report the device, OS, and version with results; browser and automated checks do not establish native performance or hardware behavior.
+
+The owner's “Looks good, move forward” after 0.5.3 approved continuation but did not supply another device-specific test report.
+
 ## 0.5.3 entry options and autosave
 
 Install `cycle-tracker-preview-0.5.3-arm64-v8a.apk` over the current preview. Export a backup first if the journal opens, and **do not uninstall or clear storage**. The app identity and signing key are unchanged. This update includes the 0.5.1 passphrase fix and 0.5.2 screenshot/eye controls; their native checks are still pending.

@@ -13,7 +13,14 @@ export function deleteEntry(journal: Journal, date: Day) {
   delete entries[date];
   return {
     journal: { ...journal, entries },
-    deleted: { date, entry: { ...entry, symptoms: [...entry.symptoms] } },
+    deleted: {
+      date,
+      entry: {
+        ...entry,
+        symptoms: [...entry.symptoms],
+        productRecords: entry.productRecords.map((record) => ({ ...record })),
+      },
+    },
   };
 }
 

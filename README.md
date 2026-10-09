@@ -37,12 +37,14 @@ The owner subsequently confirmed that symptoms, visibility, and biometrics work 
 
 The owner reported that creating a journal on Galaxy Z Flip5 in 0.5.0 stayed on the creation spinner for over a minute. Preview 0.5.1 addresses the likely JavaScript key-calculation bottleneck with native Android cryptography, progress messages, and a bounded calculation. Confirmation on the Flip5 is pending; its Android/One UI versions have not been reported.
 
-## Working preview: 0.5.3
+## Working preview: 0.6.0
 
 The first implemented milestone uses React Native, Expo SDK 57, and TypeScript for Android, iOS, and browsers. It includes:
 
 - Year, continuously scrolling month, and daily journal views with a shared selected date, past-date entry, and recorded cycle-day labels.
 - Daily flow, explicit period start/end markers, grouped and custom symptoms, cramp severity, and notes.
+- Optional **Products & bleeding details** for pads, tampons, cups, discs, period underwear, liners, and other products. Records include use/change/emptying, quantity, optional local time, type/size, and observed cup/disc amount. Editing, confirmed removal, and Undo are available.
+- Clot and flooding observations distinguish Yes, No, and Not logged. These details do not infer flow, cycle boundaries, or blood-loss estimates, and clearing flow preserves them.
 - The full source symptom catalog (99 choices), searchable categories, a dedicated less-common browser, and quick choices. Logged symptoms remain visible across categories.
 - An encrypted preference to hide curated perimenopause choices without removing existing logs or custom symptoms.
 - Cycle-length and bleeding-duration charts with average, shortest, and longest recorded values. Incomplete cycles remain unknown.
@@ -56,7 +58,9 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. Medication schedules, notifications, additional structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. Preview 0.5.3 includes the 0.5.1 creation fix, whose Flip5 retest is still pending, plus testing screenshots and passphrase eyes from 0.5.2. Native entry-options, screenshot, and eye-control checks remain pending. Symptoms, visibility, and biometrics in 0.4.0 have an owner-reported functional pass; keep them in regression testing. See [the development plan](docs/development-plan.md).
+This is a development preview, not a finished store release. Medication schedules, notifications, sexual-health and other structured symptom/lifestyle fields, PDF doctor summaries, bloodwork, and optional sync are still pending. The owner approved the 0.5.3 layout and continuing development; that feedback did not supply a new device test report. Preview 0.6.0 retains the Flip5 creation fix, testing screenshots, passphrase eyes, and safer entry deletion. Their outstanding native checks and the new flow-detail checks remain in [the device guide](docs/android-testing.md). See [the development plan](docs/development-plan.md).
+
+Journal content is now format 2 to preserve product records. Earlier journals and backups migrate on opening, with unlogged defaults. New backups require 0.6.0 or later; update the receiving app before transferring them. The encrypted envelope, passphrase, and biometric key are unchanged.
 
 ## Run locally
 

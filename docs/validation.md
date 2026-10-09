@@ -1,5 +1,29 @@
 # Validation record
 
+## 0.6.0 product records and bleeding observations — October 9, 2026
+
+The owner approved the 0.5.3 layout and explicitly requested continuing. That is authorization to proceed, not another device-specific test report. This slice adds optional product records and daily clot/flooding observations. Sexual-health records and clinical interpretation remain separate later work.
+
+- `pnpm check`: strict TypeScript and all **48 tests** passed. Eight new tests cover legacy migration/defaults, strict record validation and limits, form number/time parsing, explicit No versus unknown observations, independence from flow/cycle markers, immutable edits and duplicate/stale IDs, complete entry deletion/Undo, encrypted round trips with the unchanged envelope/key, and CSV completeness/quoting. Existing biometric, key-derivation, ordered-write, history, and symptom tests still pass.
+- `pnpm build:all`: web, Android Hermes, and iOS Hermes production exports passed. The iOS result is a bundle check, not an IPA or device run. The only final code adjustment after browser QA tightened sub-centesimal imported mL rejection; the full test suite and all bundles were rerun afterward.
+- Browser QA at isolated `127.0.0.1:4176` opened the previously created 0.5.2/0.5.3 fictional vault. Its note remained, while product records were empty and clot/flooding observations were unlogged. In the 393 × 852 Month-view daily sheet, selected Clots Yes / Flooding No and added a pad change. Zero quantity and `25:00` were rejected without adding a record; quantity 2 / `08:30` saved correctly.
+- Added a cup emptying using decimal-comma `12,5` mL and an earlier time; it sorted before the pad. Editing to a later time and 0 mL kept one record and displayed explicit zero. Removal cancellation kept both records; confirming removal exposed Undo, which restored the complete cup record. Canceling an underwear draft added nothing. Resetting an observation to Not logged worked without changing the other details.
+- Clearing a logged flow choice retained both product records and observations. Restored the fictional cup amount to 12.5 mL, locked, reloaded, and unlocked: product type/action/count/time/amount, observations, and the original note persisted. Inspected the product form in the 1280 × 720 desktop side panel and records in phone Day view. Moving to the prior day showed a separate empty log and unlogged observations. Added an untimed underwear change there; it displayed **Time not logged**, without inheriting today's time.
+- No captured browser console errors. The fictional vault was locked, QA tab closed, viewport reset, and isolated server stopped. Screenshots below contain only invented test data. Whole-entry Undo, encrypted export/import fidelity, and CSV quoting were exercised in domain/storage tests; native sharing, actual backup transfer between phones, TalkBack, fold/rotation, and keyboard behavior remain [device checks](android-testing.md#060-product-records-and-bleeding-observations).
+- Journal content is version 2; version 1 imports remain supported and gain unlogged defaults. Older apps reject version 2 instead of dropping the new data. Update a receiving app before restoring a new backup. The vault envelope, key derivation, passphrase, and biometric credential format remain unchanged. The earlier Flip5 creation retest and native screenshot/eye-control checks remain pending.
+
+The standalone ARM64 release APK built successfully. Signature verification and 16 KB zip alignment passed. Package identity is `com.liambic.cycletracker.preview`, version **0.6.0**, version code **9**, minimum API 24, target API 36, `USE_BIOMETRIC`, `allowBackup: false`, and no debuggable flag. Embedded configuration confirms testing screenshots remain enabled. The bundled Hermes program is 3,141,668 bytes.
+
+- File: `artifacts/android/cycle-tracker-preview-0.6.0-arm64-v8a.apk` (29,946,098 bytes; excluded from Git).
+- APK SHA-256: `0675d3756bc5f30612c2cf749afcafcef0aafb39405f055cb1a7684a0624232e`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`, unchanged from earlier previews.
+
+![Optional flow details in the phone sheet](screenshots/flow-details-mobile.jpg)
+
+![Fictional product records, with removal behind their options menus](screenshots/product-log-mobile.jpg)
+
+![Product record form in the desktop side panel](screenshots/product-form-desktop.jpg)
+
 ## 0.5.3 entry options and autosave — October 9, 2026
 
 The owner identified the bottom-of-entry Delete button as easy to confuse with Save. Deletion now sits behind **Entry options** beside the date and a separate dated confirmation. **Keep entry** is the prominent confirmation action; destructive controls have red outlines. Undo appears near the date after deletion. The footer explains autosave and displays the actual journal save state, or clearly identifies session-only sample changes. Screenshot availability, passphrase eyes, cryptography, and deletion/Undo storage rules are unchanged.

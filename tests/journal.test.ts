@@ -64,7 +64,7 @@ test('backup validation rejects malformed data and reconstructs only known field
   for (const malformed of [
     null,
     {},
-    { ...valid, version: 2 },
+    { ...valid, version: 3 },
     { ...valid, selectedDate: 'tomorrow' },
     { ...valid, entries: { '2026-10-01': { note: true } } },
     { ...valid, customSymptoms: ['Repeated', 'Repeated'] },

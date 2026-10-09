@@ -161,9 +161,9 @@ test('explicit no-flow survives encrypted restore and appears distinctly in CSV'
   );
   assert.deepEqual(restored.journal, journal);
   const rows = toCSV(restored.journal).split('\r\n');
-  assert.ok(rows[0]?.endsWith('"Flow recorded"'));
-  assert.ok(rows[1]?.endsWith('"true"'));
-  assert.ok(rows[2]?.endsWith('"false"'));
+  assert.equal(rows[0]?.split(',')[7], '"Flow recorded"');
+  assert.equal(rows[1]?.split(',')[7], '"true"');
+  assert.equal(rows[2]?.split(',')[7], '"false"');
   vault.key.fill(0);
   restored.vault.key.fill(0);
 });
