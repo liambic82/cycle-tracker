@@ -1,6 +1,12 @@
 import { daysBetween, validDay, type Day } from './dates.ts';
 import { parseSymptomRatings, type SymptomRating } from './symptomSeverity.ts';
 import {
+  describeImportedSleep,
+  parseSleepImports,
+  sleepImportKey,
+  type ImportedSleep,
+} from './sleepImport.ts';
+import {
   emptySleep,
   hasSleep,
   parseSleep,
@@ -49,6 +55,7 @@ export interface Entry {
   cramps: number | null;
   symptomRatings: SymptomRating[];
   sleep: SleepRecord;
+  sleepImports: ImportedSleep[];
   note: string;
   productRecords: ProductRecord[];
   clots: boolean | null;
@@ -58,7 +65,7 @@ export interface Entry {
 }
 
 export interface Journal {
-  version: 6;
+  version: 7;
   medications: Medication[];
   entries: Record<Day, Entry>;
   customSymptoms: string[];
@@ -76,6 +83,7 @@ export function emptyEntry(): Entry {
     cramps: null,
     symptomRatings: [],
     sleep: emptySleep(),
+    sleepImports: [],
     note: '',
     productRecords: [],
     clots: null,
@@ -87,7 +95,7 @@ export function emptyEntry(): Entry {
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 6,
+    version: 7,
     medications: [],
     entries: {},
     customSymptoms: [],
@@ -111,6 +119,7 @@ function hasGeneralEntry(entry: Entry): boolean {
       entry.productRecords.length > 0 ||
       entry.doseRecords.length > 0 ||
       hasSleep(entry.sleep) ||
+      entry.sleepImports.length > 0 ||
       entry.clots !== null ||
       entry.flooding !== null ||
       entry.note.length > 0)
@@ -124,6 +133,8 @@ export function updateEntry(journal: Journal, date: Day, patch: Partial<Entry>):
   if (patch.sexualHealth !== undefined) entry.sexualHealth = parseSexualHealth(patch.sexualHealth);
   if (patch.doseRecords !== undefined) entry.doseRecords = parseDoseRecords(patch.doseRecords);
   if (patch.sleep !== undefined) entry.sleep = parseSleep(patch.sleep);
+  if (patch.sleepImports !== undefined)
+    entry.sleepImports = parseSleepImports(patch.sleepImports, date);
   if (![null, true, false].includes(entry.clots) || ![null, true, false].includes(entry.flooding))
     throw new Error('Choose Yes, No, or Not logged for bleeding observations.');
   if (patch.flow !== undefined) entry.flowRecorded = patch.flowRecorded ?? true;
@@ -221,7 +232,8 @@ export function parseJournal(value: unknown): Journal {
         value.version === 3 ||
         value.version === 4 ||
         value.version === 5 ||
-        value.version === 6) &&
+        value.version === 6 ||
+        value.version === 7) &&
       validDay(value.selectedDate),
   );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
@@ -278,7 +290,8 @@ export function parseJournal(value: unknown): Journal {
       cramps: entry.cramps as number | null,
       symptomRatings:
         value.version >= 5 ? parseSymptomRatings(entry.symptomRatings, entry.symptoms) : [],
-      sleep: value.version === 6 ? parseSleep(entry.sleep) : emptySleep(),
+      sleep: value.version >= 6 ? parseSleep(entry.sleep) : emptySleep(),
+      sleepImports: value.version >= 7 ? parseSleepImports(entry.sleepImports, day) : [],
       note: entry.note,
       productRecords,
       clots,
@@ -288,8 +301,12 @@ export function parseJournal(value: unknown): Journal {
       doseRecords: value.version >= 4 ? parseDoseRecords(entry.doseRecords) : [],
     };
   }
+  const importedKeys = Object.values(entries).flatMap((entry) =>
+    entry.sleepImports.map(sleepImportKey),
+  );
+  assert(new Set(importedKeys).size === importedKeys.length);
   return {
-    version: 6,
+    version: 7,
     medications: value.version >= 4 ? parseMedications(value.medications) : [],
     entries,
     customSymptoms: [...value.customSymptoms],
@@ -327,6 +344,7 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       'Sleep duration (minutes)',
       'Sleep quality',
       'Night wakings',
+      'Imported sleep sessions',
       ...sexualFields.map((field) => SEXUAL_HEALTH_LABELS[field]),
     ],
   ];
@@ -351,6 +369,7 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       e.sleep.durationMinutes === null ? '' : String(e.sleep.durationMinutes),
       e.sleep.quality === null ? '' : SLEEP_QUALITY_LABELS[e.sleep.quality],
       e.sleep.wakings === null ? '' : String(e.sleep.wakings),
+      e.sleepImports.flatMap(describeImportedSleep).join('\n'),
       ...sexualFields.map((field) => sexualHealthLabel(e.sexualHealth[field])),
     ]);
   }

@@ -92,9 +92,19 @@ export function sleepHistory(journal: Journal, through: Day, window: SleepWindow
   const start = addDays(through, 1 - window);
   const from = start < '1900-01-01' ? '1900-01-01' : start;
   const records = Object.entries(journal.entries)
-    .filter(([date, entry]) => date >= from && date <= through && hasSleep(entry.sleep))
+    .filter(
+      ([date, entry]) =>
+        date >= from && date <= through && (hasSleep(entry.sleep) || entry.sleepImports.length > 0),
+    )
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, entry]) => ({ date, sleep: { ...entry.sleep } }));
+    .map(([date, entry]) => ({
+      date,
+      sleep: { ...entry.sleep },
+      imports: entry.sleepImports.map((record) => ({
+        ...record,
+        stages: record.stages.map((stage) => ({ ...stage })),
+      })),
+    }));
   return {
     from,
     through,

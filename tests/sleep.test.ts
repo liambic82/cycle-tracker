@@ -44,7 +44,7 @@ test('formats 1–5 gain unknown sleep, preserve prior records, and do not infer
     const legacy = { ...sample, version, entries };
     const before = JSON.stringify(legacy);
     const migrated = parseJournal(legacy);
-    assert.equal(migrated.version, 6);
+    assert.equal(migrated.version, 7);
     assert.equal(JSON.stringify(legacy), before);
     for (const [date, entry] of Object.entries(migrated.entries)) {
       assert.deepEqual(entry.sleep, emptySleep());
@@ -95,7 +95,7 @@ test('sleep schema rejects malformed, missing or coerced values and bounds each 
       parseJournal({ ...emptyJournal(today), entries: { [today]: { ...emptyEntry(), sleep } } }),
     );
   }
-  assert.throws(() => parseJournal({ ...emptyJournal(today), version: 7 }));
+  assert.throws(() => parseJournal({ ...emptyJournal(today), version: 8 }));
 });
 
 test('duration entry uses whole hours/minutes, permits partial and zero records, and rejects ambiguous input', () => {
@@ -232,9 +232,10 @@ test('CSV keeps numeric units, zero versus unknown, and the existing sexual-fiel
     'Sleep duration (minutes)',
     'Sleep quality',
     'Night wakings',
+    'Imported sleep sessions',
   ]);
-  assert.deepEqual(rows[1]!.slice(13), ['0', '', '']);
-  assert.deepEqual(rows[2]!.slice(13), ['450', 'Good', '0']);
+  assert.deepEqual(rows[1]!.slice(13), ['0', '', '', '']);
+  assert.deepEqual(rows[2]!.slice(13), ['450', 'Good', '0', '']);
   assert.equal(rows.length, 3);
   assert.ok(!toCSV(journal).includes('gentle'));
   assert.ok(toCSV(journal, { activity: true }).includes(addDays(today, -2)));

@@ -6,6 +6,7 @@ import { describeDose, describeSchedule } from './medications.ts';
 import { SYMPTOM_GROUPS } from './symptoms.ts';
 import { symptomSeverity } from './symptomSeverity.ts';
 import { describeSleep } from './sleep.ts';
+import { describeImportedSleep } from './sleepImport.ts';
 import {
   emptySexualHealthExport,
   sexualHealthLabel,
@@ -205,8 +206,11 @@ export function createDoctorReport(
   if (selected('sleep'))
     dailySection(
       REPORT_SECTIONS.sleep,
-      'Self-reported main sleep, recorded on the day of waking, including daytime sleep. Duration, quality and wakings are independent optional observations. Missing values stay unknown; 0 is explicit. No sleep score or diagnosis is calculated.',
-      (date) => describeSleep(journal.entries[date]!.sleep),
+      'Manual details describe main sleep on the waking day, including daytime sleep. Imported sessions are separate source estimates and may include naps or overlaps; they are not added to manual values or each other. A session span includes awake or unknown time. Missing stages do not mean no sleep or no wakings. No sleep score or diagnosis is calculated.',
+      (date) => [
+        ...describeSleep(journal.entries[date]!.sleep),
+        ...journal.entries[date]!.sleepImports.flatMap(describeImportedSleep),
+      ],
     );
   if (selected('medications')) {
     const blocks: ReportBlock[] = [];

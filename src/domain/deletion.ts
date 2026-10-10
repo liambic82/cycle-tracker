@@ -20,6 +20,10 @@ export function deleteEntry(journal: Journal, date: Day) {
         symptoms: [...entry.symptoms],
         symptomRatings: entry.symptomRatings.map((rating) => ({ ...rating })),
         sleep: { ...entry.sleep },
+        sleepImports: entry.sleepImports.map((record) => ({
+          ...record,
+          stages: record.stages.map((stage) => ({ ...stage })),
+        })),
         productRecords: entry.productRecords.map((record) => ({ ...record })),
         sexualHealth: { ...entry.sexualHealth },
         doseRecords: entry.doseRecords.map((record) => ({ ...record })),

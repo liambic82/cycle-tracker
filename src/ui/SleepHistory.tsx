@@ -11,6 +11,7 @@ import {
 } from '../domain/sleep';
 import { Button, Chip } from './components';
 import { useTheme } from './theme';
+import { sleepStageSummary, minutesLabel } from '../domain/sleepImport';
 
 export function SleepHistory({
   journal,
@@ -29,7 +30,8 @@ export function SleepHistory({
     <View style={{ gap: 16 }}>
       <Text style={common.body}>
         Main sleep, recorded on the day you woke up. Duration, quality and wakings can each be left
-        unlogged. Sleep disruption symptom ratings stay in symptom history.
+        unlogged. Imported sessions stay separate and are never added to manual values or each
+        other. Sleep disruption symptom ratings stay in symptom history.
       </Text>
       <Text style={common.label}>History range · ending today</Text>
       <View style={common.wrap}>
@@ -51,8 +53,8 @@ export function SleepHistory({
         {formatDay(today, { month: 'short', day: 'numeric', year: 'numeric' })}
       </Text>
       <Text style={common.body}>
-        {history.records.length} days with sleep details · {history.durations} with a duration ·{' '}
-        {history.notLogged} days without sleep details
+        {history.records.length} days with sleep details · {history.durations} with a manual
+        duration · {history.notLogged} days without sleep details
       </Text>
       <Text style={common.small}>
         Bars use the same 0–24-hour scale. Rows show logged waking dates, newest first. Missing
@@ -66,7 +68,7 @@ export function SleepHistory({
       {history.records
         .slice(-limit)
         .reverse()
-        .map(({ date, sleep }) => {
+        .map(({ date, sleep, imports }) => {
           const duration = sleepDurationLabel(sleep.durationMinutes);
           const quality =
             sleep.quality === null ? 'Not logged' : SLEEP_QUALITY_LABELS[sleep.quality];
@@ -75,7 +77,7 @@ export function SleepHistory({
             <Pressable
               key={date}
               accessibilityRole="button"
-              accessibilityLabel={`Open ${formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}, sleep duration ${duration}, quality ${quality}, night wakings ${wakings}`}
+              accessibilityLabel={`Open ${formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}, manual sleep ${duration}, quality ${quality}, night wakings ${wakings}, ${imports.length} imported sessions`}
               onPress={() => openDay(date)}
               style={({ pressed }) => ({
                 gap: 10,
@@ -89,7 +91,7 @@ export function SleepHistory({
               <Text style={common.label}>
                 {formatDay(date, { month: 'short', day: 'numeric', year: 'numeric' })}
               </Text>
-              <Text style={common.body}>Time asleep · {duration}</Text>
+              <Text style={common.body}>Manual time asleep · {duration}</Text>
               {sleep.durationMinutes !== null && (
                 <View
                   accessible={false}
@@ -111,6 +113,16 @@ export function SleepHistory({
               )}
               <Text style={common.body}>Quality · {quality}</Text>
               <Text style={common.body}>Night wakings · {wakings}</Text>
+              {imports.map((record) => {
+                const summary = sleepStageSummary(record);
+                return (
+                  <Text key={JSON.stringify([record.sourcePackage, record.id])} style={common.body}>
+                    Imported · {record.sourceName} · recorded asleep stages{' '}
+                    {minutesLabel(summary.asleepMinutes)}
+                    {summary.complete ? '' : ' · incomplete stages; total unknown'}
+                  </Text>
+                );
+              })}
             </Pressable>
           );
         })}

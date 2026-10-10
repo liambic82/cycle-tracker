@@ -30,6 +30,7 @@ import { CycleContext } from './CycleContext';
 import { SeverityControl, SymptomSeverityEditor } from './SymptomSeverityEditor';
 import { symptomSeverity } from '../domain/symptomSeverity';
 import { SleepEditor } from './SleepEditor';
+import { ImportedSleepDetails } from './ImportedSleepDetails';
 import { hasSleep, sleepDurationLabel, SLEEP_QUALITY_LABELS } from '../domain/sleep';
 
 export function DayEditor({
@@ -439,6 +440,10 @@ export function DayEditor({
               <Text style={common.small}>For the main sleep ending on this day.</Text>
             )}
           </View>
+          <ImportedSleepDetails
+            records={entry.sleepImports}
+            change={(sleepImports) => onPatch({ sleepImports })}
+          />
           <View>
             <SectionLabel icon={Heart}>How are you feeling?</SectionLabel>
             <Text style={[common.small, { marginBottom: 13 }]}>

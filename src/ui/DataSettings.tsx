@@ -15,6 +15,7 @@ import { Button } from './components';
 import { BiometricSettings } from './BiometricSettings';
 import { DoctorReport } from './DoctorReport';
 import { AppearanceSettings } from './AppearanceSettings';
+import { SleepImportSettings } from './SleepImportSettings';
 import type { PhotoControls } from '../data/personalBackgroundStore';
 import { useTheme } from './theme';
 
@@ -30,6 +31,8 @@ export function DataSettings({
   setBiometricUnlock,
   setShowPerimenopause,
   onViewChange,
+  update,
+  saveStatus,
 }: {
   photo: PhotoControls;
   journal: Journal;
@@ -42,6 +45,8 @@ export function DataSettings({
   setBiometricUnlock: (enabled: boolean) => Promise<void>;
   setShowPerimenopause: (show: boolean) => void;
   onViewChange: () => void;
+  update: (transform: (journal: Journal) => Journal) => void;
+  saveStatus: React.ReactNode;
 }) {
   const { colors, common, dark } = useTheme();
   const [message, setMessage] = useState('');
@@ -55,6 +60,7 @@ export function DataSettings({
   const [deleteError, setDeleteError] = useState('');
   const [reportOpen, setReportOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const [sleepImportOpen, setSleepImportOpen] = useState(false);
   useEffect(() => {
     if (!appearanceOpen) return;
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -104,6 +110,20 @@ export function DataSettings({
       setBusy(false);
     }
   };
+  if (sleepImportOpen)
+    return (
+      <SleepImportSettings
+        saveStatus={saveStatus}
+        journal={journal}
+        demo={demo}
+        update={update}
+        onViewChange={onViewChange}
+        close={() => {
+          setSleepImportOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (appearanceOpen)
     return (
       <AppearanceSettings
@@ -149,6 +169,21 @@ export function DataSettings({
           Your records are encrypted with your passphrase and stored on this device. This preview
           has no account, cloud sync, or analytics.
         </Text>
+      </View>
+      <View style={[common.card, { gap: 15 }]}>
+        <Text style={common.heading}>Wearable sleep</Text>
+        <Text style={common.body}>
+          Review sleep shared by Fitbit / Google Health through Android Health Connect. Imported
+          copies stay separate from manual sleep details.
+        </Text>
+        <Button
+          secondary
+          label="Import wearable sleep"
+          onPress={() => {
+            setSleepImportOpen(true);
+            onViewChange();
+          }}
+        />
       </View>
       <View style={[common.card, { gap: 15 }]}>
         <Text style={common.heading}>Doctor summary</Text>
@@ -200,7 +235,7 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          New backups need preview 0.16.0 or later. Update the receiving app before restoring.
+          New backups need preview 0.17.0 or later. Update the receiving app before restoring.
           Earlier backups still open here. Encrypted backups include all sexual-health fields,
           regardless of your CSV choices, plus all medication schedules and dose records.
         </Text>

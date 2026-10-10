@@ -549,6 +549,8 @@ function CycleApp() {
             />
           ) : (
             <DataSettings
+              saveStatus={saveStatus}
+              update={state.update}
               photo={state.photo}
               onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
               journal={journal}
