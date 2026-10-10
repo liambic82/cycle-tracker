@@ -206,7 +206,7 @@ test('unrelated sensitive fields never influence estimates, mutate records, or e
   assert.equal(toCSV(changed), csv);
   assert.deepEqual(parseJournal(JSON.parse(serialized)), changed);
   assert.ok(!JSON.stringify(expected).includes('PRIVATE'));
-  assert.equal(changed.version, 5);
+  assert.equal(changed.version, 6);
 });
 
 test('the expanded fictional sample demonstrates an estimate while remaining a valid journal', () => {

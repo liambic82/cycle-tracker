@@ -34,7 +34,7 @@ test('formats 1–4 migrate without inventing symptom ratings or losing cramps, 
     const legacy = { ...sample, version, entries };
     const before = JSON.stringify(legacy);
     const migrated = parseJournal(legacy);
-    assert.equal(migrated.version, 5);
+    assert.equal(migrated.version, 6);
     assert.equal(JSON.stringify(legacy), before);
     for (const [date, entry] of Object.entries(migrated.entries)) {
       assert.deepEqual(entry.symptomRatings, []);

@@ -77,13 +77,13 @@ test('versions 1–3 gain empty medication definitions and dose records without 
     const raw = { ...oldJournal, version, entries: { [date]: oldEntry } };
     const original = JSON.stringify(raw);
     const migrated = parseJournal(raw);
-    assert.equal(migrated.version, 5);
+    assert.equal(migrated.version, 6);
     assert.deepEqual(migrated.medications, []);
     assert.deepEqual(migrated.entries[date]?.doseRecords, []);
     assert.equal(migrated.entries[date]?.note, 'Older record');
     assert.equal(JSON.stringify(raw), original);
   }
-  assert.throws(() => parseJournal({ ...emptyJournal(date), version: 6 }));
+  assert.throws(() => parseJournal({ ...emptyJournal(date), version: 7 }));
   assert.throws(() => parseJournal({ ...emptyJournal(date), medications: undefined }));
   assert.throws(() =>
     parseJournal({
@@ -340,7 +340,7 @@ test('encrypted backups keep full schedules and dose snapshots; legacy encrypted
     seal({ ...legacy, version: 3 } as unknown as Journal, vault, randomBytes),
     vault,
   );
-  assert.equal(migrated.version, 5);
+  assert.equal(migrated.version, 6);
   assert.deepEqual(migrated.medications, []);
   vault.key.fill(0);
 });

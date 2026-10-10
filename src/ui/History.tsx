@@ -7,6 +7,7 @@ import { flowTimeline, statistics, type FlowState } from '../domain/history';
 import { Button } from './components';
 import { useTheme } from './theme';
 import { SymptomHistory } from './SymptomHistory';
+import { SleepHistory } from './SleepHistory';
 
 const FLOW_LABELS: Record<FlowState, string> = {
   bleeding: 'Bleeding',
@@ -118,6 +119,7 @@ export function History({
   };
   const [limit, setLimit] = useState(12);
   const [symptomsOpen, setSymptomsOpen] = useState(false);
+  const [sleepOpen, setSleepOpen] = useState(false);
   const lengths = statistics(cycles.map((cycle) => cycle.length));
   const durations = statistics(cycles.map((cycle) => cycle.duration));
   return (
@@ -138,6 +140,15 @@ export function History({
           onPress={() => setSymptomsOpen(!symptomsOpen)}
         />
         {symptomsOpen && <SymptomHistory journal={journal} today={today} openDay={openDay} />}
+      </View>
+      <View style={[common.card, { gap: 16 }]}>
+        <Text style={common.heading}>Sleep</Text>
+        <Button
+          secondary
+          label={sleepOpen ? 'Close sleep history' : 'Explore sleep history'}
+          onPress={() => setSleepOpen(!sleepOpen)}
+        />
+        {sleepOpen && <SleepHistory journal={journal} today={today} openDay={openDay} />}
       </View>
       <TrendChart
         title="Cycle length"

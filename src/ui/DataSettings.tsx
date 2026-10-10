@@ -200,7 +200,7 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          New backups need preview 0.15.0 or later. Update the receiving app before restoring.
+          New backups need preview 0.16.0 or later. Update the receiving app before restoring.
           Earlier backups still open here. Encrypted backups include all sexual-health fields,
           regardless of your CSV choices, plus all medication schedules and dose records.
         </Text>
@@ -222,8 +222,8 @@ export function DataSettings({
           your doctor.
         </Text>
         <Text style={common.small}>
-          Includes dose records with notes, product records, and clot/flooding observations. Blank
-          observations mean not logged, not No.
+          Includes symptom ratings, sleep details, dose records with notes, product records, and
+          clot/flooding observations. Blank values mean not logged, not No or zero.
         </Text>
         <Text style={common.small}>
           CSV files are readable and are not encrypted. Only share them with people you choose.

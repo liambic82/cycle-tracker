@@ -5,6 +5,7 @@ import { describeProduct, orderedProducts } from './flowDetails.ts';
 import { describeDose, describeSchedule } from './medications.ts';
 import { SYMPTOM_GROUPS } from './symptoms.ts';
 import { symptomSeverity } from './symptomSeverity.ts';
+import { describeSleep } from './sleep.ts';
 import {
   emptySexualHealthExport,
   sexualHealthLabel,
@@ -19,6 +20,7 @@ export const REPORT_SECTIONS = {
   products: 'Period products',
   symptoms: 'Symptoms and severity',
   moods: 'Mood and mind',
+  sleep: 'Sleep',
   medications: 'Medication schedules',
   doses: 'Recorded doses',
   notes: 'Journal and medication notes',
@@ -51,6 +53,7 @@ export function defaultReportOptions(today: Day): ReportOptions {
       products: true,
       symptoms: true,
       moods: true,
+      sleep: true,
       medications: true,
       doses: true,
       notes: false,
@@ -199,6 +202,12 @@ export function createDoctorReport(
         },
       );
     }
+  if (selected('sleep'))
+    dailySection(
+      REPORT_SECTIONS.sleep,
+      'Self-reported main sleep, recorded on the day of waking, including daytime sleep. Duration, quality and wakings are independent optional observations. Missing values stay unknown; 0 is explicit. No sleep score or diagnosis is calculated.',
+      (date) => describeSleep(journal.entries[date]!.sleep),
+    );
   if (selected('medications')) {
     const blocks: ReportBlock[] = [];
     for (const medication of journal.medications)

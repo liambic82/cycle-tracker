@@ -29,6 +29,8 @@ import { plannedDoses } from '../domain/medications';
 import { CycleContext } from './CycleContext';
 import { SeverityControl, SymptomSeverityEditor } from './SymptomSeverityEditor';
 import { symptomSeverity } from '../domain/symptomSeverity';
+import { SleepEditor } from './SleepEditor';
+import { hasSleep, sleepDurationLabel, SLEEP_QUALITY_LABELS } from '../domain/sleep';
 
 export function DayEditor({
   journal,
@@ -68,6 +70,7 @@ export function DayEditor({
   const [sexualHealthOpen, setSexualHealthOpen] = useState(false);
   const [dosesOpen, setDosesOpen] = useState(false);
   const [severityOpen, setSeverityOpen] = useState(false);
+  const [sleepOpen, setSleepOpen] = useState(false);
   const closeActions = () => {
     setActionsOpen(false);
     setDeleteConfirm(false);
@@ -86,6 +89,22 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (sleepOpen && date <= today)
+    return (
+      <SleepEditor
+        date={date}
+        value={entry.sleep}
+        save={(sleep) => {
+          onPatch({ sleep });
+          setSleepOpen(false);
+          onViewChange();
+        }}
+        cancel={() => {
+          setSleepOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (severityOpen && date <= today)
     return (
       <SymptomSeverityEditor
@@ -229,10 +248,11 @@ export function DayEditor({
               <Text style={common.label}>Delete this day’s entry?</Text>
               <Text style={common.body}>
                 This removes all daily details, including flow, product records, bleeding
-                observations, sexual-health details, dose records, symptoms, notes, and period
-                markers for {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}.
-                You can undo the last deletion until you lock, delete another entry, or log this day
-                again. Medication schedules are kept.
+                observations, sexual-health details, dose records, symptoms, sleep, notes, and
+                period markers for{' '}
+                {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
+                the last deletion until you lock, delete another entry, or log this day again.
+                Medication schedules are kept.
               </Text>
               <Button label="Keep entry" onPress={closeActions} />
               <Button
@@ -390,6 +410,34 @@ export function DayEditor({
               }{' '}
               scheduled for this day
             </Text>
+          </View>
+          <View style={{ gap: 9 }}>
+            <Button
+              secondary
+              label="Sleep details · optional"
+              onPress={() => {
+                closeActions();
+                setSleepOpen(true);
+                onViewChange();
+              }}
+            />
+            {hasSleep(entry.sleep) ? (
+              <Text style={common.small}>
+                {[
+                  entry.sleep.durationMinutes === null
+                    ? null
+                    : `Time asleep: ${sleepDurationLabel(entry.sleep.durationMinutes)}`,
+                  entry.sleep.quality === null
+                    ? null
+                    : `Quality: ${SLEEP_QUALITY_LABELS[entry.sleep.quality]}`,
+                  entry.sleep.wakings === null ? null : `Night wakings: ${entry.sleep.wakings}`,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </Text>
+            ) : (
+              <Text style={common.small}>For the main sleep ending on this day.</Text>
+            )}
           </View>
           <View>
             <SectionLabel icon={Heart}>How are you feeling?</SectionLabel>

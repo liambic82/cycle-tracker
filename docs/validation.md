@@ -1,5 +1,29 @@
 # Validation record
 
+## 0.16.0 manual sleep details and history — October 10, 2026
+
+The owner reported “Phone tests passed. Keep going.” after 0.15.0. Recorded as an owner-reported pass in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context, without a per-device breakdown, individual results, Flip5 OS details or timings. During this slice the owner requested wearable sleep support and selected **Fitbit first**. The [next integration plan](wearable-sleep.md) uses Android Health Connect; this build implements manual sleep only and requests no wearable permissions.
+
+- `pnpm check`: TypeScript and all **160 tests** passed. Nine new tests cover actual format-1–5 entries without sleep, preservation of prior observations/ratings/medications, strict schema and numeric-form validation, optional/zero/partial values, sleep-only entry retention and clearing, independent deletion/Undo snapshots, encrypted round-trip and format-5 restore, inclusive date/history boundaries, unknown/future exclusion, CSV units/zero/blank values and selected report sections/date filtering. Existing sexual-field export combinations were updated for the additional CSV columns and remain passing.
+- Production web, Android Hermes and iOS Hermes exports passed. Final web bundle: `index-1c4b55b515f223b044e407f2e79748f0.js`; offline cache: `3f571bd5a139283a`. iOS remains a bundle check, not a native iOS build or device result. The pnpm helper used the existing `--config.verify-deps-before-run=false` workaround for its store-location mismatch; TypeScript/tests/builds were not skipped.
+- Browser QA used fictional sample data only on isolated `127.0.0.1:4181`; the user's port-4173 storage was not accessed. Verified clearing the draft then cancelling retains saved values; 25 hours and 60 minutes reject without saving; a valid save updates the summary; quality-only and zero-duration/zero-wakings records persist within the demo session without inferred flow. Navigating to another date showed independent records.
+- History showed four recorded dates with three durations, including quality-only and explicit-zero examples. Missing-day counts matched 26/86/361 for 30/90/365 days. Dated rows opened the correct entry with saved fields intact. Inspected the form/history at 393 × 852, narrow form at 320 × 740, and desktop dark-mode form at 1280 × 720. Document widths matched the narrow/desktop viewports without horizontal overflow. Keyboard Tab moved from Sleep hours to Sleep minutes.
+- A Sleep-only doctor-summary preview included October 7–10 and preserved the partial/zero examples while excluding unrelated sections. The exported one-page fictional PDF was downloaded, rendered with Poppler and visually inspected: all dates, values, explanatory text, headings and footer were legible without clipping. PDF renderer changes were unnecessary.
+- With the isolated server stopped and the online QA tab closed, a new tab loaded the cached app. Editing sleep to 8 h 30 min and opening the updated history row worked offline. Final online/offline logs contained no captured warnings or errors. Sample mode was exited, both QA tabs closed and the viewport override reset; the test server remains stopped.
+- Standalone ARM64 APK built successfully and passed signature verification and 16 KB alignment. Verified package `com.liambic.cycletracker.preview`, version **0.16.0**, code **19**, minimum API 24, target API 36, `allowBackup: false`, no debuggable flag, unchanged permissions and signing identity. Embedded configuration enables testing screenshots; the packaged Hermes program is **4,795,288 bytes**. Application sources matched the build cache after formatting; no application code changed after verified builds.
+- Formatting and Git whitespace checks passed. Journal content is now format **6**, formats 1–5 migrate, and new backups need 0.16.0 or later. The encryption envelope/passphrase/biometric key remain unchanged. Saved-journal update/restart/restore, native keyboards/accessibility/folding, biometric/photo/reminder regression and native PDF sharing are the [new phone checks](android-testing.md#0160-manual-sleep-details-and-history), not independently observed results for this build.
+
+APK/build outputs, exported fictional PDF, rendered PDF image and signing material remain outside Git. The two committed browser screenshots contain fictional sample data only. The entry screenshot shows an unsaved draft used for layout inspection; it was cancelled after capture.
+
+- File: `artifacts/android/cycle-tracker-preview-0.16.0-arm64-v8a.apk`.
+- Size: **59,057,930 bytes**.
+- APK SHA-256: `05efcc428ac9edd189b9eea31683f6d20f6eef3260661f17a7f0f8eb8881c2f9`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Sleep form on a phone-sized browser](screenshots/sleep-entry-mobile.png)
+
+![Sleep history with partial and zero records](screenshots/sleep-history-mobile.png)
+
 ## 0.15.0 symptom severity and dated history — October 10, 2026
 
 The owner reported “Phone test passed. Move on” after 0.14.0. Recorded as an owner-reported pass in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context, without a per-device breakdown, individual checklist results, Flip5 OS details or timings. This closes the prior photo slice's reported phone check and authorizes continued development. The original brief and ten comments were reread; this slice addresses optional symptom severity and cramp severity history. It introduces functional controls within the existing design, with no new appearance options or layout direction.

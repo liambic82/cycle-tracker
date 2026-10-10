@@ -73,12 +73,14 @@ export function demoJournal(today: Day): Journal {
   journal.entries[addDays(today, -3)] = {
     ...emptyEntry(),
     symptoms: ['Sleep disruption'],
+    sleep: { durationMinutes: 375, quality: 'poor', wakings: 3 },
     note: 'Woke up early. A gentle walk felt good.',
   };
   journal.entries[today] = {
     ...emptyEntry(),
     symptoms: ['Bloating'],
     symptomRatings: [{ symptom: 'Bloating', value: 2 }],
+    sleep: { durationMinutes: 450, quality: 'good', wakings: 1 },
     note: '',
     sexualHealth: { activity: null, intensity: null, orgasm: null, libido: 'moderate' },
   };
