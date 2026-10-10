@@ -2,7 +2,7 @@
 
 **Status: customization approved; first implementation in preview 0.13.0.** The owner liked the initial proposals, then approved all twelve generated backgrounds and six additional named palettes on October 9, 2026. The existing app layout remains in place; no alternative layout was selected or added as a setting.
 
-**Implemented scope:** nine palettes, System/Light/Dark, Plain/Soft wash/twelve bundled backgrounds, 0–60% visibility, opaque reading surfaces, device-local preferences, temporary sample choices, and Reset appearance. Access through **Your data → Customize appearance**. Personal photo selection and broader layout changes remain later work, with the image-storage requirements below still applicable.
+**Implemented scope:** nine palettes, System/Light/Dark, Plain/Soft wash/twelve bundled backgrounds, 0–60% visibility, opaque reading surfaces, device-local preferences, temporary sample choices, and Reset appearance. Access through **Your data → Customize appearance**. Preview 0.14.0 adds the approved personal photo choose/preview/apply/replace/remove flow, with the [documented image-storage requirements](../architecture.md#personal-photo-backgrounds-0140). Broader layout changes remain open and require a new approval.
 
 The original proposal below is retained as the design record. The owner requested approval before beautification or customization is implemented; new visual options still require that approval. Approval of a direction does not mean shipping all three layouts as a new user setting. The palette and background choices can be combined with any of the layouts.
 

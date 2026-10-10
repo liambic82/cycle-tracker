@@ -5,12 +5,14 @@ import { useAppearance } from './AppearanceProvider';
 import { backgroundAssets } from './backgroundAssets';
 import { useTheme } from './theme';
 
-export function AppearanceBackdrop() {
+export function AppearanceBackdrop({ personalUri }: { personalUri: string | null }) {
   const { settings } = useAppearance();
   const { colors } = useTheme();
   const id = useId().replace(/[^a-z0-9]/gi, '');
   const [failed, setFailed] = useState<string | null>(null);
+  const imageKey = settings.background === 'personal' ? personalUri : settings.background;
   if (settings.background === 'plain' || settings.visibility === 0) return null;
+  if (settings.background === 'personal' && !personalUri) return null;
   return (
     <View
       pointerEvents="none"
@@ -31,15 +33,19 @@ export function AppearanceBackdrop() {
           </Defs>
           <Rect width="100" height="100" fill={`url(#${id})`} />
         </Svg>
-      ) : failed !== settings.background ? (
+      ) : failed !== imageKey ? (
         <Image
-          key={settings.background}
-          source={backgroundAssets[settings.background]}
+          key={imageKey}
+          source={
+            settings.background === 'personal'
+              ? { uri: personalUri! }
+              : backgroundAssets[settings.background]
+          }
           resizeMode="cover"
           accessible={false}
           fadeDuration={0}
           style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]}
-          onError={() => setFailed(settings.background)}
+          onError={() => setFailed(imageKey)}
         />
       ) : null}
     </View>

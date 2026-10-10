@@ -15,9 +15,11 @@ import { Button } from './components';
 import { BiometricSettings } from './BiometricSettings';
 import { DoctorReport } from './DoctorReport';
 import { AppearanceSettings } from './AppearanceSettings';
+import type { PhotoControls } from '../data/personalBackgroundStore';
 import { useTheme } from './theme';
 
 export function DataSettings({
+  photo,
   journal,
   demo,
   backup,
@@ -29,6 +31,7 @@ export function DataSettings({
   setShowPerimenopause,
   onViewChange,
 }: {
+  photo: PhotoControls;
   journal: Journal;
   demo: boolean;
   backup: () => string;
@@ -104,6 +107,7 @@ export function DataSettings({
   if (appearanceOpen)
     return (
       <AppearanceSettings
+        photo={photo}
         close={() => {
           setAppearanceOpen(false);
           onViewChange();
@@ -127,7 +131,7 @@ export function DataSettings({
       <View style={[common.card, { gap: 14 }]}>
         <Text style={common.heading}>Appearance</Text>
         <Text style={common.body}>
-          Nine palettes, light and dark modes, and twelve soft backgrounds to make this space yours.
+          Choose your colors, light or dark mode, and a built-in background or your own photo.
         </Text>
         <Button
           secondary
@@ -338,7 +342,7 @@ export function DataSettings({
         <Text style={common.body}>
           Remove all entries, medication schedules, and custom symptoms stored by this app on this
           device. This cannot be undone. Export an encrypted backup first if you want to keep a
-          copy.
+          copy. The app’s saved background photo is also removed; your original photo is unchanged.
         </Text>
         <Text style={common.small}>
           Backups, CSV files, and journals on other devices or browser addresses are separate and

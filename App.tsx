@@ -265,7 +265,7 @@ function CycleApp() {
         </View>
       )}
       <View style={{ flex: 1, minWidth: 0 }}>
-        {!state.obscured && <AppearanceBackdrop />}
+        {!state.obscured && <AppearanceBackdrop personalUri={state.photo.uri} />}
         {!desktop && (
           <View
             style={[
@@ -549,6 +549,7 @@ function CycleApp() {
             />
           ) : (
             <DataSettings
+              photo={state.photo}
               onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
               journal={journal}
               demo={state.demo}
@@ -704,9 +705,9 @@ function AppShell() {
             {privacy.error ? (
               <>
                 <Text accessibilityRole="alert" style={common.error}>
-                  Screen privacy could not start. Try again before opening your journal.
+                  Privacy setup could not finish. Try again before opening your journal.
                 </Text>
-                <Button label="Retry screen privacy" onPress={privacy.retry} />
+                <Button label="Retry privacy setup" onPress={privacy.retry} />
               </>
             ) : (
               <ActivityIndicator color={colors.plum} />

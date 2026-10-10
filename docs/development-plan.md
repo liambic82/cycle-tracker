@@ -2,6 +2,8 @@
 
 The [October 9 source review](source-review-2026-10-09.md) reconciles the original brief, all ten comments, and all nine screenshots against preview 0.3.0. It records detailed gaps and dependencies; source stage numbers remain suggestions.
 
+**October 10, 2026 update:** the owner reported “Phone validations pass. Let's move forward” after preview 0.13.0. This records the reported phone-validation pass and approval to continue in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context. Individual checklist results, Flip5 OS version, notification timings, and independent security/accessibility validation were not supplied. Older pending statements below describe the evidence available at those earlier milestones; retain their checklists for regression.
+
 ## Milestone 1: private daily journal
 
 Implemented in the 0.1 preview: calendar, daily flow and explicit start/end markers, selected symptom categories, custom symptoms, cramp severity, notes, recorded cycle history, encrypted local vault, backup/restore, CSV export, and responsive browser UI.
@@ -77,8 +79,8 @@ Explicitly reaffirmed by the owner after medication logging, following screensho
 - Implemented: two approved images per new palette, bundled for offline use, with any palette/image pairing. Plain and Soft wash remain available; visibility runs from 0–60% in 5-point steps. Reading surfaces stay opaque, flow semantics stay independent of palette, and Reset appearance restores Plum/System/Plain/25%.
 - Implemented: versioned device-local appearance preferences separate from encrypted journal content and exports. Sample changes are temporary and restore the device's choices on exit. Read/write errors are recoverable without blocking the journal. Artwork appears only in unlocked content.
 - The existing navigation and layout remain. Broader typography/spacing/layout beautification is still open; none of the three alternative layouts has been selected as a replacement. **Present new visual choices for approval before implementation.** General permission to continue does not approve unseen designs.
-- Next appearance work: personal image selection from the device. Before implementation define format/size limits, orientation and metadata handling, encryption, replacement/removal cleanup, storage-failure behavior, and exclusion from journal backups/transfer. Do not treat the built-in collection as completion of personal-photo support.
-- Pending native validation: larger text, TalkBack, system appearance changes, persistence after restart, offline first use, Pixel 7 and Flip5 folding/rotation. See [the 0.13.0 checklist](android-testing.md#0130-approved-palettes-and-backgrounds).
+- Implemented in **preview 0.14.0**: the approved personal-image choose/preview/apply/replace/remove flow, with JPEG/PNG limits, orientation normalization, metadata removal, encrypted device-local storage, recoverable storage errors, and lock/sample isolation. Reset appearance, journal replacement, and journal deletion remove the app's photo copy. The original stays unchanged; photos are excluded from backups and reports. See [the storage design](architecture.md#personal-photo-backgrounds-0140).
+- The owner reported the 0.13.0 phone validations passed on October 10. Keep larger text, TalkBack, system appearance, persistence, offline use, folding and rotation in regression. The new photo picker, native processing, cleanup and retention need [0.14.0 device checks](android-testing.md#0140-personal-photo-backgrounds).
 - Preserve the modest upfront purchase model. No subscription, cosmetic upsell, or paid theme tier is authorized.
 
 ## Product constraints

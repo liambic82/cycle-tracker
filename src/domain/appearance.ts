@@ -119,7 +119,7 @@ export type AppearanceSettings = {
   version: 1;
   palette: PaletteId;
   mode: 'system' | 'light' | 'dark';
-  background: 'plain' | 'wash' | BackgroundId;
+  background: 'plain' | 'wash' | 'personal' | BackgroundId;
   visibility: number;
 };
 export const defaultAppearance = (): AppearanceSettings => ({
@@ -140,6 +140,7 @@ export function parseAppearance(value: unknown): AppearanceSettings {
     !['system', 'light', 'dark'].includes(v.mode as string) ||
     (v.background !== 'plain' &&
       v.background !== 'wash' &&
+      v.background !== 'personal' &&
       !BACKGROUNDS.some((b) => b.id === v.background)) ||
     typeof v.visibility !== 'number' ||
     !Number.isInteger(v.visibility) ||

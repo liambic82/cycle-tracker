@@ -229,7 +229,8 @@ export function AuthGate({
               >
                 <Text style={common.body}>
                   Restoring replaces the journal on this device. Export your current journal first
-                  if you want to keep it.
+                  if you want to keep it. The app’s saved background photo is also removed; photos
+                  are not included in journal backups.
                 </Text>
                 <Button
                   secondary

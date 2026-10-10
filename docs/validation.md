@@ -1,5 +1,27 @@
 # Validation record
 
+## 0.14.0 personal-photo backgrounds — October 10, 2026
+
+The owner reported “Phone validations pass. Let's move forward” following 0.13.0. Recorded as an owner-reported phone-validation pass in the established Pixel 7 / Android 17 and Galaxy Z Flip5 context; individual checklist results, Flip5 OS details and timing measurements were not supplied. This authorizes the next approved appearance slice. The original proposal already covered choosing, previewing, applying, replacing and removing a personal image; no new layout direction was introduced.
+
+- `pnpm check`: TypeScript and all **143 tests** passed. Eleven new tests cover PNG metadata/alpha preservation, JPEG metadata/multiple scans, malformed and bounded image inputs, exact base64 encoding, encryption with an independently derived key/fresh nonces, tampering/foreign keys, read/write/removal failures, replacement/reload, sample isolation, lock during reads/writes, and deletion ordered after pending saves. Existing journal/export tests remain green; journal content is still format 4.
+- Formatting and Git whitespace checks passed. Final web, Android Hermes and iOS Hermes exports passed, using the existing pnpm-helper configuration and required Windows compiler execution access. The iOS result is a JavaScript bundle check, not a native iOS device build. Final web bundle: `index-715fccb8dd36b5004649799b19f543ad.js`; offline cache: `795acbaf374f4902`.
+- Browser QA used only fictional sample data on isolated `127.0.0.1:4179`, synthetic PNG/JPEG fixtures, and an approved repository artwork file selected through the personal-file flow. The user's port-4173 journal was not accessed. Verified preview-before-apply, JPEG EXIF rotation (600 × 400 source displayed as 400 × 600), cancel preview, explicit cancellation while choosing, rejection of invalid/13 MiB files, replacement/removal, reset, switching to built-in artwork and reusing the saved photo, and sample exit with no personal image on the setup screen. System picker dismissal itself still needs device/browser regression; the automation chooser cannot submit an empty file list.
+- A textured 1254 × 1254 PNG initially exceeded the storage cap even at 480 pixels. Added a 320-pixel fallback on both platforms; the same file then loaded at 320 × 320 with a 326,458-character data URI, safely under the 512 KiB binary cap. Original built-in artwork remains unchanged. Native and web builds were regenerated after this fix.
+- Inspected 393 × 852, 320 × 740 and 1280 × 720 layouts, keyboard focus, light/dark surfaces and controls. Document dimensions matched the viewport with no page overflow. Screenshot below shows a repository artwork file used as a sample personal image, not a user's photo. The personal-photo panel uses the existing cards and approved centered cover behavior.
+- After activating the final service worker, stopped the isolated server and opened the cached app. JPEG selection, preparation and Apply still worked; exiting the sample removed its image from the locked/setup screen. No captured browser warnings/errors in final online or offline checks. QA tabs were closed and the viewport override reset; the isolated server remains stopped.
+- The final standalone ARM64 APK built successfully and passed signature verification and 16 KB alignment. Verified package `com.liambic.cycletracker.preview`, version **0.14.0**, code **17**, minimum API 24, target API 36, `allowBackup: false` and no debuggable flag. Permissions are unchanged from 0.13.0; the single-file picker adds no new broad library permission. Existing preview signing identity is unchanged. Confirmed the ImageManipulator native module in the APK's DEX, a 4,770,464-byte Hermes program, testing screenshots enabled, and the final native picker source matching the build cache.
+- Native temporary-cache paths and orientation-loading code were inspected. Automated tests establish storage/crypto behavior and browser tests establish the web picker path; they do not establish native picker behavior, image orientation, temporary-file cleanup, memory use, TalkBack, folding, biometrics or restart retention for this new build. Those are the [0.14.0 phone checks](android-testing.md#0140-personal-photo-backgrounds). Independent security/accessibility review and native iOS validation remain release work.
+
+Build artifacts, synthetic local QA files and signing material remain excluded from Git.
+
+- File: `artifacts/android/cycle-tracker-preview-0.14.0-arm64-v8a.apk`.
+- Size: **59,033,106 bytes**.
+- APK SHA-256: `34efeb1eee9cdc7a8548f318d575b5f78d85cd84ff6fee3b3fbf7ea8b9dc6687`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Personal-photo controls on a phone-sized browser](screenshots/personal-photo-mobile.png)
+
 ## 0.13.0 approved palettes and backgrounds — October 9, 2026
 
 The owner approved all twelve generated images and six additional named palettes: “Looks good, these are approved.” Preview 0.13.0 implements nine palettes, System/Light/Dark, Plain/Soft wash/twelve bundled images, visibility, reset, and local appearance preferences. The existing navigation/layout remains; personal photos and further layout beautification are later work. This is still a development preview, with no 1.0 readiness claim.

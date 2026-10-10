@@ -8,9 +8,25 @@ The test app is named **Cycle Tracker Preview** and uses `com.liambic.cycletrack
 
 Start with the fictional sample journal. Use invented entries and a test-only passphrase when checking persistence and recovery. Real-device behavior and security validation are still in progress.
 
+## 0.14.0 personal-photo backgrounds
+
+Install `artifacts/android/cycle-tracker-preview-0.14.0-arm64-v8a.apk` over the existing preview after an encrypted journal backup. Version code is 17; package/signing identity and journal format 4 are unchanged. Do not uninstall or clear storage. This version continues the approved appearance scope and remains a 0.x preview.
+
+The owner reported “Phone validations pass. Let's move forward” on October 10 following 0.13.0. Record that as an owner-reported phone pass in the existing Pixel 7 / Android 17 and Galaxy Z Flip5 context. No per-device checklist breakdown, Flip5 OS details, or timing measurements accompanied it. The older checklists remain useful regression instructions, rather than evidence that each old pending check failed or was independently witnessed.
+
+New checks for **both phones**:
+
+1. Under **Your data → Customize appearance → Your own photo**, choose a JPEG and a PNG, including a camera photo with orientation metadata. The preview must appear upright before **Use this photo**; cancel keeps the previous background. Only one file can be chosen; no broad photo-library permission is requested. HEIC, GIF, SVG and videos are outside this slice. Source limits: 12 MiB, 32 megapixels, 8192 pixels per side.
+2. Apply, choose another, cancel its preview, then replace. Check portrait/landscape and Flip5 fold/reopen, light/dark mode, large text and TalkBack. The centered cover crop may differ by screen shape; records remain on opaque surfaces. Try visibility 0 and 60 percent, and switch to built-in art then **Use saved photo**.
+3. Cancel the system picker, navigate away while processing, and background for over a minute with the picker open. Return to a usable screen without a late preview or applied photo after locking. Passphrase/biometric unlock, restart, and airplane-mode reopening should retain an applied photo, with none visible on the lock screen or privacy cover.
+4. Try a too-large or damaged image on a disposable test installation. Expect a readable error and the previous photo intact. Processing is capped at 1600 pixels on the long side and 512 KiB; noisy images may be reduced further. Check operation time on each phone. Storage write/read failures are covered automatically; do not fill a phone with real records to simulate failure.
+5. Remove the personal photo, then choose a new one and reset appearance. Only the app's copy disappears; the original remains in the device library/files. Reset returns to Plum/System/Plain/25%. In sample mode, photo changes/removal/reset remain temporary and never show or change the saved journal's photo.
+6. With fictional data and recoverable journal backups, check restore/deletion: a valid journal restore (even the same journal) removes the saved photo; a wrong-passphrase or invalid backup preserves it. Deleting the journal also removes it. Photos never appear in encrypted journal backups, CSV or PDFs; choose them separately on another device. Restore can remove the photo before a later operation fails, so it may need choosing again after a failed replacement.
+7. Recheck journal saving, backup sharing, passphrase/biometric unlock, medication reminder delivery and existing built-in images. Native image orientation, app-private temporary-file cleanup, cancellation and memory/performance need hardware observation; the browser and automated passes do not establish those results. Native iOS validation remains future work.
+
 ## 0.13.0 approved palettes and backgrounds
 
-Install `artifacts/android/cycle-tracker-preview-0.13.0-arm64-v8a.apk` over the existing preview after an encrypted backup. Version code is 16; the preview identity, signing certificate, journal format 4, passphrase and biometric credentials are unchanged. Do not uninstall or clear storage. These checks are pending on **Pixel 7 / Android 17** and **Galaxy Z Flip5**.
+Preview 0.13.0 used version code 16 with unchanged signing identity and journal format 4. The owner reported its phone validations passed on October 10 in the **Pixel 7 / Android 17** and **Galaxy Z Flip5** testing context. Retain these checks for regression when installing a newer preview; the report did not provide individual measurements or checklist results.
 
 1. Open **Your data → Customize appearance**. Try all nine palettes and both named images in each of the six collections. Pair an image with a different palette. Calendar flow states must keep their meaning, and all text, controls and selected states must remain readable. Android Back returns to Your data.
 2. Try **Light**, **Dark**, and **System**. With System selected, change the phone's system appearance, background/reopen the app, and verify the new mode. With an explicit mode selected, it should remain selected. Check the keyboard, status/navigation bars, setup/unlock fields, entry sheet, symptoms, medication forms, history, education and reports.
@@ -20,7 +36,7 @@ Install `artifacts/android/cycle-tracker-preview-0.13.0-arm64-v8a.apk` over the 
 6. In airplane mode, open every artwork collection, select all twelve images, navigate entries and restart. The installed app needs no download for its backgrounds. Check scrolling and touch targets in portrait/landscape, Flip5 folded/reopened, large system text and TalkBack. The slider should announce percentages and permit adjustment.
 7. Retest fictional record saving, passphrase/biometric unlock, backup/restore, PDF sharing, and medication notifications. Earlier hardware checklists remain outstanding; automated/browser validation is not a new device pass.
 
-The original PNGs are bundled unchanged for this preview (about 26 MiB of artwork). Asset compression can be considered after appearance/device review without changing the approved art. Personal-photo selection remains later work.
+The original PNGs are bundled unchanged for this preview (about 26 MiB of artwork). Asset compression can be considered after appearance/device review without changing the approved art. Personal-photo selection follows in 0.14.0 above. The owner subsequently reported the phone validations passed on October 10.
 
 ## 0.12.0 experimental period estimates
 

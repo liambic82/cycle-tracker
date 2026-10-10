@@ -2,7 +2,7 @@
   "expo": {
     "name": "Cycle Tracker",
     "slug": "cycle-tracker",
-    "version": "0.13.0",
+    "version": "0.14.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "scheme": "cycletracker",

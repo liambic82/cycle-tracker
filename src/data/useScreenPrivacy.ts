@@ -6,6 +6,7 @@ import {
   preventScreenCaptureAsync,
 } from 'expo-screen-capture';
 import { allowPreviewScreenshots } from './buildSettings';
+import { clearPhotoCache } from './photoCache';
 
 // Configure capture before displaying native content. Preview builds allow testing screenshots;
 // store builds keep protection on. The browser has no equivalent capture prevention API.
@@ -18,6 +19,7 @@ export function useScreenPrivacy() {
     working.current = true;
     setError(false);
     try {
+      clearPhotoCache();
       if (allowPreviewScreenshots) await allowScreenCaptureAsync('cycle-journal');
       else await preventScreenCaptureAsync('cycle-journal');
       if (Platform.OS === 'ios') await enableAppSwitcherProtectionAsync(1);

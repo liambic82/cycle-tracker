@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { BackgroundVisibility } from './BackgroundVisibility';
-import { ArrowLeft, Check, Palette, RotateCcw } from 'lucide-react-native';
+import { ArrowLeft, Check, Palette } from 'lucide-react-native';
+import type { PhotoControls } from '../data/personalBackgroundStore';
+import { PersonalPhotoSettings } from './PersonalPhotoSettings';
 import {
   BACKGROUNDS,
   PALETTES,
@@ -13,9 +15,9 @@ import { backgroundAssets } from './backgroundAssets';
 import { Button, Chip } from './components';
 import { useTheme } from './theme';
 
-export function AppearanceSettings({ close }: { close: () => void }) {
+export function AppearanceSettings({ close, photo }: { close: () => void; photo: PhotoControls }) {
   const { colors, common } = useTheme();
-  const { settings, ready, saving, error, demo, update, reset, retry } = useAppearance();
+  const { settings, ready, saving, error, demo, update, retry } = useAppearance();
   const activeArt = BACKGROUNDS.find((art) => art.id === settings.background);
   const [collection, setCollection] = useState<PaletteId>(
     activeArt?.palette ??
@@ -140,13 +142,23 @@ export function AppearanceSettings({ close }: { close: () => void }) {
             disabled={!ready}
             onPress={() => choose({ background: artChoices[0]!.id })}
           />
+          <Chip
+            label="Personal image"
+            selected={settings.background === 'personal'}
+            disabled={!ready}
+            onPress={() => choose({ background: 'personal' })}
+          />
         </View>
         <Text style={common.small}>
           {activeArt
             ? `Selected: ${activeArt.name} · ${PALETTES.find((p) => p.id === activeArt.palette)!.name}`
-            : settings.background === 'wash'
-              ? 'A gentle wash of your selected palette.'
-              : 'A simple background in your selected palette.'}
+            : settings.background === 'personal'
+              ? photo.uri
+                ? 'Your own photo · stored only on this device.'
+                : 'Choose your own photo below. Until then, your background stays plain.'
+              : settings.background === 'wash'
+                ? 'A gentle wash of your selected palette.'
+                : 'A simple background in your selected palette.'}
         </Text>
         {settings.background !== 'plain' && (
           <View style={{ gap: 6 }}>
@@ -225,19 +237,7 @@ export function AppearanceSettings({ close }: { close: () => void }) {
           image with any palette.
         </Text>
       </View>
-      <View style={[common.card, { gap: 14 }]}>
-        <Text style={common.body}>
-          Appearance stays on this device and is separate from journal backups and reports. Reset
-          restores Plum, System appearance, and a plain background.
-        </Text>
-        <Button
-          secondary
-          icon={RotateCcw}
-          label="Reset appearance"
-          disabled={!ready}
-          onPress={() => void reset()}
-        />
-      </View>
+      <PersonalPhotoSettings photo={photo} />
     </View>
   );
 }

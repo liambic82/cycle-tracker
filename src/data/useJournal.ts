@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getRandomValues } from 'expo-crypto';
@@ -13,11 +13,18 @@ import { biometrics } from './biometrics';
 import { derivePassphraseKey } from './passphraseKey';
 import { reminders, reminderBackend } from './reminders';
 import { emptyReminderState } from './reminderService';
+import { PersonalBackgroundStore, type PhotoControls } from './personalBackgroundStore';
 
 // Unlike the development helper getRandomBytes, getRandomValues has no Math.random fallback.
 const secureRandomBytes = (length: number) => getRandomValues(new Uint8Array(length));
 
 export function useJournal() {
+  const [photos] = useState(() => new PersonalBackgroundStore(AsyncStorage, secureRandomBytes));
+  const photoSnapshot = useSyncExternalStore(
+    photos.subscribe,
+    photos.getSnapshot,
+    photos.getSnapshot,
+  );
   const [journal, setJournal] = useState<Journal | null>(null);
   const [exists, setExists] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -61,6 +68,7 @@ export function useJournal() {
       .catch(() => setError('Local storage could not be read. Reload the app to try again.'))
       .finally(() => setLoading(false));
     return () => {
+      photos.close();
       key.current?.key.fill(0);
       releaseLease.current?.();
     };
@@ -196,6 +204,7 @@ export function useJournal() {
   };
 
   const endSession = useCallback(() => {
+    photos.close();
     revision.current++;
     key.current?.key.fill(0);
     key.current = null;
@@ -238,6 +247,7 @@ export function useJournal() {
       if (raw) salt = parseEnvelope(raw).salt;
       if (create) {
         setAuthProgress('Preparing your private journal…');
+        await photos.clearPersistent();
         await reminders.clear();
         await biometrics.clear();
         setBiometricEnabled(false);
@@ -261,6 +271,7 @@ export function useJournal() {
         await nextWriter.save(session.journal);
       }
       setExists(true);
+      await photos.open(session.vault);
       if (openingEpoch !== backgroundEpoch.current || lockPending.current) {
         throw new Error('The app moved to the background. Unlock your journal again to continue.');
       }
@@ -276,6 +287,7 @@ export function useJournal() {
       setStatus('Saved on this device');
       await syncReminders(session.journal, session.vault.salt, revision.current, true);
     } catch (err) {
+      photos.close();
       openedKey?.key.fill(0);
       release?.();
       setError(err instanceof Error ? err.message : 'Unable to open your journal.');
@@ -307,6 +319,7 @@ export function useJournal() {
 
   const explore = () => {
     if (working.current || current.current) return;
+    photos.openDemo();
     demoRef.current = true;
     setDemo(true);
     setError('');
@@ -370,6 +383,7 @@ export function useJournal() {
     setBusy(true);
     setError('');
     try {
+      await photos.clearPersistent();
       await reminders.clear();
       setReminderState(emptyReminderState(reminderBackend.available));
       await biometrics.clear();
@@ -471,6 +485,7 @@ export function useJournal() {
       restoredKey = restored.vault;
       setAuthProgress('Saving your restored journal…');
       // Validate the backup before removing convenience access to the existing journal.
+      await photos.clearPersistent();
       await reminders.clear();
       setReminderState(emptyReminderState(reminderBackend.available));
       await biometrics.clear();
@@ -481,6 +496,7 @@ export function useJournal() {
         seal(restored.journal, restored.vault, secureRandomBytes),
       );
       setExists(true);
+      await photos.open(restored.vault);
       if (openingEpoch !== backgroundEpoch.current || lockPending.current) {
         throw new Error('Backup restored. Unlock your journal again to continue.');
       }
@@ -494,6 +510,7 @@ export function useJournal() {
       setStatus('Backup restored');
       await syncReminders(restored.journal, restored.vault.salt);
     } catch (err) {
+      photos.close();
       restoredKey?.key.fill(0);
       release?.();
       setError(err instanceof Error ? err.message : 'Could not restore this backup.');
@@ -503,6 +520,7 @@ export function useJournal() {
   };
 
   return {
+    photo: { ...photoSnapshot, apply: photos.apply, remove: photos.remove } satisfies PhotoControls,
     journal,
     exists,
     loading,
