@@ -8,6 +8,19 @@ The test app is named **Cycle Tracker Preview** and uses `com.liambic.cycletrack
 
 Start with the fictional sample journal. Use invented entries and a test-only passphrase when checking persistence and recovery. Real-device behavior and security validation are still in progress.
 
+## 0.15.0 symptom severity and dated history
+
+Install `artifacts/android/cycle-tracker-preview-0.15.0-arm64-v8a.apk` over the existing preview after an encrypted backup. Version code is 18; package and signing identity are unchanged. Do not uninstall or clear storage. Journal format 5 preserves older records; new backups need preview 0.15.0 or later on the receiving device.
+
+The owner reported “Phone test passed. Move on” after 0.14.0 on October 10, in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context. No per-device breakdown, Flip5 OS details, timings or individual checklist results accompanied it. The following new checks are pending:
+
+1. On a fictional day, log several symptoms and open **Rate symptoms · optional**. They start Not rated. Choose 0, 5 and 10 for different symptoms, return with Done, and verify the selected symptom chips show the ratings. Change one rating, clear another, and confirm clearing retains its symptom. Cramps has one shared rating in both the daily controls and this panel.
+2. Remove a rated symptom, re-add it, and verify its previous rating is cleared. Rate a custom symptom and a perimenopause choice; hiding perimenopause choices must not hide or erase their existing ratings. Edit another date and confirm ratings stay attached to the correct day. Future entries remain unavailable. Confirm whole-entry deletion and Undo restore all ratings and unrelated fields.
+3. Under **History → Explore symptom history**, inspect cramps and other symptoms. Search recorded labels and switch 30/90/365 days. All bars use 0–10; 0 says None, an unrated log says Not rated, and days without the selected symptom logged count as unknown. A note-only day must not become a zero. Tap a dated row and verify it opens that entry. Close/reopen the panel and navigate away/back.
+4. In a saved fictional journal, lock/unlock and fully restart in airplane mode; ratings should persist. Install over 0.14.0 and confirm old cramps, products, sexual-health values, medications and doses survive. Restore an older encrypted backup into a disposable test journal: no new ratings should be invented. A new encrypted backup restored into 0.15.0 should retain every rating. Restore still turns off reminders and removes the saved personal-photo copy as documented.
+5. Export journal CSV and inspect the new Other symptom severity column, plus the existing cramps column. Preview a doctor summary with Symptoms and severity only, then Mood and mind only, then neither: ratings must follow their section and date range. Export/open the PDF and verify numeric 0 and custom labels. Notes and structured sexual fields remain independently controlled; free-text symptom labels can themselves contain sensitive wording.
+6. On both phones, check the number buttons, selected states, clear controls, search keyboard, scrolling, large text, TalkBack labels and Flip5 fold/reopen. Recheck passphrase/biometric unlock, backgrounds, reminder delivery and PDF sharing. Automated/browser checks do not establish native accessibility, delivery or update-in-place retention.
+
 ## 0.14.0 personal-photo backgrounds
 
 Install `artifacts/android/cycle-tracker-preview-0.14.0-arm64-v8a.apk` over the existing preview after an encrypted journal backup. Version code is 17; package/signing identity and journal format 4 are unchanged. Do not uninstall or clear storage. This version continues the approved appearance scope and remains a 0.x preview.

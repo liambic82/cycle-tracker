@@ -36,6 +36,10 @@ function journal() {
       flooding: true,
       symptoms: ['Cramps', 'Anxiety', 'Custom café symptom', 'High libido'],
       cramps: 0,
+      symptomRatings: [
+        { symptom: 'Anxiety', value: 7 },
+        { symptom: 'Custom café symptom', value: 0 },
+      ],
       note: 'PRIVATE_NOTE',
     },
     '2026-10-08': {
@@ -114,8 +118,16 @@ test('symptoms and moods filter independently, keep custom labels, and preserve 
   assert.ok(symptoms.includes('High libido')); // Label opt-in, not the separate structured field.
   assert.ok(!symptoms.includes('Anxiety'));
   assert.ok(moods.includes('Anxiety'));
+  assert.ok(moods.includes('Anxiety severity: 7/10'));
+  assert.ok(symptoms.includes('Custom café symptom severity: 0/10'));
   assert.ok(!moods.includes('Custom café symptom'));
   assert.ok(!moods.includes('Cramps'));
+  assert.ok(!moods.includes('Cramp severity'));
+  const neither = text(createDoctorReport(journal(), only('flow'), today));
+  assert.ok(!neither.includes('severity:'));
+  const excludedDate = only('symptoms', 'moods');
+  excludedDate.through = '2026-09-30';
+  assert.ok(!text(createDoctorReport(journal(), excludedDate, today)).includes('severity:'));
 });
 
 test('all sexual-field combinations include only chosen structured values and no excluded-only dates', () => {

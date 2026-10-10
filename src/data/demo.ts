@@ -45,7 +45,8 @@ export function demoJournal(today: Day): Journal {
         periodStart: day === 0,
         periodEnd: day === 4,
         symptoms: day < 2 ? ['Cramps', 'Fatigue'] : [],
-        cramps: day < 2 ? 4 : null,
+        cramps: day < 2 ? (day === 0 ? 6 : 3) : null,
+        symptomRatings: day < 2 ? [{ symptom: 'Fatigue', value: day === 0 ? 5 : 2 }] : [],
         note: day === 0 ? 'A quiet evening and a heating pad helped.' : '',
         productRecords:
           day === 0
@@ -77,6 +78,7 @@ export function demoJournal(today: Day): Journal {
   journal.entries[today] = {
     ...emptyEntry(),
     symptoms: ['Bloating'],
+    symptomRatings: [{ symptom: 'Bloating', value: 2 }],
     note: '',
     sexualHealth: { activity: null, intensity: null, orgasm: null, libido: 'moderate' },
   };

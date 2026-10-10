@@ -1,5 +1,31 @@
 # Validation record
 
+## 0.15.0 symptom severity and dated history — October 10, 2026
+
+The owner reported “Phone test passed. Move on” after 0.14.0. Recorded as an owner-reported pass in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context, without a per-device breakdown, individual checklist results, Flip5 OS details or timings. This closes the prior photo slice's reported phone check and authorizes continued development. The original brief and ten comments were reread; this slice addresses optional symptom severity and cramp severity history. It introduces functional controls within the existing design, with no new appearance options or layout direction.
+
+- `pnpm check`: TypeScript and all **151 tests** passed. Eight new tests cover actual formats 1–4 without rating fields, preservation of medication/dose/cramp records, strict rating validation, 0 versus unknown, clearing/removal/re-addition, independent deletion/Undo snapshots, encrypted round-trip/legacy restore, inclusive history/date boundaries, future exclusion, custom/hidden category retention and CSV quoting/formula protection. Existing report tests now verify severity stays within selected symptom/mood sections and dates; all 16 sexual-field CSV combinations remain covered after the added column.
+- Production web, Android Hermes and iOS Hermes exports passed. Final web bundle: `index-7265486d77550cb8bb62b3b606cc5af3.js`; offline cache: `761b8b898f4d6423`. iOS remains a JavaScript bundle check, not a native build or hardware validation. The existing pnpm helper used `--config.verify-deps-before-run=false` for its store-location mismatch; tests and builds were not skipped.
+- Formatting and Git whitespace checks passed. No application code changed after the verified production/native builds.
+- Browser QA used only fictional sample records on isolated `127.0.0.1:4180`; the user's port-4173 journal was not accessed. Verified rating 0/5/10, clearing while retaining a symptom, removal/re-addition without restoring the old rating, independent symptom values, and shared cramps values in both controls. Fresh sample entry after exit had its original values.
+- History checks covered all three ranges, search, explicit zero, unrated logs, fixed-scale bars and dated row navigation. An October 1 Fatigue row opened the October 1 entry with its original 2/10 rating. Counts matched the sample records and omitted days stayed unknown.
+- Inspected 393 × 852 and 320 × 740 phone layouts, plus 1280 × 720 desktop dark mode. Controls wrapped without document overflow; document dimensions matched each viewport. Keyboard Tab moved from one labeled severity number to the next. Native TalkBack, larger system text, folding and Android Back remain device checks.
+- Doctor-summary preview correctly included dated cramps/fatigue ratings and an explicit Bloating 0/10, with an unrated Anxiety label only. Export succeeded and the downloaded one-page fictional PDF was rendered with Poppler and visually inspected: all selected text, values, headings and footer were legible without clipping. The automation download-event listener timed out, but the app showed success and the actual named file in Downloads was independently inspected. No report-renderer changes were needed.
+- With the isolated server stopped, a new tab loaded the cached app. Severity editing and updated history values worked offline. Final online/offline browser logs contained no captured warnings or errors. Sample mode was exited, both QA tabs were closed and the viewport override reset; the test server remains stopped.
+- Standalone ARM64 APK built successfully and passed signature verification and 16 KB alignment. Verified package `com.liambic.cycletracker.preview`, version **0.15.0**, code **18**, minimum API 24, target API 36, `allowBackup: false`, no debuggable flag, unchanged permissions and signing identity. Embedded configuration enables testing screenshots; the packaged Hermes program is **4,784,792 bytes**.
+- Journal content is now format **5**; older backups migrate and new backups need 0.15.0 or later. The encryption envelope/passphrase/biometric key remain unchanged. Actual update-in-place retention, saved-journal restart/restore, native accessibility and existing photo/reminder/biometric regressions are the [new phone checks](android-testing.md#0150-symptom-severity-and-dated-history), not claimed as independently observed here.
+
+Build artifacts, exported fictional PDF, rendered QA images and signing material remain outside Git. The two committed UI screenshots contain fictional sample data only.
+
+- File: `artifacts/android/cycle-tracker-preview-0.15.0-arm64-v8a.apk`.
+- Size: **59,047,434 bytes**.
+- APK SHA-256: `01891fbb334c6543fa83b074a6efeac8b3020b92cf67dca6f9bae1228542b8c1`.
+- Signing certificate SHA-256: `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+
+![Optional symptom ratings on a phone-sized browser](screenshots/symptom-severity-mobile.png)
+
+![Dated severity bars on a phone-sized browser](screenshots/symptom-history-mobile.png)
+
 ## 0.14.0 personal-photo backgrounds — October 10, 2026
 
 The owner reported “Phone validations pass. Let's move forward” following 0.13.0. Recorded as an owner-reported phone-validation pass in the established Pixel 7 / Android 17 and Galaxy Z Flip5 context; individual checklist results, Flip5 OS details and timing measurements were not supplied. This authorizes the next approved appearance slice. The original proposal already covered choosing, previewing, applying, replacing and removing a personal image; no new layout direction was introduced.

@@ -6,6 +6,7 @@ import { history, type Journal } from '../domain/journal';
 import { flowTimeline, statistics, type FlowState } from '../domain/history';
 import { Button } from './components';
 import { useTheme } from './theme';
+import { SymptomHistory } from './SymptomHistory';
 
 const FLOW_LABELS: Record<FlowState, string> = {
   bleeding: 'Bleeding',
@@ -116,6 +117,7 @@ export function History({
     unknown: colors.soft,
   };
   const [limit, setLimit] = useState(12);
+  const [symptomsOpen, setSymptomsOpen] = useState(false);
   const lengths = statistics(cycles.map((cycle) => cycle.length));
   const durations = statistics(cycles.map((cycle) => cycle.duration));
   return (
@@ -127,6 +129,15 @@ export function History({
           See how your recorded cycles and bleeding durations vary. Missing logs stay visible as
           gaps.
         </Text>
+      </View>
+      <View style={[common.card, { gap: 16 }]}>
+        <Text style={common.heading}>Symptom severity</Text>
+        <Button
+          secondary
+          label={symptomsOpen ? 'Close symptom history' : 'Explore symptom history'}
+          onPress={() => setSymptomsOpen(!symptomsOpen)}
+        />
+        {symptomsOpen && <SymptomHistory journal={journal} today={today} openDay={openDay} />}
       </View>
       <TrendChart
         title="Cycle length"

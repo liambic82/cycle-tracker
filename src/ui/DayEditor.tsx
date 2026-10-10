@@ -27,6 +27,8 @@ import { hasSexualHealth } from '../domain/sexualHealth';
 import { DoseLog } from './DoseLog';
 import { plannedDoses } from '../domain/medications';
 import { CycleContext } from './CycleContext';
+import { SeverityControl, SymptomSeverityEditor } from './SymptomSeverityEditor';
+import { symptomSeverity } from '../domain/symptomSeverity';
 
 export function DayEditor({
   journal,
@@ -65,6 +67,7 @@ export function DayEditor({
   const [flowDetailsOpen, setFlowDetailsOpen] = useState(false);
   const [sexualHealthOpen, setSexualHealthOpen] = useState(false);
   const [dosesOpen, setDosesOpen] = useState(false);
+  const [severityOpen, setSeverityOpen] = useState(false);
   const closeActions = () => {
     setActionsOpen(false);
     setDeleteConfirm(false);
@@ -83,6 +86,19 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (severityOpen && date <= today)
+    return (
+      <SymptomSeverityEditor
+        date={date}
+        entry={entry}
+        onPatch={onPatch}
+        saveStatus={saveStatus}
+        done={() => {
+          setSeverityOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (contextOpen)
     return (
       <CycleContext
@@ -388,7 +404,8 @@ export function DayEditor({
                   {entry.symptoms.map((symptom) => (
                     <Chip
                       key={symptom}
-                      label={symptom}
+                      label={`${symptom}${symptomSeverity(entry, symptom) === null ? '' : ` · ${symptomSeverity(entry, symptom)}/10`}`}
+                      accessibilityLabel={`Remove ${symptom}${symptomSeverity(entry, symptom) === null ? '' : `, severity ${symptomSeverity(entry, symptom)} of 10`}`}
                       selected
                       icon={Check}
                       onPress={() => toggle(symptom)}
@@ -410,6 +427,17 @@ export function DayEditor({
             </View>
             <View style={{ gap: 10, marginTop: 16 }}>
               <Button label="Browse all symptoms" onPress={() => browse('All')} />
+              {entry.symptoms.length > 0 && (
+                <Button
+                  secondary
+                  label="Rate symptoms · optional"
+                  onPress={() => {
+                    closeActions();
+                    setSeverityOpen(true);
+                    onViewChange();
+                  }}
+                />
+              )}
               <Button
                 secondary
                 label="Less common symptoms"
@@ -431,20 +459,11 @@ export function DayEditor({
                   gap: 12,
                 }}
               >
-                <Text style={common.label}>
-                  Cramp severity{entry.cramps !== null ? ` · ${entry.cramps}/10` : ''}
-                </Text>
-                <View style={common.wrap}>
-                  {Array.from({ length: 11 }, (_, i) => (
-                    <Chip
-                      key={i}
-                      label={String(i)}
-                      selected={entry.cramps === i}
-                      onPress={() => onPatch({ cramps: i })}
-                    />
-                  ))}
-                </View>
-                <Text style={common.small}>0 · None 5 · Moderate 10 · Severe</Text>
+                <SeverityControl
+                  symptom="Cramps"
+                  value={entry.cramps}
+                  change={(cramps) => onPatch({ cramps })}
+                />
               </View>
             )}
           </View>

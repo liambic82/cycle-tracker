@@ -2,7 +2,15 @@
 
 The [October 9 source review](source-review-2026-10-09.md) reconciles the original brief, all ten comments, and all nine screenshots against preview 0.3.0. It records detailed gaps and dependencies; source stage numbers remain suggestions.
 
-**October 10, 2026 update:** the owner reported “Phone validations pass. Let's move forward” after preview 0.13.0. This records the reported phone-validation pass and approval to continue in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context. Individual checklist results, Flip5 OS version, notification timings, and independent security/accessibility validation were not supplied. Older pending statements below describe the evidence available at those earlier milestones; retain their checklists for regression.
+**October 10, 2026 update:** the owner reported “Phone test passed. Move on” after preview 0.14.0, following the earlier 0.13.0 phone pass. This records the reported phone-validation pass and approval to continue in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context. Individual checklist results, a per-device breakdown, Flip5 OS version, notification timings, and independent security/accessibility validation were not supplied. Older pending statements below describe the evidence available at those earlier milestones; retain their checklists for regression.
+
+## Current slice and next steps
+
+Preview **0.15.0** adds optional 0–10 severity ratings for logged symptoms, including custom labels and mood choices. Existing cramps ratings remain intact. History provides searchable symptoms, 30/90/365-day ranges, dated bars on a fixed 0–10 scale, and links back to entries. Unrated and unlogged stay distinct from an explicit 0. Ratings are included in full encrypted backups, journal CSV, and the selected symptom/mood sections of doctor summaries. Format 5 migrates formats 1–4; new backups need 0.15.0 or later.
+
+The original Google brief and its ten comments were reread for this slice on October 10. This addresses optional symptom severity and cramp severity over time without treating other daily measures as completed.
+
+Next: structured sleep, pain location, hot-flash counts, mood/energy and lifestyle observations, introduced in bounded slices with explicit unknown values and export support. Then bloodwork and appointment/doctor-question records. Broader predictions retain their evidence requirements. Further layout beautification requires approval of concrete proposals. Store readiness, native iOS validation and optional encrypted sync remain later work; no 1.0 release decision has been made.
 
 ## Milestone 1: private daily journal
 
@@ -80,7 +88,7 @@ Explicitly reaffirmed by the owner after medication logging, following screensho
 - Implemented: versioned device-local appearance preferences separate from encrypted journal content and exports. Sample changes are temporary and restore the device's choices on exit. Read/write errors are recoverable without blocking the journal. Artwork appears only in unlocked content.
 - The existing navigation and layout remain. Broader typography/spacing/layout beautification is still open; none of the three alternative layouts has been selected as a replacement. **Present new visual choices for approval before implementation.** General permission to continue does not approve unseen designs.
 - Implemented in **preview 0.14.0**: the approved personal-image choose/preview/apply/replace/remove flow, with JPEG/PNG limits, orientation normalization, metadata removal, encrypted device-local storage, recoverable storage errors, and lock/sample isolation. Reset appearance, journal replacement, and journal deletion remove the app's photo copy. The original stays unchanged; photos are excluded from backups and reports. See [the storage design](architecture.md#personal-photo-backgrounds-0140).
-- The owner reported the 0.13.0 phone validations passed on October 10. Keep larger text, TalkBack, system appearance, persistence, offline use, folding and rotation in regression. The new photo picker, native processing, cleanup and retention need [0.14.0 device checks](android-testing.md#0140-personal-photo-backgrounds).
+- The owner reported phone validations passed for 0.13.0 and subsequently reported “Phone test passed. Move on” after 0.14.0 on October 10. Keep larger text, TalkBack, system appearance, persistence, offline use, folding and rotation in regression, alongside the [photo checks](android-testing.md#0140-personal-photo-backgrounds). These are reported passes, not independently witnessed per-device measurements.
 - Preserve the modest upfront purchase model. No subscription, cosmetic upsell, or paid theme tier is authorized.
 
 ## Product constraints

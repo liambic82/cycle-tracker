@@ -64,14 +64,16 @@ test('backup validation rejects malformed data and reconstructs only known field
   for (const malformed of [
     null,
     {},
-    { ...valid, version: 5 },
+    { ...valid, version: 6 },
     { ...valid, selectedDate: 'tomorrow' },
     { ...valid, entries: { '2026-10-01': { note: true } } },
     { ...valid, customSymptoms: ['Repeated', 'Repeated'] },
   ]) {
     assert.throws(() => parseJournal(malformed));
   }
-  const invalid = updateEntry(valid, '2026-10-01', { symptoms: ['Cramps'], cramps: 11 });
+  assert.throws(() => updateEntry(valid, '2026-10-01', { symptoms: ['Cramps'], cramps: 11 }));
+  const invalid = updateEntry(valid, '2026-10-01', { symptoms: ['Cramps'], cramps: 10 });
+  invalid.entries['2026-10-01']!.cramps = 11;
   assert.throws(() => parseJournal(invalid));
 });
 

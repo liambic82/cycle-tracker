@@ -200,7 +200,7 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          New backups need preview 0.8.0 or later. Update the receiving app before restoring.
+          New backups need preview 0.15.0 or later. Update the receiving app before restoring.
           Earlier backups still open here. Encrypted backups include all sexual-health fields,
           regardless of your CSV choices, plus all medication schedules and dose records.
         </Text>

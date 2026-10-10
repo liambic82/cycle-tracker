@@ -1,4 +1,5 @@
 import { daysBetween, validDay, type Day } from './dates.ts';
+import { parseSymptomRatings, type SymptomRating } from './symptomSeverity.ts';
 import {
   describeDose,
   parseDoseRecords,
@@ -39,6 +40,7 @@ export interface Entry {
   periodEnd: boolean;
   symptoms: string[];
   cramps: number | null;
+  symptomRatings: SymptomRating[];
   note: string;
   productRecords: ProductRecord[];
   clots: boolean | null;
@@ -48,7 +50,7 @@ export interface Entry {
 }
 
 export interface Journal {
-  version: 4;
+  version: 5;
   medications: Medication[];
   entries: Record<Day, Entry>;
   customSymptoms: string[];
@@ -64,6 +66,7 @@ export function emptyEntry(): Entry {
     periodEnd: false,
     symptoms: [],
     cramps: null,
+    symptomRatings: [],
     note: '',
     productRecords: [],
     clots: null,
@@ -75,7 +78,7 @@ export function emptyEntry(): Entry {
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 4,
+    version: 5,
     medications: [],
     entries: {},
     customSymptoms: [],
@@ -119,6 +122,17 @@ export function updateEntry(journal: Journal, date: Day, patch: Partial<Entry>):
     entry.periodEnd = false;
   }
   if (!entry.symptoms.includes('Cramps')) entry.cramps = null;
+  if (
+    entry.cramps !== null &&
+    (!Number.isInteger(entry.cramps) || entry.cramps < 0 || entry.cramps > 10)
+  )
+    throw new Error('Choose a whole-number cramp rating from 0 to 10.');
+  entry.symptomRatings = parseSymptomRatings(
+    patch.symptomRatings !== undefined
+      ? patch.symptomRatings
+      : entry.symptomRatings.filter((rating) => entry.symptoms.includes(rating.symptom)),
+    entry.symptoms,
+  );
   const entries = { ...journal.entries };
   if (hasEntry(entry)) entries[date] = entry;
   else delete entries[date];
@@ -191,7 +205,11 @@ function symptomList(value: unknown): value is string[] {
 export function parseJournal(value: unknown): Journal {
   assert(
     record(value) &&
-      (value.version === 1 || value.version === 2 || value.version === 3 || value.version === 4) &&
+      (value.version === 1 ||
+        value.version === 2 ||
+        value.version === 3 ||
+        value.version === 4 ||
+        value.version === 5) &&
       validDay(value.selectedDate),
   );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
@@ -246,18 +264,20 @@ export function parseJournal(value: unknown): Journal {
       periodEnd: entry.periodEnd,
       symptoms: [...entry.symptoms],
       cramps: entry.cramps as number | null,
+      symptomRatings:
+        value.version === 5 ? parseSymptomRatings(entry.symptomRatings, entry.symptoms) : [],
       note: entry.note,
       productRecords,
       clots,
       flooding,
       sexualHealth:
         value.version >= 3 ? parseSexualHealth(entry.sexualHealth) : emptySexualHealth(),
-      doseRecords: value.version === 4 ? parseDoseRecords(entry.doseRecords) : [],
+      doseRecords: value.version >= 4 ? parseDoseRecords(entry.doseRecords) : [],
     };
   }
   return {
-    version: 4,
-    medications: value.version === 4 ? parseMedications(value.medications) : [],
+    version: 5,
+    medications: value.version >= 4 ? parseMedications(value.medications) : [],
     entries,
     customSymptoms: [...value.customSymptoms],
     selectedDate: value.selectedDate,
@@ -290,6 +310,7 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       'Flooding noticed',
       'Product records',
       'Dose records',
+      'Other symptom severity (0-10)',
       ...sexualFields.map((field) => SEXUAL_HEALTH_LABELS[field]),
     ],
   ];
@@ -310,6 +331,7 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       e.flooding === null ? '' : e.flooding ? 'Yes' : 'No',
       orderedProducts(e.productRecords).map(describeProduct).join('\n'),
       e.doseRecords.map(describeDose).join('\n'),
+      e.symptomRatings.map(({ symptom, value }) => `${symptom}: ${value}/10`).join('\n'),
       ...sexualFields.map((field) => sexualHealthLabel(e.sexualHealth[field])),
     ]);
   }

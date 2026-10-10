@@ -4,6 +4,7 @@ import { flowTimeline, statistics } from './history.ts';
 import { describeProduct, orderedProducts } from './flowDetails.ts';
 import { describeDose, describeSchedule } from './medications.ts';
 import { SYMPTOM_GROUPS } from './symptoms.ts';
+import { symptomSeverity } from './symptomSeverity.ts';
 import {
   emptySexualHealthExport,
   sexualHealthLabel,
@@ -16,7 +17,7 @@ export const REPORT_SECTIONS = {
   cycles: 'Cycle and bleeding spans',
   flow: 'Flow and bleeding observations',
   products: 'Period products',
-  symptoms: 'Symptoms and cramp severity',
+  symptoms: 'Symptoms and severity',
   moods: 'Mood and mind',
   medications: 'Medication schedules',
   doses: 'Recorded doses',
@@ -177,8 +178,8 @@ export function createDoctorReport(
       dailySection(
         REPORT_SECTIONS[key],
         key === 'moods'
-          ? 'Includes labels from the Mood & mind category. No severity is inferred.'
-          : 'Includes other selected symptom labels and custom labels, including any sexual-health wording in those labels. Only cramps have a numeric severity scale.',
+          ? 'Includes labels from the Mood & mind category and optional self-rated severity (0–10). Missing ratings stay unknown; 0 is an explicit None rating.'
+          : 'Includes other selected symptom labels and custom labels, including any sexual-health wording in those labels. Optional self-rated severity uses 0–10. Missing ratings stay unknown; 0 is an explicit None rating.',
         (date) => {
           const entry = journal.entries[date]!;
           const labels = entry.symptoms.filter(
@@ -187,9 +188,12 @@ export function createDoctorReport(
           return labels.length
             ? [
                 labels.join('; '),
-                ...(key === 'symptoms' && entry.cramps !== null
-                  ? [`Cramp severity: ${entry.cramps}/10.`]
-                  : []),
+                ...labels.flatMap((label) => {
+                  const value = symptomSeverity(entry, label);
+                  return value === null
+                    ? []
+                    : [`${label === 'Cramps' ? 'Cramp' : label} severity: ${value}/10.`];
+                }),
               ]
             : [];
         },
