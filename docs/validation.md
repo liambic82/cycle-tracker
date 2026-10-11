@@ -1,5 +1,16 @@
 # Validation record
 
+## Held-out prediction comparisons — October 11, 2026
+
+The owner authorized moving forward. The [engineering review](prediction-heldout-review.md), separate runner and synthetic checks were committed as **`a643590` before either held-out group was scored**. The [results record](prediction-heldout-results.md) preserves separate calibration and final-test outcomes.
+
+- `pnpm check`: TypeScript and **238/238 tests** passed. Nine new checks cover prerequisite ordering, returning saved results without evaluation, interrupted/concurrent executions, changed/incomplete output, execution/code hash changes, argument rejection and fictional held-out histories. The pnpm store workaround skipped no checks.
+- The public-only freeze review matched all original preparation/analysis/production hashes and Node `v24.19.0`. No participant records were opened by that review. The existing engine, plan, methods, eligibility assumptions, exclusions and metric definitions remained fixed.
+- Calibration ran first: 28 participants, 1,457/1,961 conditional offers, 1,436 scored cases. Median/weighted MAEs were 5.40042/5.50000 days; paired contrast +0.09958 days (95% participant-bootstrap interval +0.03523 to +0.14880).
+- Final test ran once under the same execution freeze and verified calibration prerequisite: 42 participants, 2,026/2,729 offers, 1,989 scored cases. Median/weighted MAEs were 5.66616/5.72700 days; paired contrast +0.06083 days (interval +0.01090 to +0.09979). All 2,000 primary replicates were defined in each group. No tuning occurred between groups or after outcomes.
+- A subsequent call for each group returned `replayed-saved` and verified saved bytes without invoking the evaluator. Aggregate-only reports were copied into Git; raw/prepared records and execution claims remain ignored. Calibration report SHA-256: `b5bf68c84878b97766c4e6f7ea456f10183d19925cbe0109a5feb873e1392976`; final-test report SHA-256: `1f64cb0b90daba66566810d57adfe47f20f41924f5f5b1668293035f38ad61b5` (original bytes / repository LF).
+- Very long recorded gaps remain scored (median largest errors 2,226 calibration and 1,468 test days). Missing source context prevents interpreting these as validated physiological cycle errors. No production, UI, native, vault, version or APK change accompanied this research step. Independent clinical review and the consolidated 0.18.0 device pass remain outstanding.
+
 ## Controlled prediction comparisons — October 11, 2026
 
 The owner requested implementation. The runner and metric definitions were committed as `e4abfd0` before the first external development run. [Methods/results](prediction-controlled-comparisons.md) and the aggregate-only [report](../research/results/zenodo-development-comparison-v1.json) record the execution.

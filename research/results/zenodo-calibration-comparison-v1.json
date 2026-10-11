@@ -1,0 +1,755 @@
+{
+  "warning": "Conditional dates-only held-out research; unknown source eligibility is assumed solely for this analysis. No model fitting or tuning. Not prospective or clinical validation.",
+  "provenance": {
+    "planId": "zenodo-period-comparison-v1",
+    "version": "zenodo-heldout-execution-v1",
+    "developmentReportSha256Lf": "a3e04dcba11e28d9378757a6a9bd920930d33726e3bee0b7a827a69de4d0929d",
+    "preparationManifestSha256Lf": "e0e28e2ee6f09286b45fea6879edc138dd6e79ed2b77522084c22b50197e3a8b",
+    "planSha256Lf": "8ca6a1cbf3f26788ca70cb37b9ee181da6f72b729c71b4361ba617bbb8d2f12f",
+    "frozenCodeHashesLf": {
+      "research/controlled-comparison.ts": "e86ff3c9e2c48d7aa51325f0f6c51f7a4a166298717034f188ec8f9d2a04f53f",
+      "research/controlled-input.mjs": "42fa4d2b8b8fafada310145bfdf1a94965857a8813900c15be341668bf47c948",
+      "research/period-policy.ts": "e5e19b9207adbb04a6f68d18220a96d81ea1750e0c7ceb0ffec1a8b0efc4d2a7",
+      "research/period-dataset.ts": "8c4ec77a76b07e89f29d9c57597420c50c73521a5b36f48114233bdf7b52692b",
+      "research/research-files.mjs": "e3f34feb177f557ad8005602f149006d50e302eafc63771286ef1e350d917396",
+      "scripts/compare-zenodo-periods.mjs": "546c0c577e4b1101d16315a2fcd59ebaed1222918f2fae86904c0bebf8a7c85c",
+      "package.json": "f45f3f192dd5c1d486ee914fc8084cf328ce945d9c03f40ed2101f9fc0cae4fc",
+      "pnpm-lock.yaml": "07e34a3fc9b04dbfdf85225790a128252cfa6782d8f0d53c2404e2b5f079bfe9",
+      "src/domain/appearance.ts": "a7be0e7e4a07c56033db2c2c7a2825bad19f7cf9cfbd671b8bdb0f016b43562f",
+      "src/domain/cycleContext.ts": "bcece7597b6269e889e1d728c254be45693c266a397a9d40d597a6ed8ec5ba3d",
+      "src/domain/dailyDetails.ts": "9964d2c9c2754c4e436e8dd4731efaf5e13a056e526f468c0db6a76533c4823d",
+      "src/domain/dates.ts": "bcdd3cdd4f9da8546d389ca1c892d2119822bb8ef34cb439b55fadb0d854f35a",
+      "src/domain/deletion.ts": "f43c338f4db3a56cae1179eee36729d80efe11e001d415802e535ad84618cfbf",
+      "src/domain/flowDetails.ts": "c3a7327a36023ab16068df63324770f0182729dd176777075110ef5718d865c6",
+      "src/domain/history.ts": "d9887472b46e584893d2b4a429a95ccbe336bd8d470770be320550cf53cfe03e",
+      "src/domain/journal.ts": "f6854df0f3e1eb4d945dff7f038b89679f0cdedac98f6d8c92ea03eb69e5a90a",
+      "src/domain/journalImport.ts": "7d38650fc43fc20ed322ed459d9b94572823241f1097ace443ac360f57649ac2",
+      "src/domain/keyDerivation.ts": "91aea18ba382410490ce5845b0f22af881be35926ee4bc9bd682557ef8150f2e",
+      "src/domain/medicalRecords.ts": "2d28a087b5098a7ad7d2e1ba41b4a986f70a6a8b2561ff1e6a0fd758d0f84046",
+      "src/domain/medicationActions.ts": "fa165f33b6eda75afdc6e6f6fc65d98d5bf8da9e468c31820711d3c06101f03e",
+      "src/domain/medications.ts": "c5203c91cb0e0e65a26ec76af41d42fdc71e5f08bdfcfd6edaccb1424051ce64",
+      "src/domain/periodEstimate.ts": "b048ee7833677b11f5f3aab102c92fd17e827eb363cfc77740862e12d6c9d268",
+      "src/domain/personalImage.ts": "12c3bd54a5fc0bbd92baad0b8f2f559b41c63d59e72856e8c264ecf28b3ffe25",
+      "src/domain/personalReminders.ts": "d939bd519c2c5d0089320cbf4fda279ce02317dee32f1163532eb9681ca196da",
+      "src/domain/reminders.ts": "bc1102fd3f0454bf6bae14bc2549735fbbb3f48ae7c638a33da2ff29535e4515",
+      "src/domain/report.ts": "2304c84a8346cf16f0fafde1c241dd16657aaa224948ba78d1f9a7e1b46ca5db",
+      "src/domain/reportPdf.ts": "3d370345ad77b1d49dbe94fa482f7a0c7c529b390596c60b71ec3ed138cd2e07",
+      "src/domain/sexualHealth.ts": "5132fc899e58e5451370b735e4edc75786796b60c1251dd8ecee6eebf72aca8c",
+      "src/domain/sleep.ts": "2661df1b799d482929e84106ea064a064e42fb2ccd6cf75de9d635288ff4fe27",
+      "src/domain/sleepImport.ts": "28db34a52a29bc4b2a66eefa3b0f22eba5ca40a179b4969365efe33bc68be7dc",
+      "src/domain/symptomSeverity.ts": "d297b9d0f61b7c9ff934c0e7d362dbb27b194d2458e56ad07ad427e5e85f4c6c",
+      "src/domain/symptoms.ts": "8cf95b63ee11d73368c6bd56552f12466e5e2aff504b8af4bdbe490ab9ac7d33",
+      "src/domain/vault.ts": "7e35b672554ce8a90175b3a33319c4ddd82096911301a9662b02bb2247c3b143"
+    },
+    "wrapperHashesLf": {
+      "research/heldout-comparison.mjs": "47ffc23959ae84cd7723620b28f907ccabbcec401615538883eda4f0ccc5514b",
+      "scripts/compare-zenodo-heldout.mjs": "1674a611a80cd37ab70ccfcf439875da3f63551626786019fcbe904185195eaf"
+    },
+    "nodeVersion": "v24.19.0",
+    "source": {
+      "url": "https://zenodo.org/records/15598359",
+      "metadataUrl": "https://zenodo.org/api/records/15598359",
+      "license": "CC-BY-4.0",
+      "file": "menstruationdata.csv",
+      "bytes": 887713,
+      "md5": "1409abf2d80a62a26922ae62a487f5c9",
+      "sha256": "7712b11290d2d34384eaa3bca02739067a0dd6ddc8bd90c6fe91c545efffe28f"
+    },
+    "attribution": "Förster, Charlotte, and Mitesser, Oliver (2025), Zenodo dataset v1, DOI 10.5281/zenodo.15598359, CC BY 4.0.",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "datasetSha256": "4fc97553967512834479bdcb5aed25f551efc3540bec552026341fc94a095563",
+    "auditSha256": "f7bd477636bf0b9edcae153f9ebb0253b0315a59bce67ede04dab687f28560ab",
+    "productionRules": {
+      "historyDays": 365,
+      "intervals": 6,
+      "trainingMinimum": 3,
+      "shortest": 14,
+      "longest": 90,
+      "maximumSpread": 14,
+      "maximumMeanError": 7
+    }
+  },
+  "version": "conditional-period-comparison-v1",
+  "split": "calibration",
+  "issueOffsetDays": 0,
+  "analysis": "conditional-calendar-policy",
+  "assumptions": {
+    "sourceContext": "unknown",
+    "sourceCompleteness": "not established",
+    "evaluationOnly": {
+      "enabled": true,
+      "context": "comparable",
+      "complete": true
+    },
+    "logging": "same-day assumed",
+    "birthAnnotationsUsedForEligibility": false
+  },
+  "overall": {
+    "participants": 28,
+    "peopleWithForecast": 26,
+    "peopleWithoutForecast": 2,
+    "peopleWithScoredForecast": 26,
+    "opportunities": 1961,
+    "observed": 1933,
+    "censored": 28,
+    "availability": {
+      "count": 1457,
+      "denominator": 1961,
+      "fraction": 0.7429882712901581
+    },
+    "offeredCensored": 21,
+    "scored": 1436,
+    "alreadyEnded": 0,
+    "outsideFollowUp": 0,
+    "statuses": {
+      "insufficient": 225,
+      "poor-fit": 4,
+      "ready": 1457,
+      "unsupported": 61,
+      "variable": 214
+    },
+    "methods": {
+      "median": {
+        "scored": 1436,
+        "meanAbsoluteError": 5.4004178272980505,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 5,
+        "meanSignedError": -3.3084958217270195,
+        "largestError": 2226,
+        "within1": {
+          "count": 693,
+          "denominator": 1436,
+          "fraction": 0.48259052924791085
+        },
+        "within3": {
+          "count": 1178,
+          "denominator": 1436,
+          "fraction": 0.8203342618384402
+        },
+        "within7": {
+          "count": 1374,
+          "denominator": 1436,
+          "fraction": 0.9568245125348189
+        }
+      },
+      "mean": {
+        "scored": 1436,
+        "meanAbsoluteError": 5.396935933147632,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 5,
+        "meanSignedError": -3.33008356545961,
+        "largestError": 2226,
+        "within1": {
+          "count": 696,
+          "denominator": 1436,
+          "fraction": 0.48467966573816157
+        },
+        "within3": {
+          "count": 1182,
+          "denominator": 1436,
+          "fraction": 0.8231197771587744
+        },
+        "within7": {
+          "count": 1376,
+          "denominator": 1436,
+          "fraction": 0.958217270194986
+        }
+      },
+      "last": {
+        "scored": 1436,
+        "meanAbsoluteError": 6.007660167130919,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 7,
+        "meanSignedError": -3.432451253481894,
+        "largestError": 2226,
+        "within1": {
+          "count": 573,
+          "denominator": 1436,
+          "fraction": 0.39902506963788303
+        },
+        "within3": {
+          "count": 1043,
+          "denominator": 1436,
+          "fraction": 0.7263231197771588
+        },
+        "within7": {
+          "count": 1326,
+          "denominator": 1436,
+          "fraction": 0.9233983286908078
+        }
+      },
+      "fixed28": {
+        "scored": 1436,
+        "meanAbsoluteError": 6.022284122562674,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 6,
+        "meanSignedError": -3.8537604456824512,
+        "largestError": 2227,
+        "within1": {
+          "count": 500,
+          "denominator": 1436,
+          "fraction": 0.34818941504178275
+        },
+        "within3": {
+          "count": 1048,
+          "denominator": 1436,
+          "fraction": 0.7298050139275766
+        },
+        "within7": {
+          "count": 1342,
+          "denominator": 1436,
+          "fraction": 0.9345403899721448
+        }
+      },
+      "weighted": {
+        "scored": 1436,
+        "meanAbsoluteError": 5.5,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 5,
+        "meanSignedError": -3.520891364902507,
+        "largestError": 2226,
+        "within1": {
+          "count": 667,
+          "denominator": 1436,
+          "fraction": 0.46448467966573814
+        },
+        "within3": {
+          "count": 1160,
+          "denominator": 1436,
+          "fraction": 0.807799442896936
+        },
+        "within7": {
+          "count": 1372,
+          "denominator": 1436,
+          "fraction": 0.9554317548746518
+        }
+      }
+    },
+    "weightedMinusMedian": 0.09958217270194986,
+    "historicalSpread": {
+      "coverage": {
+        "count": 1099,
+        "denominator": 1436,
+        "fraction": 0.7653203342618384
+      },
+      "meanWidthDays": 5.844886753603294,
+      "widthDenominator": 1457
+    }
+  },
+  "uncertainty": {
+    "method": "paired participant-cluster percentile bootstrap",
+    "replicates": 2000,
+    "seed": 20261011,
+    "rng": "xorshift32",
+    "intervalLevel": 0.95,
+    "endpointQuantile": "linear type 7",
+    "sampledParticipantsPerReplicate": 28,
+    "meanAbsoluteError": {
+      "median": {
+        "lower": 2.9956157931057064,
+        "upper": 9.057573194872464,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "mean": {
+        "lower": 2.9869376140774473,
+        "upper": 9.062675038738233,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "last": {
+        "lower": 3.6280631393801617,
+        "upper": 9.713568523544994,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "fixed28": {
+        "lower": 3.647407011206536,
+        "upper": 9.623856987147777,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "weighted": {
+        "lower": 3.0814879298377567,
+        "upper": 9.203719203162338,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      }
+    },
+    "weightedMinusMedian": {
+      "lower": 0.03523293309563758,
+      "upper": 0.14879626671703747,
+      "definedReplicates": 2000,
+      "undefinedReplicates": 0
+    },
+    "availability": {
+      "lower": 0.6572782688230298,
+      "upper": 0.8105828757536606,
+      "definedReplicates": 2000,
+      "undefinedReplicates": 0
+    },
+    "historicalSpreadCoverage": {
+      "lower": 0.7367250998326039,
+      "upper": 0.7818198622080323,
+      "definedReplicates": 2000,
+      "undefinedReplicates": 0
+    }
+  },
+  "sourceStrata": {
+    "old-only": {
+      "participants": 3,
+      "peopleWithForecast": 3,
+      "peopleWithoutForecast": 0,
+      "peopleWithScoredForecast": 3,
+      "opportunities": 749,
+      "observed": 746,
+      "censored": 3,
+      "availability": {
+        "count": 598,
+        "denominator": 749,
+        "fraction": 0.7983978638184246
+      },
+      "offeredCensored": 1,
+      "scored": 597,
+      "alreadyEnded": 0,
+      "outsideFollowUp": 0,
+      "statuses": {
+        "insufficient": 50,
+        "ready": 598,
+        "unsupported": 27,
+        "variable": 74
+      },
+      "methods": {
+        "median": {
+          "scored": 597,
+          "meanAbsoluteError": 3.6733668341708543,
+          "medianAbsoluteError": 1,
+          "p90AbsoluteError": 4,
+          "meanSignedError": -1.7068676716917923,
+          "largestError": 327,
+          "within1": {
+            "count": 306,
+            "denominator": 597,
+            "fraction": 0.5125628140703518
+          },
+          "within3": {
+            "count": 513,
+            "denominator": 597,
+            "fraction": 0.8592964824120602
+          },
+          "within7": {
+            "count": 571,
+            "denominator": 597,
+            "fraction": 0.9564489112227805
+          }
+        },
+        "mean": {
+          "scored": 597,
+          "meanAbsoluteError": 3.6683417085427137,
+          "medianAbsoluteError": 1,
+          "p90AbsoluteError": 4,
+          "meanSignedError": -1.7520938023450587,
+          "largestError": 327,
+          "within1": {
+            "count": 309,
+            "denominator": 597,
+            "fraction": 0.5175879396984925
+          },
+          "within3": {
+            "count": 515,
+            "denominator": 597,
+            "fraction": 0.8626465661641541
+          },
+          "within7": {
+            "count": 573,
+            "denominator": 597,
+            "fraction": 0.9597989949748744
+          }
+        },
+        "last": {
+          "scored": 597,
+          "meanAbsoluteError": 4.294807370184254,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 6,
+          "meanSignedError": -1.83249581239531,
+          "largestError": 328,
+          "within1": {
+            "count": 251,
+            "denominator": 597,
+            "fraction": 0.4204355108877722
+          },
+          "within3": {
+            "count": 447,
+            "denominator": 597,
+            "fraction": 0.7487437185929648
+          },
+          "within7": {
+            "count": 559,
+            "denominator": 597,
+            "fraction": 0.9363484087102177
+          }
+        },
+        "fixed28": {
+          "scored": 597,
+          "meanAbsoluteError": 4.232830820770519,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -1.2177554438860971,
+          "largestError": 329,
+          "within1": {
+            "count": 211,
+            "denominator": 597,
+            "fraction": 0.35343383584589616
+          },
+          "within3": {
+            "count": 454,
+            "denominator": 597,
+            "fraction": 0.7604690117252931
+          },
+          "within7": {
+            "count": 564,
+            "denominator": 597,
+            "fraction": 0.9447236180904522
+          }
+        },
+        "weighted": {
+          "scored": 597,
+          "meanAbsoluteError": 3.795644891122278,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -1.916247906197655,
+          "largestError": 328,
+          "within1": {
+            "count": 288,
+            "denominator": 597,
+            "fraction": 0.4824120603015075
+          },
+          "within3": {
+            "count": 503,
+            "denominator": 597,
+            "fraction": 0.8425460636515912
+          },
+          "within7": {
+            "count": 571,
+            "denominator": 597,
+            "fraction": 0.9564489112227805
+          }
+        }
+      },
+      "weightedMinusMedian": 0.12227805695142378,
+      "historicalSpread": {
+        "coverage": {
+          "count": 467,
+          "denominator": 597,
+          "fraction": 0.7822445561139029
+        },
+        "meanWidthDays": 5.37123745819398,
+        "widthDenominator": 598
+      }
+    },
+    "new-only": {
+      "participants": 25,
+      "peopleWithForecast": 23,
+      "peopleWithoutForecast": 2,
+      "peopleWithScoredForecast": 23,
+      "opportunities": 1212,
+      "observed": 1187,
+      "censored": 25,
+      "availability": {
+        "count": 859,
+        "denominator": 1212,
+        "fraction": 0.7087458745874587
+      },
+      "offeredCensored": 20,
+      "scored": 839,
+      "alreadyEnded": 0,
+      "outsideFollowUp": 0,
+      "statuses": {
+        "insufficient": 175,
+        "poor-fit": 4,
+        "ready": 859,
+        "unsupported": 34,
+        "variable": 140
+      },
+      "methods": {
+        "median": {
+          "scored": 839,
+          "meanAbsoluteError": 6.629320619785459,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -4.448152562574493,
+          "largestError": 2226,
+          "within1": {
+            "count": 387,
+            "denominator": 839,
+            "fraction": 0.4612634088200238
+          },
+          "within3": {
+            "count": 665,
+            "denominator": 839,
+            "fraction": 0.7926102502979738
+          },
+          "within7": {
+            "count": 803,
+            "denominator": 839,
+            "fraction": 0.9570917759237187
+          }
+        },
+        "mean": {
+          "scored": 839,
+          "meanAbsoluteError": 6.626936829558999,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -4.452920143027414,
+          "largestError": 2226,
+          "within1": {
+            "count": 387,
+            "denominator": 839,
+            "fraction": 0.4612634088200238
+          },
+          "within3": {
+            "count": 667,
+            "denominator": 839,
+            "fraction": 0.7949940405244339
+          },
+          "within7": {
+            "count": 803,
+            "denominator": 839,
+            "fraction": 0.9570917759237187
+          }
+        },
+        "last": {
+          "scored": 839,
+          "meanAbsoluteError": 7.226460071513706,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 7,
+          "meanSignedError": -4.5709177592371875,
+          "largestError": 2226,
+          "within1": {
+            "count": 322,
+            "denominator": 839,
+            "fraction": 0.3837902264600715
+          },
+          "within3": {
+            "count": 596,
+            "denominator": 839,
+            "fraction": 0.7103694874851013
+          },
+          "within7": {
+            "count": 767,
+            "denominator": 839,
+            "fraction": 0.9141835518474374
+          }
+        },
+        "fixed28": {
+          "scored": 839,
+          "meanAbsoluteError": 7.295589988081049,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 6,
+          "meanSignedError": -5.729439809296782,
+          "largestError": 2227,
+          "within1": {
+            "count": 289,
+            "denominator": 839,
+            "fraction": 0.34445768772348034
+          },
+          "within3": {
+            "count": 594,
+            "denominator": 839,
+            "fraction": 0.7079856972586412
+          },
+          "within7": {
+            "count": 778,
+            "denominator": 839,
+            "fraction": 0.9272943980929678
+          }
+        },
+        "weighted": {
+          "scored": 839,
+          "meanAbsoluteError": 6.7127532777115615,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -4.6626936829559,
+          "largestError": 2226,
+          "within1": {
+            "count": 379,
+            "denominator": 839,
+            "fraction": 0.45172824791418353
+          },
+          "within3": {
+            "count": 657,
+            "denominator": 839,
+            "fraction": 0.7830750893921334
+          },
+          "within7": {
+            "count": 801,
+            "denominator": 839,
+            "fraction": 0.9547079856972587
+          }
+        }
+      },
+      "weightedMinusMedian": 0.08343265792610251,
+      "historicalSpread": {
+        "coverage": {
+          "count": 632,
+          "denominator": 839,
+          "fraction": 0.7532777115613826
+        },
+        "meanWidthDays": 6.174621653084983,
+        "widthDenominator": 859
+      }
+    },
+    "mixed": {
+      "participants": 0,
+      "peopleWithForecast": 0,
+      "peopleWithoutForecast": 0,
+      "peopleWithScoredForecast": 0,
+      "opportunities": 0,
+      "observed": 0,
+      "censored": 0,
+      "availability": {
+        "count": 0,
+        "denominator": 0,
+        "fraction": null
+      },
+      "offeredCensored": 0,
+      "scored": 0,
+      "alreadyEnded": 0,
+      "outsideFollowUp": 0,
+      "statuses": {},
+      "methods": {
+        "median": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "mean": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "last": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "fixed28": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "weighted": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        }
+      },
+      "weightedMinusMedian": null,
+      "historicalSpread": {
+        "coverage": {
+          "count": 0,
+          "denominator": 0,
+          "fraction": null
+        },
+        "meanWidthDays": null,
+        "widthDenominator": 0
+      }
+    }
+  },
+  "execution": {
+    "version": "zenodo-heldout-execution-v1",
+    "split": "calibration",
+    "freezeId": "eb0218a3c9f6b51431cb9003a90d4f9772b3d3ff22941e4117718fc1fb42c25e",
+    "prerequisiteReportSha256": null
+  }
+}

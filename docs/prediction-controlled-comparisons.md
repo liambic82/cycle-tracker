@@ -38,7 +38,7 @@ Only reviewed aggregate results may be copied into the repository. All raw/prepa
 
 TypeScript and **229/229 tests** pass. Ten new checks cover hand-calculated stable/drifting histories, retained extreme targets, quantile/sign/denominator definitions, paired participant resampling, empty/no-forecast cases, the unsigned xorshift sequence, order invariance, mixed-group rejection, audit-annotation isolation, checksum failures and rejection of held-out CLI selection. Existing chronological leakage and preparation checks remain in place. Test records are fictional.
 
-The implementation and this metric specification were committed as `e4abfd0` before the first external development run. Calibration and final-test forecasts remain unscored; no production model change or clinical release is authorized by this analysis.
+The implementation and this metric specification were committed as `e4abfd0` before the first external development run. At that checkpoint, calibration and final-test forecasts were unscored; their later execution is recorded in the separate [held-out results](prediction-heldout-results.md). No production model change or clinical release is authorized by this analysis.
 
 ## First development results
 
@@ -62,4 +62,4 @@ Historical min–max spread contained 6,191/8,068 targets (**76.74%**, bootstrap
 
 Source-stratum results were descriptive: 17 old-only participants contributed 2,147 scored cases (median/weighted MAE 4.159/4.230); 111 new-only participants contributed 5,921 (5.117/5.176). No participant was mixed-source. No settings were tuned from these views.
 
-The next step is a review of this frozen implementation and the source limitations before enabling calibration/final-test execution under the existing plan. The current command intentionally rejects both held-out groups. No model parameters, product thresholds, data exclusions or production code were changed after viewing these results.
+The subsequent [engineering review](prediction-heldout-review.md) and [held-out results](prediction-heldout-results.md) complete calibration and final-test execution through a separate frozen wrapper. The original development command still rejects both held-out groups. No model parameters, product thresholds, data exclusions or production code were changed after viewing these development results.
