@@ -1,0 +1,86 @@
+{
+  "preparationVersion": "zenodo-recorded-starts-v1",
+  "source": {
+    "url": "https://zenodo.org/records/15598359",
+    "metadataUrl": "https://zenodo.org/api/records/15598359",
+    "license": "CC-BY-4.0",
+    "file": "menstruationdata.csv",
+    "bytes": 887713,
+    "md5": "1409abf2d80a62a26922ae62a487f5c9",
+    "sha256": "7712b11290d2d34384eaa3bca02739067a0dd6ddc8bd90c6fe91c545efffe28f"
+  },
+  "attribution": "Förster, Charlotte, and Mitesser, Oliver (2025), Zenodo dataset v1, DOI 10.5281/zenodo.15598359, CC BY 4.0.",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "planId": "zenodo-period-comparison-v1",
+  "planSha256Lf": "8ca6a1cbf3f26788ca70cb37b9ee181da6f72b729c71b4361ba617bbb8d2f12f",
+  "codeHashesLf": {
+    "research/zenodo-intake.mjs": "01dc13b76a31a533045e61eb503bfb113f2d7b89bfd5d93e1026f119ea41337d",
+    "research/prepare-zenodo.mjs": "6700079b7e3985e98db24c98e7bf459edfba794cdc948c86d9d96dfe71764ccd",
+    "research/research-files.mjs": "e3f34feb177f557ad8005602f149006d50e302eafc63771286ef1e350d917396",
+    "research/period-dataset.ts": "8c4ec77a76b07e89f29d9c57597420c50c73521a5b36f48114233bdf7b52692b",
+    "scripts/prepare-zenodo-menstruation.mjs": "317b1794710db6daaa391722fff8881bb5676810e654fcb4418ed5a903f199bc",
+    "src/domain/periodEstimate.ts": "b048ee7833677b11f5f3aab102c92fd17e827eb363cfc77740862e12d6c9d268"
+  },
+  "semantics": {
+    "dates": "relative to each participant first retained start; no absolute dates or birthdays",
+    "context": "unknown; complete=false means not established, not verified incomplete",
+    "observedThrough": "last recorded start only; not proof of continuous observation",
+    "history": "one unsegmented recorded sequence per person; no invented periods or gap classifications",
+    "annotations": "retrospective audit only, excluded from predictor inputs",
+    "identifiers": "deterministic source-ID hashes; not a claim of anonymity",
+    "transformations": "sort dates, collapse exact source duplicates, omit Birth=1 from starts and birth-only identifier from cohort"
+  },
+  "summary": {
+    "preparationVersion": "zenodo-recorded-starts-v1",
+    "splitProtocol": "sha256-participant-v1-60-20-20",
+    "sourceRows": 15686,
+    "duplicateRowsRemoved": 4,
+    "birthEventRowsExcludedFromStarts": 36,
+    "birthOnlyIdentifiersOmitted": 1,
+    "retainedParticipants": 198,
+    "retainedStarts": 15646,
+    "historySegments": 198,
+    "contextInferred": false,
+    "forecastsScored": 0,
+    "splitCounts": {
+      "development": {
+        "participants": 128,
+        "starts": 10956
+      },
+      "calibration": {
+        "participants": 28,
+        "starts": 1961
+      },
+      "test": {
+        "participants": 42,
+        "starts": 2729
+      }
+    }
+  },
+  "files": {
+    "development.json": {
+      "sha256": "2acbe17e216b644843f3e14f1f06c191d83ce18fcb480c381059441728be35e6",
+      "bytes": 228672
+    },
+    "development-audit.json": {
+      "sha256": "88e4cda03c2500ca4372eaf0788a1a1fe64f2548376ce6abd2245e5fa288039d",
+      "bytes": 30298
+    },
+    "calibration.json": {
+      "sha256": "4fc97553967512834479bdcb5aed25f551efc3540bec552026341fc94a095563",
+      "bytes": 42413
+    },
+    "calibration-audit.json": {
+      "sha256": "f7bd477636bf0b9edcae153f9ebb0253b0315a59bce67ede04dab687f28560ab",
+      "bytes": 6836
+    },
+    "test.json": {
+      "sha256": "fff862ba8257d80a16893d1b9e287b50a1c4c1e0dab1891e96542fae79e16cb2",
+      "bytes": 59681
+    },
+    "test-audit.json": {
+      "sha256": "ca61a1f15df854f1bf212904e26516353b2b1095da6f3e84e4955499cb1e8e86",
+      "bytes": 9319
+    }
+  }
+}

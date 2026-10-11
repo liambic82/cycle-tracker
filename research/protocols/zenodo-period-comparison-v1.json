@@ -1,0 +1,67 @@
+{
+  "id": "zenodo-period-comparison-v1",
+  "status": "prespecified-not-executed",
+  "preparationVersion": "zenodo-recorded-starts-v1",
+  "datasetId": "zenodo-15598359-v1",
+  "sourceSha256": "7712b11290d2d34384eaa3bca02739067a0dd6ddc8bd90c6fe91c545efffe28f",
+  "target": "next distinct recorded non-birth event date, not a verified physiological onset",
+  "primaryIssueOffsetDays": 0,
+  "primaryAnalysis": "conditional-calendar-policy",
+  "sourceContext": { "context": "unknown", "complete": false },
+  "evaluationOnlyAssumption": {
+    "enabled": true,
+    "context": "comparable",
+    "complete": true,
+    "meaning": "Explicit counterfactual for dates-only comparisons, never a source fact or app eligibility estimate. No normalized file is overwritten."
+  },
+  "chronology": "same-day logging assumed; earlier starts only; target never used for eligibility",
+  "deduplication": "collapse byte-equivalent source rows after line-ending normalization; conflicting same-person/day/event-type rows fail",
+  "birthHandling": "Birth=1 is not a start. Keep all Birth=0 starts; retain event dates and flags in audit-only sidecars. Never retrospectively exclude primary targets using these annotations.",
+  "gapHandling": "keep every interval, without length-based splitting, clipping, imputation or target exclusions; continuous observation is unverified",
+  "followUp": "stop at last recorded start; final target censored; no additional observation time inferred",
+  "splitProtocol": "sha256-participant-v1-60-20-20",
+  "identifierProtocol": "z_ + SHA256(JSON([zenodo-15598359-identifier-v1, source Woman identifier]))",
+  "evaluationOrder": [
+    "development",
+    "freeze comparison implementation and reporting",
+    "calibration",
+    "final test once"
+  ],
+  "methods": [
+    "production median",
+    "rounded mean",
+    "last interval",
+    "fixed 28",
+    "linear-weights-1-to-6-v1"
+  ],
+  "folds": "all methods share conditional production-reference offered and observed cases; report withholding and censored cases separately",
+  "primaryContrast": "paired MAE difference in days: weighted median minus production median; negative favors weighted",
+  "secondaryReporting": [
+    "MAE",
+    "median and nearest-rank p90 absolute error",
+    "signed error",
+    "within 1/3/7 days",
+    "largest error",
+    "availability",
+    "historical spread width and observed coverage",
+    "participants with no forecasts"
+  ],
+  "uncertainty": {
+    "method": "paired participant-cluster percentile bootstrap",
+    "replicates": 2000,
+    "rng": "xorshift32",
+    "seed": 20261011,
+    "percentiles": [2.5, 97.5],
+    "emptyReplicates": "exclude undefined ratios and report their count",
+    "samplingUnit": "all participants in the selected split, with replacement; keep every sampled person's rows together"
+  },
+  "sourceStrata": "old-only, new-only, mixed; descriptive secondary reports without tuning on strata",
+  "unavailableClaims": [
+    "perimenopause accuracy",
+    "prospective accuracy",
+    "full-policy eligibility",
+    "ovulation or fertility",
+    "calibrated probabilities"
+  ],
+  "releaseDecision": "none; research comparisons cannot approve clinical use or a production model change"
+}

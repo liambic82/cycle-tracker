@@ -46,7 +46,7 @@ try {
     JSON.stringify(
       {
         warning:
-          'Research only; not clinical validation. Same-day logging is assumed. Starts/context only; opt-in is assumed. No source-specific adapter has been validated. Comparator uses reference-policy folds.',
+          'Research only; not clinical validation. Same-day logging is assumed. Starts/context only; opt-in is assumed. Source eligibility and observation coverage require dataset-specific review. Comparator uses reference-policy folds.',
         normalizedInputSha256: hash(bytes),
         productionPolicySha256Lf: hash(source.replace(/\r\n/g, '\n')),
         rules: ESTIMATE_RULES,

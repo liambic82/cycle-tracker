@@ -6,7 +6,7 @@ Research update: October 11, 2026. Extends the [initial evidence review and eval
 
 The local benchmark now accepts a strict normalized history format, assigns whole participants to stable development/calibration/test groups, and compares the production policy with a fixed recency-weighted candidate on the same scored cases. Automated examples are fictional. A separate intake audit has verified and inspected an original, openly licensed dataset with 198 menstrual histories. **No external forecast has been scored, no model has been fitted, and no clinical accuracy has been established.**
 
-The source-specific forecast adapter remains pending. Missing context, follow-up and logging-time information prevent treating this dataset as a replay of every production eligibility rule. A future conditional, dates-only comparison must state its assumptions separately from full-policy validation. The perimenopause evidence gap remains open.
+The [source-specific preparation](prediction-record-preparation.md) is now complete: exact duplicates are removed, dates are ordered, unknown context is preserved, and separate participant-group files have reproducible manifests. Missing context, follow-up and logging-time information prevent treating this dataset as a replay of every production eligibility rule. The conditional dates-only analysis plan is fixed; its comparison runner and reporting remain next. The perimenopause evidence gap remains open.
 
 ## Source decision and provenance
 
@@ -86,4 +86,4 @@ The eight-person fictional fixture produces 3/4/1 participants in development/ca
 
 ## Next research step
 
-Freeze a source adapter and an explicitly conditional dates-only analysis plan before evaluating external forecasts. Account for exact duplicates, date ordering, birth-related ambiguity, observation gaps, source cohorts and unavailable context. Keep final test outcomes untouched while developing the method. Then extend reporting to participant-cluster uncertainty, error quantiles and prespecified subgroup checks; these required release analyses are not yet implemented. Independent clinical/editorial review and suitable intended-population evidence remain release gates.
+The [source adapter, prepared records and conditional analysis plan](prediction-record-preparation.md) are complete. Next implement the conditional comparison runner and reporting for participant-cluster uncertainty, error quantiles and prespecified source strata, then evaluate development participants. Keep final-test forecast outcomes unscored during development. Independent clinical/editorial review and suitable intended-population evidence remain release gates.

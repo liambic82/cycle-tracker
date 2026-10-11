@@ -19,6 +19,7 @@
     "research:predictions": "node --experimental-strip-types scripts/evaluate-period-policy.ts",
     "research:benchmark": "node --experimental-strip-types scripts/benchmark-period-dataset.mjs",
     "research:audit-zenodo": "node scripts/audit-zenodo-menstruation.mjs",
+    "research:prepare-zenodo": "node --experimental-strip-types scripts/prepare-zenodo-menstruation.mjs",
     "build:web": "expo export --platform web && node scripts/prepare-web.mjs",
     "build:all": "expo export --platform all && node scripts/prepare-web.mjs",
     "preview": "node scripts/serve-preview.mjs",

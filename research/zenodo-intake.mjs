@@ -1,4 +1,5 @@
-// Source-specific structural audit, not a forecast adapter or a general CSV parser.
+// Source-specific parsing and structural audit, not a general CSV parser.
+import { createHash } from 'node:crypto';
 export const ZENODO_SOURCE = {
   url: 'https://zenodo.org/records/15598359',
   metadataUrl: 'https://zenodo.org/api/records/15598359',
@@ -28,19 +29,14 @@ function dateDay(value) {
   return date.getTime() / 86400000;
 }
 
-export function auditZenodoMenstruation(text) {
+// Internal records contain source identifiers; callers must never print them.
+export function parseZenodoMenstruation(text) {
   // This exact deposit uses unquoted semicolon-separated fields. Fail if it changes.
   if (text.includes('"') || text.includes('\0')) invalid();
   const lines = text.replace(/\r\n/g, '\n').split('\n');
   if (lines.at(-1) === '') lines.pop();
   if (lines.shift() !== HEADER || !lines.length) invalid();
-  const allPeople = new Set();
-  const people = new Map();
-  let birthRows = 0;
-  let beforeBirth = 0;
-  let afterBirth = 0;
-  const study = { old: 0, new: 0 };
-  for (const line of lines) {
+  return lines.map((line) => {
     const fields = line.split(';');
     if (fields.length !== 9) invalid();
     const [id, date, , source, , , before, after, birth] = fields;
@@ -50,21 +46,43 @@ export function auditZenodoMenstruation(text) {
       ![before, after, birth].every((flag) => flag === '0' || flag === '1')
     )
       invalid();
-    const day = dateDay(date);
+    return {
+      id,
+      day: dateDay(date),
+      study: source,
+      beforeBirth: before === '1',
+      afterBirth: after === '1',
+      birth: birth === '1',
+      // Compare the entire original row, including fields not retained as predictors.
+      fingerprint: createHash('sha256').update(line).digest('hex'),
+    };
+  });
+}
+
+export function auditZenodoMenstruation(text) {
+  const records = parseZenodoMenstruation(text);
+  const allPeople = new Set();
+  const people = new Map();
+  let birthRows = 0;
+  let beforeBirth = 0;
+  let afterBirth = 0;
+  const study = { old: 0, new: 0 };
+  for (const record of records) {
+    const { id, day, birth } = record;
     allPeople.add(id);
-    if (birth === '1') {
+    if (birth) {
       birthRows++;
       continue;
     }
-    beforeBirth += Number(before);
-    afterBirth += Number(after);
-    study[source]++;
+    beforeBirth += Number(record.beforeBirth);
+    afterBirth += Number(record.afterBirth);
+    study[record.study]++;
     const person = people.get(id) ?? { rows: 0, dates: new Map(), last: null, descending: 0 };
     person.rows++;
     if (person.last !== null && day < person.last) person.descending++;
     person.last = day;
     const copies = person.dates.get(day) ?? [];
-    copies.push(line);
+    copies.push(record.fingerprint);
     person.dates.set(day, copies);
     people.set(id, person);
   }
@@ -74,7 +92,7 @@ export function auditZenodoMenstruation(text) {
     .flatMap((p) => [...p.dates.values()])
     .filter((g) => g.length > 1);
   return {
-    sourceRows: lines.length,
+    sourceRows: records.length,
     allEventIdentifiers: allPeople.size,
     birthRows,
     birthOnlyIdentifiers: allPeople.size - people.size,

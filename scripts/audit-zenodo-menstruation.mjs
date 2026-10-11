@@ -1,32 +1,14 @@
-import { readFile, realpath, stat } from 'node:fs/promises';
-import { resolve, relative, isAbsolute } from 'node:path';
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createHash } from 'node:crypto';
 import { ZENODO_SOURCE, auditZenodoMenstruation } from '../research/zenodo-intake.mjs';
+import { readVerifiedZenodoSource } from '../research/research-files.mjs';
 
 try {
   const root = fileURLToPath(new URL('../research/private-data/', import.meta.url));
   const [path = resolve(root, 'zenodo-15598359-menstruationdata.csv'), extra] =
     process.argv.slice(2);
   if (extra) throw new Error('Usage: pnpm research:audit-zenodo [local-source.csv]');
-  const privateRoot = await realpath(root);
-  const inputPath = await realpath(resolve(path));
-  const within = relative(privateRoot, inputPath);
-  if (
-    isAbsolute(within) ||
-    within === '..' ||
-    within.startsWith('../') ||
-    within.startsWith('..\\')
-  )
-    throw new Error('Keep external inputs under the ignored research/private-data directory.');
-  if ((await stat(inputPath)).size !== ZENODO_SOURCE.bytes)
-    throw new Error('Source size differs from the reviewed deposit.');
-  const bytes = await readFile(inputPath);
-  const sha256 = createHash('sha256').update(bytes).digest('hex');
-  const md5 = createHash('md5').update(bytes).digest('hex');
-  if (sha256 !== ZENODO_SOURCE.sha256 || md5 !== ZENODO_SOURCE.md5)
-    throw new Error('Source checksum differs from the reviewed deposit.');
-  const audit = auditZenodoMenstruation(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
+  const audit = auditZenodoMenstruation(await readVerifiedZenodoSource(root, path));
   console.log(
     JSON.stringify(
       {

@@ -1,5 +1,14 @@
 # Validation record
 
+## Prediction record preparation — October 11, 2026
+
+The owner requested preparation for controlled comparisons. The [preparation record](prediction-record-preparation.md), [analysis plan](../research/protocols/zenodo-period-comparison-v1.json) and aggregate-only [manifest](../research/manifests/zenodo-preparation-v1.json) record the completed work.
+
+- `pnpm check`: TypeScript and **219/219 tests** passed. Eight new checks cover exact versus conflicting duplicate rows, sorting without gap imputation, deterministic preparation, stable participant assignment, identifier/demographic omission, unknown context and no invented follow-up, separate audit annotations, non-overwriting writes and verified source boundaries/checksums. Fixtures are fictional. The pnpm store workaround skipped no checks.
+- The source audit still matches all prior counts after parser reuse. `pnpm research:prepare-zenodo` created the real local bundle and then verified it byte for byte on a second run: 15,646 starts, 198 participants, 4 duplicate excess rows removed, 36 birth events excluded from starts, 1 birth-only identifier omitted. Development/calibration/test counts are 128/28/42 people; no participant appears in two groups.
+- Participant records remain in ignored `research/private-data`. Only source/code/output hashes, attribution, semantics and aggregate counts are committed. Unknown context remains unknown; source birth annotations are retrospective audit information, not available-at-issuance predictors.
+- No external forecast was scored and no model selected. Production policy, app UI/storage/native code and preview 0.18.0 are unchanged; no new APK or phone-testing claim. The conditional runner and external comparison/reporting are next.
+
 ## Prediction benchmark and dataset intake — October 11, 2026
 
 The owner requested the next research step. The [benchmark/intake record](prediction-benchmark.md) documents the strict input contract, fixed participant assignment, weighted comparison, original-file provenance and aggregate source findings.

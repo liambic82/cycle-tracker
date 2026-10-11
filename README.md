@@ -16,7 +16,7 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 [Prediction research, October 11](docs/prediction-research-2026-10-11.md) now records the evidence, dataset candidates and validation plan. `pnpm research:predictions` evaluates the full existing prediction policy on fictional histories. This is research tooling; the app's method remains experimental and unchanged.
 
-The [benchmark and source-intake follow-up](docs/prediction-benchmark.md) adds participant-separated comparisons and audits a licensed original dataset with 198 menstrual histories. External forecast scoring remains pending because source context and normalization need further work. `pnpm research:benchmark` runs fictional examples; `pnpm research:audit-zenodo` verifies the locally held original without publishing participant rows.
+The [benchmark and source-intake follow-up](docs/prediction-benchmark.md) adds participant-separated comparisons and audits a licensed original dataset with 198 menstrual histories. [Record preparation](docs/prediction-record-preparation.md) now retains 15,646 distinct starts in fixed development/calibration/test groups, preserving unknown context and separate audit annotations. `pnpm research:prepare-zenodo` reproduces the local files and manifest. External forecast scoring remains pending; the conditional comparison plan is fixed before those results are examined.
 
 ## Agreed direction
 
