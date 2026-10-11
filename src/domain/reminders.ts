@@ -1,4 +1,5 @@
 import { addDays, fromDay, toDay } from './dates.ts';
+import { reminderOccurs } from './personalReminders.ts';
 import type { Journal } from './journal.ts';
 import { plannedDoses } from './medications.ts';
 
@@ -51,6 +52,18 @@ export function planReminders(journal: Journal, enabled: string[], now: Date): R
       local.setHours(hour!, minute!, 0, 0);
       if (local.getTime() > now.getTime()) dailyTimes.add(local.getTime());
     }
+    for (const plan of journal.personalReminders) {
+      if (
+        !enabled.includes(plan.id) ||
+        !reminderOccurs(plan, date) ||
+        (plan.kind === 'journal' && journal.entries[date])
+      )
+        continue;
+      const [hour, minute] = plan.time.split(':').map(Number);
+      const local = fromDay(date);
+      local.setHours(hour!, minute!, 0, 0);
+      if (local.getTime() > now.getTime()) dailyTimes.add(local.getTime());
+    }
     for (const time of [...dailyTimes].sort((a, b) => a - b)) {
       times.add(time);
       if (times.size > REMINDER_LIMIT) break;
@@ -69,9 +82,17 @@ export function planReminders(journal: Journal, enabled: string[], now: Date): R
         plan.times.length > 0 && (medication.plans[index + 1]?.startsOn ?? '9999') > today,
     ),
   );
-  const refreshAt = hasScheduledPlan
-    ? Math.max(now.getTime() + 1000, (sorted[REMINDER_LIMIT] ?? end.getTime()) - 60000)
-    : null;
+  const hasPersonalPlan = journal.personalReminders.some(
+    (plan) =>
+      enabled.includes(plan.id) &&
+      !plan.paused &&
+      (!plan.endsOn || plan.endsOn >= today) &&
+      (plan.everyDays !== null || plan.startsOn >= today),
+  );
+  const refreshAt =
+    hasScheduledPlan || hasPersonalPlan
+      ? Math.max(now.getTime() + 1000, (sorted[REMINDER_LIMIT] ?? end.getTime()) - 60000)
+      : null;
   if (refreshAt !== null) {
     notifications.push({
       id: `${REMINDER_PREFIX}refresh-${refreshAt}`,

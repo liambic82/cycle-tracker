@@ -361,7 +361,7 @@ function CycleApp() {
               { alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 },
             ]}
           >
-            <View style={{ gap: 8 }}>
+            <View style={{ gap: 8, maxWidth: '100%', flexShrink: 1 }}>
               <Text style={common.eyebrow}>
                 {formatDay(today, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase()}
               </Text>

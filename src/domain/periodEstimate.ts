@@ -104,6 +104,7 @@ export type EstimateStatus =
   | 'off'
   | 'context'
   | 'unconfirmed'
+  | 'cycle-observation'
   | 'future-start'
   | 'insufficient'
   | 'stale'
@@ -148,6 +149,16 @@ export function periodEstimate(
   if (!review.enabled) return unavailable('off');
   if (review.context !== 'comparable') return unavailable('context');
   if (!review.complete) return unavailable('unconfirmed');
+  if (
+    Object.entries(journal.entries).some(
+      ([date, e]) =>
+        date <= today &&
+        date >= (recent[0] ?? today) &&
+        (e.dailyDetails.cycleObservation !== null ||
+          (e.dailyDetails.pregnancyTest === 'positive' && date >= (recent.at(-1) ?? today))),
+    )
+  )
+    return unavailable('cycle-observation');
   if (Object.entries(journal.entries).some(([date, entry]) => date > today && entry.periodStart))
     return unavailable('future-start');
   const anchor = recorded.at(-1);

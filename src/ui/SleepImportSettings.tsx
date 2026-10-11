@@ -39,7 +39,10 @@ export function SleepImportSettings({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [days, setDays] = useState<7 | 30>(7);
+  const [days, setDays] = useState<7 | 30 | 90 | 365>(7);
+  const [historyStatus, setHistoryStatus] = useState<'unsupported' | 'not-granted' | 'granted'>(
+    'unsupported',
+  );
   const [records, setRecords] = useState<ImportedSleep[]>([]);
   const [source, setSource] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -76,7 +79,12 @@ export function SleepImportSettings({
   }
   async function refresh(valid: () => boolean) {
     const next = await healthSleep.status();
-    if (valid()) setStatus(next);
+    const history = await healthSleep.historyStatus();
+    if (valid()) {
+      setStatus(next);
+      setHistoryStatus(history);
+      if (history !== 'granted') setDays((d) => (d > 30 ? 30 : d));
+    }
   }
   useEffect(() => {
     mounted.current = true;
@@ -232,9 +240,38 @@ export function SleepImportSettings({
           )}
           {(demo || status === 'granted') && (
             <>
-              <Text style={common.label}>Recent sessions</Text>
+              <Text style={common.label}>Sleep sessions</Text>
+              {!demo && historyStatus === 'not-granted' && (
+                <>
+                  <Text style={common.small}>
+                    Optional: permit reading older sleep history to load 90 or 365 days. Sleep
+                    remains the only record type we read. No background access is requested.
+                  </Text>
+                  <Button
+                    secondary
+                    label="Allow older sleep history"
+                    disabled={busy}
+                    onPress={() =>
+                      void run(async (valid) => {
+                        await healthSleep.requestPermission(true);
+                        if (valid()) await refresh(valid);
+                      })
+                    }
+                  />
+                </>
+              )}
+              {!demo && historyStatus === 'unsupported' && (
+                <Text style={common.small}>
+                  Older-history access is unavailable on this phone. Recent sleep still works when
+                  permitted.
+                </Text>
+              )}
               <View style={common.wrap}>
-                {([7, 30] as const).map((n) => (
+                {(
+                  (demo || historyStatus === 'granted' ? [7, 30, 90, 365] : [7, 30]) as (
+                    7 | 30 | 90 | 365
+                  )[]
+                ).map((n) => (
                   <Chip
                     key={n}
                     label={`${n} days`}

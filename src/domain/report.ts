@@ -5,6 +5,8 @@ import { describeProduct, orderedProducts } from './flowDetails.ts';
 import { describeDose, describeSchedule } from './medications.ts';
 import { SYMPTOM_GROUPS } from './symptoms.ts';
 import { symptomSeverity } from './symptomSeverity.ts';
+import { describeDailyDetails, emptyDailyDetails } from './dailyDetails.ts';
+import { describeMedicalRecord } from './medicalRecords.ts';
 import { describeSleep } from './sleep.ts';
 import { describeImportedSleep } from './sleepImport.ts';
 import {
@@ -22,9 +24,12 @@ export const REPORT_SECTIONS = {
   symptoms: 'Symptoms and severity',
   moods: 'Mood and mind',
   sleep: 'Sleep',
+  observations: 'Daily observations',
+  tests: 'Test and fertility observations',
+  medical: 'Medical records and doctor questions',
   medications: 'Medication schedules',
   doses: 'Recorded doses',
-  notes: 'Journal and medication notes',
+  notes: 'Notes and context',
 } as const;
 export type ReportSectionKey = keyof typeof REPORT_SECTIONS;
 export type ReportOptions = {
@@ -55,6 +60,9 @@ export function defaultReportOptions(today: Day): ReportOptions {
       symptoms: true,
       moods: true,
       sleep: true,
+      observations: true,
+      tests: false,
+      medical: false,
       medications: true,
       doses: true,
       notes: false,
@@ -212,6 +220,44 @@ export function createDoctorReport(
         ...journal.entries[date]!.sleepImports.flatMap(describeImportedSleep),
       ],
     );
+  if (selected('observations'))
+    dailySection(
+      REPORT_SECTIONS.observations,
+      'Self-reported daily observations. Units are preserved; missing values are unknown. Cycle markers are user observations, not inferred dates or diagnoses.',
+      (date) => describeDailyDetails(journal.entries[date]!.dailyDetails, selected('notes'), false),
+    );
+  if (selected('tests'))
+    dailySection(
+      REPORT_SECTIONS.tests,
+      'Explicitly included test observations. No ovulation, fertility or diagnosis is inferred.',
+      (date) => {
+        const x = journal.entries[date]!.dailyDetails;
+        return describeDailyDetails(
+          {
+            ...emptyDailyDetails(),
+            temperature: x.temperature,
+            temperatureUnit: x.temperatureUnit,
+            lhTest: x.lhTest,
+            pregnancyTest: x.pregnancyTest,
+            mucus: x.mucus,
+          },
+          false,
+          true,
+        );
+      },
+    );
+  if (selected('medical'))
+    sections.push({
+      title: REPORT_SECTIONS.medical,
+      explanation:
+        'User-entered records dated in this range. Undated medical history and open questions are included and labeled. Future appointments are excluded by the report end date. Attachment contents are excluded. Values and laboratory ranges are transcribed, not interpreted.',
+      blocks: journal.medicalRecords
+        .filter((x) => x.date === null || (x.date >= from && x.date <= through))
+        .map((x) => ({
+          heading: `${x.date ?? 'Date unknown'} · ${x.title}`,
+          paragraphs: describeMedicalRecord(x, selected('notes')),
+        })),
+    });
   if (selected('medications')) {
     const blocks: ReportBlock[] = [];
     for (const medication of journal.medications)

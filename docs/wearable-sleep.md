@@ -1,5 +1,11 @@
 # Wearable sleep integration
 
+## Optional older history — 0.18.0
+
+Preview 0.18.0 adds separately requested `android.permission.health.READ_HEALTH_DATA_HISTORY`. The SDK feature check controls whether the button is offered; 90/365-day choices appear only after the actual grant (or with fictional sample data). The ordinary sleep permission request still requests only Sleep. Reads recheck history access before and after fetching; denial/revocation leaves recent reads and saved copies available subject to Sleep permission. Existing 500-session/20,000-stage/ten-page limits still apply, so a busy source may need a shorter range. No background or write permission is added.
+
+The owner deferred automatic background syncing and cloud sync. This history extension compiles but needs real-device permission and Inspire 3 data validation. [Android history access](https://developer.android.com/health-and-fitness/health-connect/read-data) · [Consolidated checklist](android-testing.md#0180-consolidated-local-android-test-build). The 0.17.0 description below records the original implementation.
+
 ## Decision and status — October 10, 2026
 
 The owner selected **Fitbit first** and identified the testing wearable as **Fitbit Inspire 3**. Preview **0.17.0** implements the first Android Health Connect import. Actual Inspire 3 data availability and native permission behavior require phone validation; automated and browser checks do not establish wearable compatibility. No health permission has been granted by the development agent.

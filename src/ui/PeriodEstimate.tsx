@@ -25,6 +25,8 @@ const MESSAGES: Record<Exclude<EstimateStatus, 'ready'>, string> = {
     'No estimate for this context. This simple method needs a comparable pattern and does not model treatment or life changes.',
   unconfirmed:
     'Review the start dates below. Confirm only if they are complete and belong to your current pattern.',
+  'cycle-observation':
+    'A missed/skipped cycle or a recent positive pregnancy-test observation is recorded. This simple method does not offer an estimate for that context.',
   'future-start':
     'A period start is recorded in the future. Review it in your journal before using an estimate; nothing has been changed.',
   insufficient:

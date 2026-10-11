@@ -1,3 +1,4 @@
+import { PersonalReminders } from './PersonalReminders';
 import React, { useState } from 'react';
 import { Switch, Text, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
@@ -5,7 +6,11 @@ import { Plus } from 'lucide-react-native';
 import { addDays, type Day } from '../domain/dates';
 import type { Journal } from '../domain/journal';
 import { describeSchedule, planOn, type Medication } from '../domain/medications';
-import { saveMedicationPlan } from '../domain/medicationActions';
+import {
+  reviewPastMedicationPlan,
+  applyPastMedicationPlan,
+  saveMedicationPlan,
+} from '../domain/medicationActions';
 import { MedicationForm } from './MedicationForm';
 import { Button } from './components';
 import { useTheme } from './theme';
@@ -30,11 +35,70 @@ export function Medications({
 }) {
   const { colors, common } = useTheme();
   const [form, setForm] = useState<Medication | 'new' | null>(null);
+  const [past, setPast] = useState(false);
+  const [review, setReview] = useState<ReturnType<typeof reviewPastMedicationPlan> | null>(null);
+  const [reviewError, setReviewError] = useState('');
   const [expanded, setExpanded] = useState<string | null>(null);
   const changeForm = (next: Medication | 'new' | null) => {
     setForm(next);
     onViewChange();
   };
+  if (review)
+    return (
+      <View style={{ gap: 18 }}>
+        <Button
+          secondary
+          label="Cancel past schedule correction"
+          onPress={() => {
+            setReview(null);
+            setForm(null);
+            setPast(false);
+            onViewChange();
+          }}
+        />
+        {saveStatus}
+        <Text style={common.heading}>Review past schedule correction</Text>
+        <Text style={common.body}>
+          {review.plan.name} · {review.plan.dose} · {describeSchedule(review.plan)}
+        </Text>
+        <Text style={common.body}>
+          Applies from {review.plan.startsOn}{' '}
+          {review.nextStart
+            ? `up to, but not including, ${review.nextStart}`
+            : 'onward until the next saved change'}
+          . Any existing plan starting on that date is replaced; later dated plans remain.
+        </Text>
+        <Text style={common.label}>
+          {review.affectedCount} existing dose records in this interval will retain their original
+          names, amounts, times and schedule snapshots.
+        </Text>
+        <Text style={common.body}>
+          This corrects the plan, not what was recorded as taken or skipped. Review individual dose
+          records in their daily log if they also need correction. No missing doses will be
+          invented. Upcoming alerts follow the corrected plan after it saves.
+        </Text>
+        {!!reviewError && (
+          <Text accessibilityRole="alert" style={common.error}>
+            {reviewError}
+          </Text>
+        )}
+        <Button
+          label="Apply reviewed schedule correction"
+          onPress={() => {
+            try {
+              update((j) => applyPastMedicationPlan(j, review, today));
+              setReview(null);
+              setForm(null);
+              setPast(false);
+              setReviewError('');
+              onViewChange();
+            } catch (e) {
+              setReviewError(e instanceof Error ? e.message : 'Could not apply correction.');
+            }
+          }}
+        />
+      </View>
+    );
   if (form) {
     const existing = form === 'new' ? null : form;
     const lastRecord = existing
@@ -53,11 +117,28 @@ export function Medications({
     return (
       <MedicationForm
         key={existing?.id ?? 'new'}
-        existing={existing?.plans.at(-1) ?? null}
-        initialDate={initialDate}
-        cancel={() => changeForm(null)}
+        existing={
+          existing
+            ? past
+              ? (planOn(existing, today) ?? existing.plans[0]!)
+              : existing.plans.at(-1)!
+            : null
+        }
+        initialDate={past ? (existing && planOn(existing, today)?.startsOn) || today : initialDate}
+        submitLabel={past ? 'Review past schedule correction' : 'Save schedule'}
+        pastCorrection={past}
+        cancel={() => {
+          setPast(false);
+          changeForm(null);
+        }}
         save={(plan) => {
           const id = existing?.id ?? randomUUID();
+          if (past) {
+            setReview(reviewPastMedicationPlan(journal, id, plan, today));
+            setReviewError('');
+            onViewChange();
+            return;
+          }
           update((value) => saveMedicationPlan(value, id, plan, today));
           changeForm(null);
         }}
@@ -75,6 +156,7 @@ export function Medications({
         <Button label="Open today's journal" onPress={openToday} />
       </View>
       <ReminderSettings reminders={reminders} />
+      <PersonalReminders journal={journal} today={today} update={update} reminders={reminders} />
       <Button
         label="Add medication or supplement"
         icon={Plus}
@@ -128,12 +210,24 @@ export function Medications({
               secondary
               label={`Change schedule for ${display.name}`}
               disabled={reminders.busy}
-              onPress={() => changeForm(medication)}
+              onPress={() => {
+                setPast(false);
+                changeForm(medication);
+              }}
             />
             <Button
               secondary
               label={`${expanded === medication.id ? 'Hide' : 'Show'} schedule history for ${display.name}`}
               onPress={() => setExpanded(expanded === medication.id ? null : medication.id)}
+            />
+            <Button
+              secondary
+              label={`Correct past schedule for ${display.name}`}
+              disabled={reminders.busy}
+              onPress={() => {
+                setPast(true);
+                changeForm(medication);
+              }}
             />
             {expanded === medication.id && (
               <View style={{ gap: 12 }}>

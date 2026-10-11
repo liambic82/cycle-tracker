@@ -60,7 +60,7 @@ export class ReminderService {
         if (
           value.vault === vault &&
           Array.isArray(value.enabled) &&
-          value.enabled.length <= 100 &&
+          value.enabled.length <= 200 &&
           value.enabled.every(
             (id: unknown) => typeof id === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(id),
           )
@@ -113,8 +113,11 @@ export class ReminderService {
     return this.run(async () => {
       if (!this.backend.available)
         throw new Error('Reminders are available in the installed mobile app.');
-      if (!journal.medications.some((medication) => medication.id === medicationId)) {
-        throw new Error('This medication is no longer available.');
+      if (
+        !journal.medications.some((medication) => medication.id === medicationId) &&
+        !journal.personalReminders.some((plan) => plan.id === medicationId)
+      ) {
+        throw new Error('This reminder plan is no longer available.');
       }
       const settings = await this.settings(vault);
       if (enabled && (await this.backend.permission(true)) !== 'granted') {

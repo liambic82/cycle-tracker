@@ -1,3 +1,12 @@
+import {
+  emptyDailyDetails,
+  parseDailyDetails,
+  hasDailyDetails,
+  describeDailyDetails,
+  type DailyDetails,
+} from './dailyDetails.ts';
+import { parsePersonalReminders, type PersonalReminder } from './personalReminders.ts';
+import { parseMedicalRecords, type MedicalRecord } from './medicalRecords.ts';
 import { daysBetween, validDay, type Day } from './dates.ts';
 import { parseSymptomRatings, type SymptomRating } from './symptomSeverity.ts';
 import {
@@ -56,6 +65,7 @@ export interface Entry {
   symptomRatings: SymptomRating[];
   sleep: SleepRecord;
   sleepImports: ImportedSleep[];
+  dailyDetails: DailyDetails;
   note: string;
   productRecords: ProductRecord[];
   clots: boolean | null;
@@ -65,8 +75,10 @@ export interface Entry {
 }
 
 export interface Journal {
-  version: 7;
+  version: 8;
   medications: Medication[];
+  medicalRecords: MedicalRecord[];
+  personalReminders: PersonalReminder[];
   entries: Record<Day, Entry>;
   customSymptoms: string[];
   selectedDate: Day;
@@ -84,6 +96,7 @@ export function emptyEntry(): Entry {
     symptomRatings: [],
     sleep: emptySleep(),
     sleepImports: [],
+    dailyDetails: emptyDailyDetails(),
     note: '',
     productRecords: [],
     clots: null,
@@ -95,8 +108,10 @@ export function emptyEntry(): Entry {
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 7,
+    version: 8,
     medications: [],
+    medicalRecords: [],
+    personalReminders: [],
     entries: {},
     customSymptoms: [],
     selectedDate: today,
@@ -119,6 +134,7 @@ function hasGeneralEntry(entry: Entry): boolean {
       entry.productRecords.length > 0 ||
       entry.doseRecords.length > 0 ||
       hasSleep(entry.sleep) ||
+      hasDailyDetails(entry.dailyDetails) ||
       entry.sleepImports.length > 0 ||
       entry.clots !== null ||
       entry.flooding !== null ||
@@ -132,6 +148,7 @@ export function updateEntry(journal: Journal, date: Day, patch: Partial<Entry>):
     entry.productRecords = parseProductRecords(patch.productRecords);
   if (patch.sexualHealth !== undefined) entry.sexualHealth = parseSexualHealth(patch.sexualHealth);
   if (patch.doseRecords !== undefined) entry.doseRecords = parseDoseRecords(patch.doseRecords);
+  if (patch.dailyDetails !== undefined) entry.dailyDetails = parseDailyDetails(patch.dailyDetails);
   if (patch.sleep !== undefined) entry.sleep = parseSleep(patch.sleep);
   if (patch.sleepImports !== undefined)
     entry.sleepImports = parseSleepImports(patch.sleepImports, date);
@@ -233,7 +250,8 @@ export function parseJournal(value: unknown): Journal {
         value.version === 4 ||
         value.version === 5 ||
         value.version === 6 ||
-        value.version === 7) &&
+        value.version === 7 ||
+        value.version === 8) &&
       validDay(value.selectedDate),
   );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
@@ -291,6 +309,8 @@ export function parseJournal(value: unknown): Journal {
       symptomRatings:
         value.version >= 5 ? parseSymptomRatings(entry.symptomRatings, entry.symptoms) : [],
       sleep: value.version >= 6 ? parseSleep(entry.sleep) : emptySleep(),
+      dailyDetails:
+        value.version >= 8 ? parseDailyDetails(entry.dailyDetails) : emptyDailyDetails(),
       sleepImports: value.version >= 7 ? parseSleepImports(entry.sleepImports, day) : [],
       note: entry.note,
       productRecords,
@@ -305,9 +325,16 @@ export function parseJournal(value: unknown): Journal {
     entry.sleepImports.map(sleepImportKey),
   );
   assert(new Set(importedKeys).size === importedKeys.length);
+  const personalReminders =
+    value.version >= 8 ? parsePersonalReminders(value.personalReminders) : [];
+  const medications = value.version >= 4 ? parseMedications(value.medications) : [];
+  const reminderIds = new Set(personalReminders.map((reminder) => reminder.id));
+  assert(medications.every((medication) => !reminderIds.has(medication.id)));
   return {
-    version: 7,
-    medications: value.version >= 4 ? parseMedications(value.medications) : [],
+    version: 8,
+    personalReminders,
+    medicalRecords: value.version >= 8 ? parseMedicalRecords(value.medicalRecords) : [],
+    medications,
     entries,
     customSymptoms: [...value.customSymptoms],
     selectedDate: value.selectedDate,
@@ -320,7 +347,11 @@ export function parseJournal(value: unknown): Journal {
   };
 }
 
-export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {}): string {
+export function toCSV(
+  journal: Journal,
+  include: Partial<SexualHealthExport> = {},
+  includeTests = false,
+): string {
   // Explicit opt-in only. Omitted columns and dates with only excluded data reveal no structured details.
   const sexualFields = SEXUAL_HEALTH_FIELDS.filter((field) => include[field] === true);
   // Prefix formula-like values before quoting to prevent spreadsheet formula execution.
@@ -345,12 +376,18 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       'Sleep quality',
       'Night wakings',
       'Imported sleep sessions',
+      'Daily observations',
+      ...(includeTests ? ['Test and fertility observations'] : []),
       ...sexualFields.map((field) => SEXUAL_HEALTH_LABELS[field]),
     ],
   ];
   for (const day of Object.keys(journal.entries).sort()) {
     const e = journal.entries[day]!;
-    if (!hasGeneralEntry(e) && !sexualFields.some((field) => e.sexualHealth[field] !== null))
+    if (
+      !hasGeneralEntry({ ...e, dailyDetails: emptyDailyDetails() }) &&
+      !describeDailyDetails(e.dailyDetails, true, includeTests).length &&
+      !sexualFields.some((field) => e.sexualHealth[field] !== null)
+    )
       continue;
     rows.push([
       day,
@@ -370,6 +407,23 @@ export function toCSV(journal: Journal, include: Partial<SexualHealthExport> = {
       e.sleep.quality === null ? '' : SLEEP_QUALITY_LABELS[e.sleep.quality],
       e.sleep.wakings === null ? '' : String(e.sleep.wakings),
       e.sleepImports.flatMap(describeImportedSleep).join('\n'),
+      describeDailyDetails(e.dailyDetails, true, false).join('\n'),
+      ...(includeTests
+        ? [
+            describeDailyDetails(
+              {
+                ...emptyDailyDetails(),
+                temperature: e.dailyDetails.temperature,
+                temperatureUnit: e.dailyDetails.temperatureUnit,
+                lhTest: e.dailyDetails.lhTest,
+                pregnancyTest: e.dailyDetails.pregnancyTest,
+                mucus: e.dailyDetails.mucus,
+              },
+              false,
+              true,
+            ).join('\n'),
+          ]
+        : []),
       ...sexualFields.map((field) => sexualHealthLabel(e.sexualHealth[field])),
     ]);
   }

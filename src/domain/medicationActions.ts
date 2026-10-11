@@ -5,11 +5,69 @@ import {
   parseDoseRecords,
   parseMedications,
   sameDose,
+  parsePlan,
   type DoseInput,
   type DoseRecord,
   type DoseTarget,
   type MedicationPlan,
 } from './medications.ts';
+
+export function reviewPastMedicationPlan(
+  journal: Journal,
+  medicationId: string,
+  proposed: MedicationPlan,
+  today: Day,
+) {
+  const medication = journal.medications.find((x) => x.id === medicationId);
+  if (!medication) throw new Error('This medication is no longer available.');
+  const plan = parsePlan(proposed);
+  if (plan.startsOn > today) throw new Error('Use today or an earlier date for a past correction.');
+  const nextStart = medication.plans.find((x) => x.startsOn > plan.startsOn)?.startsOn ?? null;
+  const plans = [...medication.plans.filter((x) => x.startsOn !== plan.startsOn), plan].sort(
+    (a, b) => a.startsOn.localeCompare(b.startsOn),
+  );
+  parseMedications([{ ...medication, plans }]);
+  const affected = Object.entries(journal.entries)
+    .filter(([date]) => date >= plan.startsOn && (!nextStart || date < nextStart))
+    .flatMap(([date, e]) =>
+      e.doseRecords
+        .filter((x) => x.medicationId === medicationId)
+        .map((record) => ({ date, record })),
+    );
+  return {
+    medicationId,
+    plan,
+    nextStart,
+    affectedCount: affected.length,
+    before: JSON.stringify(medication.plans),
+    dosesBefore: JSON.stringify(affected),
+  };
+}
+export function applyPastMedicationPlan(
+  journal: Journal,
+  review: ReturnType<typeof reviewPastMedicationPlan>,
+  today: Day,
+): Journal {
+  const current = reviewPastMedicationPlan(journal, review.medicationId, review.plan, today);
+  if (current.before !== review.before || current.dosesBefore !== review.dosesBefore)
+    throw new Error('The schedule or dose records changed. Review the correction again.');
+  return {
+    ...journal,
+    medications: parseMedications(
+      journal.medications.map((med) =>
+        med.id !== review.medicationId
+          ? med
+          : {
+              ...med,
+              plans: [
+                ...med.plans.filter((x) => x.startsOn !== review.plan.startsOn),
+                review.plan,
+              ].sort((a, b) => a.startsOn.localeCompare(b.startsOn)),
+            },
+      ),
+    ),
+  };
+}
 
 export function saveMedicationPlan(
   journal: Journal,

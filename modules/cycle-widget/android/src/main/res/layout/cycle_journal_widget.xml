@@ -1,0 +1,9 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/cycle_widget_root" android:layout_width="match_parent" android:layout_height="match_parent"
+  android:orientation="vertical" android:gravity="center_vertical" android:padding="16dp"
+  android:background="@drawable/cycle_widget_background" android:contentDescription="Cycle. Open your private journal.">
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cycle."
+    android:textSize="24sp" android:fontFamily="serif" android:textColor="@color/cycle_widget_ink" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Open your journal"
+    android:textSize="14sp" android:textColor="@color/cycle_widget_ink" />
+</LinearLayout>

@@ -10,6 +10,8 @@ These choices exist only in React state. Turning the switch off, leaving the vie
 
 ## Fixed method and product rules
 
+**0.18.0 update:** explicit missed/skipped-cycle observations between the earliest selected start and today withhold the estimate. A recorded positive pregnancy-test observation on or after the latest selected start also withholds it. These are conservative product exclusions, not a diagnosis or clinical interpretation. Other test values, basal temperature and mucus do not supply dates or infer ovulation. The new observations are encrypted journal records, unlike the session-only review choices above; their readable exports have separate controls.
+
 The implementation is a transparent preview baseline, **not independently clinically validated**. The following limits are deliberately documented product choices, not diagnostic boundaries, clinical recommendations, or a declaration of which cycles are normal:
 
 1. Read explicit period-start markers only. Reject the estimate if any start is in the future. Flow, end markers, symptoms, and notes cannot supply a start.

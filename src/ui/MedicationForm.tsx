@@ -54,11 +54,15 @@ export function MedicationForm({
   initialDate,
   save,
   cancel,
+  submitLabel = 'Save schedule',
+  pastCorrection = false,
 }: {
   existing: MedicationPlan | null;
   initialDate: Day;
   save: (plan: MedicationPlan) => void;
   cancel: () => void;
+  submitLabel?: string;
+  pastCorrection?: boolean;
 }) {
   const { common } = useTheme();
   const [id] = useState(randomUUID);
@@ -129,7 +133,13 @@ export function MedicationForm({
           cancel();
         }}
       />
-      <Text style={common.heading}>{existing ? 'Change a schedule' : 'Add to your routine'}</Text>
+      <Text style={common.heading}>
+        {pastCorrection
+          ? 'Correct a past schedule'
+          : existing
+            ? 'Change a schedule'
+            : 'Add to your routine'}
+      </Text>
       <Text style={common.body}>
         Enter the schedule you already use. Doses are recorded as you enter them; the app does not
         calculate dose changes.
@@ -157,9 +167,11 @@ export function MedicationForm({
         change={setStartsOn}
         maxLength={10}
         hint={
-          existing
-            ? 'Earlier schedule history is kept. Choose a date after any recorded doses. You can correct an individual dose in its daily log.'
-            : 'You can start in the past to record an existing routine.'
+          pastCorrection
+            ? 'Choose today or a past date. The next screen shows the affected interval before you apply it; existing dose records retain their original details.'
+            : existing
+              ? 'Earlier schedule history is kept. Choose a date after any recorded doses. You can correct an individual dose in its daily log.'
+              : 'You can start in the past to record an existing routine.'
         }
       />
       <View style={{ gap: 10 }}>
@@ -216,7 +228,7 @@ export function MedicationForm({
           value={times}
           change={setTimes}
           maxLength={70}
-          hint="Separate multiple times with commas, for example 08:00, 20:00. Times follow the local calendar; this preview does not send reminders."
+          hint="Separate multiple times with commas, for example 08:00, 20:00. Times follow the local calendar. Enable phone reminders separately after saving."
         />
       )}
       {mode === 'as-needed' && (
@@ -245,7 +257,7 @@ export function MedicationForm({
         </Text>
       )}
       <Text style={common.small}>These changes are a draft until you save.</Text>
-      <Button label="Save schedule" icon={Check} onPress={submit} />
+      <Button label={submitLabel} icon={Check} onPress={submit} />
     </View>
   );
 }

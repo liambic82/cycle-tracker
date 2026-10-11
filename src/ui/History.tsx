@@ -7,6 +7,7 @@ import { flowTimeline, statistics, type FlowState } from '../domain/history';
 import { Button } from './components';
 import { useTheme } from './theme';
 import { SymptomHistory } from './SymptomHistory';
+import { DailyDetailsHistory } from './DailyDetailsHistory';
 import { SleepHistory } from './SleepHistory';
 
 const FLOW_LABELS: Record<FlowState, string> = {
@@ -119,11 +120,20 @@ export function History({
   };
   const [limit, setLimit] = useState(12);
   const [symptomsOpen, setSymptomsOpen] = useState(false);
+  const [dailyOpen, setDailyOpen] = useState(false);
   const [sleepOpen, setSleepOpen] = useState(false);
   const lengths = statistics(cycles.map((cycle) => cycle.length));
   const durations = statistics(cycles.map((cycle) => cycle.duration));
   return (
     <View style={{ gap: 22 }}>
+      <View style={[common.card, { gap: 16 }]}>
+        <Button
+          secondary
+          label={dailyOpen ? 'Hide daily observations' : 'Explore daily observation history'}
+          onPress={() => setDailyOpen(!dailyOpen)}
+        />
+        {dailyOpen && <DailyDetailsHistory journal={journal} today={today} openDay={openDay} />}
+      </View>
       <View style={[common.card, { backgroundColor: colors.sage, gap: 14 }]}>
         <Activity color={colors.sageInk} size={24} strokeWidth={1.5} />
         <Text style={common.heading}>Your history, in your own time.</Text>

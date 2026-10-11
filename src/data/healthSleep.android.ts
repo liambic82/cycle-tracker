@@ -3,7 +3,8 @@ import type { HealthSleepStatus } from './healthSleep';
 export type { HealthSleepStatus } from './healthSleep';
 interface NativeSleep {
   status(): Promise<HealthSleepStatus>;
-  requestPermission(): Promise<boolean>;
+  historyStatus(): Promise<'unsupported' | 'not-granted' | 'granted'>;
+  requestPermission(history: boolean): Promise<boolean>;
   readRecent(days: number): Promise<unknown[]>;
   disconnect(): Promise<void>;
   openSettings(): Promise<void>;
@@ -16,8 +17,9 @@ const required = () => {
 };
 export const healthSleep = {
   status: async (): Promise<HealthSleepStatus> => (native ? native.status() : 'unsupported'),
-  requestPermission: () => required().requestPermission(),
-  readRecent: (days: 7 | 30) => required().readRecent(days),
+  historyStatus: async () => (native ? native.historyStatus() : ('unsupported' as const)),
+  requestPermission: (history = false) => required().requestPermission(history),
+  readRecent: (days: 7 | 30 | 90 | 365) => required().readRecent(days),
   disconnect: () => required().disconnect(),
   openSettings: () => required().openSettings(),
   openPrivacy: () => required().openPrivacy(),

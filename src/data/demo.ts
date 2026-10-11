@@ -84,6 +84,44 @@ export function demoJournal(today: Day): Journal {
     note: '',
     sexualHealth: { activity: null, intensity: null, orgasm: null, libido: 'moderate' },
   };
+  journal.entries[today]!.dailyDetails = {
+    ...journal.entries[today]!.dailyDetails,
+    hotFlashes: 2,
+    energy: 6,
+    stress: 3,
+    activityMinutes: 25,
+    painLocations: ['Lower back'],
+  };
+  journal.medicalRecords = [
+    {
+      id: 'sample-lab',
+      kind: 'lab',
+      date: addDays(today, -5),
+      time: null,
+      title: 'Fictional lab example',
+      detail: 'Fictional demonstration, not medical advice.',
+      value: '12',
+      unit: 'sample units',
+      reference: '8–16 (fictional)',
+      clinician: 'Sample clinic',
+      resolved: false,
+      attachments: [],
+    },
+    {
+      id: 'sample-question',
+      kind: 'question',
+      date: null,
+      time: null,
+      title: 'What should I bring to my appointment?',
+      detail: 'Fictional question.',
+      value: '',
+      unit: '',
+      reference: '',
+      clinician: '',
+      resolved: false,
+      attachments: [],
+    },
+  ];
   return recordDose(
     journal,
     today,

@@ -38,8 +38,9 @@ export function ReminderSettings({ reminders }: { reminders: ReminderControls })
     <View style={[common.card, { gap: 12 }]}>
       <SectionLabel icon={Bell}>Private reminders</SectionLabel>
       <Text style={common.body}>
-        Choose reminders for each medication below. They follow its saved times, including weekday
-        and on/off schedules. Recording a dose cancels its upcoming reminder.
+        Choose alerts for medication and care reminder plans below. Medication alerts follow saved
+        times, including weekday and on/off schedules. Recording a dose cancels its upcoming
+        reminder.
       </Text>
       {!available ? (
         <Text style={common.body}>
@@ -62,7 +63,7 @@ export function ReminderSettings({ reminders }: { reminders: ReminderControls })
               {state.permission === 'denied'
                 ? 'Notifications are blocked in your phone’s settings.'
                 : state.enabled.length === 0
-                  ? 'Medication reminders are off.'
+                  ? 'Phone reminders are off.'
                   : state.permission !== 'granted'
                     ? 'Notification permission is needed. Turn a reminder on to allow it.'
                     : `${state.count} upcoming reminder${state.count === 1 ? '' : 's'} queued on this phone.`}

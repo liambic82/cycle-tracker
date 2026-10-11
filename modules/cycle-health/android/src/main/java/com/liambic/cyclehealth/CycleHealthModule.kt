@@ -2,6 +2,7 @@ package com.liambic.cyclehealth
 
 import android.app.Activity
 import android.content.Intent
+import androidx.health.connect.client.HealthConnectFeatures
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
@@ -19,6 +20,7 @@ import java.time.format.DateTimeFormatterBuilder
 
 class CycleHealthModule : Module() {
   private val permission = "android.permission.health.READ_SLEEP"
+  private val historyPermission = "android.permission.health.READ_HEALTH_DATA_HISTORY"
   private var pending: Promise? = null
   private val requestCode = 49371
   private val formatter = DateTimeFormatterBuilder().appendInstant(3).toFormatter()
@@ -38,13 +40,19 @@ class CycleHealthModule : Module() {
         }
       } }
     }
-    AsyncFunction("requestPermission") { promise: Promise ->
+    AsyncFunction("historyStatus") Coroutine { ->
+      withContext(Dispatchers.IO) { withTimeout(15000) {
+        if (HealthConnectClient.getSdkStatus(context()) != HealthConnectClient.SDK_AVAILABLE || client().features.getFeatureStatus(HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_HISTORY) != HealthConnectFeatures.FEATURE_STATUS_AVAILABLE) "unsupported"
+        else if (client().permissionController.getGrantedPermissions().contains(historyPermission)) "granted" else "not-granted"
+      } }
+    }
+    AsyncFunction("requestPermission") { history: Boolean, promise: Promise ->
       val activity = appContext.currentActivity
       if (activity == null || pending != null) { promise.reject("SLEEP_BUSY","Return to the app and retry after closing any permission screen.",null) }
       else {
         pending = promise
         activity.runOnUiThread {
-          try { activity.startActivityForResult(Intent(activity, SleepPermissionActivity::class.java),requestCode) }
+          try { activity.startActivityForResult(Intent(activity, SleepPermissionActivity::class.java).putExtra("history",history),requestCode) }
           catch (_: Exception) { pending?.reject("SLEEP_PERMISSION","Could not open the sleep permission screen. Try Health Connect settings.",null); pending=null }
         }
       }
@@ -63,10 +71,11 @@ class CycleHealthModule : Module() {
       context().startActivity(Intent(context(),SleepPrivacyActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
     AsyncFunction("readRecent") Coroutine { days: Int ->
-      require(days == 7 || days == 30)
+      require(days == 7 || days == 30 || days == 90 || days == 365)
       withContext(Dispatchers.IO) { withTimeout(30000) {
         val health = client()
         check(health.permissionController.getGrantedPermissions().contains(permission)) { "Sleep permission is not granted. Review access in Health Connect." }
+        if (days > 30) check(health.features.getFeatureStatus(HealthConnectFeatures.FEATURE_READ_HEALTH_DATA_HISTORY) == HealthConnectFeatures.FEATURE_STATUS_AVAILABLE && health.permissionController.getGrantedPermissions().contains(historyPermission)) { "Allow older sleep history before loading more than 30 days." }
         val end = Instant.now()
         val start = end.minusSeconds(days.toLong()*86400)
         val imported = formatter.format(end)
@@ -98,6 +107,7 @@ class CycleHealthModule : Module() {
           check(pages <= 10 && (result.size < 500 || token == null)) { "Too many sleep records. Choose 7 days." }
         } while (token != null)
         check(health.permissionController.getGrantedPermissions().contains(permission)) { "Sleep access changed. Nothing was imported. Review permissions and retry." }
+        if (days > 30) check(health.permissionController.getGrantedPermissions().contains(historyPermission)) { "History permission changed. Nothing was imported." }
         result
       } }
     }

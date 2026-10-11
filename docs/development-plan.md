@@ -6,13 +6,13 @@ The [October 9 source review](source-review-2026-10-09.md) reconciles the origin
 
 ## Current slice and next steps
 
-Preview **0.17.0** implements Android Health Connect sleep import, with **Fitbit Inspire 3** chosen by the owner as the testing wearable. It adds sleep-only permission, recent 7/30-day reads, source selection, session review, duplicate prevention and reviewed source corrections. Imported sessions retain provenance, stages and waking-date offsets separately from manual sleep; unknown stages, naps and overlaps are preserved without fabricated totals/quality/wakings. Removal/Undo, history, CSV, selected doctor summaries and full encrypted backups include imported copies. Format 7 migrates formats 1–6; new backups need 0.17.0 or later. Native runtime and actual Inspire 3 data validation are pending.
+**October 11 owner direction:** finish local Android development for a consolidated test pass, then port to iOS. Cloud sync and automatic background sleep syncing are deferred. Do not require a new phone sign-off after every development slice. The visual direction is clean, easy to read and clearly feminine; preserve approved palettes and the existing design until a specific replacement is approved.
 
-The original brief and ten comments were reread for 0.15.0 on October 10. That slice addressed symptom severity; 0.16.0 added optional manual sleep duration, quality and wakings with explicit Save, dated history and exports. The owner's “The testing wearable will be the fitbit inspire 3. Let's go.” authorizes 0.17.0 development; it does not establish a new 0.16.0 phone test pass. The latest reported phone pass remains 0.15.0.
+Preview **0.18.0** adds the remaining structured daily observations, medical records and encrypted attachments, dated lab history, appointments/questions/medical history, care reminders, reviewed past medication corrections, guided historical periods and a strict CSV template importer. It also adds optional Health Connect 90/365-day history access and a static Android home-screen widget. Journal format **8** migrates formats 1–7; new backups need 0.18.0+. [Feature scope and open dependencies](android-completion.md).
 
-Next: validate the Inspire 3 → Fitbit/Google Health → Health Connect route on the paired Android phone using [the device checklist](android-testing.md#0170-fitbit-inspire-3-sleep-import), including denial/revocation, stage availability, reimports, source corrections, source deletion with retained copies, native privacy rationale and offline reads. Address observed integration issues before claiming compatibility. Automatic background imports, older history and automatic deletion reconciliation remain later refinements. [Integration design and sources](wearable-sleep.md).
+Next: run the [consolidated Android checklist](android-testing.md#0180-consolidated-local-android-test-build) on Pixel 7 / Android 17, Galaxy Z Flip5 and the phone paired with Fitbit Inspire 3; fix observed issues before the native iOS port. The last owner-reported phone pass is still **0.15.0**. Automated and browser tests are separate evidence.
 
-Then pain location, hot-flash counts, mood/energy and lifestyle observations, introduced in bounded slices with explicit unknown values and export support; then bloodwork and appointment/doctor-question records. Broader predictions retain their evidence requirements. Further layout beautification requires approval of concrete proposals. Store readiness, native iOS validation and optional encrypted sync remain later work; no 1.0 release decision has been made.
+Prediction research, clinical/editorial criteria for interpretation and prompts, other-app import samples, independent accessibility/security review and store preparation remain open. The template importer does not claim universal vendor compatibility. These dependencies are tracked explicitly rather than described as completed Android features. There is no 1.0 release decision.
 
 ## Milestone 1: private daily journal
 
@@ -58,9 +58,9 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Implemented in 0.8.0: Taken, Skipped, and user-marked Taken late records, actual amount/date/optional time, as-needed reasons and dose notes, editing, confirmed removal/Undo, and complete exports. Unrecorded doses are not inferred missed or taken. No adherence percentage or lateness threshold is calculated.
 - Implemented in 0.8.0: dated user-entered dose/schedule changes, pauses/resumption, and schedule history. Changes start today or later and after existing dose records; latest unused schedules can be corrected on the same effective date. These are recording tools for an existing plan, not automatic titration advice. Follow [the medication checklist](android-testing.md#080-medication-schedules-and-dose-records).
 - Implemented in 0.9.0: individually enabled, discreet local medication notifications, permission and blocked-channel handling, test notification, cancellation/rescheduling after saved plan or dose changes, and cleanup on journal replacement/deletion. Choices are device-local and off after restore. The rolling queue covers up to 30 days / 60 distinct dose times, shows the refresh deadline, and includes an unlock-to-refresh notice. Local times refresh on unlock/foreground/manual refresh; actual delivery and background behavior remain [device checks](android-testing.md#090-medication-reminders). Browser and sample journals do not send alerts.
-- Later medication refinements: dedicated patch/ring/injection/refill reminders and broader retrospective schedule editing with explicit record reconciliation.
+- Implemented in 0.18.0: dedicated journal/patch/ring/injection/refill/appointment/custom reminder plans and reviewed retrospective schedule corrections. Existing dose snapshots remain unchanged; no adherence or missed-dose inference is added.
 - Implemented in 0.10.0: doctor summaries and locally generated PDFs, with a date range up to 366 days, independent section choices, and review before export. Includes recorded cycle/bleeding spans, flow, clot/flooding observations, products, symptoms, moods, overlapping medication plans, and recorded doses. Notes and each sexual-health field start off for each new report. Phone sharing/offline behavior remains in [the device checklist](android-testing.md#0100-doctor-summaries-and-pdf-export). No journal-format change.
-- Extend reports with lab records and reviewed discussion prompts only when those features are available. Broader font/script coverage and tagged PDF accessibility remain release work.
+- Implemented in 0.18.0: optional lab/medical records and observation/test sections in reports. Reviewed clinical discussion prompts remain a separate dependency. Broader font/script coverage and tagged PDF accessibility remain release work.
 - The clot-logging dependency is implemented in 0.6.0 as a daily Yes/No/Not logged observation and included in 0.10.0 reports when selected; clinical interpretation and any more detailed clot measurements need separate design/review.
 
 ## Milestone 5: predictions and everyday education
@@ -72,12 +72,12 @@ Preview 0.5.3 addresses the owner’s concern about accidental deletion from the
 - Educational copy was checked against public health sources for 0.11.0; independent clinical/editorial review and medication-context validation remain required before release. The source feedback prioritizes self-understanding and empathy; it does not authorize partner access or sharing.
 - Offer measured lab results alone or beside clearly labeled typical curves when available, preserving hormonal-medication context. Resolve the brief's dashboard/visual staging mismatch before presenting estimates.
 
-## Later milestones
+## Extended local features and later milestones
 
-- Bloodwork with units, lab-provided reference ranges, attachments, and draw-date context.
-- Appointments, doctor questions, medical-history records, and the remaining structured symptom/lifestyle inputs identified in the source review.
-- CSV/other-app import feasibility based on actual export formats; no universal import promise.
-- Beautification and personal appearance: see the dedicated scope below. A home-screen widget remains a separate later feature.
+- Implemented in 0.18.0: bloodwork with units, lab-provided reference ranges, encrypted attachments, dated same-test/unit history and draw-date cycle context. Educational typical-curve overlays retain their separate review dependency.
+- Implemented in 0.18.0: appointments, doctor questions, diagnoses/procedures/allergies and the structured daily symptom/lifestyle/test observations identified in the source review.
+- Implemented in 0.18.0: guided past periods and the strict simple CSV template importer. Vendor-specific mappings still require actual export samples; no universal import promise.
+- Beautification and personal appearance: see the dedicated scope below. Implemented in 0.18.0: a static Android home-screen widget that opens the normal lock flow without displaying health data.
 - Optional end-to-end encrypted sync, initially measured on a free tier; key recovery, conflict resolution, deletion propagation, and funding must be designed before public release.
 - iOS device validation, store metadata, pricing, accessibility review, and release testing.
 

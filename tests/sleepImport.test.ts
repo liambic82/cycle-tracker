@@ -39,7 +39,7 @@ test('formats 1–6 migrate with no imports, preserving manual sleep and all ear
     const legacy = { ...source, version, entries };
     const before = JSON.stringify(legacy);
     const parsed = parseJournal(legacy);
-    assert.equal(parsed.version, 7);
+    assert.equal(parsed.version, 8);
     assert.equal(JSON.stringify(legacy), before);
     for (const [date, entry] of Object.entries(parsed.entries)) {
       assert.deepEqual(entry.sleepImports, []);
@@ -89,7 +89,7 @@ test('imports reject corrupt metadata, timestamps, offsets, stages and mismatche
       entries: { [today]: { ...journal.entries[today], sleepImports: undefined } },
     }),
   );
-  assert.throws(() => parseJournal({ ...journal, version: 8 }));
+  assert.throws(() => parseJournal({ ...journal, version: 9 }));
   const parsed = parseSleepImport({ ...base, ignored: 'drop', stages: [...base.stages].reverse() });
   assert.deepEqual(parsed, base);
   parsed.stages[0]!.type = 0;

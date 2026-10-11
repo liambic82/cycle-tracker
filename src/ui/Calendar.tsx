@@ -43,6 +43,9 @@ function DayGrid({
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {monthCells(month).map((day, index) => {
+          const medicalCount = day
+            ? journal.medicalRecords.filter((record) => record.date === day).length
+            : 0;
           const entry = day ? journal.entries[day] : undefined;
           const state = flowState(entry);
           const chosen = day === journal.selectedDate;
@@ -85,7 +88,7 @@ function DayGrid({
               </Text>
               {!mini && (
                 <View style={{ height: 4, flexDirection: 'row', gap: 3 }}>
-                  {hasEntry(entry) && (
+                  {(hasEntry(entry) || medicalCount > 0) && (
                     <View
                       style={{
                         width: entry?.periodStart ? 9 : 4,
@@ -121,7 +124,7 @@ function DayGrid({
                 ) : (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`${formatDay(day, { month: 'long', day: 'numeric', year: 'numeric' })}${day === today ? ', today' : ''}${cycle === null ? '' : `, cycle day ${cycle}`}, ${state === 'unknown' ? 'flow not logged' : state === 'none' ? 'no flow' : entry?.flow}${hasEntry(entry) ? ', logged' : ''}`}
+                    accessibilityLabel={`${formatDay(day, { month: 'long', day: 'numeric', year: 'numeric' })}${day === today ? ', today' : ''}${cycle === null ? '' : `, cycle day ${cycle}`}, ${state === 'unknown' ? 'flow not logged' : state === 'none' ? 'no flow' : entry?.flow}${hasEntry(entry) ? ', logged' : ''}${medicalCount ? `, ${medicalCount} medical records` : ''}`}
                     accessibilityState={{ selected: chosen }}
                     aria-pressed={chosen}
                     onPress={() => onOpenDay(day)}

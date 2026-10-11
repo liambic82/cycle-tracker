@@ -15,6 +15,8 @@ import { Button } from './components';
 import { BiometricSettings } from './BiometricSettings';
 import { DoctorReport } from './DoctorReport';
 import { AppearanceSettings } from './AppearanceSettings';
+import { JournalImport } from './JournalImport';
+import { MedicalRecords } from './MedicalRecords';
 import { SleepImportSettings } from './SleepImportSettings';
 import type { PhotoControls } from '../data/personalBackgroundStore';
 import { useTheme } from './theme';
@@ -60,6 +62,9 @@ export function DataSettings({
   const [deleteError, setDeleteError] = useState('');
   const [reportOpen, setReportOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const [journalImportOpen, setJournalImportOpen] = useState(false);
+  const [medicalOpen, setMedicalOpen] = useState(false);
+  const [testExport, setTestExport] = useState(false);
   const [sleepImportOpen, setSleepImportOpen] = useState(false);
   useEffect(() => {
     if (!appearanceOpen) return;
@@ -89,7 +94,7 @@ export function DataSettings({
     try {
       await exportText(
         kind === 'journal'
-          ? toCSV(journal, sexualExport)
+          ? toCSV(journal, sexualExport, testExport)
           : kind === 'schedules'
             ? medicationCSV(journal.medications)
             : backup(),
@@ -102,6 +107,7 @@ export function DataSettings({
       );
       setMessage('Your export is ready. Check your downloads or the location you selected.');
       setCSVConfirm(false);
+      setTestExport(false);
       setMedicationConfirm(false);
     } catch (err) {
       setError(true);
@@ -110,6 +116,32 @@ export function DataSettings({
       setBusy(false);
     }
   };
+  if (journalImportOpen)
+    return (
+      <JournalImport
+        journal={journal}
+        update={update}
+        saveStatus={saveStatus}
+        onViewChange={onViewChange}
+        close={() => {
+          setJournalImportOpen(false);
+          onViewChange();
+        }}
+      />
+    );
+  if (medicalOpen)
+    return (
+      <MedicalRecords
+        journal={journal}
+        update={update}
+        saveStatus={saveStatus}
+        onViewChange={onViewChange}
+        close={() => {
+          setMedicalOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (sleepImportOpen)
     return (
       <SleepImportSettings
@@ -148,6 +180,43 @@ export function DataSettings({
     );
   return (
     <View style={{ gap: 22 }}>
+      <View style={[common.card, { gap: 15 }]}>
+        <Text style={common.heading}>Earlier records</Text>
+        <Text style={common.body}>
+          Add past period boundaries or review dates, flow, symptoms and notes from the simple
+          import template.
+        </Text>
+        <Button
+          secondary
+          label="Add past periods or import CSV"
+          onPress={() => {
+            setJournalImportOpen(true);
+            onViewChange();
+          }}
+        />
+      </View>
+      <View style={[common.card, { gap: 15 }]}>
+        <Text style={common.heading}>Medical records & doctor visits</Text>
+        <Text style={common.body}>
+          Bloodwork, attachments, appointments, questions and medical history.
+        </Text>
+        <Button
+          secondary
+          label="Open medical records"
+          onPress={() => {
+            setMedicalOpen(true);
+            onViewChange();
+          }}
+        />
+      </View>
+      <View style={[common.card, { gap: 12 }]}>
+        <Text style={common.heading}>Android home-screen widget</Text>
+        <Text style={common.body}>
+          Long-press an empty area of the Android home screen, choose Widgets, then Cycle journal.
+          The shortcut opens the app through its normal lock screen. It displays no health records
+          and needs no background access.
+        </Text>
+      </View>
       <View style={[common.card, { gap: 14 }]}>
         <Text style={common.heading}>Appearance</Text>
         <Text style={common.body}>
@@ -235,7 +304,7 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          New backups need preview 0.17.0 or later. Update the receiving app before restoring.
+          New backups need preview 0.18.0 or later. Update the receiving app before restoring.
           Earlier backups still open here. Encrypted backups include all sexual-health fields,
           regardless of your CSV choices, plus all medication schedules and dose records.
         </Text>
@@ -265,6 +334,20 @@ export function DataSettings({
         </Text>
         {csvConfirm ? (
           <View style={{ gap: 10 }}>
+            <View style={common.between}>
+              <Text style={[common.label, { flex: 1 }]}>
+                Include test and fertility observations
+              </Text>
+              <Switch
+                accessibilityLabel="Include test and fertility observations in CSV"
+                value={testExport}
+                onValueChange={setTestExport}
+                disabled={busy}
+              />
+            </View>
+            <Text style={common.small}>
+              Includes basal temperature, LH/pregnancy tests and cervical mucus only when selected.
+            </Text>
             <Text style={common.label}>Optional sexual-health columns</Text>
             <Text style={common.small}>
               Choose for this export only. All four start off each time.
@@ -308,6 +391,7 @@ export function DataSettings({
             icon={FileSpreadsheet}
             onPress={() => {
               setSexualExport(emptySexualHealthExport());
+              setTestExport(false);
               setCSVConfirm(true);
             }}
           />

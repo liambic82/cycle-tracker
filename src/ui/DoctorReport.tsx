@@ -193,9 +193,10 @@ export function DoctorReport({
           </View>
         ))}
         <Text style={common.small}>
-          Notes start off. Medication notes need both Notes and the relevant schedule/dose section.
-          Other free-text labels, names, and product descriptions can still contain sensitive
-          details. Mood & mind uses that category’s labels; custom labels are in Symptoms.
+          Notes start off. Observation context, medical details and medication notes need both Notes
+          and their corresponding section. Other free-text labels, names, and product descriptions
+          can still contain sensitive details. Mood & mind uses that category’s labels; custom
+          labels are in Symptoms.
         </Text>
       </View>
       <View style={[common.card, { gap: 16 }]}>
@@ -224,9 +225,10 @@ export function DoctorReport({
         ))}
       </View>
       <Text style={common.small}>
-        Reports use recorded data only. Lab results and clinical discussion prompts will be added
-        with those later features. Some scripts and emoji are not supported in PDF yet; an
-        unsupported character stops export without changing your journal.
+        Reports use recorded data only. Medical records include dated records in this range plus
+        undated history; attachment contents are excluded. No clinical interpretation or suggested
+        questions are generated. Some scripts and emoji are not supported in PDF yet; an unsupported
+        character stops export without changing your journal.
       </Text>
       {feedback}
       <Button label="Preview doctor summary" icon={FileText} onPress={preview} />

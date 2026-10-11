@@ -29,6 +29,9 @@ import { plannedDoses } from '../domain/medications';
 import { CycleContext } from './CycleContext';
 import { SeverityControl, SymptomSeverityEditor } from './SymptomSeverityEditor';
 import { symptomSeverity } from '../domain/symptomSeverity';
+import { describeMedicalRecord } from '../domain/medicalRecords';
+import { DailyDetailsEditor } from './DailyDetailsEditor';
+import { hasDailyDetails, describeDailyDetails } from '../domain/dailyDetails';
 import { SleepEditor } from './SleepEditor';
 import { ImportedSleepDetails } from './ImportedSleepDetails';
 import { hasSleep, sleepDurationLabel, SLEEP_QUALITY_LABELS } from '../domain/sleep';
@@ -71,6 +74,7 @@ export function DayEditor({
   const [sexualHealthOpen, setSexualHealthOpen] = useState(false);
   const [dosesOpen, setDosesOpen] = useState(false);
   const [severityOpen, setSeverityOpen] = useState(false);
+  const [dailyOpen, setDailyOpen] = useState(false);
   const [sleepOpen, setSleepOpen] = useState(false);
   const closeActions = () => {
     setActionsOpen(false);
@@ -90,6 +94,22 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (dailyOpen && date <= today)
+    return (
+      <DailyDetailsEditor
+        date={date}
+        value={entry.dailyDetails}
+        save={(dailyDetails) => {
+          onPatch({ dailyDetails });
+          setDailyOpen(false);
+          onViewChange();
+        }}
+        cancel={() => {
+          setDailyOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (sleepOpen && date <= today)
     return (
       <SleepEditor
@@ -249,11 +269,11 @@ export function DayEditor({
               <Text style={common.label}>Delete this day’s entry?</Text>
               <Text style={common.body}>
                 This removes all daily details, including flow, product records, bleeding
-                observations, sexual-health details, dose records, symptoms, sleep, notes, and
-                period markers for{' '}
+                observations, sexual-health details, dose records, symptoms, sleep, daily
+                observations, notes, and period markers for{' '}
                 {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
                 the last deletion until you lock, delete another entry, or log this day again.
-                Medication schedules are kept.
+                Medication schedules, care reminder plans and separate medical records are kept.
               </Text>
               <Button label="Keep entry" onPress={closeActions} />
               <Button
@@ -281,6 +301,23 @@ export function DayEditor({
           )}
         </View>
       )}
+      {journal.medicalRecords
+        .filter((record) => record.date === date)
+        .map((record) => (
+          <View key={record.id} style={[common.card, { gap: 8 }]}>
+            <Text style={common.label}>Medical record · {record.title}</Text>
+            {describeMedicalRecord(record, true)
+              .slice(1)
+              .map((text, i) => (
+                <Text key={i} style={common.body}>
+                  {text}
+                </Text>
+              ))}
+            <Text style={common.small}>
+              Edit or manage attachments under Your data → Medical records.
+            </Text>
+          </View>
+        ))}
       {undoNotice}
       {date > today ? (
         <View style={{ backgroundColor: colors.sage, padding: 20, borderRadius: 14, gap: 10 }}>
@@ -439,6 +476,22 @@ export function DayEditor({
             ) : (
               <Text style={common.small}>For the main sleep ending on this day.</Text>
             )}
+          </View>
+          <View style={{ gap: 9 }}>
+            <Button
+              secondary
+              label="Daily observations · optional"
+              onPress={() => {
+                closeActions();
+                setDailyOpen(true);
+                onViewChange();
+              }}
+            />
+            <Text style={common.small}>
+              {hasDailyDetails(entry.dailyDetails)
+                ? `${describeDailyDetails(entry.dailyDetails).length} observations recorded`
+                : 'Pain, hot flashes, mood, energy, activity, measurements and tests.'}
+            </Text>
           </View>
           <ImportedSleepDetails
             records={entry.sleepImports}

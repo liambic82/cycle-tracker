@@ -58,14 +58,14 @@ test('version 1 and 2 migration leaves sexual-health observations unlogged while
     const legacy = { ...emptyJournal(day), version, entries: { [day]: entry } };
     const snapshot = JSON.stringify(legacy);
     const parsed = parseJournal(legacy);
-    assert.equal(parsed.version, 7);
+    assert.equal(parsed.version, 8);
     assert.deepEqual(parsed.entries[day]?.sexualHealth, emptySexualHealth());
     assert.equal(parsed.entries[day]?.note, 'Legacy note');
     assert.equal(parsed.entries[day]?.flooding, version === 1 ? null : false);
     assert.equal(parsed.entries[day]?.productRecords.length, version === 1 ? 0 : 1);
     assert.equal(JSON.stringify(legacy), snapshot);
   }
-  assert.throws(() => parseJournal({ ...emptyJournal(day), version: 8 }));
+  assert.throws(() => parseJournal({ ...emptyJournal(day), version: 9 }));
   assert.throws(() => parseJournal({ ...emptyJournal(day), entries: { [day]: v2Entry } }));
 });
 
@@ -139,7 +139,7 @@ test('encrypted backups always preserve all observations regardless of readable 
   const legacy = { ...journal, version: 2, entries: { [day]: legacyEntry } };
   const migrated = openVaultWithKey(seal(legacy as unknown as Journal, vault, randomBytes), vault);
   assert.deepEqual(migrated.entries[day]?.sexualHealth, emptySexualHealth());
-  assert.equal(migrated.version, 7);
+  assert.equal(migrated.version, 8);
   vault.key.fill(0);
 });
 
@@ -169,18 +169,18 @@ test('all 16 CSV field combinations export only selected columns and omit dates 
       .map((line) => line.split(',').map((cell) => cell.slice(1, -1)));
     const fields = SEXUAL_HEALTH_FIELDS.filter((field) => include[field]);
     assert.deepEqual(
-      rows[0]!.slice(17),
+      rows[0]!.slice(18),
       fields.map((field) => SEXUAL_HEALTH_LABELS[field]),
     );
     assert.equal(rows.length, fields.length + 3);
     SEXUAL_HEALTH_FIELDS.forEach((field, index) => {
       const row = rows.find((value) => value[0] === `2026-10-0${index + 1}`);
       if (!include[field]) assert.equal(row, undefined);
-      else assert.equal(row![17 + fields.indexOf(field)], rendered[field]);
+      else assert.equal(row![18 + fields.indexOf(field)], rendered[field]);
     });
     const flowOnly = rows.find((row) => row[0] === '2026-10-06')!;
     assert.deepEqual(
-      flowOnly.slice(17),
+      flowOnly.slice(18),
       fields.map(() => ''),
     );
     assert.ok(rows.some((row) => row[0] === '2026-10-05'));
