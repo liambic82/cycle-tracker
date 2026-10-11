@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import {
   evaluatePeriodPolicy,
   summarizePeriodPolicy,
-  type SyntheticSeries,
+  type PeriodPolicySeries,
 } from '../research/period-policy.ts';
 
-const fixture: SyntheticSeries = {
+const fixture: PeriodPolicySeries = {
   name: 'Fictional stable history',
   lengths: Array<number>(12).fill(28),
   review: { enabled: true, context: 'comparable', complete: true },

@@ -4,7 +4,9 @@
 
 Prioritize **next period-start forecasting**. Keep the current experimental median as the reference method while evaluating alternatives outside the app. Treat personal ovulation/phase estimation as a separate research track requiring suitable measurements and reference labels. The current sleep import is insufficient evidence for implementing that feature.
 
-This pass completes an evidence review, dataset-access assessment, evaluation protocol and reproducible synthetic evaluation of the **full production policy**. It does not establish population accuracy, validate predictions for perimenopause, or change preview 0.18.0. No participant records were downloaded, no data agreements were accepted, and no provider was contacted. The research code is not imported by the app.
+This initial pass completes an evidence review, dataset-access assessment, evaluation protocol and reproducible synthetic evaluation of the **full production policy**. It does not establish population accuracy, validate predictions for perimenopause, or change preview 0.18.0. No participant records were downloaded during this initial pass, no data agreements were accepted, and no provider was contacted. The research code is not imported by the app.
+
+The [same-day follow-up](prediction-benchmark.md) adds the normalized benchmark, participant splits and a fixed weighted candidate. It also verifies an openly licensed original Zenodo file and reports aggregate intake findings for 198 menstrual histories. No external forecast has yet been scored. Consult that follow-up for the updated source-access decisions; the candidate assessment below records the initial review.
 
 ## Evidence and applicability
 
@@ -97,7 +99,7 @@ The seven new automated checks cover future-target/observation isolation, cold-s
 ## Development sequence and release gates
 
 1. **Completed here:** evidence/access review, protocol, full-policy synthetic harness and regression checks. Keep the reference algorithm and experimental labeling.
-2. **Next research step:** verify original dataset definitions/reuse, document a data manifest, and build a local adapter with participant-separated splits. Begin with period dates and explicitly label any idealized logging assumption. No personal health records in Git.
+2. **Follow-up underway:** [source provenance/intake and a normalized benchmark with participant-separated splits](prediction-benchmark.md) are now documented and implemented. The source-specific forecast adapter and its conditional analysis plan remain next. Begin with period dates and explicitly label any idealized logging assumption. No personal health records in Git.
 3. **Then:** compare the frozen baseline and candidate; measure error, availability and uncertainty on untouched people/time. Resolve the perimenopause evidence gap rather than removing the withholding rule to claim support.
 4. **Before broader app release:** independent clinical/editorial assessment of intended use, wording and quantitative acceptance criteria; satisfactory external/prospective evidence; a reviewable UI proposal before any new prediction overlays or visual changes. Report failure or insufficient evidence as a valid research outcome.
 5. **Separate biomarker track:** evaluate the measurement pathway and ovulation reference labels before implementation. Distinguish retrospective detection, prospective prediction and fertile-window estimation. Our existing Health Connect integration reads sleep only; adding temperature or other signals needs source availability, permission, measurement and device validation. Imported sleep alone receives no phase label from this research.

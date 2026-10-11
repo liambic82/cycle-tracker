@@ -1,4 +1,4 @@
-// Research-only synthetic evaluation. No app imports this module and no personal data is read.
+// Research-only historical evaluation. No app imports this module; it performs no file I/O.
 import { addDays, daysBetween, validDay, type Day } from '../src/domain/dates.ts';
 import { emptyDailyDetails, type DailyDetails } from '../src/domain/dailyDetails.ts';
 import { emptyJournal, updateEntry } from '../src/domain/journal.ts';
@@ -10,7 +10,7 @@ import {
   type PeriodEstimateResult,
 } from '../src/domain/periodEstimate.ts';
 
-export type SyntheticSeries = {
+export type PeriodPolicySeries = {
   name: string;
   lengths: readonly number[];
   review: EstimateReview;
@@ -33,7 +33,7 @@ export type PolicyRow = {
 // This idealized replay assumes explicit starts and observations were logged on their dates.
 // The target and all later starts are withheld. Real retrospective exports cannot prove this
 // assumption: entry dates alone do not establish when a user entered or corrected a record.
-export function evaluatePeriodPolicy(series: SyntheticSeries, issueOffsetDays = 0): PolicyRow[] {
+export function evaluatePeriodPolicy(series: PeriodPolicySeries, issueOffsetDays = 0): PolicyRow[] {
   const first = series.firstStart ?? '2025-01-01';
   if (
     !validDay(first) ||
@@ -44,14 +44,17 @@ export function evaluatePeriodPolicy(series: SyntheticSeries, issueOffsetDays = 
     series.lengths.some((length) => !Number.isInteger(length) || length <= 0) ||
     series.observations?.some((o) => !Number.isInteger(o.afterDays) || o.afterDays < 0)
   )
-    throw new Error('Invalid synthetic series.');
+    throw new Error('Invalid research series.');
 
   const starts = [first];
   for (const length of series.lengths) starts.push(addDays(starts.at(-1)!, length));
   const observedThrough = addDays(starts.at(-1)!, series.finalFollowUpDays);
   if (![...starts, observedThrough].every(validDay)) throw new Error('Unsupported study dates.');
 
+  let startJournal = emptyJournal(first);
   return starts.map((anchor, index): PolicyRow => {
+    // Extend only the known prefix; future starts never enter this journal.
+    startJournal = updateEntry(startJournal, anchor, { flow: 'medium', periodStart: true });
     const issuedOn = addDays(anchor, issueOffsetDays);
     if (!validDay(issuedOn)) throw new Error('Unsupported issue date.');
     const target = starts[index + 1] ?? null;
@@ -60,9 +63,7 @@ export function evaluatePeriodPolicy(series: SyntheticSeries, issueOffsetDays = 
     if (issuedOn > observedThrough)
       return { index, anchor, issuedOn, target, outcome: 'outside-follow-up', result: null };
 
-    let journal = emptyJournal(issuedOn);
-    for (const start of starts.slice(0, index + 1))
-      journal = updateEntry(journal, start, { flow: 'medium', periodStart: true });
+    let journal = startJournal;
     for (const observation of series.observations ?? []) {
       const day = addDays(first, observation.afterDays);
       if (day > issuedOn) continue;

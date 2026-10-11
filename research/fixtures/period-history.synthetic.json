@@ -1,0 +1,107 @@
+{
+  "protocol": "period-history-v1",
+  "provenance": {
+    "datasetId": "fictional-period-history-v1",
+    "kind": "synthetic",
+    "sourceUrl": "https://github.com/liambic82/cycle-tracker/blob/master/research/fixtures/period-history.synthetic.json",
+    "sourceSha256": null,
+    "rightsReference": "https://github.com/liambic82/cycle-tracker/blob/master/docs/prediction-benchmark.md",
+    "loggingAssumption": "same-day-assumed"
+  },
+  "participants": [
+    {
+      "id": "fictional-01",
+      "segments": [
+        {
+          "startDays": [0, 28, 56, 84, 112, 140, 168, 196, 224],
+          "observedThrough": 264,
+          "context": "comparable",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "fictional-02",
+      "segments": [
+        {
+          "startDays": [0, 24, 49, 75, 102, 130, 159, 189, 220],
+          "observedThrough": 260,
+          "context": "comparable",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "fictional-03",
+      "segments": [
+        {
+          "startDays": [0, 28, 56, 84, 112, 140, 168, 263],
+          "observedThrough": 303,
+          "context": "comparable",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "fictional-04",
+      "segments": [
+        {
+          "startDays": [0, 28, 56, 84],
+          "observedThrough": 100,
+          "context": "comparable",
+          "complete": true
+        },
+        {
+          "startDays": [400, 428, 456, 484],
+          "observedThrough": 524,
+          "context": "comparable",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "fictional-05",
+      "segments": [
+        {
+          "startDays": [0, 28, 56, 84, 112, 140, 168, 196],
+          "observedThrough": 236,
+          "context": "unknown",
+          "complete": false
+        }
+      ]
+    },
+    {
+      "id": "fictional-06",
+      "segments": [
+        {
+          "startDays": [0, 28, 56, 84, 112, 140, 168, 196],
+          "observedThrough": 236,
+          "context": "changing",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "fictional-07",
+      "segments": [
+        {
+          "startDays": [0, 20, 65, 90, 150, 172, 220, 244, 299],
+          "observedThrough": 339,
+          "context": "comparable",
+          "complete": true
+        }
+      ]
+    },
+    {
+      "id": "fictional-08",
+      "segments": [
+        {
+          "startDays": [0, 29, 59, 88, 118, 147, 177, 206, 236],
+          "observedThrough": 276,
+          "context": "comparable",
+          "complete": true
+        }
+      ]
+    }
+  ]
+}

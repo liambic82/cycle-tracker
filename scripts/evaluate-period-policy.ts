@@ -2,12 +2,12 @@ import { ESTIMATE_RULES, type EstimateReview } from '../src/domain/periodEstimat
 import {
   evaluatePeriodPolicy,
   summarizePeriodPolicy,
-  type SyntheticSeries,
+  type PeriodPolicySeries,
 } from '../research/period-policy.ts';
 
 const review: EstimateReview = { enabled: true, context: 'comparable', complete: true };
 const stable = Array<number>(12).fill(28);
-const cases: (Omit<SyntheticSeries, 'review' | 'finalFollowUpDays'> & {
+const cases: (Omit<PeriodPolicySeries, 'review' | 'finalFollowUpDays'> & {
   review?: EstimateReview;
 })[] = [
   { name: 'Stable 28', lengths: stable },
@@ -31,7 +31,7 @@ const cases: (Omit<SyntheticSeries, 'review' | 'finalFollowUpDays'> & {
   },
   { name: 'Expired long cycle', lengths: [...stable.slice(0, 6), 40] },
 ];
-const scenarios: SyntheticSeries[] = cases.map((scenario) => ({
+const scenarios: PeriodPolicySeries[] = cases.map((scenario) => ({
   review,
   finalFollowUpDays: 40,
   ...scenario,

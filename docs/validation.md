@@ -1,5 +1,15 @@
 # Validation record
 
+## Prediction benchmark and dataset intake — October 11, 2026
+
+The owner requested the next research step. The [benchmark/intake record](prediction-benchmark.md) documents the strict input contract, fixed participant assignment, weighted comparison, original-file provenance and aggregate source findings.
+
+- `pnpm check`: TypeScript and **211/211 tests** passed. Twelve added checks cover normalization failures, split isolation/stability, observation-segment gaps, a 500-start history, unknown/empty results, the weighted comparator, aggregate CLI output, and source-intake date/duplicate/order handling. Existing tests still verify chronological target/observation isolation. The pnpm store workaround skipped no checks.
+- `pnpm research:audit-zenodo`: source size, repository MD5 and local SHA-256 matched. The original contains 15,650 non-birth rows for 198 participants, including four exact duplicate excess rows and 19 descending within-person date transitions. Raw records remain under ignored `research/private-data`, also excluded from formatting. No normalization or forecast scoring was performed on those records.
+- `pnpm research:benchmark` exercised development/calibration day-1 and test day-36 paths with the committed eight-person fictional fixture. The split names do not imply actual statistical calibration or external testing. No model was fitted and no held-out external forecast was inspected.
+- Code changes are research-only: prefix replay now extends known starts incrementally, and long-history coverage verifies the bounded recent production window. Production policy, UI, native code, vault and preview version are unchanged. No new APK or device-validation claim accompanies this work.
+- Source-specific context/segmentation rules, external evaluation, participant-cluster uncertainty, subgroup/quantile reporting and independent clinical/editorial review remain pending.
+
 ## Prediction research, production method unchanged — October 11, 2026
 
 The owner selected prediction research. The [research record](prediction-research-2026-10-11.md) documents primary evidence, dataset access/limitations, a proposed validation contract, and a reproducible synthetic evaluation of the full existing policy.
