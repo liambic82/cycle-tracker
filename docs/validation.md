@@ -1,5 +1,15 @@
 # Validation record
 
+## Controlled prediction comparisons — October 11, 2026
+
+The owner requested implementation. The runner and metric definitions were committed as `e4abfd0` before the first external development run. [Methods/results](prediction-controlled-comparisons.md) and the aggregate-only [report](../research/results/zenodo-development-comparison-v1.json) record the execution.
+
+- `pnpm check`: TypeScript and **229/229 tests** passed. Ten new checks verify hand-computed stable/drifting/extreme examples, paired participant bootstrap and undefined replicates, error quantiles/signs, PRNG sequence, order invariance, participant-group isolation, annotation isolation, checksum failures and held-out CLI refusal. Existing domain/storage/research tests remain passing; the pnpm store workaround skipped no checks.
+- `pnpm research:compare-zenodo` verified the prepared development inputs and evaluated 128 people, with 8,162/10,956 conditional offers and 8,068 known targets. Median/weighted MAEs are 4.8618/4.9243 days; the paired weighted-minus-median contrast is +0.06247 days (95% participant-bootstrap interval +0.04158 to +0.08114). The existing benchmark's separate aggregation matched all five MAEs and offered/scored counts under the same assumptions; it shares the same production policy and is not an independent clinical validation.
+- A second run returned `verified-existing` with identical report bytes. Report SHA-256: `a3e04dcba11e28d9378757a6a9bd920930d33726e3bee0b7a827a69de4d0929d`. All 2,000 primary bootstrap replicates were defined. No participant IDs, dates or individual rows are in the committed report.
+- Very long recorded gaps remain scored. The median's largest error is 3,893 days; a post-run diagnostic counted 39 scored target intervals over 90 days, including 24 over 365. These are not verified physiological cycle lengths. No target exclusions, model settings or production rules were changed after results were observed.
+- Calibration/final-test selection is rejected before file access. Those forecasts remain unscored. Source eligibility is still unknown, with a labeled counterfactual used only in memory. No production/UI/native/vault change, version bump, APK or hardware-validation claim accompanies this research step.
+
 ## Prediction record preparation — October 11, 2026
 
 The owner requested preparation for controlled comparisons. The [preparation record](prediction-record-preparation.md), [analysis plan](../research/protocols/zenodo-period-comparison-v1.json) and aggregate-only [manifest](../research/manifests/zenodo-preparation-v1.json) record the completed work.

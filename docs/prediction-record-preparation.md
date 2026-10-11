@@ -1,6 +1,6 @@
 # Prepared records for controlled prediction comparisons
 
-October 11, 2026. The original [Zenodo source assessed during intake](prediction-benchmark.md) has now been transformed into reproducible local comparison inputs. **15,646 distinct non-birth records from 198 participants are prepared. No external forecasts have been scored.** Preview 0.18.0 and the production prediction policy are unchanged.
+October 11, 2026. The original [Zenodo source assessed during intake](prediction-benchmark.md) has now been transformed into reproducible local comparison inputs. **15,646 distinct non-birth records from 198 participants are prepared.** No external forecasts were scored during preparation. The subsequent [controlled development comparison](prediction-controlled-comparisons.md) now records the first results; calibration/final-test forecasts remain unscored. Preview 0.18.0 and the production prediction policy are unchanged.
 
 ## Reproducible preparation
 
@@ -63,7 +63,7 @@ The [versioned analysis plan](../research/protocols/zenodo-period-comparison-v1.
 
 Primary issuance is immediately after a recorded start, assuming same-day logging. At each issue time, only earlier completed intervals are available. The target's eventual length and retrospective annotations cannot influence inclusion. The production median and fixed weighted candidate use identical reference-policy offered/scorable cases, alongside rounded mean, last interval and fixed 28. Report the paired MAE difference (weighted minus median) as the primary contrast, with error quantiles, availability, missing outcomes and participant-cluster uncertainty. Historical spread is not a calibrated probability interval.
 
-The plan fixes 2,000 paired participant bootstrap replicates and a reproducible seed, along with descriptive source-cohort strata. The comparison runner and those reporting additions are **next**, not implemented or executed by the preparation command. Start on development participants; freeze the evaluated implementation before calibration and final test. No thresholds, weights, exclusions or subgroup definitions may be chosen from final-test performance. Any later plan change must be recorded with its timing and rationale.
+The plan fixes 2,000 paired participant bootstrap replicates and a reproducible seed, along with descriptive source-cohort strata. The [comparison runner and development reporting](prediction-controlled-comparisons.md) are implemented separately; the preparation command never performs scoring. Review the frozen implementation before calibration and final test. No thresholds, weights, exclusions or subgroup definitions may be chosen from final-test performance. Any later plan change must be recorded with its timing and rationale.
 
 This cohort cannot establish prospective accuracy, perimenopause performance, full-policy eligibility, ovulation or clinical readiness. No production model change or release decision follows from preparing these records.
 

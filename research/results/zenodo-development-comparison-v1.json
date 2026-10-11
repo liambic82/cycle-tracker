@@ -1,0 +1,744 @@
+{
+  "warning": "Conditional dates-only development research; unknown source eligibility is assumed solely for this analysis. Not prospective or clinical validation. Final-test and calibration forecasts remain unscored.",
+  "provenance": {
+    "planId": "zenodo-period-comparison-v1",
+    "planSha256Lf": "8ca6a1cbf3f26788ca70cb37b9ee181da6f72b729c71b4361ba617bbb8d2f12f",
+    "preparationManifestSha256Lf": "e0e28e2ee6f09286b45fea6879edc138dd6e79ed2b77522084c22b50197e3a8b",
+    "source": {
+      "url": "https://zenodo.org/records/15598359",
+      "metadataUrl": "https://zenodo.org/api/records/15598359",
+      "license": "CC-BY-4.0",
+      "file": "menstruationdata.csv",
+      "bytes": 887713,
+      "md5": "1409abf2d80a62a26922ae62a487f5c9",
+      "sha256": "7712b11290d2d34384eaa3bca02739067a0dd6ddc8bd90c6fe91c545efffe28f"
+    },
+    "attribution": "Förster, Charlotte, and Mitesser, Oliver (2025), Zenodo dataset v1, DOI 10.5281/zenodo.15598359, CC BY 4.0.",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "datasetSha256": "2acbe17e216b644843f3e14f1f06c191d83ce18fcb480c381059441728be35e6",
+    "auditSha256": "88e4cda03c2500ca4372eaf0788a1a1fe64f2548376ce6abd2245e5fa288039d",
+    "codeHashesLf": {
+      "research/controlled-comparison.ts": "e86ff3c9e2c48d7aa51325f0f6c51f7a4a166298717034f188ec8f9d2a04f53f",
+      "research/controlled-input.mjs": "42fa4d2b8b8fafada310145bfdf1a94965857a8813900c15be341668bf47c948",
+      "research/period-policy.ts": "e5e19b9207adbb04a6f68d18220a96d81ea1750e0c7ceb0ffec1a8b0efc4d2a7",
+      "research/period-dataset.ts": "8c4ec77a76b07e89f29d9c57597420c50c73521a5b36f48114233bdf7b52692b",
+      "research/research-files.mjs": "e3f34feb177f557ad8005602f149006d50e302eafc63771286ef1e350d917396",
+      "scripts/compare-zenodo-periods.mjs": "546c0c577e4b1101d16315a2fcd59ebaed1222918f2fae86904c0bebf8a7c85c",
+      "package.json": "f45f3f192dd5c1d486ee914fc8084cf328ce945d9c03f40ed2101f9fc0cae4fc",
+      "pnpm-lock.yaml": "07e34a3fc9b04dbfdf85225790a128252cfa6782d8f0d53c2404e2b5f079bfe9",
+      "src/domain/appearance.ts": "a7be0e7e4a07c56033db2c2c7a2825bad19f7cf9cfbd671b8bdb0f016b43562f",
+      "src/domain/cycleContext.ts": "bcece7597b6269e889e1d728c254be45693c266a397a9d40d597a6ed8ec5ba3d",
+      "src/domain/dailyDetails.ts": "9964d2c9c2754c4e436e8dd4731efaf5e13a056e526f468c0db6a76533c4823d",
+      "src/domain/dates.ts": "bcdd3cdd4f9da8546d389ca1c892d2119822bb8ef34cb439b55fadb0d854f35a",
+      "src/domain/deletion.ts": "f43c338f4db3a56cae1179eee36729d80efe11e001d415802e535ad84618cfbf",
+      "src/domain/flowDetails.ts": "c3a7327a36023ab16068df63324770f0182729dd176777075110ef5718d865c6",
+      "src/domain/history.ts": "d9887472b46e584893d2b4a429a95ccbe336bd8d470770be320550cf53cfe03e",
+      "src/domain/journal.ts": "f6854df0f3e1eb4d945dff7f038b89679f0cdedac98f6d8c92ea03eb69e5a90a",
+      "src/domain/journalImport.ts": "7d38650fc43fc20ed322ed459d9b94572823241f1097ace443ac360f57649ac2",
+      "src/domain/keyDerivation.ts": "91aea18ba382410490ce5845b0f22af881be35926ee4bc9bd682557ef8150f2e",
+      "src/domain/medicalRecords.ts": "2d28a087b5098a7ad7d2e1ba41b4a986f70a6a8b2561ff1e6a0fd758d0f84046",
+      "src/domain/medicationActions.ts": "fa165f33b6eda75afdc6e6f6fc65d98d5bf8da9e468c31820711d3c06101f03e",
+      "src/domain/medications.ts": "c5203c91cb0e0e65a26ec76af41d42fdc71e5f08bdfcfd6edaccb1424051ce64",
+      "src/domain/periodEstimate.ts": "b048ee7833677b11f5f3aab102c92fd17e827eb363cfc77740862e12d6c9d268",
+      "src/domain/personalImage.ts": "12c3bd54a5fc0bbd92baad0b8f2f559b41c63d59e72856e8c264ecf28b3ffe25",
+      "src/domain/personalReminders.ts": "d939bd519c2c5d0089320cbf4fda279ce02317dee32f1163532eb9681ca196da",
+      "src/domain/reminders.ts": "bc1102fd3f0454bf6bae14bc2549735fbbb3f48ae7c638a33da2ff29535e4515",
+      "src/domain/report.ts": "2304c84a8346cf16f0fafde1c241dd16657aaa224948ba78d1f9a7e1b46ca5db",
+      "src/domain/reportPdf.ts": "3d370345ad77b1d49dbe94fa482f7a0c7c529b390596c60b71ec3ed138cd2e07",
+      "src/domain/sexualHealth.ts": "5132fc899e58e5451370b735e4edc75786796b60c1251dd8ecee6eebf72aca8c",
+      "src/domain/sleep.ts": "2661df1b799d482929e84106ea064a064e42fb2ccd6cf75de9d635288ff4fe27",
+      "src/domain/sleepImport.ts": "28db34a52a29bc4b2a66eefa3b0f22eba5ca40a179b4969365efe33bc68be7dc",
+      "src/domain/symptomSeverity.ts": "d297b9d0f61b7c9ff934c0e7d362dbb27b194d2458e56ad07ad427e5e85f4c6c",
+      "src/domain/symptoms.ts": "8cf95b63ee11d73368c6bd56552f12466e5e2aff504b8af4bdbe490ab9ac7d33",
+      "src/domain/vault.ts": "7e35b672554ce8a90175b3a33319c4ddd82096911301a9662b02bb2247c3b143"
+    },
+    "nodeVersion": "v24.19.0",
+    "productionRules": {
+      "historyDays": 365,
+      "intervals": 6,
+      "trainingMinimum": 3,
+      "shortest": 14,
+      "longest": 90,
+      "maximumSpread": 14,
+      "maximumMeanError": 7
+    }
+  },
+  "version": "conditional-period-comparison-v1",
+  "split": "development",
+  "issueOffsetDays": 0,
+  "analysis": "conditional-calendar-policy",
+  "assumptions": {
+    "sourceContext": "unknown",
+    "sourceCompleteness": "not established",
+    "evaluationOnly": {
+      "enabled": true,
+      "context": "comparable",
+      "complete": true
+    },
+    "logging": "same-day assumed",
+    "birthAnnotationsUsedForEligibility": false
+  },
+  "overall": {
+    "participants": 128,
+    "peopleWithForecast": 126,
+    "peopleWithoutForecast": 2,
+    "peopleWithScoredForecast": 126,
+    "opportunities": 10956,
+    "observed": 10828,
+    "censored": 128,
+    "availability": {
+      "count": 8162,
+      "denominator": 10956,
+      "fraction": 0.7449799196787149
+    },
+    "offeredCensored": 94,
+    "scored": 8068,
+    "alreadyEnded": 0,
+    "outsideFollowUp": 0,
+    "statuses": {
+      "insufficient": 1049,
+      "poor-fit": 20,
+      "ready": 8162,
+      "unsupported": 222,
+      "variable": 1503
+    },
+    "methods": {
+      "median": {
+        "scored": 8068,
+        "meanAbsoluteError": 4.861799702528508,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 5,
+        "meanSignedError": -2.704635597421914,
+        "largestError": 3893,
+        "within1": {
+          "count": 4029,
+          "denominator": 8068,
+          "fraction": 0.4993802677243431
+        },
+        "within3": {
+          "count": 6670,
+          "denominator": 8068,
+          "fraction": 0.8267228557263262
+        },
+        "within7": {
+          "count": 7699,
+          "denominator": 8068,
+          "fraction": 0.9542637580565195
+        }
+      },
+      "mean": {
+        "scored": 8068,
+        "meanAbsoluteError": 4.861923648983639,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 5,
+        "meanSignedError": -2.747397124442241,
+        "largestError": 3891,
+        "within1": {
+          "count": 3994,
+          "denominator": 8068,
+          "fraction": 0.49504214179474465
+        },
+        "within3": {
+          "count": 6668,
+          "denominator": 8068,
+          "fraction": 0.8264749628160635
+        },
+        "within7": {
+          "count": 7703,
+          "denominator": 8068,
+          "fraction": 0.9547595438770451
+        }
+      },
+      "last": {
+        "scored": 8068,
+        "meanAbsoluteError": 5.441249380267724,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 6,
+        "meanSignedError": -2.8743182944967773,
+        "largestError": 3887,
+        "within1": {
+          "count": 3268,
+          "denominator": 8068,
+          "fraction": 0.40505701536936045
+        },
+        "within3": {
+          "count": 5921,
+          "denominator": 8068,
+          "fraction": 0.7338869608329202
+        },
+        "within7": {
+          "count": 7505,
+          "denominator": 8068,
+          "fraction": 0.9302181457610312
+        }
+      },
+      "fixed28": {
+        "scored": 8068,
+        "meanAbsoluteError": 5.311353495290034,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 6,
+        "meanSignedError": -2.829945463559742,
+        "largestError": 3892,
+        "within1": {
+          "count": 3202,
+          "denominator": 8068,
+          "fraction": 0.39687654933068917
+        },
+        "within3": {
+          "count": 6132,
+          "denominator": 8068,
+          "fraction": 0.7600396628656421
+        },
+        "within7": {
+          "count": 7605,
+          "denominator": 8068,
+          "fraction": 0.9426127912741695
+        }
+      },
+      "weighted": {
+        "scored": 8068,
+        "meanAbsoluteError": 4.9242687159147245,
+        "medianAbsoluteError": 2,
+        "p90AbsoluteError": 5,
+        "meanSignedError": -2.9361675756073375,
+        "largestError": 3887,
+        "within1": {
+          "count": 3962,
+          "denominator": 8068,
+          "fraction": 0.4910758552305404
+        },
+        "within3": {
+          "count": 6573,
+          "denominator": 8068,
+          "fraction": 0.814700049578582
+        },
+        "within7": {
+          "count": 7675,
+          "denominator": 8068,
+          "fraction": 0.9512890431333664
+        }
+      }
+    },
+    "weightedMinusMedian": 0.06246901338621715,
+    "historicalSpread": {
+      "coverage": {
+        "count": 6191,
+        "denominator": 8068,
+        "fraction": 0.7673525037183937
+      },
+      "meanWidthDays": 5.594094584660622,
+      "widthDenominator": 8162
+    }
+  },
+  "uncertainty": {
+    "method": "paired participant-cluster percentile bootstrap",
+    "replicates": 2000,
+    "seed": 20261011,
+    "rng": "xorshift32",
+    "intervalLevel": 0.95,
+    "endpointQuantile": "linear type 7",
+    "sampledParticipantsPerReplicate": 128,
+    "meanAbsoluteError": {
+      "median": {
+        "lower": 3.6882512908735072,
+        "upper": 6.162828176818771,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "mean": {
+        "lower": 3.691226475403198,
+        "upper": 6.180922215086922,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "last": {
+        "lower": 4.27543741319038,
+        "upper": 6.731280829110831,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "fixed28": {
+        "lower": 4.152673246666538,
+        "upper": 6.627218623295712,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      },
+      "weighted": {
+        "lower": 3.747318700814828,
+        "upper": 6.2260875907812405,
+        "definedReplicates": 2000,
+        "undefinedReplicates": 0
+      }
+    },
+    "weightedMinusMedian": {
+      "lower": 0.0415819173761985,
+      "upper": 0.08113938597392327,
+      "definedReplicates": 2000,
+      "undefinedReplicates": 0
+    },
+    "availability": {
+      "lower": 0.7080792408964027,
+      "upper": 0.7776115977517568,
+      "definedReplicates": 2000,
+      "undefinedReplicates": 0
+    },
+    "historicalSpreadCoverage": {
+      "lower": 0.7585219426975832,
+      "upper": 0.7755303266845527,
+      "definedReplicates": 2000,
+      "undefinedReplicates": 0
+    }
+  },
+  "sourceStrata": {
+    "old-only": {
+      "participants": 17,
+      "peopleWithForecast": 17,
+      "peopleWithoutForecast": 0,
+      "peopleWithScoredForecast": 17,
+      "opportunities": 2915,
+      "observed": 2898,
+      "censored": 17,
+      "availability": {
+        "count": 2153,
+        "denominator": 2915,
+        "fraction": 0.7385934819897084
+      },
+      "offeredCensored": 6,
+      "scored": 2147,
+      "alreadyEnded": 0,
+      "outsideFollowUp": 0,
+      "statuses": {
+        "insufficient": 183,
+        "poor-fit": 10,
+        "ready": 2153,
+        "unsupported": 60,
+        "variable": 509
+      },
+      "methods": {
+        "median": {
+          "scored": 2147,
+          "meanAbsoluteError": 4.158826269212855,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -1.9566837447601304,
+          "largestError": 1285,
+          "within1": {
+            "count": 1062,
+            "denominator": 2147,
+            "fraction": 0.49464368886818816
+          },
+          "within3": {
+            "count": 1751,
+            "denominator": 2147,
+            "fraction": 0.8155565905915231
+          },
+          "within7": {
+            "count": 2028,
+            "denominator": 2147,
+            "fraction": 0.9445738239403819
+          }
+        },
+        "mean": {
+          "scored": 2147,
+          "meanAbsoluteError": 4.139729855612482,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -2.0419189566837446,
+          "largestError": 1284,
+          "within1": {
+            "count": 1066,
+            "denominator": 2147,
+            "fraction": 0.49650675360968793
+          },
+          "within3": {
+            "count": 1747,
+            "denominator": 2147,
+            "fraction": 0.8136935258500233
+          },
+          "within7": {
+            "count": 2031,
+            "denominator": 2147,
+            "fraction": 0.9459711224965067
+          }
+        },
+        "last": {
+          "scored": 2147,
+          "meanAbsoluteError": 4.7368421052631575,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 7,
+          "meanSignedError": -2.1555659059152306,
+          "largestError": 1285,
+          "within1": {
+            "count": 878,
+            "denominator": 2147,
+            "fraction": 0.40894271075919886
+          },
+          "within3": {
+            "count": 1550,
+            "denominator": 2147,
+            "fraction": 0.7219375873311598
+          },
+          "within7": {
+            "count": 1982,
+            "denominator": 2147,
+            "fraction": 0.9231485794131346
+          }
+        },
+        "fixed28": {
+          "scored": 2147,
+          "meanAbsoluteError": 4.620866325104798,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 6,
+          "meanSignedError": -1.5095482068001862,
+          "largestError": 1282,
+          "within1": {
+            "count": 810,
+            "denominator": 2147,
+            "fraction": 0.37727061015370283
+          },
+          "within3": {
+            "count": 1575,
+            "denominator": 2147,
+            "fraction": 0.7335817419655333
+          },
+          "within7": {
+            "count": 2014,
+            "denominator": 2147,
+            "fraction": 0.9380530973451328
+          }
+        },
+        "weighted": {
+          "scored": 2147,
+          "meanAbsoluteError": 4.230088495575221,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -2.207731718677224,
+          "largestError": 1285,
+          "within1": {
+            "count": 1056,
+            "denominator": 2147,
+            "fraction": 0.4918490917559385
+          },
+          "within3": {
+            "count": 1725,
+            "denominator": 2147,
+            "fraction": 0.8034466697717746
+          },
+          "within7": {
+            "count": 2018,
+            "denominator": 2147,
+            "fraction": 0.9399161620866325
+          }
+        }
+      },
+      "weightedMinusMedian": 0.0712622263623661,
+      "historicalSpread": {
+        "coverage": {
+          "count": 1629,
+          "denominator": 2147,
+          "fraction": 0.7587331159757802
+        },
+        "meanWidthDays": 5.55829075708314,
+        "widthDenominator": 2153
+      }
+    },
+    "new-only": {
+      "participants": 111,
+      "peopleWithForecast": 109,
+      "peopleWithoutForecast": 2,
+      "peopleWithScoredForecast": 109,
+      "opportunities": 8041,
+      "observed": 7930,
+      "censored": 111,
+      "availability": {
+        "count": 6009,
+        "denominator": 8041,
+        "fraction": 0.7472951125481905
+      },
+      "offeredCensored": 88,
+      "scored": 5921,
+      "alreadyEnded": 0,
+      "outsideFollowUp": 0,
+      "statuses": {
+        "insufficient": 866,
+        "poor-fit": 10,
+        "ready": 6009,
+        "unsupported": 162,
+        "variable": 994
+      },
+      "methods": {
+        "median": {
+          "scored": 5921,
+          "meanAbsoluteError": 5.116703259584529,
+          "medianAbsoluteError": 1,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -2.9758486742104373,
+          "largestError": 3893,
+          "within1": {
+            "count": 2967,
+            "denominator": 5921,
+            "fraction": 0.5010977875358892
+          },
+          "within3": {
+            "count": 4919,
+            "denominator": 5921,
+            "fraction": 0.8307718290829251
+          },
+          "within7": {
+            "count": 5671,
+            "denominator": 5921,
+            "fraction": 0.9577774024657997
+          }
+        },
+        "mean": {
+          "scored": 5921,
+          "meanAbsoluteError": 5.123796655970275,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -3.003208917412599,
+          "largestError": 3891,
+          "within1": {
+            "count": 2928,
+            "denominator": 5921,
+            "fraction": 0.494511062320554
+          },
+          "within3": {
+            "count": 4921,
+            "denominator": 5921,
+            "fraction": 0.8311096098631988
+          },
+          "within7": {
+            "count": 5672,
+            "denominator": 5921,
+            "fraction": 0.9579462928559365
+          }
+        },
+        "last": {
+          "scored": 5921,
+          "meanAbsoluteError": 5.6966728593143054,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 6,
+          "meanSignedError": -3.134943421719304,
+          "largestError": 3887,
+          "within1": {
+            "count": 2390,
+            "denominator": 5921,
+            "fraction": 0.4036480324269549
+          },
+          "within3": {
+            "count": 4371,
+            "denominator": 5921,
+            "fraction": 0.7382198952879581
+          },
+          "within7": {
+            "count": 5523,
+            "denominator": 5921,
+            "fraction": 0.9327816247255531
+          }
+        },
+        "fixed28": {
+          "scored": 5921,
+          "meanAbsoluteError": 5.561729437595001,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 6,
+          "meanSignedError": -3.3087316331700727,
+          "largestError": 3892,
+          "within1": {
+            "count": 2392,
+            "denominator": 5921,
+            "fraction": 0.4039858132072285
+          },
+          "within3": {
+            "count": 4557,
+            "denominator": 5921,
+            "fraction": 0.7696335078534031
+          },
+          "within7": {
+            "count": 5591,
+            "denominator": 5921,
+            "fraction": 0.9442661712548556
+          }
+        },
+        "weighted": {
+          "scored": 5921,
+          "meanAbsoluteError": 5.175983786522547,
+          "medianAbsoluteError": 2,
+          "p90AbsoluteError": 5,
+          "meanSignedError": -3.2003040027022465,
+          "largestError": 3887,
+          "within1": {
+            "count": 2906,
+            "denominator": 5921,
+            "fraction": 0.49079547373754434
+          },
+          "within3": {
+            "count": 4848,
+            "denominator": 5921,
+            "fraction": 0.8187806113832123
+          },
+          "within7": {
+            "count": 5657,
+            "denominator": 5921,
+            "fraction": 0.9554129370038845
+          }
+        }
+      },
+      "weightedMinusMedian": 0.059280526938017226,
+      "historicalSpread": {
+        "coverage": {
+          "count": 4562,
+          "denominator": 5921,
+          "fraction": 0.7704779598040872
+        },
+        "meanWidthDays": 5.606922948909968,
+        "widthDenominator": 6009
+      }
+    },
+    "mixed": {
+      "participants": 0,
+      "peopleWithForecast": 0,
+      "peopleWithoutForecast": 0,
+      "peopleWithScoredForecast": 0,
+      "opportunities": 0,
+      "observed": 0,
+      "censored": 0,
+      "availability": {
+        "count": 0,
+        "denominator": 0,
+        "fraction": null
+      },
+      "offeredCensored": 0,
+      "scored": 0,
+      "alreadyEnded": 0,
+      "outsideFollowUp": 0,
+      "statuses": {},
+      "methods": {
+        "median": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "mean": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "last": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "fixed28": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        },
+        "weighted": {
+          "scored": 0,
+          "meanAbsoluteError": null,
+          "medianAbsoluteError": null,
+          "p90AbsoluteError": null,
+          "meanSignedError": null,
+          "largestError": null,
+          "within1": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within3": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          },
+          "within7": {
+            "count": 0,
+            "denominator": 0,
+            "fraction": null
+          }
+        }
+      },
+      "weightedMinusMedian": null,
+      "historicalSpread": {
+        "coverage": {
+          "count": 0,
+          "denominator": 0,
+          "fraction": null
+        },
+        "meanWidthDays": null,
+        "widthDenominator": 0
+      }
+    }
+  }
+}

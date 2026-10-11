@@ -38,4 +38,28 @@ Only reviewed aggregate results may be copied into the repository. All raw/prepa
 
 TypeScript and **229/229 tests** pass. Ten new checks cover hand-calculated stable/drifting histories, retained extreme targets, quantile/sign/denominator definitions, paired participant resampling, empty/no-forecast cases, the unsigned xorshift sequence, order invariance, mixed-group rejection, audit-annotation isolation, checksum failures and rejection of held-out CLI selection. Existing chronological leakage and preparation checks remain in place. Test records are fictional.
 
-The implementation and this metric specification are committed before the first external development run. Development results will be recorded separately after that run. Calibration and final-test forecasts remain unscored; no production model change or clinical release is authorized by this analysis.
+The implementation and this metric specification were committed as `e4abfd0` before the first external development run. Calibration and final-test forecasts remain unscored; no production model change or clinical release is authorized by this analysis.
+
+## First development results
+
+The [aggregate report](../research/results/zenodo-development-comparison-v1.json) was generated after the implementation commit and reproduced byte for byte on a second run. Exact report SHA-256: `a3e04dcba11e28d9378757a6a9bd920930d33726e3bee0b7a827a69de4d0929d`. The existing benchmark's separate aggregation matched all five MAEs and offered/scored counts under the same explicit in-memory context assumption. Both paths share the production policy; this is an implementation cross-check, not independent clinical validation.
+
+There were **128 development participants and 10,956 issue opportunities**. The conditional policy offered 8,162 forecasts (74.50%); 8,068 had a subsequent recorded start and 94 remained censored. Across all opportunities there were 10,828 observed and 128 unknown targets. Two participants never received a forecast; 126 had scored forecasts. Withholding counts were 1,049 insufficient-history, 1,503 variable-history, 222 unsupported-history and 20 poor-fit cases. These are numeric-policy states under assumed eligibility, not a measurement of actual user eligibility.
+
+| Method                | MAE, days | Bootstrap interval for MAE | Median absolute error | P90 absolute error | Within ±3 days |
+| --------------------- | --------: | -------------------------- | --------------------: | -----------------: | -------------: |
+| Production median     |     4.862 | 3.688–6.163                |                     2 |                  5 |         82.67% |
+| Rounded mean          |     4.862 | 3.691–6.181                |                     2 |                  5 |         82.65% |
+| Last interval         |     5.441 | 4.275–6.731                |                     2 |                  6 |         73.39% |
+| Fixed 28              |     5.311 | 4.153–6.627                |                     2 |                  6 |         76.00% |
+| Fixed weighted median |     4.924 | 3.747–6.226                |                     2 |                  5 |         81.47% |
+
+All methods use the same 8,068 scored cases. The paired primary contrast, **weighted minus median MAE, is +0.06247 days**, with a 95% participant-bootstrap interval of **+0.04158 to +0.08114 days**. All 2,000 replicate ratios were defined. This candidate is slightly worse in this development analysis and supplies no reason to replace the reference median. This is a small cohort-specific difference, not a claim that the reference is clinically suitable or universally best.
+
+The median's signed mean error is −2.705 days. Its largest absolute error is **3,893 days**, reflecting a very long interval between recorded events. A post-run aggregate diagnostic found 39 scored target intervals over 90 days, including 24 over 365 days. These counts were examined after seeing the result and are **not a prespecified subgroup comparison**. No forecasts were dropped or rescored. Such gaps may reflect unobserved intervals or other context; this dataset does not identify their causes well enough to treat the overall MAE as the app's physiological period-prediction accuracy. The contrast and the absolute-error distribution answer different questions.
+
+Historical min–max spread contained 6,191/8,068 targets (**76.74%**, bootstrap interval 75.85–77.55%), with mean width **5.59 days** across all 8,162 offered forecasts. Conditional availability's interval is 70.81–77.76%. These descriptive spread results do not justify a confidence label in the app.
+
+Source-stratum results were descriptive: 17 old-only participants contributed 2,147 scored cases (median/weighted MAE 4.159/4.230); 111 new-only participants contributed 5,921 (5.117/5.176). No participant was mixed-source. No settings were tuned from these views.
+
+The next step is a review of this frozen implementation and the source limitations before enabling calibration/final-test execution under the existing plan. The current command intentionally rejects both held-out groups. No model parameters, product thresholds, data exclusions or production code were changed after viewing these results.

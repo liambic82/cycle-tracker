@@ -4,9 +4,9 @@ Research update: October 11, 2026. Extends the [initial evidence review and eval
 
 ## Completed and remaining
 
-The local benchmark now accepts a strict normalized history format, assigns whole participants to stable development/calibration/test groups, and compares the production policy with a fixed recency-weighted candidate on the same scored cases. Automated examples are fictional. A separate intake audit has verified and inspected an original, openly licensed dataset with 198 menstrual histories. **No external forecast has been scored, no model has been fitted, and no clinical accuracy has been established.**
+The local benchmark accepts a strict normalized history format, assigns whole participants to stable development/calibration/test groups, and compares the production policy with a fixed recency-weighted candidate on the same scored cases. Automated examples are fictional. A separate intake audit verified an original, openly licensed dataset with 198 menstrual histories. No external forecasts were scored during intake; the later [controlled development comparison](prediction-controlled-comparisons.md) now supplies the first conditional results. No model has been fitted and no clinical accuracy has been established.
 
-The [source-specific preparation](prediction-record-preparation.md) is now complete: exact duplicates are removed, dates are ordered, unknown context is preserved, and separate participant-group files have reproducible manifests. Missing context, follow-up and logging-time information prevent treating this dataset as a replay of every production eligibility rule. The conditional dates-only analysis plan is fixed; its comparison runner and reporting remain next. The perimenopause evidence gap remains open.
+The [source-specific preparation](prediction-record-preparation.md) is complete: exact duplicates are removed, dates are ordered, unknown context is preserved, and separate participant-group files have reproducible manifests. Missing context, follow-up and logging-time information prevent treating this dataset as a replay of every production eligibility rule. The conditional dates-only analysis plan, comparison runner and development reporting are complete; held-out scoring and the perimenopause evidence gap remain open.
 
 ## Source decision and provenance
 
@@ -86,4 +86,4 @@ The eight-person fictional fixture produces 3/4/1 participants in development/ca
 
 ## Next research step
 
-The [source adapter, prepared records and conditional analysis plan](prediction-record-preparation.md) are complete. Next implement the conditional comparison runner and reporting for participant-cluster uncertainty, error quantiles and prespecified source strata, then evaluate development participants. Keep final-test forecast outcomes unscored during development. Independent clinical/editorial review and suitable intended-population evidence remain release gates.
+The [source adapter, prepared records and conditional analysis plan](prediction-record-preparation.md), followed by [controlled development comparisons](prediction-controlled-comparisons.md), are complete. Next review the frozen implementation and source limitations before enabling held-out evaluation. Independent clinical/editorial review and suitable intended-population evidence remain release gates.
