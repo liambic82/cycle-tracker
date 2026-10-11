@@ -1,5 +1,15 @@
 # Validation record
 
+## Prediction research, production method unchanged — October 11, 2026
+
+The owner selected prediction research. The [research record](prediction-research-2026-10-11.md) documents primary evidence, dataset access/limitations, a proposed validation contract, and a reproducible synthetic evaluation of the full existing policy.
+
+- `pnpm check`: TypeScript and **199/199 tests** passed. Seven added research checks verify cold-start and censored-outcome denominators, future-target/observation isolation, withheld accuracy remaining unavailable, landmark expiry/follow-up boundaries, input validation and fixture immutability. The pnpm store workaround skipped no checks.
+- The full-policy scenario script completed for 12 fictional histories at 0, 14 and 35 elapsed days. It calls the actual production method and preserves unexpected targets in day-1 scoring. A drifting example missed its historical range on all six scored outcomes; this is a synthetic limitation check, not population accuracy. The document records the exact day-1 results and reproduction command.
+- Initial verification caught widened TypeScript fixture literals and a fixture that omitted the bleeding flow required to retain a start marker. Both research-only setup issues were corrected before the passing check; no production defect or clinical result is inferred from them.
+- Public study text/abstracts, dataset metadata and terms were reviewed. No participant data were downloaded or analyzed, and no agreement/application/outreach was submitted. External-data/prospective evaluation and clinical/editorial review remain open.
+- No app/UI, vault format or native code changed. Preview **0.18.0** remains the device build; no APK rebuild or new hardware pass is claimed. The last owner-reported phone pass remains **0.15.0**.
+
 ## 0.18.0 local Android completion batch — October 11, 2026
 
 The owner directed local Android development first, a consolidated phone pass next, and iOS afterward; cloud sync and automatic background sleep syncing are deferred. Appearance should be easy to read, clean and clearly feminine. This batch preserves approved colors, serif headings and rounded surfaces, with a narrow-heading wrapping fix. It does not implement an unapproved layout replacement. The latest owner-reported phone pass remains **0.15.0**. [Implemented scope and open dependencies](android-completion.md) · [Consolidated device checklist](android-testing.md#0180-consolidated-local-android-test-build).

@@ -26,6 +26,8 @@ The current estimate always concerns today, even if another calendar day was sel
 
 ## Validation method and results
 
+The [October 11 prediction research](prediction-research-2026-10-11.md) adds a full-production-policy synthetic evaluation (`pnpm research:predictions`), primary-source review, dataset-access assessment and external-validation protocol. It separately reports cold starts, context/observation withholding, later issuance, and forecasts whose outcomes are unknown. The candidate-only results below remain useful engineering evidence; neither evaluation establishes clinical accuracy. The production method is unchanged.
+
 `pnpm validate:estimates` runs deterministic synthetic stress cases in `scripts/validate-period-estimates.ts`. `backtestIntervals` uses a sliding window of three to six **preceding** intervals for each next target, without future information. It keeps unexpected targets in scoring and reports when training history makes the candidate abstain. Mean, last-interval, and fixed-28-day comparisons use exactly the same eligible folds. The fixed example is a benchmark only, not a fallback in the app.
 
 These rows evaluate the candidate calculation and its training-history limits. They do **not** represent the complete UI eligibility policy: the UI additionally requires six completed intervals, user review, recency, an unexpired result, and three acceptable historical checks. “Offered / possible” below is candidate fold availability; “inside” is empirical inclusion in each training prefix's min–max spread. Neither is a future probability. Errors are in days.

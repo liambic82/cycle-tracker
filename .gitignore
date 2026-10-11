@@ -30,6 +30,7 @@ modules/**/android/.gradle/
 *.tsbuildinfo
 
 # Local health data, backups, and signing material
+research/private-data/
 *.cyclevault
 *.jks
 *.keystore

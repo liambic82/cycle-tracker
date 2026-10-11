@@ -14,6 +14,8 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 [Consolidated Android checks](docs/android-testing.md#0180-consolidated-local-android-test-build) · [Completed scope and remaining dependencies](docs/android-completion.md) · [Validation evidence](docs/validation.md).
 
+[Prediction research, October 11](docs/prediction-research-2026-10-11.md) now records the evidence, dataset candidates and validation plan. `pnpm research:predictions` evaluates the full existing prediction policy on fictional histories. This is research tooling; the app's method remains experimental and unchanged.
+
 ## Agreed direction
 
 - Finish the local Android features and consolidated phone validation first, then port to iOS. Cloud sync and automatic background wearable syncing follow later.
