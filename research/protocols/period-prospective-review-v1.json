@@ -1,0 +1,52 @@
+{
+  "id": "period-prospective-review-v1",
+  "status": "draft-awaiting-independent-review",
+  "preparedOn": "2026-10-11",
+  "role": "non-executable readiness record; not study approval or a frozen analysis plan",
+  "protocol": "docs/prediction-prospective-protocol.md",
+  "reviewPackage": "docs/prediction-independent-review.md",
+  "dataReview": "docs/prediction-data-suitability.md",
+  "baseline": {
+    "repositoryRevision": "3258660",
+    "previewVersion": "0.18.0",
+    "journalVersion": 8,
+    "periodPolicySha256Lf": "b048ee7833677b11f5f3aab102c92fd17e827eb363cfc77740862e12d6c9d268",
+    "newStudyBuild": null,
+    "captureImplemented": false
+  },
+  "newParticipantDataAcquired": false,
+  "newOutcomesExamined": false,
+  "providerContacted": false,
+  "agreementAccepted": false,
+  "independentReview": {
+    "clinical": "pending",
+    "statistical": "pending",
+    "intendedUser": "pending",
+    "reviewRecords": []
+  },
+  "unresolvedBeforeStudyFreeze": {
+    "responsibleStudyOperator": null,
+    "intendedPopulationAndRecruitment": null,
+    "sourceAndPermittedUse": null,
+    "consentAndOversightRecord": null,
+    "storageAccessRetentionWithdrawalPlan": null,
+    "onsetDefinitionAndAdjudication": null,
+    "issuanceEpisodesAndLateTargetRules": null,
+    "participantCountAndPrecisionJustification": null,
+    "followUpDurationAndStoppingRule": null,
+    "maximumPrimaryMeanAbsoluteErrorDays": null,
+    "maximumP90AbsoluteErrorDays": null,
+    "minimumPrimaryAvailabilityFraction": null,
+    "minimumExactOutcomeAscertainmentFraction": null,
+    "maximumUnusableForecastFraction": null,
+    "subgroupDefinitionsAndPrecision": null,
+    "smallCellReportingRules": null,
+    "analysisImplementationAndFreeze": null
+  },
+  "priorCohort": {
+    "datasetId": "zenodo-15598359-v1",
+    "status": "all development, calibration and test participants examined",
+    "futureUse": "exploratory only; never relabel as an untouched confirmatory cohort"
+  },
+  "releaseDecision": "none; independent review, study execution and product readiness remain separate"
+}

@@ -1,5 +1,15 @@
 # Validation record
 
+## Prospective prediction-review preparation — October 11, 2026
+
+The owner authorized the next step after held-out results. Prepared a [prospective protocol draft](prediction-prospective-protocol.md), [independent-review package and response form](prediction-independent-review.md), [new-data suitability assessment](prediction-data-suitability.md) and non-executable [readiness record](../research/protocols/period-prospective-review-v1.json).
+
+- Reviewed the journal and session-only estimate controls: existing exports cannot reconstruct every prior entry revision, context answer or issued forecast. The draft specifies as-known input snapshots, actual issue times, immutable forecasts, observation coverage, outcome adjudication, late targets and missing-outcome accounting. Capture is specified, not implemented.
+- Checked primary reporting/methodology sources and current public Marquette, Clue, SWAN/NIA, mcPHASES and MENISCUS documentation. No candidate was accepted for full-policy/prospective validation. Access failures and unverified fields are recorded; no participant files were acquired, provider contacted or agreement accepted.
+- Independent reviews remain pending. Sample size, follow-up, meaningful acceptance thresholds, cohort access and study oversight are explicitly unresolved, not implicitly approved. Ordinary phone passes are not research enrollment or accuracy validation.
+- Documentation links, JSON readiness fields, baseline policy/version references, formatting and Git whitespace were checked. The previous frozen comparison code, plan and aggregate hashes remain unchanged. No forecasts were rescored. This documentation-only step adds no tests; the last executable verification remains TypeScript and **238/238 passing tests** from the held-out implementation.
+- Preview remains **0.18.0**, with no app/UI/native/vault changes, new APK, telemetry or hosting. The consolidated phone pass and qualified independent review remain open dependencies.
+
 ## Held-out prediction comparisons — October 11, 2026
 
 The owner authorized moving forward. The [engineering review](prediction-heldout-review.md), separate runner and synthetic checks were committed as **`a643590` before either held-out group was scored**. The [results record](prediction-heldout-results.md) preserves separate calibration and final-test outcomes.
