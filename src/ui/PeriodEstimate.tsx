@@ -74,9 +74,13 @@ export function PeriodEstimate({
           does not identify ovulation, fertile days, or “safe” days and must not be used as
           contraception.
         </Text>
+        <Text style={common.body}>
+          Predictions are not medical advice. Do not use them to diagnose or treat a condition or
+          make medication decisions. Talk with a healthcare professional about medical concerns.
+        </Text>
         <Text style={common.small}>
-          This preview has not been independently clinically validated. These choices last only
-          while this view is open; no answer or estimate is saved or added to your calendar.
+          This preview has not been clinically validated. These choices last only while this view is
+          open; no answer or estimate is saved or added to your calendar.
         </Text>
       </View>
       <View style={[common.card, { gap: 16 }]}>
@@ -138,6 +142,7 @@ export function PeriodEstimate({
         {estimate ? (
           <>
             <Text style={common.heading}>{displayDate(estimate.center)}</Text>
+            <Text style={common.label}>Estimate only. Not medical advice.</Text>
             <Text style={common.body}>
               Last recorded start: {displayDate(estimate.anchor)}. Adding the middle (median)
               interval of {estimate.days} days gives this date. It stays anchored to that start.

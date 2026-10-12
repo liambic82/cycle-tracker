@@ -1,6 +1,8 @@
-# Independent prediction-review package
+# Archived independent prediction-review proposal
 
-Prepared October 11, 2026. **Package prepared; independent review not performed.** No reviewer appointment, response or endorsement is recorded. The implementing assistant's earlier engineering review is not independent clinical or statistical review.
+**Superseded October 12, 2026:** the owner declined independent review and requested assistant-led statistical review. External clinical/statistical review is not a project requirement. See the [completed internal review](prediction-statistical-review-2026-10-12.md). No external review or endorsement occurred.
+
+The remaining text preserves the October 11 proposal for historical context. Its requests, pending fields and reviewer workflow are inactive and must not be treated as development or release blockers.
 
 ## Brief for the reviewer
 

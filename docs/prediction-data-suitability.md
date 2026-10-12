@@ -30,10 +30,10 @@ Before accepting records, obtain a source-specific answer and supporting documen
 4. How is onset distinguished from spotting? Are observation windows, explicit negative reports, missing diary days, withdrawal and uncertain/corrected labels available?
 5. Are context changes, relevant treatment/life-stage information and completeness known contemporaneously? Are labels self-reported, adjudicated or inferred, and by whom?
 6. How much pre-issue history and subsequent follow-up are available per person? Can suitability be assessed from a codebook and aggregate counts before confirmatory outcomes are opened?
-7. What recruitment and exclusion rules selected the cohort, and which intended users are poorly represented? Can an independent assessor review target labels without seeing predictions?
+7. What recruitment and exclusion rules selected the cohort, and which intended users are poorly represented? Can target labels be assessed without seeing predictions, to reduce outcome-assessment bias?
 
 These are intake questions, not a message already sent to any provider. The project owner may choose a provider contact later; no external outreach or expense has been initiated.
 
 ## Recommended path
 
-Complete independent review of the study design and data requirements first. Then assess either an authorized provider extract that meets them or a separately consented prospective collection. The latter needs an instrument that preserves issued forecasts and as-known inputs; ordinary app backups are insufficient. The owner and study operator must establish a feasible sample and appropriate stewardship before recruitment. Until then, continue development with fictional audit cases and keep the app's experimental prediction claims unchanged.
+The [internal statistical review](prediction-statistical-review-2026-10-12.md) is complete; the owner declined external review on October 12. If a future study is chosen, assess either an authorized provider extract that meets the data requirements or a separately consented prospective collection. The latter needs an instrument that preserves issued forecasts and as-known inputs; ordinary app backups are insufficient. Establish a feasible sample and appropriate stewardship before recruitment. Continue ordinary development with proportionate experimental prediction claims; external review is not a project gate.

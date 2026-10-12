@@ -1,5 +1,18 @@
 # Android preview testing
 
+## 0.18.1 prediction disclaimer patch
+
+Install `artifacts/android/cycle-tracker-preview-0.18.1-arm64-v8a.apk` over the existing preview after saving an encrypted backup. **Do not uninstall or clear app storage.** Version code **22** retains the preview package and signing identity. No journal-format, prediction-method or eligibility-rule change accompanies this patch. Screenshots remain enabled for testing.
+
+This is the current build for the full **0.18.0 consolidated checklist below**, plus these focused checks on Pixel 7 / Android 17 and Galaxy Z Flip5:
+
+1. Open **Explore period estimate**. Before enabling estimates, confirm that the full “Predictions are not medical advice” paragraph is visible before the controls and readable with larger text.
+2. With a suitable fictional sample history, select the comparable-pattern context and completeness confirmation. Confirm the offered date also says **“Estimate only. Not medical advice.”** The experimental label, contraception warning and historical-range limitations should remain.
+3. Select unknown or changing-cycle context: the estimate should still be withheld. Return to the calendar and reopen: the estimate should start off, with the disclaimer present.
+4. Check scrolling and wrapping, TalkBack reading order, folding/rotation and offline reopening. Keep the real journal intact; sample changes remain temporary.
+
+Automated tests, browser checks and APK verification are recorded separately in [validation evidence](validation.md). No 0.18.1 hardware pass has yet been reported.
+
 ## 0.18.0 consolidated local Android test build
 
 Install `artifacts/android/cycle-tracker-preview-0.18.0-arm64-v8a.apk` over the existing preview after saving an encrypted backup. **Do not uninstall or clear app storage.** Code **21** retains the existing package/signature. Format **8** migrates formats 1–7; new backups need 0.18.0+ on the receiving device. Screenshots remain enabled for testing. Latest reported phone pass is 0.15.0; this is the combined new-feature and regression pass for Pixel 7 / Android 17, Galaxy Z Flip5 and Fitbit Inspire 3 on its paired phone. Record the Flip5 OS and which phone is paired with the wearable.

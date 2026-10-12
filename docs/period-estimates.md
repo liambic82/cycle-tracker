@@ -12,7 +12,9 @@ These choices exist only in React state. Turning the switch off, leaving the vie
 
 **0.18.0 update:** explicit missed/skipped-cycle observations between the earliest selected start and today withhold the estimate. A recorded positive pregnancy-test observation on or after the latest selected start also withholds it. These are conservative product exclusions, not a diagnosis or clinical interpretation. Other test values, basal temperature and mucus do not supply dates or infer ovulation. The new observations are encrypted journal records, unlike the session-only review choices above; their readable exports have separate controls.
 
-The implementation is a transparent preview baseline, **not independently clinically validated**. The following limits are deliberately documented product choices, not diagnostic boundaries, clinical recommendations, or a declaration of which cycles are normal:
+**0.18.1 update:** the screen says “Predictions are not medical advice” before the estimate controls, with guidance not to use predictions for diagnosis, treatment or medication decisions. Each offered date also says “Estimate only. Not medical advice.” The [internal statistical review](prediction-statistical-review-2026-10-12.md) is complete; the owner declined independent review as a project requirement. The median method and withholding rules are unchanged.
+
+The implementation is a transparent preview baseline, **not clinically validated**. The following limits are deliberately documented product choices, not diagnostic boundaries, clinical recommendations, or a declaration of which cycles are normal:
 
 1. Read explicit period-start markers only. Reject the estimate if any start is in the future. Flow, end markers, symptoms, and notes cannot supply a start.
 2. Use the latest seven starts on/before today, all within the preceding 365 days (inclusive), giving six complete start-to-start intervals. Older history stays in the journal and is explicitly outside this calculation. Do not trim, split, impute, or silently remove unusual intervals within the selected six.
@@ -47,7 +49,7 @@ These examples expose limitations: the median lags a trend, a historical spread 
 
 The live UI repeats the small chronological check on the user's selected history, showing candidate availability, median average/largest error, empirical spread inclusion, and optional baseline details. This is descriptive, small-sample, retrospective evidence; it cannot establish future accuracy, complete logging, or current medical comparability. Product-rule unit tests separately cover opt-in, withholding, date boundaries, corrections, expiry, immutability, and sensitive-field independence.
 
-Before general release, obtain an appropriately licensed/consented dataset and independent clinical/editorial review, freeze the method and gates before evaluation, and report person-separated chronological holdout errors and availability for the **full** policy, including irregular histories and subgroup limitations. Evaluate calibration separately before offering any probability or confidence range. No external clinical dataset has been used and no population accuracy is claimed for 0.12.0.
+The original 0.12.0 release used no external clinical dataset and claimed no population accuracy. The subsequent [controlled comparisons](prediction-heldout-results.md) and [internal review](prediction-statistical-review-2026-10-12.md) support retaining the experimental median, with full-policy accuracy still unknown. Under the October 12 owner decision, external clinical/statistical review is not required. Any future evaluation must freeze the method and gates before inspecting new outcomes, report person-separated errors and availability with irregular-history and subgroup limitations, and assess calibration before offering probability claims. The disclaimer adds no statistical accuracy evidence.
 
 ## Evidence reviewed October 9, 2026
 

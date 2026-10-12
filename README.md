@@ -10,9 +10,9 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
-**Preview 0.18.0** adds structured daily observations, medical records with encrypted PDF/photo attachments, dated lab history, appointments and doctor questions, care reminders, reviewed past medication corrections, historical-period/CSV import, optional older Health Connect sleep history, and a private home-screen shortcut. The existing approved soft palettes and feminine styling remain; narrow headings wrap correctly.
+**Preview 0.18.1** adds an explicit medical-advice disclaimer before prediction controls and beside an offered date. It includes the 0.18.0 structured daily observations, medical records with encrypted PDF/photo attachments, dated lab history, appointments and doctor questions, care reminders, reviewed past medication corrections, historical-period/CSV import, optional older Health Connect sleep history, and private home-screen shortcut. The existing approved soft palettes and feminine styling remain.
 
-[Consolidated Android checks](docs/android-testing.md#0180-consolidated-local-android-test-build) · [Completed scope and remaining dependencies](docs/android-completion.md) · [Validation evidence](docs/validation.md).
+[Disclaimer patch checks](docs/android-testing.md#0181-prediction-disclaimer-patch) · [Consolidated Android checks](docs/android-testing.md#0180-consolidated-local-android-test-build) · [Completed scope and remaining dependencies](docs/android-completion.md) · [Validation evidence](docs/validation.md).
 
 [Prediction research, October 11](docs/prediction-research-2026-10-11.md) now records the evidence, dataset candidates and validation plan. `pnpm research:predictions` evaluates the full existing prediction policy on fictional histories. This is research tooling; the app's method remains experimental and unchanged.
 
@@ -20,11 +20,12 @@ The [benchmark and source-intake follow-up](docs/prediction-benchmark.md) adds p
 
 The [controlled development comparison](docs/prediction-controlled-comparisons.md), [implementation review](docs/prediction-heldout-review.md) and [held-out evaluations](docs/prediction-heldout-results.md) are complete. Five fixed methods were compared without tuning; the weighted candidate did not improve on the median in development, calibration or final test. On 42 final-test participants, median/weighted mean absolute errors were 5.666/5.727 days against the next recorded start. Unknown source context and long gaps between records prevent treating this as clinical or prospective validation. The app's experimental method is unchanged.
 
-The [independent-review package](docs/prediction-independent-review.md), [prospective evaluation draft](docs/prediction-prospective-protocol.md) and [new-data suitability review](docs/prediction-data-suitability.md) are prepared. Reviewer decisions, a suitable authorized cohort, study size/thresholds and a local record of issued forecasts remain unresolved. The current journal cannot reconstruct all prior edits or issued predictions; no prospective data capture or study has started.
+The [internal statistical review](docs/prediction-statistical-review-2026-10-12.md) is complete. At the owner's direction, external clinical/statistical review is not a project requirement. The review supports retaining the experimental median with proportionate claims; it is not clinical validation. The [prospective evaluation draft](docs/prediction-prospective-protocol.md) and [new-data suitability review](docs/prediction-data-suitability.md) remain optional future research planning. A suitable authorized cohort, study size/thresholds and a local record of issued forecasts are unresolved if that study is pursued. No prospective capture or study has started.
 
 ## Agreed direction
 
 - Finish the local Android features and consolidated phone validation first, then port to iOS. Cloud sync and automatic background wearable syncing follow later.
+- Use internal statistical review and clear prediction disclaimers; no external prediction-review sign-off is required. Predictions are experimental and are not medical advice.
 - Plan for eventual publication in Google Play and the Apple App Store.
 - Support use on a computer as well as on a phone.
 - Launch with a modest upfront purchase price; the exact price is still to be decided.
@@ -84,7 +85,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - A separate fictional sample journal; demo edits are never saved to the real journal.
 - Responsive desktop and phone layouts, plus a cached offline browser shell in the production web build.
 
-This is a development preview, not a finished store release. **1.0 requires an explicitly agreed release scope and readiness decision.** Independent prediction/clinical validation, arbitrary vendor import mappings, further wearable hardware validation, accessibility/security review and store preparation remain open. Cloud sync and automatic background sleep syncing are deferred. See [the Android completion record](docs/android-completion.md) for the exact boundary. The latest reported phone pass is 0.15.0; the consolidated 0.18.0 device pass is pending. The app records existing user-entered plans and results; it does not recommend dosing or interpret lab results.
+This is a development preview, not a finished store release. **1.0 requires an explicitly agreed release scope and readiness decision.** Arbitrary vendor import mappings, further wearable hardware validation, accessibility/security review and store preparation remain open. Prediction claims must stay within the available evidence; external review is not a release gate. Cloud sync and automatic background sleep syncing are deferred. See [the Android completion record](docs/android-completion.md) for the exact boundary. The latest reported phone pass is 0.15.0; the consolidated 0.18.x device pass is pending. The app records existing user-entered plans and results; it does not recommend dosing or interpret lab results.
 
 Doctor reports support up to 366 days per export. Excessively large reports request a shorter range or fewer sections rather than silently dropping records. The bundled font supports Latin, Greek, and Cyrillic text; unsupported scripts or emoji stop PDF export with an explanation. Journal content and CSV export remain intact. Reports include recorded information only, with no predictions or clinical interpretation. Lab records are included only when their report section is selected; attachment contents are excluded. Free-text labels and selected notes are not automatically redacted.
 
