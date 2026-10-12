@@ -6,6 +6,8 @@ The [October 9 source review](source-review-2026-10-09.md) reconciles the origin
 
 ## Current slice and next steps
 
+**October 12 tester feedback:** update, historical entry and backup creation were reported, alongside friction entering a period span and importing sleep one night at a time. This is partial feedback, not a consolidated pass. Preview **0.19.0** addresses both: Calendar → Add period with start/finish and optional flow, repeat entry, and multi-select/review/import for sleep with direct access to saved nights. Journal **format 9** migrates 1–8; new backups need 0.19.0+. [Feedback and implementation](testing-feedback-2026-10-12.md) · [Focused retest](android-testing.md#0190-period-ranges-and-bulk-sleep-import).
+
 **October 11 owner direction:** finish local Android development for a consolidated test pass, then port to iOS. Cloud sync and automatic background sleep syncing are deferred. Do not require a new phone sign-off after every development slice. The visual direction is clean, easy to read and clearly feminine; preserve approved palettes and the existing design until a specific replacement is approved.
 
 Preview **0.18.0** adds the remaining structured daily observations, medical records and encrypted attachments, dated lab history, appointments/questions/medical history, care reminders, reviewed past medication corrections, guided historical periods and a strict CSV template importer. It also adds optional Health Connect 90/365-day history access and a static Android home-screen widget. Journal format **8** migrates formats 1–7; new backups need 0.18.0+. [Feature scope and open dependencies](android-completion.md).

@@ -82,7 +82,9 @@ export function CycleContext({
               ? 'Flow: not logged for this day'
               : context.flow === 'none'
                 ? 'Flow: explicitly recorded as none'
-                : `Flow: ${context.flow}, as recorded`}
+                : context.flow === 'unspecified'
+                  ? 'Bleeding recorded; flow level not specified'
+                  : `Flow: ${context.flow}, as recorded`}
           </Text>
         )}
         <View style={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 12, gap: 6 }}>

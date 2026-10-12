@@ -1,5 +1,11 @@
 # Wearable sleep integration
 
+## Multi-night import — 0.19.0
+
+October 12 feedback identified one-at-a-time import as the main difficulty. After loading, a single source is selected automatically; multiple sources require a choice. Select all new nights or individual sessions, review the batch and import together. Changed copies require explicit individual selection and a replacement warning. Duplicate/older/future sessions are not selectable; overlaps are flagged and kept separate. One invalid record or capacity failure aborts the entire batch. Manual values remain unchanged. View saved sleep nights opens history directly. Permission, source/time-zone, lock/background clearing and encrypted-storage behavior remain unchanged. No background syncing is added. [Feedback and focused checks](testing-feedback-2026-10-12.md).
+
+The tester reports eventually importing sleep successfully, with substantial usability friction. Exact source metadata, permission edge cases and complete hardware coverage remain unverified. The dated first-slice descriptions below are historical; use the current batch flow for multiple nights.
+
 ## Optional older history — 0.18.0
 
 Preview 0.18.0 adds separately requested `android.permission.health.READ_HEALTH_DATA_HISTORY`. The SDK feature check controls whether the button is offered; 90/365-day choices appear only after the actual grant (or with fictional sample data). The ordinary sleep permission request still requests only Sleep. Reads recheck history access before and after fetching; denial/revocation leaves recent reads and saved copies available subject to Sleep permission. Existing 500-session/20,000-stage/ten-page limits still apply, so a busy source may need a shorter range. No background or write permission is added.

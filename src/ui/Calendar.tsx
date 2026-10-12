@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { ArrowDown, ArrowUp, ChevronRight } from 'lucide-react-native';
 import { addDays, formatDay, monthCells, monthKey, validDay, type Day } from '../domain/dates';
-import { hasEntry, type Journal } from '../domain/journal';
+import { hasEntry, FLOW_LABELS, type Journal } from '../domain/journal';
 import { cycleDayLookup, flowState } from '../domain/history';
 import { Button, Chip } from './components';
 import { useTheme, serif } from './theme';
@@ -124,7 +124,7 @@ function DayGrid({
                 ) : (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`${formatDay(day, { month: 'long', day: 'numeric', year: 'numeric' })}${day === today ? ', today' : ''}${cycle === null ? '' : `, cycle day ${cycle}`}, ${state === 'unknown' ? 'flow not logged' : state === 'none' ? 'no flow' : entry?.flow}${hasEntry(entry) ? ', logged' : ''}${medicalCount ? `, ${medicalCount} medical records` : ''}`}
+                    accessibilityLabel={`${formatDay(day, { month: 'long', day: 'numeric', year: 'numeric' })}${day === today ? ', today' : ''}${cycle === null ? '' : `, cycle day ${cycle}`}, ${state === 'unknown' ? 'flow not logged' : state === 'none' ? 'no flow' : entry && FLOW_LABELS[entry.flow]}${hasEntry(entry) ? ', logged' : ''}${medicalCount ? `, ${medicalCount} medical records` : ''}`}
                     accessibilityState={{ selected: chosen }}
                     aria-pressed={chosen}
                     onPress={() => onOpenDay(day)}

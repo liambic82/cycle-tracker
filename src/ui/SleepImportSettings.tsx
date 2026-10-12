@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, BackHandler, Text, View } from 'react-native';
-import { toDay } from '../domain/dates';
+import { toDay, formatDay, type Day } from '../domain/dates';
 import type { Journal } from '../domain/journal';
 import { hasSleep } from '../domain/sleep';
 import {
   applySleepImport,
+  applySleepImports,
+  sleepStageSummary,
+  sleepLocalTime,
   describeImportedSleep,
   existingSleepImport,
   overlappingSleepImports,
@@ -18,6 +21,42 @@ import { healthSleep, type HealthSleepStatus } from '../data/healthSleep';
 import { demoSleepImports } from '../data/sleepImportDemo';
 import { Button, Chip } from './components';
 import { useTheme } from './theme';
+import { SleepHistory } from './SleepHistory';
+
+const duration = (minutes: number) => {
+  const rounded = Math.round(minutes);
+  return `${Math.floor(rounded / 60)} h ${rounded % 60} min`;
+};
+const friendlyDate = (day: Day) =>
+  formatDay(day, { month: 'short', day: 'numeric', year: 'numeric' });
+const savedCandidate = (journal: Journal, incoming: ImportedSleep) => {
+  const old = existingSleepImport(journal, incoming);
+  return old ? { ...incoming, fallbackOffset: old.fallbackOffset } : incoming;
+};
+function SleepSummary({ record }: { record: ImportedSleep }) {
+  const { common } = useTheme();
+  const summary = sleepStageSummary(record);
+  return (
+    <View style={{ gap: 6 }}>
+      <Text style={common.label}>
+        {friendlyDate(sleepWakingDay(record))} · {record.sourceName}
+      </Text>
+      <Text style={common.body}>
+        {summary.complete ? 'Time asleep' : 'Recorded sleep stages'} ·{' '}
+        {duration(summary.asleepMinutes)}
+      </Text>
+      {!summary.complete && (
+        <Text style={common.small}>
+          Some sleep stages are missing; total time asleep is unknown.
+        </Text>
+      )}
+      <Text style={common.small}>
+        {sleepLocalTime(record.start, record.startOffset ?? record.fallbackOffset)} →{' '}
+        {sleepLocalTime(record.end, record.endOffset ?? record.fallbackOffset)}
+      </Text>
+    </View>
+  );
+}
 
 export function SleepImportSettings({
   journal,
@@ -26,6 +65,7 @@ export function SleepImportSettings({
   close,
   onViewChange,
   saveStatus,
+  openDay,
 }: {
   journal: Journal;
   demo: boolean;
@@ -33,6 +73,7 @@ export function SleepImportSettings({
   close: () => void;
   onViewChange: () => void;
   saveStatus: React.ReactNode;
+  openDay: (day: Day) => void;
 }) {
   const { common } = useTheme();
   const [status, setStatus] = useState<HealthSleepStatus | null>(null);
@@ -48,6 +89,9 @@ export function SleepImportSettings({
   const [selected, setSelected] = useState<string | null>(null);
   const [limit, setLimit] = useState(20);
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+  const [chosen, setChosen] = useState<string[]>([]);
+  const [batchReview, setBatchReview] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const epoch = useRef(0);
   const mounted = useRef(true);
   const clear = () => {
@@ -55,6 +99,8 @@ export function SleepImportSettings({
     setSelected(null);
     setSource(null);
     setLimit(20);
+    setChosen([]);
+    setBatchReview(false);
   };
   async function run(action: (valid: () => boolean) => Promise<void>) {
     const token = ++epoch.current;
@@ -119,6 +165,21 @@ export function SleepImportSettings({
   const visible = records
     .filter((x) => x.sourcePackage === source)
     .sort((a, b) => b.end.localeCompare(a.end));
+  const batch = records
+    .filter((x) => chosen.includes(sleepImportKey(x)))
+    .map((x) => savedCandidate(journal, x))
+    .sort((a, b) => b.end.localeCompare(a.end));
+  const updatedCount = batch.filter((x) => sleepImportState(journal, x) === 'updated').length;
+  const hasOverlaps = batch.some(
+    (x) =>
+      overlappingSleepImports(journal, x).length ||
+      batch.some(
+        (y) => sleepImportKey(x) !== sleepImportKey(y) && x.start < y.end && x.end > y.start,
+      ),
+  );
+  const selectable = (record: ImportedSleep) =>
+    ['new', 'updated'].includes(sleepImportState(journal, record)) &&
+    sleepWakingDay(savedCandidate(journal, record)) <= today;
   const load = () =>
     void run(async (valid) => {
       clear();
@@ -132,9 +193,13 @@ export function SleepImportSettings({
           'The source returned duplicate record identifiers. Refresh before importing.',
         );
       setRecords(parsed);
+      const packages = [...new Set(parsed.map((x) => x.sourcePackage))];
+      if (packages.length === 1) setSource(packages[0]!);
       setMessage(
         parsed.length
-          ? 'Choose the source that receives your Inspire 3 sleep, then review a session.'
+          ? packages.length === 1
+            ? 'Select the nights you want, then review and import them together.'
+            : 'Choose your sleep source, then select nights to import together.'
           : 'No shared sleep sessions found. Sync your Inspire 3 in Fitbit/Google Health, allow that app to write Sleep to Health Connect, then retry.',
       );
     });
@@ -142,18 +207,37 @@ export function SleepImportSettings({
     <View style={{ gap: 20 }}>
       <Button
         secondary
-        label={candidate ? 'Back to sleep sessions' : 'Back to Your data'}
+        label={
+          candidate || batchReview || historyOpen ? 'Back to sleep import' : 'Back to Your data'
+        }
         onPress={() => {
-          if (candidate) {
+          if (candidate || batchReview || historyOpen) {
             setSelected(null);
+            setBatchReview(false);
+            setHistoryOpen(false);
             onViewChange();
           } else close();
         }}
       />
       {saveStatus}
-      {!candidate && (
+      {historyOpen && (
+        <>
+          <Text style={common.heading}>Saved sleep nights</Text>
+          <SleepHistory journal={journal} today={today} openDay={openDay} />
+        </>
+      )}
+      {!candidate && !batchReview && !historyOpen && (
         <>
           <Text style={common.heading}>Import wearable sleep</Text>
+          <Text style={common.label}>Connect → load nights → select → import together</Text>
+          <Button
+            secondary
+            label="View saved sleep nights"
+            onPress={() => {
+              setHistoryOpen(true);
+              onViewChange();
+            }}
+          />
           <Text style={common.body}>
             Fitbit Inspire 3 → Fitbit / Google Health → Health Connect → this journal. First sync
             your tracker in its phone app and allow that app to share Sleep with Health Connect.
@@ -302,7 +386,10 @@ export function SleepImportSettings({
           )}
           {!!records.length && (
             <>
-              <Text style={common.label}>Select a source · {records.length} sessions found</Text>
+              <Text style={common.label}>
+                {sources.length === 1 ? 'Sleep source' : 'Choose a sleep source'} · {records.length}{' '}
+                sessions found
+              </Text>
               <View style={common.wrap}>
                 {sources.map(([id, name]) => (
                   <Chip
@@ -313,29 +400,93 @@ export function SleepImportSettings({
                     onPress={() => {
                       setSource(id);
                       setSelected(null);
+                      setChosen([]);
                       setLimit(20);
                     }}
                   />
                 ))}
               </View>
               {source && (
-                <Text style={common.small}>
-                  {source} · Source names may differ from the tracker name. Verify the source in
-                  Health Connect; importing from two apps can create overlapping copies.
-                </Text>
+                <>
+                  <Text style={common.small}>
+                    {source} · Source names may differ from the tracker name. Verify the source in
+                    Health Connect; importing from two apps can create overlapping copies.
+                  </Text>
+                  <View style={common.wrap}>
+                    <Button
+                      secondary
+                      label="Select all new nights"
+                      disabled={
+                        !visible.some(
+                          (x) => sleepImportState(journal, x) === 'new' && selectable(x),
+                        )
+                      }
+                      onPress={() =>
+                        setChosen(
+                          visible
+                            .filter((x) => sleepImportState(journal, x) === 'new' && selectable(x))
+                            .map(sleepImportKey),
+                        )
+                      }
+                    />
+                    <Button
+                      secondary
+                      label="Clear selection"
+                      disabled={!chosen.length}
+                      onPress={() => setChosen([])}
+                    />
+                  </View>
+                  <Text accessibilityLiveRegion="polite" style={common.label}>
+                    {chosen.length} sleep sessions selected
+                  </Text>
+                  <Button
+                    label={`Review ${chosen.length} selected sessions`}
+                    disabled={!chosen.length}
+                    onPress={() => {
+                      setBatchReview(true);
+                      setError('');
+                      onViewChange();
+                    }}
+                  />
+                </>
               )}
               {visible.slice(0, limit).map((record) => (
-                <Button
-                  key={sleepImportKey(record)}
-                  secondary
-                  label={`Review sleep ending ${sleepWakingDay(record)} · ${record.end.slice(11, 16)} UTC · ${sleepImportState(journal, record)}`}
-                  onPress={() => {
-                    setSelected(sleepImportKey(record));
-                    setMessage('');
-                    setError('');
-                    onViewChange();
-                  }}
-                />
+                <View key={sleepImportKey(record)} style={[common.card, { gap: 10 }]}>
+                  <SleepSummary record={savedCandidate(journal, record)} />
+                  <Chip
+                    label={
+                      sleepImportState(journal, record) === 'unchanged'
+                        ? 'Already imported'
+                        : sleepImportState(journal, record) === 'older'
+                          ? 'Newer copy already saved'
+                          : sleepWakingDay(savedCandidate(journal, record)) > today
+                            ? 'Future waking date'
+                            : sleepImportState(journal, record) === 'updated'
+                              ? 'Select changed session'
+                              : 'Select night'
+                    }
+                    accessibilityLabel={`Select sleep ending ${sleepLocalTime(record.end, record.endOffset ?? savedCandidate(journal, record).fallbackOffset)}`}
+                    disabled={!selectable(record)}
+                    selected={chosen.includes(sleepImportKey(record))}
+                    onPress={() =>
+                      setChosen((current) =>
+                        current.includes(sleepImportKey(record))
+                          ? current.filter((key) => key !== sleepImportKey(record))
+                          : [...current, sleepImportKey(record)],
+                      )
+                    }
+                  />
+                  <Button
+                    secondary
+                    label={`View details · ${friendlyDate(sleepWakingDay(savedCandidate(journal, record)))}`}
+                    onPress={() => {
+                      setSelected(sleepImportKey(record));
+                      setMessage('');
+                      setError('');
+                      onViewChange();
+                    }}
+                  />
+                </View>
               ))}
               {visible.length > limit && (
                 <Button
@@ -352,6 +503,68 @@ export function SleepImportSettings({
         <Text accessibilityRole="alert" style={common.error}>
           {error}
         </Text>
+      )}
+      {batchReview && (
+        <View style={{ gap: 16 }}>
+          <Text style={common.heading}>Import {batch.length} selected sleep sessions</Text>
+          <Text style={common.body}>
+            These copies will be added to the days you woke up. Manual sleep, symptoms and other
+            journal details stay unchanged. Sleep sessions and naps stay separate; their durations
+            are never added together.
+          </Text>
+          {updatedCount > 0 && (
+            <Text style={common.label}>
+              {updatedCount} changed session(s) will replace earlier imported copies, including
+              moving to the source's corrected waking date if needed.
+            </Text>
+          )}
+          {hasOverlaps && (
+            <Text style={common.label}>
+              Some sessions overlap each other or saved copies and may describe the same sleep. Go
+              back to deselect unwanted duplicates, or keep them as separate records.
+            </Text>
+          )}
+          {batch.map((record) => (
+            <View key={sleepImportKey(record)} style={[common.card, { gap: 8 }]}>
+              <SleepSummary record={record} />
+              <Text style={common.small}>
+                {sleepImportState(journal, record) === 'updated'
+                  ? 'Updates an existing copy'
+                  : 'New imported copy'}
+              </Text>
+            </View>
+          ))}
+          <Button
+            label={`Import ${batch.length} selected sessions`}
+            disabled={busy || !batch.length}
+            onPress={() => {
+              try {
+                update((current) => applySleepImports(current, batch, today));
+                setMessage(
+                  `${batch.length} sleep sessions added to your journal. Check the save status, or choose View saved sleep nights to see them.`,
+                );
+                setChosen([]);
+                setBatchReview(false);
+                setError('');
+                onViewChange();
+              } catch (err) {
+                setError(
+                  err instanceof Error ? err.message : 'Could not import. Nothing was added.',
+                );
+                onViewChange();
+              }
+            }}
+          />
+          <Button
+            secondary
+            label="Back to selection"
+            onPress={() => {
+              setBatchReview(false);
+              setError('');
+              onViewChange();
+            }}
+          />
+        </View>
       )}
       {candidate && (
         <View style={[common.card, { gap: 14 }]}>
@@ -409,6 +622,7 @@ export function SleepImportSettings({
                     'Copy added to your journal. Check the save status before leaving. Manual sleep is unchanged.',
                   );
                   setSelected(null);
+                  setChosen((keys) => keys.filter((key) => key !== sleepImportKey(candidate)));
                   setError('');
                   onViewChange();
                 } catch (err) {

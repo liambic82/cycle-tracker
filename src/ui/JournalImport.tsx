@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BackHandler, Platform, Text, TextInput, View } from 'react-native';
+import { BackHandler, Platform, Text, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { File } from 'expo-file-system';
 import {
@@ -7,11 +7,10 @@ import {
   parseJournalCSV,
   importRowState,
   applyImportRows,
-  historicalPeriodRows,
   type ImportRow,
 } from '../domain/journalImport';
 import { toDay } from '../domain/dates';
-import type { Flow, Journal } from '../domain/journal';
+import type { Journal } from '../domain/journal';
 import { exportText } from '../data/files';
 import { removePhotoTemp } from '../data/photoCache';
 import { Button, Chip } from './components';
@@ -29,14 +28,11 @@ export function JournalImport({
   saveStatus: React.ReactNode;
   onViewChange: () => void;
 }) {
-  const { common, colors } = useTheme();
+  const { common } = useTheme();
   const [rows, setRows] = useState<ImportRow[]>([]),
     [selected, setSelected] = useState<string[]>([]),
     [error, setError] = useState(''),
     [message, setMessage] = useState(''),
-    [start, setStart] = useState(''),
-    [end, setEnd] = useState(''),
-    [flow, setFlow] = useState<Flow>('medium'),
     [busy, setBusy] = useState(false),
     [limit, setLimit] = useState(20);
   const alive = useRef(true);
@@ -81,7 +77,7 @@ export function JournalImport({
     <View style={{ gap: 18 }}>
       <Button secondary label="Back to Your data" disabled={busy} onPress={close} />
       {saveStatus}
-      <Text style={common.heading}>Add past periods & import CSV</Text>
+      <Text style={common.heading}>Import CSV</Text>
       {!!error && (
         <Text accessibilityRole="alert" style={common.error}>
           {error}
@@ -164,48 +160,6 @@ export function JournalImport({
         </>
       ) : (
         <>
-          <Text style={common.label}>Add a past period</Text>
-          <Text style={common.body}>
-            Enter the start and optional last day you remember. Only those dates receive
-            observations; days in between remain unlogged. A start/end pair describes a span, not
-            proof of bleeding every day.
-          </Text>
-          <TextInput
-            accessibilityLabel="Historical period start"
-            style={common.input}
-            placeholder="Start YYYY-MM-DD"
-            placeholderTextColor={colors.muted}
-            value={start}
-            onChangeText={setStart}
-            maxLength={10}
-          />
-          <TextInput
-            accessibilityLabel="Historical period end"
-            style={common.input}
-            placeholder="End YYYY-MM-DD (optional)"
-            placeholderTextColor={colors.muted}
-            value={end}
-            onChangeText={setEnd}
-            maxLength={10}
-          />
-          <Text style={common.small}>
-            Flow to record on the supplied dates; use each day's editor if they differed.
-          </Text>
-          <View style={common.wrap}>
-            {(['light', 'medium', 'heavy'] as const).map((x) => (
-              <Chip key={x} label={x} selected={flow === x} onPress={() => setFlow(x)} />
-            ))}
-          </View>
-          <Button
-            label="Review past period"
-            onPress={() => {
-              try {
-                review(historicalPeriodRows(start, end || null, flow, today));
-              } catch (e) {
-                setError(e instanceof Error ? e.message : 'Check the dates.');
-              }
-            }}
-          />
           <Text style={common.label}>Import from a prepared CSV</Text>
           <Text style={common.body}>
             Use the simple template for dates, flow, period boundaries, symptoms and notes. It has a

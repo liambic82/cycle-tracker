@@ -5,6 +5,7 @@ import { addDays } from '../src/domain/dates.ts';
 import { emptyJournal, parseJournal, updateEntry, toCSV } from '../src/domain/journal.ts';
 import {
   applySleepImport,
+  applySleepImports,
   parseSleepImport,
   parseSleepImports,
   sleepStageSummary,
@@ -27,6 +28,63 @@ import {
 
 const today = '2026-10-10';
 const session = () => demoSleepImports(today)[0]!;
+
+test('bulk sleep import applies multiple nights once and preserves manual entries', () => {
+  const values = demoSleepImports(today);
+  const original = updateEntry(emptyJournal(today), today, {
+    note: 'Keep',
+    sleep: { durationMinutes: 410, quality: 'good', wakings: 1 },
+  });
+  const before = JSON.stringify(original);
+  const next = applySleepImports(original, values, today);
+  assert.equal(JSON.stringify(original), before);
+  assert.equal(Object.values(next.entries).flatMap((e) => e.sleepImports).length, 2);
+  assert.deepEqual(next.entries[today]!.sleep, original.entries[today]!.sleep);
+  assert.equal(next.entries[today]!.note, 'Keep');
+  assert.deepEqual(applySleepImports(next, values, today), next);
+  assert.deepEqual(parseJournal(next), next);
+});
+test('bulk sleep import rejects duplicates, corrupt, future, stale and over-limit selections atomically', () => {
+  const [first, second] = demoSleepImports(today);
+  const original = applySleepImport(emptyJournal(today), first!, today),
+    before = JSON.stringify(original);
+  const future = {
+    ...second!,
+    id: 'future',
+    start: '2027-01-01T00:00:00.000Z',
+    end: '2027-01-01T01:00:00.000Z',
+    stages: [],
+  };
+  const stale = { ...first!, modified: '2020-01-01T00:00:00.000Z' };
+  for (const rows of [
+    [],
+    [second!, second!],
+    [second!, { ...first!, stages: null }],
+    [second!, future],
+    [second!, stale],
+    Array(501).fill(second),
+  ]) {
+    assert.throws(() => applySleepImports(original, rows as (typeof first)[], today));
+    assert.equal(JSON.stringify(original), before);
+  }
+});
+test('bulk sleep updates retain captured time zones and preserve overlapping sessions separately', () => {
+  const base = { ...session(), startOffset: null, endOffset: null, fallbackOffset: -480 };
+  const original = applySleepImport(emptyJournal(today), base, today);
+  const change = {
+    ...base,
+    modified: '2026-10-10T09:00:00.000Z',
+    fallbackOffset: 600,
+    device: 'Corrected label',
+  };
+  const overlap = { ...session(), id: 'different-record' };
+  const next = applySleepImports(original, [change, overlap], today);
+  const saved = Object.values(next.entries).flatMap((e) => e.sleepImports);
+  assert.equal(saved.length, 2);
+  assert.equal(saved.find((x) => x.id === base.id)!.fallbackOffset, -480);
+  assert.equal(next.entries[addDays(today, -1)]!.sleepImports[0]!.device, 'Corrected label');
+  assert.equal(next.entries[today]!.sleepImports[0]!.id, 'different-record');
+});
 test('formats 1–6 migrate with no imports, preserving manual sleep and all earlier records', () => {
   const source = demoJournal(today);
   for (const version of [1, 2, 3, 4, 5, 6]) {
@@ -39,7 +97,7 @@ test('formats 1–6 migrate with no imports, preserving manual sleep and all ear
     const legacy = { ...source, version, entries };
     const before = JSON.stringify(legacy);
     const parsed = parseJournal(legacy);
-    assert.equal(parsed.version, 8);
+    assert.equal(parsed.version, 9);
     assert.equal(JSON.stringify(legacy), before);
     for (const [date, entry] of Object.entries(parsed.entries)) {
       assert.deepEqual(entry.sleepImports, []);
@@ -89,7 +147,7 @@ test('imports reject corrupt metadata, timestamps, offsets, stages and mismatche
       entries: { [today]: { ...journal.entries[today], sleepImports: undefined } },
     }),
   );
-  assert.throws(() => parseJournal({ ...journal, version: 9 }));
+  assert.throws(() => parseJournal({ ...journal, version: 10 }));
   const parsed = parseSleepImport({ ...base, ignored: 'drop', stages: [...base.stages].reverse() });
   assert.deepEqual(parsed, base);
   parsed.stages[0]!.type = 0;

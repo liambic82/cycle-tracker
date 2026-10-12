@@ -11,7 +11,14 @@ import {
   Trash2,
 } from 'lucide-react-native';
 import { formatDay, type Day } from '../domain/dates';
-import { cycleDay, emptyEntry, FLOWS, type Entry, type Journal } from '../domain/journal';
+import {
+  cycleDay,
+  emptyEntry,
+  FLOWS,
+  FLOW_LABELS,
+  type Entry,
+  type Journal,
+} from '../domain/journal';
 import { Button, Chip, SectionLabel } from './components';
 import { useTheme } from './theme';
 import {
@@ -336,7 +343,7 @@ export function DayEditor({
               {FLOWS.map((flow) => (
                 <Chip
                   key={flow}
-                  label={flow[0]!.toUpperCase() + flow.slice(1)}
+                  label={FLOW_LABELS[flow]}
                   selected={entry.flowRecorded && entry.flow === flow}
                   onPress={() => onPatch({ flow })}
                   icon={flow !== 'none' ? Droplet : undefined}
@@ -347,7 +354,9 @@ export function DayEditor({
               {entry.flowRecorded
                 ? entry.flow === 'none'
                   ? 'Recorded: no flow.'
-                  : 'Flow recorded for this day.'
+                  : entry.flow === 'unspecified'
+                    ? 'Bleeding recorded. You can add the flow level whenever you like.'
+                    : 'Flow recorded for this day.'
                 : 'Flow not logged yet. Choose None to record a day without flow.'}
             </Text>
             {entry.flowRecorded && (

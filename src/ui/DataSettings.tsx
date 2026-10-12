@@ -16,6 +16,8 @@ import { BiometricSettings } from './BiometricSettings';
 import { DoctorReport } from './DoctorReport';
 import { AppearanceSettings } from './AppearanceSettings';
 import { JournalImport } from './JournalImport';
+import { PeriodRangeEditor } from './PeriodRangeEditor';
+import { toDay, type Day } from '../domain/dates';
 import { MedicalRecords } from './MedicalRecords';
 import { SleepImportSettings } from './SleepImportSettings';
 import type { PhotoControls } from '../data/personalBackgroundStore';
@@ -35,6 +37,7 @@ export function DataSettings({
   onViewChange,
   update,
   saveStatus,
+  openDay,
 }: {
   photo: PhotoControls;
   journal: Journal;
@@ -49,6 +52,7 @@ export function DataSettings({
   onViewChange: () => void;
   update: (transform: (journal: Journal) => Journal) => void;
   saveStatus: React.ReactNode;
+  openDay: (day: Day) => void;
 }) {
   const { colors, common, dark } = useTheme();
   const [message, setMessage] = useState('');
@@ -63,6 +67,7 @@ export function DataSettings({
   const [reportOpen, setReportOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [journalImportOpen, setJournalImportOpen] = useState(false);
+  const [periodOpen, setPeriodOpen] = useState(false);
   const [medicalOpen, setMedicalOpen] = useState(false);
   const [testExport, setTestExport] = useState(false);
   const [sleepImportOpen, setSleepImportOpen] = useState(false);
@@ -116,6 +121,21 @@ export function DataSettings({
       setBusy(false);
     }
   };
+  if (periodOpen)
+    return (
+      <PeriodRangeEditor
+        journal={journal}
+        today={toDay(new Date())}
+        update={update}
+        saveStatus={saveStatus}
+        onViewChange={onViewChange}
+        closeLabel="Back to Your data"
+        close={() => {
+          setPeriodOpen(false);
+          onViewChange();
+        }}
+      />
+    );
   if (journalImportOpen)
     return (
       <JournalImport
@@ -145,6 +165,7 @@ export function DataSettings({
   if (sleepImportOpen)
     return (
       <SleepImportSettings
+        openDay={openDay}
         saveStatus={saveStatus}
         journal={journal}
         demo={demo}
@@ -183,12 +204,19 @@ export function DataSettings({
       <View style={[common.card, { gap: 15 }]}>
         <Text style={common.heading}>Earlier records</Text>
         <Text style={common.body}>
-          Add past period boundaries or review dates, flow, symptoms and notes from the simple
-          import template.
+          Record a period's start and finish together, or import a prepared CSV file.
         </Text>
         <Button
           secondary
-          label="Add past periods or import CSV"
+          label="Add period"
+          onPress={() => {
+            setPeriodOpen(true);
+            onViewChange();
+          }}
+        />
+        <Button
+          secondary
+          label="Import CSV"
           onPress={() => {
             setJournalImportOpen(true);
             onViewChange();
@@ -304,7 +332,7 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          New backups need preview 0.18.0 or later. Update the receiving app before restoring.
+          New backups need preview 0.19.0 or later. Update the receiving app before restoring.
           Earlier backups still open here. Encrypted backups include all sexual-health fields,
           regardless of your CSV choices, plus all medication schedules and dose records.
         </Text>

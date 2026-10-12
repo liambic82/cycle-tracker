@@ -1,10 +1,22 @@
 # Android preview testing
 
+## 0.19.0 period ranges and bulk sleep import
+
+Install `artifacts/android/cycle-tracker-preview-0.19.0-arm64-v8a.apk` over the existing preview after making an encrypted backup. Do not uninstall or clear storage. Code **23** retains the preview package/signature; screenshots remain enabled. Journal **format 9** migrates formats 1–8. New backups need **0.19.0+** on the receiving app. The October 12 feedback reports update, entry and backup creation, but not a full device pass or verified restore.
+
+1. **Period catch-up:** from Calendar → Add period, choose a past start and finish on the same screen, using month/year navigation. Leave Add details later selected, review the span and Save. All selected days should show bleeding with an unspecified flow level; only the first/last get boundary markers. Add another period should clear the form and retain the month. Back to calendar should select the added start. Try a single day, start only, a cross-month range, a leap day and Cancel without saving.
+2. **Preservation and conflicts:** use fictional dates with notes, sleep, symptoms or a known flow level. Adding a range must retain these. Repeating the same span must not duplicate it. Existing no-flow/spotting, a conflicting boundary or an overlapping recorded period should stop the whole operation. Check future/reversed dates cannot save. Edit individual daily flow afterward and check start/end/history still agree.
+3. **Batch sleep:** sync the Inspire 3 in its paired app, then load recent sessions in Your data → Import wearable sleep. A single source should show nights immediately; with multiple sources choose explicitly. Select all new nights or individual nights, deselect one, review the selected list, go back without importing, then import several together. Only selected sessions should appear. View saved sleep nights should take you directly to their history; manual sleep stays separate.
+4. **Repeat and update:** reload: already-imported nights must not duplicate and must be excluded from Select all new nights. A changed source record needs explicit selection and a warning that the copy will be replaced/moved. Review overlap and incomplete-stage wording. Switching source/range, backing out, backgrounding or locking must not import pending choices. Check permission denial/revocation and offline saved-history access using the existing 0.17.0 checks.
+5. **Storage and phone usability:** verify old records survive the upgrade and lock/restart. Round-trip a format-9 backup into a disposable updated journal, including unspecified-flow days and several sleep imports; keep the original backup. Check CSV/PDF wording, larger text, TalkBack order/labels, Android Back, folding and rotation. Continue the consolidated 0.18.0 checklist below on this build.
+
+Record device/OS, build and specific pass/fail results. No 0.19.0 hardware pass is claimed by the automated/build/browser checks.
+
 ## 0.18.1 prediction disclaimer patch
 
 Install `artifacts/android/cycle-tracker-preview-0.18.1-arm64-v8a.apk` over the existing preview after saving an encrypted backup. **Do not uninstall or clear app storage.** Version code **22** retains the preview package and signing identity. No journal-format, prediction-method or eligibility-rule change accompanies this patch. Screenshots remain enabled for testing.
 
-This is the current build for the full **0.18.0 consolidated checklist below**, plus these focused checks on Pixel 7 / Android 17 and Galaxy Z Flip5:
+Use the current preview for the full **0.18.0 consolidated checklist below**, including these focused checks introduced in 0.18.1 on Pixel 7 / Android 17 and Galaxy Z Flip5:
 
 1. Open **Explore period estimate**. Before enabling estimates, confirm that the full “Predictions are not medical advice” paragraph is visible before the controls and readable with larger text.
 2. With a suitable fictional sample history, select the comparable-pattern context and completeness confirmation. Confirm the offered date also says **“Estimate only. Not medical advice.”** The experimental label, contraception warning and historical-range limitations should remain.

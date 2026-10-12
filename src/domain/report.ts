@@ -1,5 +1,5 @@
 import { addDays, daysBetween, validDay, type Day } from './dates.ts';
-import { history, type Journal } from './journal.ts';
+import { history, FLOW_LABELS, type Journal } from './journal.ts';
 import { flowTimeline, statistics } from './history.ts';
 import { describeProduct, orderedProducts } from './flowDetails.ts';
 import { describeDose, describeSchedule } from './medications.ts';
@@ -160,7 +160,7 @@ export function createDoctorReport(
         ...dates.flatMap((date) => {
           const entry = journal.entries[date]!;
           if (!entry.flowRecorded && entry.clots === null && entry.flooding === null) return [];
-          const details = [`Flow: ${entry.flowRecorded ? capitalize(entry.flow) : 'not logged'}.`];
+          const details = [`Flow: ${entry.flowRecorded ? FLOW_LABELS[entry.flow] : 'not logged'}.`];
           if (entry.clots !== null) details.push(`Clots noticed: ${yesNo(entry.clots)}.`);
           if (entry.flooding !== null) details.push(`Flooding noticed: ${yesNo(entry.flooding)}.`);
           return [{ heading: date, paragraphs: [details.join(' ')] }];

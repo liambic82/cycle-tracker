@@ -2,6 +2,8 @@
 
 ## Owner direction — October 11, 2026
 
+**Current build: 0.19.0 / code 23.** The [October 12 feedback fixes](testing-feedback-2026-10-12.md) add calendar-level period ranges with optional flow and batch sleep import. Journal format 9 migrates 1–8; new backups need 0.19.0+. The tester reported using the latest build, entering dates and making a backup, but this does not establish a consolidated pass or backup restore. Retest these fixes with [the 0.19.0 checklist](android-testing.md#0190-period-ranges-and-bulk-sleep-import). The dated 0.18.0 scope below remains included.
+
 Complete local Android development, then run a consolidated Android test pass, then port and validate on iOS. The owner explicitly deferred **cloud sync and automatic background sleep syncing** until after the local app. Continue development without requiring a phone sign-off after every individual feature slice. This changes the development sequence; it is not a new report of passing device tests or a 1.0 release decision.
 
 Appearance must be clean and easy to read while clearly feminine. Retain the existing approved soft palettes, rounded surfaces and serif headings for this functional batch. The owner's response did not explicitly approve replacing the app with Clear and compact. Present any further appearance proposal before implementing it.
@@ -36,7 +38,7 @@ Journal format **8** migrates formats 1–7. New backups require **0.18.0+**. Ex
 - **Release preparation:** security/accessibility checks, internal clinical-copy/source checks, final public privacy/contact information, Play declarations/review, store metadata/pricing and a separate release-scope decision remain. These are not established by an APK build.
 - **Deferred by the owner:** hosted encrypted sync and automatic/background wearable syncing. iOS/HealthKit work follows the Android pass.
 
-Do not describe 0.18.1 as “all Android work complete” while the device and release items remain. Optional future research is separate. This file keeps the Android-first objective and the remaining dependencies visible across development sessions.
+Do not describe 0.19.0 as “all Android work complete” while the device and release items remain. Optional future research is separate. This file keeps the Android-first objective and the remaining dependencies visible across development sessions.
 
 ## Native implementation references
 

@@ -175,7 +175,7 @@ export function overlappingSleepImports(journal: Journal, incoming: ImportedSlee
         x.end > incoming.start,
     );
 }
-export function applySleepImport(journal: Journal, value: ImportedSleep, today: Day): Journal {
+function mergeSleepImport(journal: Journal, value: ImportedSleep, today: Day): Journal {
   let incoming = parseSleepImport(value);
   const old = existingSleepImport(journal, incoming);
   // Travel must not move a previously imported session when its source omitted the zone.
@@ -200,6 +200,11 @@ export function applySleepImport(journal: Journal, value: ImportedSleep, today: 
   next = updateEntry(next, day, {
     sleepImports: [...(next.entries[day]?.sleepImports ?? []), incoming],
   });
+  return next;
+}
+function checkSleepImportSize(next: Journal): Journal {
+  if (Object.keys(next.entries).length > 40000)
+    throw new Error('This import would exceed the journal entry limit. Nothing was imported.');
   // The existing 8 MiB vault envelope uses hex ciphertext (two characters per byte).
   // Leave space for the authentication tag and envelope before changing the live journal.
   if (new TextEncoder().encode(JSON.stringify(next)).length > 4 * 1024 * 1024 - 512)
@@ -207,4 +212,19 @@ export function applySleepImport(journal: Journal, value: ImportedSleep, today: 
       'This import would exceed the preview journal limit. Export a backup and remove unwanted imported copies first. Nothing was imported.',
     );
   return next;
+}
+export function applySleepImport(journal: Journal, value: ImportedSleep, today: Day): Journal {
+  return checkSleepImportSize(mergeSleepImport(journal, value, today));
+}
+// One transaction: failure in any session leaves the caller's journal untouched.
+// Size is checked once after merging, rather than serializing the vault for every night.
+export function applySleepImports(journal: Journal, values: ImportedSleep[], today: Day): Journal {
+  if (!Array.isArray(values) || !values.length || values.length > 500)
+    throw new Error('Choose between 1 and 500 sleep sessions.');
+  const incoming = values.map(parseSleepImport);
+  if (new Set(incoming.map(sleepImportKey)).size !== incoming.length)
+    throw new Error('The selection contains duplicate sleep sessions. Reload and try again.');
+  let next = journal;
+  for (const value of incoming) next = mergeSleepImport(next, value, today);
+  return checkSleepImportSize(next);
 }

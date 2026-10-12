@@ -40,6 +40,7 @@ import { UndoNotice } from './src/ui/UndoNotice';
 import { Medications } from './src/ui/Medications';
 import { CycleContext } from './src/ui/CycleContext';
 import { PeriodEstimate } from './src/ui/PeriodEstimate';
+import { PeriodRangeEditor } from './src/ui/PeriodRangeEditor';
 import { Brand, Button } from './src/ui/components';
 import { useTheme, serif } from './src/ui/theme';
 import { AppearanceProvider, useAppearance } from './src/ui/AppearanceProvider';
@@ -68,6 +69,7 @@ function CycleApp() {
   const [editing, setEditing] = useState(false);
   const [learning, setLearning] = useState(false);
   const [estimating, setEstimating] = useState(false);
+  const [addingPeriod, setAddingPeriod] = useState(false);
   const mainScroll = useRef<ScrollView>(null);
   const editorScroll = useRef<ScrollView>(null);
   const [today, setToday] = useState(toDay(new Date()));
@@ -80,6 +82,7 @@ function CycleApp() {
       setEditing(false);
       setLearning(false);
       setEstimating(false);
+      setAddingPeriod(false);
       setPage('calendar');
       setCalendarView('month');
     }
@@ -135,6 +138,7 @@ function CycleApp() {
   const showDay = (date: Day) => {
     setLearning(false);
     setEstimating(false);
+    setAddingPeriod(false);
     setPage('calendar');
     setCalendarView('day');
     setEditing(false);
@@ -211,6 +215,7 @@ function CycleApp() {
                 onPress={() => {
                   setLearning(false);
                   setEstimating(false);
+                  setAddingPeriod(false);
                   setPage(id);
                 }}
                 style={{
@@ -366,37 +371,54 @@ function CycleApp() {
                 {formatDay(today, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase()}
               </Text>
               <Text style={[common.title, { fontSize: desktop ? 35 : 29 }]}>
-                {page === 'calendar' && estimating
-                  ? 'Looking ahead, gently.'
-                  : page === 'calendar' && learning
-                    ? 'A little understanding.'
-                    : page === 'calendar'
-                      ? 'Your cycle, at a glance.'
-                      : page === 'history'
-                        ? 'A picture of your patterns.'
-                        : page === 'medications'
-                          ? 'A place for your routine.'
-                          : 'Your space. Your choice.'}
+                {page === 'calendar' && addingPeriod
+                  ? 'Your remembered dates.'
+                  : page === 'calendar' && estimating
+                    ? 'Looking ahead, gently.'
+                    : page === 'calendar' && learning
+                      ? 'A little understanding.'
+                      : page === 'calendar'
+                        ? 'Your cycle, at a glance.'
+                        : page === 'history'
+                          ? 'A picture of your patterns.'
+                          : page === 'medications'
+                            ? 'A place for your routine.'
+                            : 'Your space. Your choice.'}
               </Text>
               <Text style={common.body}>
-                {page === 'calendar' && estimating
-                  ? 'An optional estimate, with its limits in view.'
-                  : page === 'calendar' && learning
-                    ? 'Your records, with room to learn.'
-                    : page === 'calendar'
-                      ? 'A little awareness. A little more care for yourself.'
-                      : page === 'history'
-                        ? 'Getting to know your own kind of normal.'
-                        : page === 'medications'
-                          ? 'Your schedules, and what you choose to record.'
-                          : 'Keep your records close, and in your control.'}
+                {page === 'calendar' && addingPeriod
+                  ? 'One period at a time, with room for details later.'
+                  : page === 'calendar' && estimating
+                    ? 'An optional estimate, with its limits in view.'
+                    : page === 'calendar' && learning
+                      ? 'Your records, with room to learn.'
+                      : page === 'calendar'
+                        ? 'A little awareness. A little more care for yourself.'
+                        : page === 'history'
+                          ? 'Getting to know your own kind of normal.'
+                          : page === 'medications'
+                            ? 'Your schedules, and what you choose to record.'
+                            : 'Keep your records close, and in your control.'}
               </Text>
             </View>
             {desktop && <Button label="Log today" icon={Plus} onPress={logToday} />}
           </View>
           {(page !== 'calendar' || (!inlineEditor && calendarView !== 'day' && !editing)) &&
             undoNotice}
-          {page === 'calendar' && estimating ? (
+          {page === 'calendar' && addingPeriod ? (
+            <PeriodRangeEditor
+              journal={journal}
+              today={today}
+              update={state.update}
+              saveStatus={saveStatus}
+              onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
+              closeLabel="Back to calendar"
+              close={() => {
+                setAddingPeriod(false);
+                mainScroll.current?.scrollTo({ y: 0, animated: false });
+              }}
+            />
+          ) : page === 'calendar' && estimating ? (
             <PeriodEstimate
               journal={journal}
               today={today}
@@ -471,6 +493,17 @@ function CycleApp() {
               </View>
               <View style={{ flexDirection: 'row', gap: 24, alignItems: 'flex-start' }}>
                 <View style={{ flex: 1, minWidth: 0, gap: 17 }}>
+                  <Button
+                    icon={Plus}
+                    label="Add period"
+                    onPress={() => {
+                      setEditing(false);
+                      setLearning(false);
+                      setEstimating(false);
+                      setAddingPeriod(true);
+                      mainScroll.current?.scrollTo({ y: 0, animated: false });
+                    }}
+                  />
                   <Button
                     secondary
                     icon={BookOpen}
@@ -555,6 +588,7 @@ function CycleApp() {
               onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
               journal={journal}
               demo={state.demo}
+              openDay={showDay}
               backup={state.backup}
               lock={state.lock}
               erase={state.erase}
@@ -589,6 +623,7 @@ function CycleApp() {
                 onPress={() => {
                   setLearning(false);
                   setEstimating(false);
+                  setAddingPeriod(false);
                   setPage(id);
                 }}
                 style={{ flex: 1, alignItems: 'center', gap: 5, padding: 10, minHeight: 59 }}

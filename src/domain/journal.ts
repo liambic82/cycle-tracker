@@ -52,8 +52,16 @@ import {
   validateCustomSymptom,
 } from './symptoms.ts';
 
-export const FLOWS = ['none', 'spotting', 'light', 'medium', 'heavy'] as const;
+export const FLOWS = ['none', 'spotting', 'unspecified', 'light', 'medium', 'heavy'] as const;
 export type Flow = (typeof FLOWS)[number];
+export const FLOW_LABELS: Record<Flow, string> = {
+  none: 'None',
+  spotting: 'Spotting',
+  unspecified: 'Bleeding · flow not specified',
+  light: 'Light',
+  medium: 'Medium',
+  heavy: 'Heavy',
+};
 
 export interface Entry {
   flow: Flow;
@@ -75,7 +83,7 @@ export interface Entry {
 }
 
 export interface Journal {
-  version: 8;
+  version: 9;
   medications: Medication[];
   medicalRecords: MedicalRecord[];
   personalReminders: PersonalReminder[];
@@ -108,7 +116,7 @@ export function emptyEntry(): Entry {
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 8,
+    version: 9,
     medications: [],
     medicalRecords: [],
     personalReminders: [],
@@ -251,7 +259,8 @@ export function parseJournal(value: unknown): Journal {
         value.version === 5 ||
         value.version === 6 ||
         value.version === 7 ||
-        value.version === 8) &&
+        value.version === 8 ||
+        value.version === 9) &&
       validDay(value.selectedDate),
   );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
@@ -269,6 +278,7 @@ export function parseJournal(value: unknown): Journal {
     assert(validDay(day) && record(entry));
     assert(
       FLOWS.includes(entry.flow as Flow) &&
+        (value.version >= 9 || entry.flow !== 'unspecified') &&
         typeof entry.periodStart === 'boolean' &&
         typeof entry.periodEnd === 'boolean',
     );
@@ -331,7 +341,7 @@ export function parseJournal(value: unknown): Journal {
   const reminderIds = new Set(personalReminders.map((reminder) => reminder.id));
   assert(medications.every((medication) => !reminderIds.has(medication.id)));
   return {
-    version: 8,
+    version: 9,
     personalReminders,
     medicalRecords: value.version >= 8 ? parseMedicalRecords(value.medicalRecords) : [],
     medications,
