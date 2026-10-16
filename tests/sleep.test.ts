@@ -44,7 +44,7 @@ test('formats 1–5 gain unknown sleep, preserve prior records, and do not infer
     const legacy = { ...sample, version, entries };
     const before = JSON.stringify(legacy);
     const migrated = parseJournal(legacy);
-    assert.equal(migrated.version, 9);
+    assert.equal(migrated.version, 10);
     assert.equal(JSON.stringify(legacy), before);
     for (const [date, entry] of Object.entries(migrated.entries)) {
       assert.deepEqual(entry.sleep, emptySleep());
@@ -95,7 +95,7 @@ test('sleep schema rejects malformed, missing or coerced values and bounds each 
       parseJournal({ ...emptyJournal(today), entries: { [today]: { ...emptyEntry(), sleep } } }),
     );
   }
-  assert.throws(() => parseJournal({ ...emptyJournal(today), version: 10 }));
+  assert.throws(() => parseJournal({ ...emptyJournal(today), version: 11 }));
 });
 
 test('duration entry uses whole hours/minutes, permits partial and zero records, and rejects ambiguous input', () => {

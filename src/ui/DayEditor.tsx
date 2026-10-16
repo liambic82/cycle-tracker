@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { ActionRow } from './ActionRow';
+import { DaySectionOrder } from './DaySectionOrder';
+import type { DaySection } from '../domain/journalPreferences';
+import React, { useEffect, useState } from 'react';
+import { BackHandler, Pressable, Text, TextInput, View } from 'react-native';
 import {
   Check,
-  BookOpen,
   Droplet,
   Ellipsis,
   Heart,
@@ -22,7 +24,8 @@ import {
 import { Button, Chip, SectionLabel } from './components';
 import { useTheme } from './theme';
 import {
-  QUICK_SYMPTOMS,
+  symptomIdentity,
+  symptomSections,
   symptomSelected,
   toggleSymptom,
   type SymptomFilter,
@@ -33,7 +36,6 @@ import { SexualHealthEditor } from './SexualHealthEditor';
 import { hasSexualHealth } from '../domain/sexualHealth';
 import { DoseLog } from './DoseLog';
 import { plannedDoses } from '../domain/medications';
-import { CycleContext } from './CycleContext';
 import { SeverityControl, SymptomSeverityEditor } from './SymptomSeverityEditor';
 import { symptomSeverity } from '../domain/symptomSeverity';
 import { describeMedicalRecord } from '../domain/medicalRecords';
@@ -41,7 +43,7 @@ import { DailyDetailsEditor } from './DailyDetailsEditor';
 import { hasDailyDetails, describeDailyDetails } from '../domain/dailyDetails';
 import { SleepEditor } from './SleepEditor';
 import { ImportedSleepDetails } from './ImportedSleepDetails';
-import { hasSleep, sleepDurationLabel, SLEEP_QUALITY_LABELS } from '../domain/sleep';
+import { hasSleep } from '../domain/sleep';
 
 export function DayEditor({
   journal,
@@ -72,7 +74,6 @@ export function DayEditor({
   const date = journal.selectedDate;
   const entry = journal.entries[date] ?? emptyEntry();
   const day = date <= today ? cycleDay(journal, date) : null;
-  const [contextOpen, setContextOpen] = useState(false);
   const [browsing, setBrowsing] = useState<SymptomFilter | null>(null);
   const [symptomError, setSymptomError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -83,6 +84,20 @@ export function DayEditor({
   const [severityOpen, setSeverityOpen] = useState(false);
   const [dailyOpen, setDailyOpen] = useState(false);
   const [sleepOpen, setSleepOpen] = useState(false);
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [pinsOpen, setPinsOpen] = useState(false);
+  const [flowOpen, setFlowOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
+  useEffect(() => {
+    if (!pinsOpen && browsing === null) return;
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      setPinsOpen(false);
+      setBrowsing(null);
+      onViewChange();
+      return true;
+    });
+    return () => sub.remove();
+  }, [pinsOpen, browsing, onViewChange]);
   const closeActions = () => {
     setActionsOpen(false);
     setDeleteConfirm(false);
@@ -101,6 +116,45 @@ export function DayEditor({
       setSymptomError(err instanceof Error ? err.message : 'Could not log this symptom.');
     }
   };
+  if (orderOpen)
+    return (
+      <DaySectionOrder
+        order={journal.preferences.sectionOrder}
+        saveStatus={saveStatus}
+        change={(sectionOrder) =>
+          onUpdate((value) => ({ ...value, preferences: { ...value.preferences, sectionOrder } }))
+        }
+        done={() => {
+          setOrderOpen(false);
+          onViewChange();
+        }}
+      />
+    );
+  if (pinsOpen)
+    return (
+      <SymptomBrowser
+        pinMode
+        selected={journal.preferences.pinnedSymptoms}
+        custom={journal.customSymptoms}
+        showPerimenopause={journal.preferences.showPerimenopause}
+        initialFilter="All"
+        toggle={(symptom) =>
+          onUpdate((value) => ({
+            ...value,
+            preferences: {
+              ...value.preferences,
+              pinnedSymptoms: toggleSymptom(value.preferences.pinnedSymptoms, symptom),
+            },
+          }))
+        }
+        onCustom={() => {}}
+        done={() => {
+          setPinsOpen(false);
+          onViewChange();
+        }}
+        error=""
+      />
+    );
   if (dailyOpen && date <= today)
     return (
       <DailyDetailsEditor
@@ -142,19 +196,6 @@ export function DayEditor({
         saveStatus={saveStatus}
         done={() => {
           setSeverityOpen(false);
-          onViewChange();
-        }}
-      />
-    );
-  if (contextOpen)
-    return (
-      <CycleContext
-        journal={journal}
-        date={date}
-        today={today}
-        doneLabel="Back to daily journal"
-        done={() => {
-          setContextOpen(false);
           onViewChange();
         }}
       />
@@ -205,6 +246,7 @@ export function DayEditor({
   if (browsing !== null && date <= today)
     return (
       <SymptomBrowser
+        favorites={journal.preferences.pinnedSymptoms}
         selected={entry.symptoms}
         custom={journal.customSymptoms}
         showPerimenopause={journal.preferences.showPerimenopause}
@@ -215,128 +257,145 @@ export function DayEditor({
         error={symptomError}
       />
     );
-  return (
-    <View style={{ gap: 26 }}>
-      <View style={[common.between, { alignItems: 'flex-start' }]}>
-        <View style={{ flex: 1, gap: 6 }}>
-          <Text style={common.eyebrow}>{date === today ? 'TODAY’S JOURNAL' : 'DAILY JOURNAL'}</Text>
-          <Text style={common.heading}>{formatDay(date, { month: 'long', day: 'numeric' })}</Text>
-          <Text style={common.body}>
-            {formatDay(date, { weekday: 'long', year: 'numeric' })}
-            {day ? `  ·  Cycle day ${day}` : ''}
-          </Text>
+  const visibleSymptoms = new Set(
+    symptomSections(journal.customSymptoms, journal.preferences.showPerimenopause)
+      .flatMap((section) => section.labels)
+      .map(symptomIdentity),
+  );
+  const pinnedSymptoms = journal.preferences.pinnedSymptoms.filter((label) =>
+    visibleSymptoms.has(symptomIdentity(label)),
+  );
+  const sections: Record<DaySection, React.ReactNode> = {
+    symptoms: (
+      <View>
+        <SectionLabel icon={Heart}>How are you feeling?</SectionLabel>
+        {entry.symptoms.length > 0 && (
+          <View style={{ gap: 9, marginBottom: 18 }}>
+            <Text style={common.label}>Logged this day · {entry.symptoms.length}</Text>
+            <Text style={common.small}>Tap a selected symptom to remove it from this day.</Text>
+            <View style={common.wrap}>
+              {entry.symptoms.map((symptom) => (
+                <Chip
+                  key={symptom}
+                  label={`${symptom}${symptomSeverity(entry, symptom) === null ? '' : ` · ${symptomSeverity(entry, symptom)}/10`}`}
+                  accessibilityLabel={`Remove ${symptom}${symptomSeverity(entry, symptom) === null ? '' : `, severity ${symptomSeverity(entry, symptom)} of 10`}`}
+                  selected
+                  icon={Check}
+                  onPress={() => toggle(symptom)}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+        <Text style={[common.small, { marginBottom: 9 }]}>Pinned symptoms</Text>
+        <View style={common.wrap}>
+          {pinnedSymptoms.map((symptom) => (
+            <Chip
+              key={symptom}
+              label={symptom}
+              selected={symptomSelected(entry.symptoms, symptom)}
+              onPress={() => toggle(symptom)}
+            />
+          ))}
         </View>
-        {date <= today && !!journal.entries[date] && (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Entry options"
-            accessibilityState={{ expanded: actionsOpen }}
-            aria-expanded={actionsOpen}
+        <View style={{ gap: 10, marginTop: 16 }}>
+          <Button
+            secondary
+            label="Pin symptoms"
             onPress={() => {
-              setActionsOpen(!actionsOpen);
-              setDeleteConfirm(false);
+              setPinsOpen(true);
+              onViewChange();
             }}
-            style={({ pressed }) => ({
-              width: 48,
-              height: 48,
+          />
+          <Button secondary label="Browse all symptoms" onPress={() => browse('All')} />
+          {entry.symptoms.length > 0 && (
+            <Button
+              secondary
+              label="Rate symptoms · optional"
+              onPress={() => {
+                closeActions();
+                setSeverityOpen(true);
+                onViewChange();
+              }}
+            />
+          )}
+          {!!symptomError && (
+            <Text accessibilityRole="alert" style={common.error}>
+              {symptomError}
+            </Text>
+          )}
+        </View>
+        {entry.symptoms.includes('Cramps') && (
+          <View
+            style={{
+              marginTop: 14,
+              backgroundColor: colors.roseSoft,
               borderRadius: 12,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: actionsOpen || pressed ? colors.roseSoft : colors.paper,
-              borderWidth: 1,
-              borderColor: colors.line,
-            })}
+              padding: 14,
+              gap: 12,
+            }}
           >
-            <Ellipsis size={22} color={colors.plum} />
-          </Pressable>
+            <SeverityControl
+              symptom="Cramps"
+              value={entry.cramps}
+              change={(cramps) => onPatch({ cramps })}
+            />
+          </View>
         )}
       </View>
-      <Button
-        secondary
-        icon={BookOpen}
-        label="Explore this day’s cycle context"
+    ),
+    observations: (
+      <ActionRow
+        label="Daily observations"
+        detail={
+          hasDailyDetails(entry.dailyDetails)
+            ? `${describeDailyDetails(entry.dailyDetails).length} recorded`
+            : 'Mood, energy, activity & more'
+        }
         onPress={() => {
           closeActions();
-          setContextOpen(true);
+          setDailyOpen(true);
           onViewChange();
         }}
       />
-      {actionsOpen && date <= today && !!journal.entries[date] && (
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: colors.line,
-            borderRadius: 14,
-            padding: 16,
-            gap: 12,
+    ),
+    medications: (
+      <ActionRow
+        label="Medications & supplements"
+        detail={`${entry.doseRecords.length} logged · ${plannedDoses(journal.medications, date).filter((d) => d.phase !== 'as-needed').length} scheduled`}
+        onPress={() => {
+          closeActions();
+          setDosesOpen(true);
+          onViewChange();
+        }}
+      />
+    ),
+    sleep: (
+      <View>
+        <ActionRow
+          label="Sleep"
+          detail={`${hasSleep(entry.sleep) ? 'Manual details recorded' : 'No manual details'}${entry.sleepImports.length ? ` · ${entry.sleepImports.length} imported` : ''}`}
+          onPress={() => {
+            closeActions();
+            setSleepOpen(true);
+            onViewChange();
           }}
-        >
-          {deleteConfirm ? (
-            <>
-              <Text style={common.label}>Delete this day’s entry?</Text>
-              <Text style={common.body}>
-                This removes all daily details, including flow, product records, bleeding
-                observations, sexual-health details, dose records, symptoms, sleep, daily
-                observations, notes, and period markers for{' '}
-                {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
-                the last deletion until you lock, delete another entry, or log this day again.
-                Medication schedules, care reminder plans and separate medical records are kept.
-              </Text>
-              <Button label="Keep entry" onPress={closeActions} />
-              <Button
-                secondary
-                danger
-                label="Delete this entry"
-                icon={Trash2}
-                onPress={() => {
-                  onDelete();
-                  closeActions();
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <Text style={common.label}>Entry options</Text>
-              <Button
-                secondary
-                danger
-                label="Delete entry"
-                icon={Trash2}
-                onPress={() => setDeleteConfirm(true)}
-              />
-            </>
-          )}
-        </View>
-      )}
-      {journal.medicalRecords
-        .filter((record) => record.date === date)
-        .map((record) => (
-          <View key={record.id} style={[common.card, { gap: 8 }]}>
-            <Text style={common.label}>Medical record · {record.title}</Text>
-            {describeMedicalRecord(record, true)
-              .slice(1)
-              .map((text, i) => (
-                <Text key={i} style={common.body}>
-                  {text}
-                </Text>
-              ))}
-            <Text style={common.small}>
-              Edit or manage attachments under Your data → Medical records.
-            </Text>
-          </View>
-        ))}
-      {undoNotice}
-      {date > today ? (
-        <View style={{ backgroundColor: colors.sage, padding: 20, borderRadius: 14, gap: 10 }}>
-          <Sparkles size={24} color={colors.sageInk} />
-          <Text style={common.label}>A day still to come</Text>
-          <Text style={common.body}>
-            Your journal will be ready when this day arrives. Choose today or a past date to log how
-            you feel.
-          </Text>
-        </View>
-      ) : (
-        <>
+        />
+        <ImportedSleepDetails
+          records={entry.sleepImports}
+          change={(sleepImports) => onPatch({ sleepImports })}
+        />
+      </View>
+    ),
+    flow: (
+      <View>
+        <ActionRow
+          label="Flow"
+          detail={entry.flowRecorded ? FLOW_LABELS[entry.flow] : 'Not logged'}
+          expanded={flowOpen}
+          onPress={() => setFlowOpen(!flowOpen)}
+        />
+        {flowOpen && (
           <View>
             <SectionLabel icon={Droplet}>Flow</SectionLabel>
             <View style={common.wrap}>
@@ -437,166 +496,29 @@ export function DayEditor({
               )}
             </View>
           </View>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
-          <View style={{ gap: 9 }}>
-            <Button
-              secondary
-              label="Medications & supplements"
-              onPress={() => {
-                closeActions();
-                setDosesOpen(true);
-                onViewChange();
-              }}
-            />
-            <Text style={common.small}>
-              {entry.doseRecords.length} dose{' '}
-              {entry.doseRecords.length === 1 ? 'record' : 'records'} ·{' '}
-              {
-                plannedDoses(journal.medications, date).filter((dose) => dose.phase !== 'as-needed')
-                  .length
-              }{' '}
-              scheduled for this day
-            </Text>
-          </View>
-          <View style={{ gap: 9 }}>
-            <Button
-              secondary
-              label="Sleep details · optional"
-              onPress={() => {
-                closeActions();
-                setSleepOpen(true);
-                onViewChange();
-              }}
-            />
-            {hasSleep(entry.sleep) ? (
-              <Text style={common.small}>
-                {[
-                  entry.sleep.durationMinutes === null
-                    ? null
-                    : `Time asleep: ${sleepDurationLabel(entry.sleep.durationMinutes)}`,
-                  entry.sleep.quality === null
-                    ? null
-                    : `Quality: ${SLEEP_QUALITY_LABELS[entry.sleep.quality]}`,
-                  entry.sleep.wakings === null ? null : `Night wakings: ${entry.sleep.wakings}`,
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </Text>
-            ) : (
-              <Text style={common.small}>For the main sleep ending on this day.</Text>
-            )}
-          </View>
-          <View style={{ gap: 9 }}>
-            <Button
-              secondary
-              label="Daily observations · optional"
-              onPress={() => {
-                closeActions();
-                setDailyOpen(true);
-                onViewChange();
-              }}
-            />
-            <Text style={common.small}>
-              {hasDailyDetails(entry.dailyDetails)
-                ? `${describeDailyDetails(entry.dailyDetails).length} observations recorded`
-                : 'Pain, hot flashes, mood, energy, activity, measurements and tests.'}
-            </Text>
-          </View>
-          <ImportedSleepDetails
-            records={entry.sleepImports}
-            change={(sleepImports) => onPatch({ sleepImports })}
-          />
-          <View>
-            <SectionLabel icon={Heart}>How are you feeling?</SectionLabel>
-            <Text style={[common.small, { marginBottom: 13 }]}>
-              Choose anything you notice. Every day counts.
-            </Text>
-            {entry.symptoms.length > 0 && (
-              <View style={{ gap: 9, marginBottom: 18 }}>
-                <Text style={common.label}>Logged this day · {entry.symptoms.length}</Text>
-                <Text style={common.small}>Tap a selected symptom to remove it from this day.</Text>
-                <View style={common.wrap}>
-                  {entry.symptoms.map((symptom) => (
-                    <Chip
-                      key={symptom}
-                      label={`${symptom}${symptomSeverity(entry, symptom) === null ? '' : ` · ${symptomSeverity(entry, symptom)}/10`}`}
-                      accessibilityLabel={`Remove ${symptom}${symptomSeverity(entry, symptom) === null ? '' : `, severity ${symptomSeverity(entry, symptom)} of 10`}`}
-                      selected
-                      icon={Check}
-                      onPress={() => toggle(symptom)}
-                    />
-                  ))}
-                </View>
-              </View>
-            )}
-            <Text style={[common.small, { marginBottom: 9 }]}>Quick choices</Text>
-            <View style={common.wrap}>
-              {QUICK_SYMPTOMS.map((symptom) => (
-                <Chip
-                  key={symptom}
-                  label={symptom}
-                  selected={symptomSelected(entry.symptoms, symptom)}
-                  onPress={() => toggle(symptom)}
-                />
-              ))}
-            </View>
-            <View style={{ gap: 10, marginTop: 16 }}>
-              <Button label="Browse all symptoms" onPress={() => browse('All')} />
-              {entry.symptoms.length > 0 && (
-                <Button
-                  secondary
-                  label="Rate symptoms · optional"
-                  onPress={() => {
-                    closeActions();
-                    setSeverityOpen(true);
-                    onViewChange();
-                  }}
-                />
-              )}
-              <Button
-                secondary
-                label="Less common symptoms"
-                onPress={() => browse('More symptoms')}
-              />
-              {!!symptomError && (
-                <Text accessibilityRole="alert" style={common.error}>
-                  {symptomError}
-                </Text>
-              )}
-            </View>
-            {entry.symptoms.includes('Cramps') && (
-              <View
-                style={{
-                  marginTop: 14,
-                  backgroundColor: colors.roseSoft,
-                  borderRadius: 12,
-                  padding: 14,
-                  gap: 12,
-                }}
-              >
-                <SeverityControl
-                  symptom="Cramps"
-                  value={entry.cramps}
-                  change={(cramps) => onPatch({ cramps })}
-                />
-              </View>
-            )}
-          </View>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
-          <View>
-            <Button
-              secondary
-              label="Sexual health · optional"
-              onPress={() => {
-                closeActions();
-                setSexualHealthOpen(true);
-                onViewChange();
-              }}
-            />
-            {hasSexualHealth(entry.sexualHealth) && (
-              <Text style={[common.small, { marginTop: 9 }]}>Details logged for this day.</Text>
-            )}
-          </View>
+        )}
+      </View>
+    ),
+    sexualHealth: (
+      <ActionRow
+        label="Sexual health"
+        detail={hasSexualHealth(entry.sexualHealth) ? 'Details recorded' : undefined}
+        onPress={() => {
+          closeActions();
+          setSexualHealthOpen(true);
+          onViewChange();
+        }}
+      />
+    ),
+    notes: (
+      <View>
+        <ActionRow
+          label="Notes"
+          detail={entry.note ? 'Note recorded' : undefined}
+          expanded={notesOpen}
+          onPress={() => setNotesOpen(!notesOpen)}
+        />
+        {notesOpen && (
           <View>
             <SectionLabel icon={NotebookPen}>A note for yourself</SectionLabel>
             <TextInput
@@ -614,10 +536,134 @@ export function DayEditor({
               placeholderTextColor={colors.muted}
               maxLength={10000}
             />
-            <Text style={[common.small, { marginTop: 9 }]}>
-              Anything that feels relevant. Or nothing at all.
+          </View>
+        )}
+      </View>
+    ),
+  };
+  return (
+    <View style={{ gap: 16 }}>
+      <View style={[common.between, { alignItems: 'flex-start' }]}>
+        <View style={{ flex: 1, gap: 6 }}>
+          <Text style={common.eyebrow}>{date === today ? 'TODAY’S JOURNAL' : 'DAILY JOURNAL'}</Text>
+          <Text style={common.heading}>{formatDay(date, { month: 'long', day: 'numeric' })}</Text>
+          <Text style={common.body}>
+            {formatDay(date, { weekday: 'long', year: 'numeric' })}
+            {day ? `  ·  Cycle day ${day}` : ''}
+          </Text>
+        </View>
+        {date <= today && !!journal.entries[date] && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Entry options"
+            accessibilityState={{ expanded: actionsOpen }}
+            aria-expanded={actionsOpen}
+            onPress={() => {
+              setActionsOpen(!actionsOpen);
+              setDeleteConfirm(false);
+            }}
+            style={({ pressed }) => ({
+              width: 48,
+              height: 48,
+              borderRadius: 12,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: actionsOpen || pressed ? colors.roseSoft : colors.paper,
+              borderWidth: 1,
+              borderColor: colors.line,
+            })}
+          >
+            <Ellipsis size={22} color={colors.plum} />
+          </Pressable>
+        )}
+      </View>
+      <Button
+        secondary
+        label="Edit section order"
+        onPress={() => {
+          setOrderOpen(true);
+          onViewChange();
+        }}
+      />
+      {actionsOpen && date <= today && !!journal.entries[date] && (
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: colors.line,
+            borderRadius: 14,
+            padding: 16,
+            gap: 12,
+          }}
+        >
+          {deleteConfirm ? (
+            <>
+              <Text style={common.label}>Delete this day’s entry?</Text>
+              <Text style={common.body}>
+                This removes all daily details, including flow, product records, bleeding
+                observations, sexual-health details, dose records, symptoms, sleep, daily
+                observations, notes, and period markers for{' '}
+                {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}. You can undo
+                the last deletion until you lock, delete another entry, or log this day again.
+                Medication schedules, care reminder plans and separate medical records are kept.
+              </Text>
+              <Button label="Keep entry" onPress={closeActions} />
+              <Button
+                secondary
+                danger
+                label="Delete this entry"
+                icon={Trash2}
+                onPress={() => {
+                  onDelete();
+                  closeActions();
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <Text style={common.label}>Entry options</Text>
+              <Button
+                secondary
+                danger
+                label="Delete entry"
+                icon={Trash2}
+                onPress={() => setDeleteConfirm(true)}
+              />
+            </>
+          )}
+        </View>
+      )}
+      {journal.medicalRecords
+        .filter((record) => record.date === date)
+        .map((record) => (
+          <View key={record.id} style={[common.card, { gap: 8 }]}>
+            <Text style={common.label}>Medical record · {record.title}</Text>
+            {describeMedicalRecord(record, true)
+              .slice(1)
+              .map((text, i) => (
+                <Text key={i} style={common.body}>
+                  {text}
+                </Text>
+              ))}
+            <Text style={common.small}>
+              Edit or manage attachments under Your data → Medical records.
             </Text>
           </View>
+        ))}
+      {undoNotice}
+      {date > today ? (
+        <View style={{ backgroundColor: colors.sage, padding: 20, borderRadius: 14, gap: 10 }}>
+          <Sparkles size={24} color={colors.sageInk} />
+          <Text style={common.label}>A day still to come</Text>
+          <Text style={common.body}>
+            Your journal will be ready when this day arrives. Choose today or a past date to log how
+            you feel.
+          </Text>
+        </View>
+      ) : (
+        <>
+          {journal.preferences.sectionOrder.map((section) => (
+            <View key={section}>{sections[section]}</View>
+          ))}
           <View style={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 20, gap: 8 }}>
             <Text style={common.small}>
               {demo ? 'You’re exploring a sample journal.' : 'Changes save automatically.'}

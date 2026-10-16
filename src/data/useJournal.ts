@@ -1,3 +1,7 @@
+import { checkJournalSize } from '../domain/sleepImport';
+import { rememberRemovedSleep, resetRestoredAutomation } from '../domain/journalPreferences';
+import { healthSleep } from './healthSleep';
+import { ForegroundSleepImporter, type AutoSleepState } from './foregroundSleepImporter';
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,6 +56,61 @@ export function useJournal() {
   const backgroundEpoch = useRef(0);
   const lockPending = useRef(false);
   const releaseLease = useRef<(() => void) | null>(null);
+  const [autoSleep, setAutoSleep] = useState<AutoSleepState>({ state: 'idle', message: '' });
+  const foreground = useRef(true);
+  const autoRequested = useRef<string | null>(null);
+  const [sleepImporter] = useState(
+    () =>
+      new ForegroundSleepImporter({
+        current: () => current.current,
+        active: () =>
+          foreground.current &&
+          !!current.current &&
+          !demoRef.current &&
+          !working.current &&
+          !lockPending.current,
+        status: () => healthSleep.status(),
+        read: () => healthSleep.readRecent(30),
+        now: () => new Date(),
+        report: setAutoSleep,
+        save: async (next) => {
+          const change = ++revision.current;
+          setCurrent(next);
+          setStatus('Saving…');
+          setError('');
+          try {
+            await writer.current!.save(next);
+            if (revision.current === change && current.current && key.current) {
+              savedRevision.current = change;
+              setStatus('Saved on this device');
+              await syncReminders(next, key.current.salt, change);
+            }
+          } catch {
+            if (revision.current === change) {
+              setStatus('Not saved');
+              setError(
+                'Sleep import could not be saved. Keep the app open and retry saving or export a backup.',
+              );
+            }
+            throw new Error(
+              'Sleep import could not be saved. Retry saving your journal before checking again.',
+            );
+          }
+        },
+      }),
+  );
+  useEffect(() => {
+    if (!journal || !journal.preferences.sleepAutomation.enabled) autoRequested.current = null;
+    else if (!busy && autoRequested.current !== journal.preferences.sleepAutomation.source) {
+      autoRequested.current = journal.preferences.sleepAutomation.source;
+      void sleepImporter.check();
+    }
+  }, [
+    !!journal,
+    busy,
+    journal?.preferences.sleepAutomation.enabled,
+    journal?.preferences.sleepAutomation.source,
+  ]);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -68,6 +127,7 @@ export function useJournal() {
       .catch(() => setError('Local storage could not be read. Reload the app to try again.'))
       .finally(() => setLoading(false));
     return () => {
+      sleepImporter.cancel();
       photos.close();
       key.current?.key.fill(0);
       releaseLease.current?.();
@@ -204,6 +264,7 @@ export function useJournal() {
   };
 
   const endSession = useCallback(() => {
+    sleepImporter.cancel();
     photos.close();
     revision.current++;
     key.current?.key.fill(0);
@@ -329,7 +390,15 @@ export function useJournal() {
 
   const update = (transform: (value: Journal) => Journal) => {
     if (!current.current || working.current) return;
-    const next = transform(current.current);
+    const next = checkJournalSize(
+      rememberRemovedSleep(current.current, transform(current.current)),
+    );
+    if (
+      next.preferences.sleepAutomation.enabled !==
+        current.current.preferences.sleepAutomation.enabled ||
+      next.preferences.sleepAutomation.source !== current.current.preferences.sleepAutomation.source
+    )
+      sleepImporter.cancel(true);
     if (deletedRef.current && next.entries[deletedRef.current.date]) rememberDeletion(null);
     setCurrent(next);
     if (demoRef.current) return;
@@ -401,6 +470,7 @@ export function useJournal() {
   };
 
   const lock = useCallback(async () => {
+    sleepImporter.cancel();
     if (working.current) {
       lockPending.current = true;
       return;
@@ -426,6 +496,8 @@ export function useJournal() {
     let hiddenAt = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const visibility = (hidden: boolean) => {
+      foreground.current = !hidden;
+      if (hidden) sleepImporter.cancel();
       setObscured(hidden);
       if (hidden) {
         if (!hiddenAt) hiddenAt = Date.now();
@@ -482,6 +554,7 @@ export function useJournal() {
     try {
       release = await acquireEditLease();
       const restored = await openVault(raw, passphrase, derivePassphraseKey);
+      restored.journal = resetRestoredAutomation(restored.journal);
       restoredKey = restored.vault;
       setAuthProgress('Saving your restored journal…');
       // Validate the backup before removing convenience access to the existing journal.
@@ -520,6 +593,8 @@ export function useJournal() {
   };
 
   return {
+    autoSleep,
+    checkSleep: () => sleepImporter.check(true),
     photo: { ...photoSnapshot, apply: photos.apply, remove: photos.remove } satisfies PhotoControls,
     journal,
     exists,

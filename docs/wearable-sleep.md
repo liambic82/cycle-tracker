@@ -1,5 +1,15 @@
 # Wearable sleep integration
 
+## Opt-in foreground import — 0.20.0
+
+After granting Sleep access, load recent sessions and verify the source. **Enable import on unlock from [source]** is the explicit opt-in. New non-overlapping sessions from that source are read over a bounded 30-day window once after unlock while the app is active. Check sleep now retries on demand. The app never requests permission automatically, changes providers, runs a locked/background worker or forces Fitbit to sync. No additional OS permission or hosting is added.
+
+The latest check shows its time, added/review counts and absent-source state alongside journal save status. Only the completion message reports saved after encrypted persistence. Changes, overlaps (including ambiguous results in one read) and future waking dates are left for manual review. Load nights to review opens the 30-day manual flow; the result is a count from the last check, not a durable copy of unsaved source data. Counts refresh on the next check. Backfill beyond 30 days remains manual. Manual sleep and separate naps are retained unchanged; missing stages remain unknown.
+
+Reads have an in-flight guard, a one-minute automatic cooldown and lifecycle invalidation. Background/lock/disconnect/source change invalidates late results, and a subsequent unlock queues safely behind an old read. Read/permission/save errors remain visible and do not block manual journaling. No plaintext staging or background key retention is added.
+
+Deleting an imported copy or its full day records an encrypted source/id suppression. The same record will not return automatically. Undo or explicitly importing it clears that suppression. A source-generated new ID cannot be recognized as the deleted identity. The suppression list, chosen source and last check are backed up with format 10; **restore always disables automation and clears last-check status**. Disconnect disables automation before permission revocation; saved copies remain. The native public privacy rationale is updated. Real Inspire 3/Health Connect and lifecycle checks remain pending in the [0.20 checklist](android-testing.md#0200-journal-first-and-foreground-sleep-import).
+
 ## Multi-night import — 0.19.0
 
 October 12 feedback identified one-at-a-time import as the main difficulty. After loading, a single source is selected automatically; multiple sources require a choice. Select all new nights or individual sessions, review the batch and import together. Changed copies require explicit individual selection and a replacement warning. Duplicate/older/future sessions are not selectable; overlaps are flagged and kept separate. One invalid record or capacity failure aborts the entire batch. Manual values remain unchanged. View saved sleep nights opens history directly. Permission, source/time-zone, lock/background clearing and encrypted-storage behavior remain unchanged. No background syncing is added. [Feedback and focused checks](testing-feedback-2026-10-12.md).

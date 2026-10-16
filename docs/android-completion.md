@@ -2,9 +2,9 @@
 
 ## Owner direction — October 11, 2026
 
-**October 16 update:** further 0.19 feedback identifies usability work before the Android handoff: section order, symptom pins, clutter/copy, control clarity, earlier-month scrolling and a better cycle summary. Sleep import is improved but remains uncertain. [Proposals and acceptance criteria](testing-feedback-2026-10-16.md) include opt-in foreground import after unlock; visual/customization changes await concrete proposal approval. This is partial feedback, not a consolidated pass, and does not enable closed-app background syncing.
+**Current build: 0.20.0 / code 24.** The owner approved Journal first, section ordering, symptom pins, clearer/shorter daily controls, a single scrolling calendar and opt-in foreground sleep import, and requested testosterone in the optional hormone guide. [Implemented scope](testing-feedback-2026-10-16.md) · [Focused checks](android-testing.md#0200-journal-first-and-foreground-sleep-import). Journal format 10 migrates 1–9; new backups need 0.20.0+. Restoring a backup disables automatic sleep import.
 
-**Current build: 0.19.0 / code 23.** The [October 12 feedback fixes](testing-feedback-2026-10-12.md) add calendar-level period ranges with optional flow and batch sleep import. Journal format 9 migrates 1–8; new backups need 0.19.0+. The tester reported using the latest build, entering dates and making a backup, but this does not establish a consolidated pass or backup restore. Retest these fixes with [the 0.19.0 checklist](android-testing.md#0190-period-ranges-and-bulk-sleep-import). The dated 0.18.0 scope below remains included.
+The [0.19 period-range and batch-import improvements](testing-feedback-2026-10-12.md) and the dated 0.18.0 scope below remain included. October 16 feedback is partial evidence, not a consolidated hardware pass. Closed-app/background sync and store release remain deferred.
 
 Complete local Android development, then run a consolidated Android test pass, then port and validate on iOS. The owner explicitly deferred **cloud sync and automatic background sleep syncing** until after the local app. Continue development without requiring a phone sign-off after every individual feature slice. This changes the development sequence; it is not a new report of passing device tests or a 1.0 release decision.
 
@@ -40,7 +40,7 @@ Journal format **8** migrates formats 1–7. New backups require **0.18.0+**. Ex
 - **Release preparation:** security/accessibility checks, internal clinical-copy/source checks, final public privacy/contact information, Play declarations/review, store metadata/pricing and a separate release-scope decision remain. These are not established by an APK build.
 - **Deferred by the owner:** hosted encrypted sync and automatic/background wearable syncing. iOS/HealthKit work follows the Android pass.
 
-Do not describe 0.19.0 as “all Android work complete” while the device and release items remain. Optional future research is separate. This file keeps the Android-first objective and the remaining dependencies visible across development sessions.
+Do not describe 0.20.0 as “all Android work complete” while the device and release items remain. Optional future research is separate. This file keeps the Android-first objective and the remaining dependencies visible across development sessions.
 
 ## Native implementation references
 

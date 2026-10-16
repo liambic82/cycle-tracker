@@ -158,7 +158,7 @@ test('all seven prior journal formats migrate without inventing daily, medical o
     };
     const before = JSON.stringify(legacy),
       parsed = parseJournal(legacy);
-    assert.equal(parsed.version, 9);
+    assert.equal(parsed.version, 10);
     assert.equal(JSON.stringify(legacy), before);
     assert.deepEqual(parsed.medicalRecords, []);
     assert.deepEqual(parsed.personalReminders, []);

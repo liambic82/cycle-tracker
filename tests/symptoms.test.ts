@@ -113,8 +113,9 @@ test('0.3 journal imports default to visible choices and retain unknown/custom s
   ])
     assert.throws(() => parseJournal({ ...legacy, preferences }));
   assert.deepEqual(
-    parseJournal({ ...legacy, preferences: { showPerimenopause: false, unknown: 1 } }).preferences,
-    { showPerimenopause: false },
+    parseJournal({ ...legacy, version: 9, preferences: { showPerimenopause: false, unknown: 1 } })
+      .preferences,
+    { ...emptyJournal('2026-10-09').preferences, showPerimenopause: false },
   );
 });
 

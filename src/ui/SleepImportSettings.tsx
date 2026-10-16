@@ -1,3 +1,6 @@
+import type { AutoSleepState } from '../data/foregroundSleepImporter';
+import { AutomaticSleepSettings } from './AutomaticSleepSettings';
+import { ActionRow } from './ActionRow';
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, BackHandler, Text, View } from 'react-native';
 import { toDay, formatDay, type Day } from '../domain/dates';
@@ -59,6 +62,8 @@ function SleepSummary({ record }: { record: ImportedSleep }) {
 }
 
 export function SleepImportSettings({
+  autoSleep,
+  checkSleep,
   journal,
   demo,
   update,
@@ -67,6 +72,8 @@ export function SleepImportSettings({
   saveStatus,
   openDay,
 }: {
+  autoSleep: AutoSleepState;
+  checkSleep: () => Promise<void>;
   journal: Journal;
   demo: boolean;
   update: (transform: (journal: Journal) => Journal) => void;
@@ -92,6 +99,7 @@ export function SleepImportSettings({
   const [chosen, setChosen] = useState<string[]>([]);
   const [batchReview, setBatchReview] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [help, setHelp] = useState(false);
   const epoch = useRef(0);
   const mounted = useRef(true);
   const clear = () => {
@@ -180,10 +188,10 @@ export function SleepImportSettings({
   const selectable = (record: ImportedSleep) =>
     ['new', 'updated'].includes(sleepImportState(journal, record)) &&
     sleepWakingDay(savedCandidate(journal, record)) <= today;
-  const load = () =>
+  const load = (window = days) =>
     void run(async (valid) => {
       clear();
-      const raw = demo ? demoSleepImports(today) : await healthSleep.readRecent(days);
+      const raw = demo ? demoSleepImports(today) : await healthSleep.readRecent(window);
       if (!valid()) return;
       if (!Array.isArray(raw) || raw.length > 500)
         throw new Error('Too many sleep sessions. Choose 7 days and retry.');
@@ -228,8 +236,23 @@ export function SleepImportSettings({
       )}
       {!candidate && !batchReview && !historyOpen && (
         <>
-          <Text style={common.heading}>Import wearable sleep</Text>
-          <Text style={common.label}>Connect → load nights → select → import together</Text>
+          <Text style={common.heading}>Wearable sleep</Text>
+          <AutomaticSleepSettings
+            journal={journal}
+            update={update}
+            source={source}
+            sourceName={sources.find(([id]) => id === source)?.[1] ?? null}
+            available={demo || status === 'granted'}
+            busy={busy}
+            demo={demo}
+            autoSleep={autoSleep}
+            checkSleep={checkSleep}
+            review={() => {
+              setDays(30);
+              load(30);
+            }}
+          />
+
           <Button
             secondary
             label="View saved sleep nights"
@@ -238,21 +261,25 @@ export function SleepImportSettings({
               onViewChange();
             }}
           />
-          <Text style={common.body}>
-            Fitbit Inspire 3 → Fitbit / Google Health → Health Connect → this journal. First sync
-            your tracker in its phone app and allow that app to share Sleep with Health Connect.
-          </Text>
-          <Text style={common.body}>
-            Optional read-only access to sleep sessions and stages. We read only when you load
-            sessions. Review before importing; copies stay encrypted on this device. Your manual
-            sleep values are never replaced.
-          </Text>
-          <Text style={common.small}>
-            Imports include source/device labels and times. No heart rate, cycle records, Fitbit
-            password, write-back or background access is requested. Source apps have their own data
-            practices. Backups include copies; CSV and a PDF with Sleep selected are readable
-            exports.
-          </Text>
+          <ActionRow
+            label="Connection steps & privacy"
+            expanded={help}
+            onPress={() => setHelp(!help)}
+          />
+          {help && (
+            <View style={{ gap: 10 }}>
+              <Text style={common.body}>
+                Sync your Inspire 3 in Fitbit / Google Health. Allow it to share Sleep with Health
+                Connect, then allow this app to read Sleep.
+              </Text>
+              <Text style={common.small}>
+                We read sessions and stages when you load them, or after unlock if enabled. Copies
+                stay encrypted on this device. No Fitbit password, heart rate, cycle records,
+                write-back or background access. Source apps have their own data practices. Backups
+                include copies; CSV and PDF exports with Sleep are readable.
+              </Text>
+            </View>
+          )}
           {demo ? (
             <Text style={common.label}>
               Fictional demonstration · no wearable connection or permission request
@@ -375,7 +402,7 @@ export function SleepImportSettings({
               <Button
                 label={demo ? 'Load fictional sessions' : 'Load recent sleep sessions'}
                 busy={busy}
-                onPress={load}
+                onPress={() => load()}
               />
             </>
           )}
@@ -671,6 +698,17 @@ export function SleepImportSettings({
               busy={busy}
               onPress={() =>
                 void run(async (valid) => {
+                  update((j) => ({
+                    ...j,
+                    preferences: {
+                      ...j.preferences,
+                      sleepAutomation: {
+                        ...j.preferences.sleepAutomation,
+                        enabled: false,
+                        lastCheck: null,
+                      },
+                    },
+                  }));
                   clear();
                   await healthSleep.disconnect();
                   if (valid()) {

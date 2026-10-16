@@ -1,3 +1,5 @@
+import { HormoneGuide } from './src/ui/HormoneGuide';
+import { ActionRow } from './src/ui/ActionRow';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -18,7 +20,6 @@ import {
   Check,
   CircleAlert,
   Flower2,
-  Heart,
   LockKeyhole,
   Plus,
   Pill,
@@ -32,7 +33,7 @@ import app from './app.json';
 import { addCustomSymptom, cycleDay, starts, updateEntry } from './src/domain/journal';
 import { formatDay, toDay, type Day } from './src/domain/dates';
 import { AuthGate } from './src/ui/AuthGate';
-import { Calendar, type CalendarView } from './src/ui/Calendar';
+import { Calendar, type CalendarView, type CalendarHandle } from './src/ui/Calendar';
 import { DayEditor } from './src/ui/DayEditor';
 import { History } from './src/ui/History';
 import { DataSettings } from './src/ui/DataSettings';
@@ -64,7 +65,8 @@ function CycleApp() {
   const width = useWindowDimensions().width;
   const desktop = width >= 900;
   const [calendarView, setCalendarView] = useState<CalendarView>('month');
-  const inlineEditor = width >= 1180 && calendarView !== 'day';
+  const calendarScroll = useRef<CalendarHandle>(null);
+  const [exploreOpen, setExploreOpen] = useState(false);
   const [page, setPage] = useState<Page>('calendar');
   const [editing, setEditing] = useState(false);
   const [learning, setLearning] = useState(false);
@@ -133,7 +135,7 @@ function CycleApp() {
   const lastStart = starts(journal, today).at(-1);
   const select = (date: Day) => {
     state.update((value) => ({ ...value, selectedDate: date }));
-    if (!inlineEditor && calendarView !== 'day') setEditing(true);
+    setEditing(true);
   };
   const showDay = (date: Day) => {
     setLearning(false);
@@ -171,12 +173,10 @@ function CycleApp() {
       undoNotice={undoNotice}
       saveStatus={saveStatus}
       demo={state.demo}
-      onViewChange={() =>
-        (inlineEditor || calendarView === 'day' ? mainScroll : editorScroll).current?.scrollTo({
-          y: 0,
-          animated: false,
-        })
-      }
+      onViewChange={() => {
+        if (editing) editorScroll.current?.scrollTo({ y: 0, animated: false });
+        else calendarScroll.current?.top();
+      }}
       onDelete={() => state.removeEntry(journal.selectedDate)}
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
       onCustom={(symptom) => state.update((value) => addCustomSymptom(value, symptom))}
@@ -186,6 +186,84 @@ function CycleApp() {
         setPage('medications');
         mainScroll.current?.scrollTo({ y: 0, animated: false });
       }}
+    />
+  );
+  const calendarHome = page === 'calendar' && !addingPeriod && !estimating && !learning;
+  const home = (
+    <Calendar
+      ref={calendarScroll}
+      journal={journal}
+      today={today}
+      compact={!desktop}
+      view={calendarView}
+      onSelect={(date) => state.update((value) => ({ ...value, selectedDate: date }))}
+      onOpenDay={select}
+      changeView={(view) => {
+        setCalendarView(view);
+        setEditing(false);
+      }}
+      dayContent={editor}
+      header={
+        <View style={{ gap: 14 }}>
+          <View style={[common.card, { padding: 18, gap: 10 }]}>
+            <Text style={common.eyebrow}>CURRENT CYCLE · TODAY</Text>
+            <View style={[common.between, { flexWrap: 'wrap', gap: 12 }]}>
+              <View>
+                <Text style={common.heading}>{day ? `Cycle day ${day}` : 'Cycle day unknown'}</Text>
+                <Text style={common.small}>
+                  Last period start:{' '}
+                  {lastStart
+                    ? formatDay(lastStart, { month: 'short', day: 'numeric', year: 'numeric' })
+                    : 'Not recorded'}
+                </Text>
+              </View>
+            </View>
+            <HormoneGuide />
+          </View>
+          <Button
+            icon={Plus}
+            label="Add period"
+            onPress={() => {
+              setEditing(false);
+              setAddingPeriod(true);
+            }}
+          />
+          {journal.preferences.sleepAutomation.enabled && (
+            <Text style={common.small} accessibilityLiveRegion="polite">
+              {state.autoSleep.message ||
+                (journal.preferences.sleepAutomation.lastCheck
+                  ? `Sleep · ${journal.preferences.sleepAutomation.lastCheck.added} new, ${journal.preferences.sleepAutomation.lastCheck.review} to review at last check`
+                  : 'Sleep import on unlock is on')}
+              {' · Your data → Wearable sleep'}
+            </Text>
+          )}
+        </View>
+      }
+      explore={
+        <View>
+          <ActionRow
+            label="Explore"
+            expanded={exploreOpen}
+            onPress={() => setExploreOpen(!exploreOpen)}
+          />
+          {exploreOpen && (
+            <View style={{ gap: 10, marginTop: 10 }}>
+              <Button
+                secondary
+                icon={BookOpen}
+                label="Cycle context"
+                onPress={() => setLearning(true)}
+              />
+              <Button
+                secondary
+                icon={CalendarDays}
+                label="Period estimate"
+                onPress={() => setEstimating(true)}
+              />
+            </View>
+          )}
+        </View>
+      }
     />
   );
   return (
@@ -217,6 +295,7 @@ function CycleApp() {
                   setEstimating(false);
                   setAddingPeriod(false);
                   setPage(id);
+                  if (id === 'calendar') calendarScroll.current?.top();
                 }}
                 style={{
                   minHeight: 49,
@@ -269,7 +348,12 @@ function CycleApp() {
           </Text>
         </View>
       )}
-      <View style={{ flex: 1, minWidth: 0 }}>
+      <View
+        style={{ flex: 1, minWidth: 0 }}
+        accessibilityElementsHidden={editing}
+        importantForAccessibility={editing ? 'no-hide-descendants' : 'auto'}
+        aria-hidden={editing}
+      >
         {!state.obscured && <AppearanceBackdrop personalUri={state.photo.uri} />}
         {!desktop && (
           <View
@@ -346,264 +430,118 @@ function CycleApp() {
             )}
           </View>
         )}
-        <ScrollView
-          ref={mainScroll}
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            padding: desktop ? 32 : 20,
-            gap: 24,
-            maxWidth: 1530,
-            width: '100%',
-            alignSelf: 'center',
-            paddingBottom: 36,
-          }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View
-            style={[
-              common.between,
-              common.readable,
-              { alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 },
-            ]}
+        {calendarHome ? (
+          home
+        ) : (
+          <ScrollView
+            ref={mainScroll}
+            style={{ flex: 1 }}
+            contentContainerStyle={{
+              padding: desktop ? 32 : 20,
+              gap: 24,
+              maxWidth: 1530,
+              width: '100%',
+              alignSelf: 'center',
+              paddingBottom: 36,
+            }}
+            keyboardShouldPersistTaps="handled"
           >
-            <View style={{ gap: 8, maxWidth: '100%', flexShrink: 1 }}>
-              <Text style={common.eyebrow}>
-                {formatDay(today, { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase()}
-              </Text>
-              <Text style={[common.title, { fontSize: desktop ? 35 : 29 }]}>
-                {page === 'calendar' && addingPeriod
-                  ? 'Your remembered dates.'
-                  : page === 'calendar' && estimating
-                    ? 'Looking ahead, gently.'
-                    : page === 'calendar' && learning
-                      ? 'A little understanding.'
-                      : page === 'calendar'
-                        ? 'Your cycle, at a glance.'
-                        : page === 'history'
-                          ? 'A picture of your patterns.'
-                          : page === 'medications'
-                            ? 'A place for your routine.'
-                            : 'Your space. Your choice.'}
-              </Text>
-              <Text style={common.body}>
-                {page === 'calendar' && addingPeriod
-                  ? 'One period at a time, with room for details later.'
-                  : page === 'calendar' && estimating
-                    ? 'An optional estimate, with its limits in view.'
-                    : page === 'calendar' && learning
-                      ? 'Your records, with room to learn.'
-                      : page === 'calendar'
-                        ? 'A little awareness. A little more care for yourself.'
-                        : page === 'history'
-                          ? 'Getting to know your own kind of normal.'
-                          : page === 'medications'
-                            ? 'Your schedules, and what you choose to record.'
-                            : 'Keep your records close, and in your control.'}
-              </Text>
-            </View>
-            {desktop && <Button label="Log today" icon={Plus} onPress={logToday} />}
-          </View>
-          {(page !== 'calendar' || (!inlineEditor && calendarView !== 'day' && !editing)) &&
-            undoNotice}
-          {page === 'calendar' && addingPeriod ? (
-            <PeriodRangeEditor
-              journal={journal}
-              today={today}
-              update={state.update}
-              saveStatus={saveStatus}
-              onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
-              closeLabel="Back to calendar"
-              close={() => {
-                setAddingPeriod(false);
-                mainScroll.current?.scrollTo({ y: 0, animated: false });
-              }}
-            />
-          ) : page === 'calendar' && estimating ? (
-            <PeriodEstimate
-              journal={journal}
-              today={today}
-              done={() => {
-                setEstimating(false);
-                mainScroll.current?.scrollTo({ y: 0, animated: false });
-              }}
-            />
-          ) : page === 'calendar' && learning ? (
-            <CycleContext
-              journal={journal}
-              date={journal.selectedDate}
-              today={today}
-              doneLabel="Back to calendar"
-              done={() => {
-                setLearning(false);
-                mainScroll.current?.scrollTo({ y: 0, animated: false });
-              }}
-            />
-          ) : page === 'calendar' ? (
-            <>
-              <View style={{ flexDirection: 'row', gap: desktop ? 15 : 9, flexWrap: 'wrap' }}>
-                {[
-                  [
-                    day ? String(day) : '—',
-                    'CURRENT CYCLE DAY',
-                    day ? 'Since your last period began' : 'Log a period start to begin',
-                    colors.roseSoft,
-                  ],
-                  [
-                    lastStart ? formatDay(lastStart, { month: 'short', day: 'numeric' }) : '—',
-                    'LAST PERIOD START',
-                    'From your recorded history',
-                    colors.sage,
-                  ],
-                  [
-                    String(Object.keys(journal.entries).filter((date) => date <= today).length),
-                    'DAYS WITH A NOTE OR LOG',
-                    'Small check-ins add up',
-                    colors.sand,
-                  ],
-                ]
-                  .slice(0, width < 600 ? 2 : 3)
-                  .map(([value, label, description, color]) => (
-                    <View
-                      key={label}
-                      style={{
-                        flex: 1,
-                        minWidth: desktop ? 170 : 135,
-                        padding: desktop ? 21 : 16,
-                        gap: 7,
-                        backgroundColor: color,
-                        borderRadius: 17,
-                      }}
-                    >
-                      <Text style={[common.eyebrow, { fontSize: 8, letterSpacing: 1.1 }]}>
-                        {label}
-                      </Text>
-                      <Text
-                        style={{
-                          fontFamily: serif,
-                          fontSize: desktop ? 34 : 27,
-                          lineHeight: 40,
-                          color: colors.ink,
-                        }}
-                      >
-                        {value}
-                      </Text>
-                      <Text style={[common.small, { fontSize: 10 }]}>{description}</Text>
-                    </View>
-                  ))}
-              </View>
-              <View style={{ flexDirection: 'row', gap: 24, alignItems: 'flex-start' }}>
-                <View style={{ flex: 1, minWidth: 0, gap: 17 }}>
-                  <Button
-                    icon={Plus}
-                    label="Add period"
-                    onPress={() => {
-                      setEditing(false);
-                      setLearning(false);
-                      setEstimating(false);
-                      setAddingPeriod(true);
-                      mainScroll.current?.scrollTo({ y: 0, animated: false });
-                    }}
-                  />
-                  <Button
-                    secondary
-                    icon={BookOpen}
-                    label="Explore cycle context"
-                    onPress={() => {
-                      setEditing(false);
-                      setLearning(true);
-                      mainScroll.current?.scrollTo({ y: 0, animated: false });
-                    }}
-                  />
-                  <Button
-                    secondary
-                    icon={CalendarDays}
-                    label="Explore period estimate"
-                    onPress={() => {
-                      setEditing(false);
-                      setLearning(false);
-                      setEstimating(true);
-                      mainScroll.current?.scrollTo({ y: 0, animated: false });
-                    }}
-                  />
-                  <Calendar
-                    journal={journal}
-                    today={today}
-                    onSelect={(date) => state.update((value) => ({ ...value, selectedDate: date }))}
-                    onOpenDay={select}
-                    compact={!desktop}
-                    view={calendarView}
-                    changeView={(view) => {
-                      setCalendarView(view);
-                      setEditing(false);
-                      mainScroll.current?.scrollTo({ y: 0, animated: false });
-                    }}
-                    dayContent={editor}
-                  />
-                  <View style={[common.row, common.readable, { alignItems: 'flex-start', gap: 9 }]}>
-                    <Heart size={15} color={colors.plum} strokeWidth={1.5} />
-                    <Text style={[common.small, { flex: 1 }]}>
-                      There’s no perfect way to track. Start with what feels helpful today.
-                    </Text>
-                  </View>
-                  {!inlineEditor && calendarView !== 'day' && (
-                    <Button
-                      label="Open selected day"
-                      icon={Plus}
-                      onPress={() => showDay(journal.selectedDate)}
-                    />
-                  )}
-                </View>
-                {inlineEditor && (
-                  <View style={[common.card, { width: 340, padding: 23 }]}>{editor}</View>
-                )}
-              </View>
-            </>
-          ) : page === 'history' ? (
-            <History journal={journal} today={today} openDay={showDay} />
-          ) : page === 'medications' ? (
-            <Medications
-              reminders={{
-                state: state.reminderState,
-                available: state.remindersAvailable,
-                demo: state.demo,
-                busy: state.busy,
-                error: state.reminderError,
-                setEnabled: state.setMedicationReminder,
-                refresh: state.refreshReminders,
-                stop: state.stopReminders,
-                test: state.testReminder,
-              }}
-              journal={journal}
-              today={today}
-              update={state.update}
-              openToday={logToday}
-              saveStatus={saveStatus}
-              onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
-            />
-          ) : (
-            <DataSettings
-              saveStatus={saveStatus}
-              update={state.update}
-              photo={state.photo}
-              onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
-              journal={journal}
-              demo={state.demo}
-              openDay={showDay}
-              backup={state.backup}
-              lock={state.lock}
-              erase={state.erase}
-              biometricEnabled={state.biometricEnabled}
-              biometricAvailable={state.biometricAvailable}
-              setBiometricUnlock={state.setBiometricUnlock}
-              setShowPerimenopause={(showPerimenopause) =>
-                state.update((value) => ({
-                  ...value,
-                  preferences: { ...value.preferences, showPerimenopause },
-                }))
-              }
-            />
-          )}
-        </ScrollView>
+            <Text style={common.heading}>
+              {page === 'calendar'
+                ? addingPeriod
+                  ? 'Add period'
+                  : estimating
+                    ? 'Period estimate'
+                    : 'Cycle context'
+                : page === 'history'
+                  ? 'Your history'
+                  : page === 'medications'
+                    ? 'Medications'
+                    : 'Your data'}
+            </Text>
+            {undoNotice}
+            {page === 'calendar' && addingPeriod ? (
+              <PeriodRangeEditor
+                journal={journal}
+                today={today}
+                update={state.update}
+                saveStatus={saveStatus}
+                onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
+                closeLabel="Back to calendar"
+                close={() => {
+                  setAddingPeriod(false);
+                  mainScroll.current?.scrollTo({ y: 0, animated: false });
+                }}
+              />
+            ) : page === 'calendar' && estimating ? (
+              <PeriodEstimate
+                journal={journal}
+                today={today}
+                done={() => {
+                  setEstimating(false);
+                  mainScroll.current?.scrollTo({ y: 0, animated: false });
+                }}
+              />
+            ) : page === 'calendar' && learning ? (
+              <CycleContext
+                journal={journal}
+                date={journal.selectedDate}
+                today={today}
+                doneLabel="Back to calendar"
+                done={() => {
+                  setLearning(false);
+                  mainScroll.current?.scrollTo({ y: 0, animated: false });
+                }}
+              />
+            ) : page === 'history' ? (
+              <History journal={journal} today={today} openDay={showDay} />
+            ) : page === 'medications' ? (
+              <Medications
+                reminders={{
+                  state: state.reminderState,
+                  available: state.remindersAvailable,
+                  demo: state.demo,
+                  busy: state.busy,
+                  error: state.reminderError,
+                  setEnabled: state.setMedicationReminder,
+                  refresh: state.refreshReminders,
+                  stop: state.stopReminders,
+                  test: state.testReminder,
+                }}
+                journal={journal}
+                today={today}
+                update={state.update}
+                openToday={logToday}
+                saveStatus={saveStatus}
+                onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
+              />
+            ) : (
+              <DataSettings
+                autoSleep={state.autoSleep}
+                checkSleep={state.checkSleep}
+                saveStatus={saveStatus}
+                update={state.update}
+                photo={state.photo}
+                onViewChange={() => mainScroll.current?.scrollTo({ y: 0, animated: false })}
+                journal={journal}
+                demo={state.demo}
+                openDay={showDay}
+                backup={state.backup}
+                lock={state.lock}
+                erase={state.erase}
+                biometricEnabled={state.biometricEnabled}
+                biometricAvailable={state.biometricAvailable}
+                setBiometricUnlock={state.setBiometricUnlock}
+                setShowPerimenopause={(showPerimenopause) =>
+                  state.update((value) => ({
+                    ...value,
+                    preferences: { ...value.preferences, showPerimenopause },
+                  }))
+                }
+              />
+            )}
+          </ScrollView>
+        )}
         {!desktop && (
           <View
             style={{
@@ -625,6 +563,7 @@ function CycleApp() {
                   setEstimating(false);
                   setAddingPeriod(false);
                   setPage(id);
+                  if (id === 'calendar') calendarScroll.current?.top();
                 }}
                 style={{ flex: 1, alignItems: 'center', gap: 5, padding: 10, minHeight: 59 }}
               >
@@ -648,7 +587,7 @@ function CycleApp() {
         )}
       </View>
       <Modal
-        visible={editing && !inlineEditor && !state.obscured}
+        visible={editing && !state.obscured}
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={() => setEditing(false)}

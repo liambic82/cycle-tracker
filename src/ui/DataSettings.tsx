@@ -1,3 +1,4 @@
+import type { AutoSleepState } from '../data/foregroundSleepImporter';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Platform, Switch, Text, TextInput, View } from 'react-native';
 import { Download, FileSpreadsheet, LockKeyhole, ShieldCheck, Trash2 } from 'lucide-react-native';
@@ -24,6 +25,8 @@ import type { PhotoControls } from '../data/personalBackgroundStore';
 import { useTheme } from './theme';
 
 export function DataSettings({
+  autoSleep,
+  checkSleep,
   photo,
   journal,
   demo,
@@ -39,6 +42,8 @@ export function DataSettings({
   saveStatus,
   openDay,
 }: {
+  autoSleep: AutoSleepState;
+  checkSleep: () => Promise<void>;
   photo: PhotoControls;
   journal: Journal;
   demo: boolean;
@@ -165,6 +170,8 @@ export function DataSettings({
   if (sleepImportOpen)
     return (
       <SleepImportSettings
+        autoSleep={autoSleep}
+        checkSleep={checkSleep}
         openDay={openDay}
         saveStatus={saveStatus}
         journal={journal}
@@ -332,7 +339,7 @@ export function DataSettings({
           backup.
         </Text>
         <Text style={common.small}>
-          New backups need preview 0.19.0 or later. Update the receiving app before restoring.
+          New backups need preview 0.20.0 or later. Update the receiving app before restoring.
           Earlier backups still open here. Encrypted backups include all sexual-health fields,
           regardless of your CSV choices, plus all medication schedules and dose records.
         </Text>

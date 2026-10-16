@@ -17,7 +17,7 @@ export type ImportedSleep = {
   stages: SleepStage[];
 };
 const invalid = () =>
-  new Error('The sleep session is incomplete or unsupported. Nothing was imported.');
+  new Error('The sleep session is incomplete or unsupported. Nothing was changed.');
 const object = (x: unknown): x is Record<string, unknown> =>
   !!x && typeof x === 'object' && !Array.isArray(x);
 const text = (x: unknown, max: number): x is string =>
@@ -202,19 +202,19 @@ function mergeSleepImport(journal: Journal, value: ImportedSleep, today: Day): J
   });
   return next;
 }
-function checkSleepImportSize(next: Journal): Journal {
+export function checkJournalSize(next: Journal): Journal {
   if (Object.keys(next.entries).length > 40000)
-    throw new Error('This import would exceed the journal entry limit. Nothing was imported.');
+    throw new Error('These changes would exceed the journal entry limit. Nothing was changed.');
   // The existing 8 MiB vault envelope uses hex ciphertext (two characters per byte).
   // Leave space for the authentication tag and envelope before changing the live journal.
   if (new TextEncoder().encode(JSON.stringify(next)).length > 4 * 1024 * 1024 - 512)
     throw new Error(
-      'This import would exceed the preview journal limit. Export a backup and remove unwanted imported copies first. Nothing was imported.',
+      'These changes would exceed the preview journal limit. Export a backup and remove unwanted imported copies first. Nothing was changed.',
     );
   return next;
 }
 export function applySleepImport(journal: Journal, value: ImportedSleep, today: Day): Journal {
-  return checkSleepImportSize(mergeSleepImport(journal, value, today));
+  return checkJournalSize(mergeSleepImport(journal, value, today));
 }
 // One transaction: failure in any session leaves the caller's journal untouched.
 // Size is checked once after merging, rather than serializing the vault for every night.
@@ -226,5 +226,5 @@ export function applySleepImports(journal: Journal, values: ImportedSleep[], tod
     throw new Error('The selection contains duplicate sleep sessions. Reload and try again.');
   let next = journal;
   for (const value of incoming) next = mergeSleepImport(next, value, today);
-  return checkSleepImportSize(next);
+  return checkJournalSize(next);
 }

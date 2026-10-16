@@ -88,11 +88,11 @@ test('invalid, future and conflicting ranges fail atomically without clearing ex
 });
 test('format 9 preserves format 8 journals exactly and round trips unspecified bleeding in encrypted backups', () => {
   const old = { ...demoJournal(today), version: 8 };
-  assert.deepEqual(parseJournal(old), { ...old, version: 9 });
+  assert.deepEqual(parseJournal(old), { ...old, version: 10 });
   const j = applyPeriodRange(emptyJournal(today), range, today);
   assert.deepEqual(parseJournal(j), j);
   assert.throws(() => parseJournal({ ...j, version: 8 }));
-  assert.throws(() => parseJournal({ ...j, version: 10 }));
+  assert.throws(() => parseJournal({ ...j, version: 11 }));
   const key = { key: randomBytes(32), salt: randomBytes(16).toString('hex') };
   assert.deepEqual(openVaultWithKey(seal(j, key, randomBytes), key), j);
 });

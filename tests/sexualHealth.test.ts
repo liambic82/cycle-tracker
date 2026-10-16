@@ -58,14 +58,14 @@ test('version 1 and 2 migration leaves sexual-health observations unlogged while
     const legacy = { ...emptyJournal(day), version, entries: { [day]: entry } };
     const snapshot = JSON.stringify(legacy);
     const parsed = parseJournal(legacy);
-    assert.equal(parsed.version, 9);
+    assert.equal(parsed.version, 10);
     assert.deepEqual(parsed.entries[day]?.sexualHealth, emptySexualHealth());
     assert.equal(parsed.entries[day]?.note, 'Legacy note');
     assert.equal(parsed.entries[day]?.flooding, version === 1 ? null : false);
     assert.equal(parsed.entries[day]?.productRecords.length, version === 1 ? 0 : 1);
     assert.equal(JSON.stringify(legacy), snapshot);
   }
-  assert.throws(() => parseJournal({ ...emptyJournal(day), version: 10 }));
+  assert.throws(() => parseJournal({ ...emptyJournal(day), version: 11 }));
   assert.throws(() => parseJournal({ ...emptyJournal(day), entries: { [day]: v2Entry } }));
 });
 
@@ -139,7 +139,7 @@ test('encrypted backups always preserve all observations regardless of readable 
   const legacy = { ...journal, version: 2, entries: { [day]: legacyEntry } };
   const migrated = openVaultWithKey(seal(legacy as unknown as Journal, vault, randomBytes), vault);
   assert.deepEqual(migrated.entries[day]?.sexualHealth, emptySexualHealth());
-  assert.equal(migrated.version, 9);
+  assert.equal(migrated.version, 10);
   vault.key.fill(0);
 });
 

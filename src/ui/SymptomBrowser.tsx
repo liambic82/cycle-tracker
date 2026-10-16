@@ -4,6 +4,7 @@ import { ArrowLeft, Check, Plus, Search } from 'lucide-react-native';
 import {
   SYMPTOM_GROUPS,
   symptomSections,
+  symptomIdentity,
   symptomSelected,
   validateCustomSymptom,
   type SymptomFilter,
@@ -13,6 +14,8 @@ import { Button, Chip } from './components';
 import { useTheme } from './theme';
 
 export function SymptomBrowser({
+  pinMode = false,
+  favorites = [],
   selected,
   custom,
   showPerimenopause,
@@ -22,6 +25,8 @@ export function SymptomBrowser({
   done,
   error,
 }: {
+  pinMode?: boolean;
+  favorites?: string[];
   selected: string[];
   custom: string[];
   showPerimenopause: boolean;
@@ -45,7 +50,30 @@ export function SymptomBrowser({
     ),
     'Your symptoms',
   ];
-  const sections = symptomSections(custom, showPerimenopause, activeFilter, query);
+  let sections: Array<{ category: string; labels: string[] }> = symptomSections(
+    custom,
+    showPerimenopause,
+    activeFilter,
+    query,
+  );
+  if (activeFilter === 'All') {
+    const visible = new Map(
+      sections.flatMap((s) => s.labels).map((label) => [symptomIdentity(label), label]),
+    );
+    const pinned = (pinMode ? selected : favorites)
+      .map((label) => visible.get(symptomIdentity(label)))
+      .filter((label): label is string => !!label);
+    if (pinned.length)
+      sections = [
+        { category: 'Pinned symptoms', labels: pinned },
+        ...sections
+          .map((s) => ({
+            ...s,
+            labels: s.labels.filter((label) => !symptomSelected(pinned, label)),
+          }))
+          .filter((s) => s.labels.length),
+      ];
+  }
   const resultCount = sections.reduce((count, section) => count + section.labels.length, 0);
   const saveCustom = () => {
     try {
@@ -72,12 +100,14 @@ export function SymptomBrowser({
         }}
       />
       <View style={{ gap: 6 }}>
-        <Text style={common.heading}>Find what you’re feeling</Text>
+        <Text style={common.heading}>{pinMode ? 'Pinned symptoms' : 'Find symptoms'}</Text>
         <Text style={common.body}>
-          Choose a category or search. Your selections save as you go.
+          {pinMode
+            ? 'Pin common symptoms for quick access. Pinning does not log a symptom.'
+            : 'Choose symptoms to log for this day.'}
         </Text>
         <Text accessibilityLiveRegion="polite" style={[common.label, { color: colors.plum }]}>
-          {selected.length} logged for this day
+          {selected.length} {pinMode ? 'pinned' : 'logged for this day'}
         </Text>
       </View>
       <View style={[common.row, { gap: 8 }]}>
@@ -114,15 +144,17 @@ export function SymptomBrowser({
           Previously logged symptoms and your own labels remain available.
         </Text>
       )}
-      <Button
-        secondary
-        label={adding ? 'Cancel custom symptom' : 'Add your own symptom'}
-        icon={Plus}
-        onPress={() => {
-          setAdding(!adding);
-          setCustomError('');
-        }}
-      />
+      {!pinMode && (
+        <Button
+          secondary
+          label={adding ? 'Cancel custom symptom' : 'Add your own symptom'}
+          icon={Plus}
+          onPress={() => {
+            setAdding(!adding);
+            setCustomError('');
+          }}
+        />
+      )}
       {adding && (
         <View style={{ gap: 10 }}>
           <TextInput
@@ -169,7 +201,7 @@ export function SymptomBrowser({
                 <Pressable
                   key={label}
                   accessibilityRole="checkbox"
-                  accessibilityLabel={label}
+                  accessibilityLabel={pinMode ? `${checked ? 'Unpin' : 'Pin'} ${label}` : label}
                   accessibilityState={{ checked }}
                   aria-checked={checked}
                   onPress={() => toggle(label)}
@@ -219,7 +251,7 @@ export function SymptomBrowser({
         spotting and period boundaries in Flow to include them in your cycle history.
       </Text>
       <Button
-        label="Done choosing symptoms"
+        label={pinMode ? 'Done pinning symptoms' : 'Done choosing symptoms'}
         onPress={() => {
           Keyboard.dismiss();
           done();

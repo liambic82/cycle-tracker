@@ -1,4 +1,9 @@
 import {
+  defaultPreferences,
+  parsePreferences,
+  type JournalPreferences,
+} from './journalPreferences.ts';
+import {
   emptyDailyDetails,
   parseDailyDetails,
   hasDailyDetails,
@@ -83,14 +88,14 @@ export interface Entry {
 }
 
 export interface Journal {
-  version: 9;
+  version: 10;
   medications: Medication[];
   medicalRecords: MedicalRecord[];
   personalReminders: PersonalReminder[];
   entries: Record<Day, Entry>;
   customSymptoms: string[];
   selectedDate: Day;
-  preferences: { showPerimenopause: boolean };
+  preferences: JournalPreferences;
 }
 
 export function emptyEntry(): Entry {
@@ -116,14 +121,14 @@ export function emptyEntry(): Entry {
 
 export function emptyJournal(today: Day): Journal {
   return {
-    version: 9,
+    version: 10,
     medications: [],
     medicalRecords: [],
     personalReminders: [],
     entries: {},
     customSymptoms: [],
     selectedDate: today,
-    preferences: { showPerimenopause: true },
+    preferences: defaultPreferences(),
   };
 }
 
@@ -260,7 +265,8 @@ export function parseJournal(value: unknown): Journal {
         value.version === 6 ||
         value.version === 7 ||
         value.version === 8 ||
-        value.version === 9) &&
+        value.version === 9 ||
+        value.version === 10) &&
       validDay(value.selectedDate),
   );
   // Pre-0.4 backups have no preferences. Their entries and labels stay unchanged.
@@ -341,19 +347,14 @@ export function parseJournal(value: unknown): Journal {
   const reminderIds = new Set(personalReminders.map((reminder) => reminder.id));
   assert(medications.every((medication) => !reminderIds.has(medication.id)));
   return {
-    version: 9,
+    version: 10,
     personalReminders,
     medicalRecords: value.version >= 8 ? parseMedicalRecords(value.medicalRecords) : [],
     medications,
     entries,
     customSymptoms: [...value.customSymptoms],
     selectedDate: value.selectedDate,
-    preferences: {
-      showPerimenopause:
-        value.preferences === undefined
-          ? true
-          : (value.preferences as { showPerimenopause: boolean }).showPerimenopause,
-    },
+    preferences: parsePreferences(value.preferences, value.version),
   };
 }
 

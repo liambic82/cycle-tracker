@@ -1,6 +1,17 @@
 # Preview 0.19 usability feedback — October 16, 2026
 
-Status: feedback captured, current code inspected, feasibility researched and concrete interactive proposals prepared. **No production UI, import behavior, journal format or APK has changed.** The owner requires proposal approval before appearance/customization implementation. This report is partial tester feedback, not a consolidated Android pass.
+Status: the owner approved the presented proposal and requested testosterone in the hormone guide. **Journal first** was the selected mock layout at approval. Implemented in preview **0.20.0 / Android code 24**, with encrypted journal format **10**. The approval covers the presented layout, section order, symptom pins and optional foreground sleep import. This is not a real-device pass or a store-release decision.
+
+## Approved implementation
+
+- The landing screen now leads with a compact current-cycle summary and Add period, followed by the daily journal. Symptoms, observations, medications, sleep, flow, sexual health and notes can be reordered with accessible up/down controls. Sexual health was retained as a seventh section so no existing fields disappear. Flow and notes expand in place; detailed forms retain their existing logging behavior. Entry deletion stays in Entry options.
+- Pinned catalog/custom symptoms appear before other symptoms. Pinning changes preferences only; already-logged symptoms remain visible even when unpinned. Preferences are encrypted and included in backups. Invalid cosmetic settings fall back safely; versions 1–9 receive defaults.
+- Calendar uses one root virtualized list, with earlier-month prepending that retains the visible offset, automatic later-month extension and explicit earlier/later controls for keyboard/accessibility use. Selecting a day opens an editor without resetting the month window. Header-height changes preserve the month anchor. Today/date jump and year/day modes remain. Explore is collapsed after daily tasks, before the continuous calendar, so it stays reachable without scrolling to the end of a growing list.
+- Import when I unlock starts off and requires an explicit source-specific enable action after loading shared sessions. It checks up to 30 recent days once after unlock while active, with one read in flight and a cooldown; Check sleep now can retry. New non-overlapping sessions save together, corrections/overlaps/future waking dates require manual review, and manual sleep is unchanged. The saved check records counts and source availability. No background permission, account or hosting was added.
+- Lock/background/disconnect invalidates late results. A new unlock can queue behind an invalidated read without applying the old result. Removed copies and deleted entries suppress automatic reimport of the same source/id; Undo or explicit manual reimport clears suppression. A newly issued source ID remains a new identity and may need review. Restore turns automation off; actual Health Connect grants remain device-local.
+- The optional hormone guide starts collapsed and includes **estrogen, progesterone and testosterone**, labeled as schematic educational patterns with separate relative scales. It has no personal marker, lab units or measured/predicted hormone values. Individual variation and the medical-advice limitation remain explicit. No prediction method, research plan, source records or frozen results were changed.
+
+See [validation evidence](validation.md#approved-daily-use-improvements--october-16-2026) and [focused device checks](android-testing.md#0200-journal-first-and-foreground-sleep-import). The proposal and findings below record the basis for the implementation; they are no longer awaiting approval.
 
 ## Feedback and proposed acceptance criteria
 
@@ -14,7 +25,7 @@ Status: feedback captured, current code inspected, feasibility researched and co
 | Explore buttons are infrequent tasks                               | Put cycle context and period estimates in a collapsed Explore section after the daily tasks.                                                                                                                  | Every current feature remains reachable and existing estimate opt-in/eligibility behavior remains.                                                                                                                                       |
 | Current cycle/last period should be more useful                    | A single compact summary showing recorded cycle day and latest recorded period start; an optional expanded hormone guide within the same section.                                                             | Unknown start stays unknown; no fabricated cycle day or expected next period. Distinguish a current summary from a selected past day's context. Hormone illustration is educational, not personal hormone measurement or prediction.     |
 
-## Concrete proposals awaiting approval
+## Presented proposals (approved scope above)
 
 - **Calendar first (recommended):** compact current-cycle summary, Add period, calendar, reordered daily sections, then Explore. Hormone guide starts collapsed. This preserves the calendar as the main screen while freeing space used by the introductory card and earlier Explore buttons.
 - **Journal first:** the same summary and controls, but daily sections come before the calendar. The mock initially expands the hormone guide to make the space tradeoff visible; its display can be toggled. This favors quick daily logging.
@@ -47,7 +58,7 @@ Google documents sleep-session and sleep-stage sharing through Google Health/Hea
 
 ## Hormone chart scope
 
-Offer an optional **Typical ovulatory pattern** illustration of relative estrogen/progesterone changes. It has no lab units, personalized values, fertile-window claim, ovulation-date claim or “you are here” marker placed on the curve. Recorded cycle day remains a separate fact above it. Label it **Illustration, not your hormone levels** and retain the medical-advice qualification. The mock's lines are deliberately schematic, not fitted or sampled data.
+Offer an optional **Typical ovulatory pattern** illustration of relative estrogen/progesterone/testosterone changes. It has no lab units, personalized values, fertile-window claim, ovulation-date claim or “you are here” marker placed on the curve. Recorded cycle day remains a separate fact above it. Label it **Illustration, not your hormone levels** and retain the medical-advice qualification. The mock's lines are deliberately schematic, not fitted or sampled data.
 
 Hormonal patterns and ovulation timing vary, including across cycles; an ovulatory template may not apply with hormonal contraception, perimenopause, irregular or non-ovulatory cycles. Calendar dates and wearable sleep do not establish an individual's hormone concentrations. The visual should not say where this person's hormones “should” be. [Office on Women's Health: Your menstrual cycle](https://womenshealth.gov/menstrual-cycle/your-menstrual-cycle). This is an assistant-led content/design constraint, not an external-review gate.
 
@@ -60,3 +71,9 @@ After the owner approves a concrete direction: (1) calendar scroll ownership/anc
 ## Proposal checks
 
 The standalone conversation preview passed JavaScript syntax checks. Browser checks exercised section reordering, pinning without logging, the import opt-in and sample check result, switching layout variants and opening the educational chart. The layout was inspected at ordinary desktop width and 390/320 px browser widths; the narrow fragment had no horizontal overflow and the schematic labels remained readable. Browser error logs were empty. These checks apply only to the mock, not production Android behavior. No new application tests/build were required for this documentation/proposal-only change; the most recent app verification remains the 0.19.0 record with 247 passing tests. The current phone feedback is recorded without upgrading it to a full test pass.
+
+## Testosterone evidence and wording
+
+A 2024 study of salivary testosterone found a small aggregate mid-cycle peak and luteal decrease. A 2013 daily-serum study found higher mid-cycle testosterone on average but no discernible peak in every individual; day-to-day variation exceeded the cyclical component. These support the cautious phrase “may rise modestly around mid-cycle,” not a personal prediction or a universal hormone target. The schematic is hand-authored, not sampled/fitted study data; no absolute concentrations or between-hormone magnitudes are implied.
+
+Primary sources checked October 16, 2026: [2024 testosterone pattern study](https://pubmed.ncbi.nlm.nih.gov/39053138/), [2013 individual variation study](https://pubmed.ncbi.nlm.nih.gov/23127814/), and [Office on Women's Health menstrual-cycle guide](https://womenshealth.gov/menstrual-cycle/your-menstrual-cycle). Links are also available inside the expanded guide.
