@@ -10,6 +10,8 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
+**October 16 follow-up:** [0.19 usability feedback and proposed next slice](docs/testing-feedback-2026-10-16.md) cover decluttering, section order, symptom pins, month scrolling and optional import after unlock. Concrete visual proposals are awaiting approval; these additions are not yet implemented.
+
 **Preview 0.19.0** addresses tester feedback with **Calendar → Add period**: start/finish together, optional flow details and an easy way to add another period. Sleep import now supports selecting and importing multiple nights together, plus direct access to saved sleep history. It includes the 0.18.x observations, medical records/attachments, reminders, history access, widget and prediction disclaimer. The existing approved soft palettes and feminine styling remain. [Feedback and changes](docs/testing-feedback-2026-10-12.md).
 
 [Period and sleep retest](docs/android-testing.md#0190-period-ranges-and-bulk-sleep-import) · [Consolidated Android checks](docs/android-testing.md#0180-consolidated-local-android-test-build) · [Completed scope and remaining dependencies](docs/android-completion.md) · [Validation evidence](docs/validation.md).
