@@ -1,5 +1,11 @@
 # Validation record
 
+## Layout review — October 17, 2026
+
+The owner's report that a tester thought the app looked broken prompted a review of **0.20.0**. Three navigation defects remain open: year-grid month selection can land on the wrong month, switching views hides the selected view, and daily detail forms can open below the viewport. [Reproductions, screenshots, limitations and acceptance criteria](layout-review-2026-10-17.md).
+
+Browser inspection used fictional records at 320/390 px and desktop widths, with light/dark checks. Pinning, section reordering and a two-session sample sleep import worked; the period range form accepted selection. Typecheck and **260/260 tests passed** outside the sandbox after temporary-file restrictions affected the first run. Passing tests do not close the layout findings. Opening/closing a day retained the month but moved the observed cell by 31 px; exact anchor retention and native gestures remain open. No app code, APK or new device pass resulted from this review.
+
 ## Approved daily-use improvements — October 16, 2026
 
 The owner approved the presented **Journal first** proposal and explicitly requested testosterone in the hormone guide. Preview **0.20.0**, Android code **24**, implements that scope. [Approval and implementation](testing-feedback-2026-10-16.md) · [Focused device checklist](android-testing.md#0200-journal-first-and-foreground-sleep-import).
