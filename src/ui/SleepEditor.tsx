@@ -1,3 +1,4 @@
+import { useJournalDraft } from './JournalEditorContext';
 import React, { useState } from 'react';
 import { Keyboard, Text, TextInput, View } from 'react-native';
 import { formatDay, type Day } from '../domain/dates';
@@ -24,6 +25,7 @@ export function SleepEditor({
   save: (value: SleepRecord) => void;
   cancel: () => void;
 }) {
+  useJournalDraft(cancel);
   const { colors, common, dark } = useTheme();
   const [draft, setDraft] = useState<SleepInput>(() => sleepToInput(value));
   const [error, setError] = useState('');

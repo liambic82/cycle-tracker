@@ -14,8 +14,8 @@ export function createTheme(palette: PaletteId, dark: boolean) {
       gap: 12,
     },
     wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    title: { fontFamily: serif, color: colors.ink, fontSize: 32, lineHeight: 40 },
-    heading: { fontFamily: serif, color: colors.ink, fontSize: 24, lineHeight: 32 },
+    title: { color: colors.ink, fontSize: 26, lineHeight: 34, fontWeight: '600' },
+    heading: { color: colors.ink, fontSize: 21, lineHeight: 28, fontWeight: '600' },
     label: { color: colors.ink, fontSize: 14, fontWeight: '600', lineHeight: 22 },
     body: { color: colors.muted, fontSize: 14, lineHeight: 22 },
     small: { color: colors.muted, fontSize: 12, lineHeight: 19 },
@@ -28,10 +28,10 @@ export function createTheme(palette: PaletteId, dark: boolean) {
     },
     card: {
       backgroundColor: colors.paper,
-      borderRadius: 20,
+      borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.line,
-      padding: 24,
+      padding: 16,
     },
     readable: { backgroundColor: colors.paper, borderRadius: 12, padding: 12 },
     input: {

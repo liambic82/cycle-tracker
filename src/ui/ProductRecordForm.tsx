@@ -1,3 +1,4 @@
+import { useJournalDraft } from './JournalEditorContext';
 import React, { useState } from 'react';
 import { Keyboard, Text, TextInput, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
@@ -28,6 +29,7 @@ export function ProductRecordForm({
   save: (record: ProductRecord) => void;
   cancel: () => void;
 }) {
+  useJournalDraft(cancel, existing ? 'Save record changes' : 'Add record');
   const { colors, common, dark } = useTheme();
   const [id] = useState(() => existing?.id ?? randomUUID());
   const [type, setType] = useState<ProductType>(existing?.type ?? 'pad');

@@ -25,6 +25,7 @@ export function DaySectionOrder({
   }, [done]);
   return (
     <View style={{ gap: 16 }}>
+      <Button quiet label="Back to journal settings" onPress={done} />
       <Text style={common.heading}>Daily section order</Text>
       <Text style={common.body}>Move sections to suit your routine.</Text>
       {order.map((section, i) => (

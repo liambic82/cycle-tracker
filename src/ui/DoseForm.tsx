@@ -1,3 +1,4 @@
+import { useJournalDraft } from './JournalEditorContext';
 import React, { useState } from 'react';
 import { Keyboard, Text, View } from 'react-native';
 import { ArrowLeft, Check } from 'lucide-react-native';
@@ -28,6 +29,7 @@ export function DoseForm({
   save: (input: DoseInput) => void;
   cancel: () => void;
 }) {
+  useJournalDraft(cancel);
   const { common } = useTheme();
   const plannedDose = existing?.plannedDose ?? target!.dose;
   const name = existing?.name ?? target!.plan.name;

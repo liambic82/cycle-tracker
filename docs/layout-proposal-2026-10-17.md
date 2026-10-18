@@ -1,6 +1,14 @@
 # Layout refinement proposal — October 17, 2026
 
-**Awaiting owner approval.** The owner authorized the navigation repair first, followed by a concrete layout proposal. Preview **0.20.1 / Android code 25** contains navigation repairs only. Neither design below is implemented in the app. This proposal supersedes neither the existing palette/background approvals nor the requirement to approve new visual changes.
+**Approved October 18, 2026; implemented in preview 0.21.0 / Android code 26.** The owner explicitly approved **Calendar & journal**, including the History and wearable sleep changes. This follows the navigation-only repair in 0.20.1. The alternative below remains unimplemented. Existing palette/background approvals remain in force; further visual changes still require approval.
+
+## Implementation
+
+Calendar opens with a compact cycle summary and month grid. Dates open a focused journal with adjacent-day controls and visible persistence feedback. Explicit-save forms identify their pending form state; system Back cancels the current form before closing the journal. History and saved-sleep links retain their originating screen. Journal settings contains order and pin management; the daily symptom list combines visible pins with all logged symptoms without duplicates.
+
+Continuous scrolling retains measured navigation and calendar return positions. Months use their actual number of weeks and readable cells, with recorded cycle-day context retained in accessibility labels and the dated journal. Month arrows and Find date replace the separate Day-view toolbar; tapping a date opens that same daily editor. Explore stays collapsed beneath the scrolling calendar so it remains reachable without chasing an extending list. The calendar is the only vertical scroll owner on its screen.
+
+History leads with recorded charts. Wearable sleep groups permission/source, explicit opt-in, last result, checking and saved nights; connection help is expandable. Missing sleep totals lead with Unknown. All seven journal sections, detailed fields, safeguards, existing appearance options and prediction qualifications remain. No schema, permission, automatic-import policy or prediction changes. See [validation](validation.md#calendar--journal--october-18-2026) and [device checks](android-testing.md#0210-calendar--journal).
 
 ## Calendar & journal — recommended
 
@@ -23,7 +31,7 @@
 
 The interactive mock uses fictional data. Forms show representative fields and do not replace the existing schema or validation requirements. Its saved/connected indicators are sample states, not evidence of real persistence or a wearable connection. It demonstrates calendar/year selection, dated editing, symptom logging versus pinning, section reordering, history and sleep navigation. It does not implement or validate native continuous-list performance, encrypted saving or Health Connect.
 
-Proposal source: `C:/Users/liamb/.codex/visualizations/2026/10/08/01a11caf-e281-7720-8db9-0ac41ed8a07b/cycle-layout-refinement.html`. Browser checks cover both variants, primary interactions and narrow wrapping. The owner should approve a named direction and any requested adjustments; changing a carousel selection alone is not approval.
+Proposal source: `C:/Users/liamb/.codex/visualizations/2026/10/08/01a11caf-e281-7720-8db9-0ac41ed8a07b/cycle-layout-refinement.html`. Browser checks covered both variants, primary interactions and narrow wrapping. Approval came from the owner's explicit message, not a carousel selection.
 
 ## Acceptance after approval
 

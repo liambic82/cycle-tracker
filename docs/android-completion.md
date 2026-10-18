@@ -2,15 +2,13 @@
 
 ## Owner direction — October 11, 2026
 
-The 0.20.1 navigation patch fixes view switching, year-to-month selection and visible daily forms, with measured calendar return positions. [Patch evidence](validation.md#navigation-repair--october-17-2026) · [Focused retest](android-testing.md#0201-navigation-repair). The [layout refinement](layout-proposal-2026-10-17.md) is a separate proposal awaiting approval.
-
-**Current build: 0.20.1 / code 25.** The owner approved Journal first, section ordering, symptom pins, clearer/shorter daily controls, a single scrolling calendar and opt-in foreground sleep import, and requested testosterone in the optional hormone guide. [Implemented scope](testing-feedback-2026-10-16.md) · [Focused checks](android-testing.md#0200-journal-first-and-foreground-sleep-import). Journal format 10 migrates 1–9; new backups need 0.20.0+. Restoring a backup disables automatic sleep import.
+**Current build: 0.21.0 / code 26.** The owner explicitly approved Calendar & journal, including History and wearable sleep, on October 18. This replaces Journal first with the calendar as the primary task, focused daily entries, quiet settings and charts-first History. The grouped sleep controls preserve explicit source opt-in and existing import behavior. [Implemented scope](layout-proposal-2026-10-17.md) · [Focused checks](android-testing.md#0210-calendar--journal) · [Validation](validation.md#calendar--journal--october-18-2026). Journal format 10 migrates 1–9; new backups need 0.20.0+. Restoring a backup disables automatic sleep import.
 
 The [0.19 period-range and batch-import improvements](testing-feedback-2026-10-12.md) and the dated 0.18.0 scope below remain included. October 16 feedback is partial evidence, not a consolidated hardware pass. Closed-app/background sync and store release remain deferred.
 
 Complete local Android development, then run a consolidated Android test pass, then port and validate on iOS. The owner explicitly deferred **cloud sync and automatic background sleep syncing** until after the local app. Continue development without requiring a phone sign-off after every individual feature slice. This changes the development sequence; it is not a new report of passing device tests or a 1.0 release decision.
 
-Appearance must be clean and easy to read while clearly feminine. Retain the existing approved soft palettes, rounded surfaces and serif headings for this functional batch. The owner's response did not explicitly approve replacing the app with Clear and compact. Present any further appearance proposal before implementing it.
+Appearance must be clean, easy to read and clearly feminine. The October 18 named proposal approval authorizes the implemented sans-serif section headings, compact spacing and smaller corners while retaining the serif brand and approved palettes/backgrounds. New visual scope still requires a concrete proposal and approval.
 
 **October 12 update:** the owner declined independent prediction review. The [internal statistical review](prediction-statistical-review-2026-10-12.md) is complete, and preview **0.18.1**, code **22**, adds explicit medical-advice wording before prediction controls and beside offered dates. External clinical/statistical sign-off is not a project requirement. Use the [patch checks](android-testing.md#0181-prediction-disclaimer-patch) with the consolidated 0.18.0 feature checklist.
 

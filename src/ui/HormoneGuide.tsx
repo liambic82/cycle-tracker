@@ -35,12 +35,7 @@ export function HormoneGuide() {
   const { colors, common, dark } = useTheme();
   return (
     <View>
-      <ActionRow
-        label="Hormone guide"
-        detail="Typical ovulatory pattern"
-        expanded={open}
-        onPress={() => setOpen(!open)}
-      />
+      <ActionRow label="Hormone guide" expanded={open} onPress={() => setOpen(!open)} />
       {open && (
         <View style={{ gap: 12, paddingTop: 12 }}>
           <Text style={common.label}>Illustration, not your hormone levels</Text>

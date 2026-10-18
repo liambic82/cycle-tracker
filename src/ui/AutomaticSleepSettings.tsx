@@ -30,17 +30,15 @@ export function AutomaticSleepSettings({
   const { common } = useTheme();
   const auto = journal.preferences.sleepAutomation;
   return (
-    <View style={[common.card, { gap: 12 }]}>
+    <View style={{ gap: 10 }}>
       <Text style={common.label}>Import when I unlock · {auto.enabled ? 'On' : 'Off'}</Text>
       <Text style={common.body}>
-        Automatically save new nights from one source while the journal is open. Changed or
-        overlapping sessions need your review. Manual sleep stays unchanged.
+        Save new nights from one source after unlock. Changed or overlapping nights need review.
+        Manual sleep stays separate. Nothing runs while locked or in the background.
       </Text>
       {auto.enabled ? (
         <>
-          <Text style={common.small}>
-            Source: {auto.sourceName} ({auto.source}) · last 30 days
-          </Text>
+          <Text style={common.small}>Source: {auto.sourceName} · last 30 days</Text>
           <Button
             secondary
             label="Turn off automatic sleep import"
@@ -85,20 +83,16 @@ export function AutomaticSleepSettings({
             />
           ) : (
             <Text style={common.small}>
-              To enable: connect sleep, load recent nights below, then choose your source.
+              Connect sleep and load nights below to choose a source.
             </Text>
           )}
-          {source && (
-            <Text style={common.small}>
-              Chosen source: {sourceName} ({source})
-            </Text>
-          )}
+          {source && <Text style={common.small}>Chosen source: {sourceName}</Text>}
         </>
       )}
       {auto.lastCheck && (
         <Text style={common.small}>
-          Latest check (see save status above): {new Date(auto.lastCheck.at).toLocaleString()} ·{' '}
-          {auto.lastCheck.added} added · {auto.lastCheck.review} to review
+          Last check: {new Date(auto.lastCheck.at).toLocaleString()} · {auto.lastCheck.added} added
+          · {auto.lastCheck.review} to review
           {auto.lastCheck.sourceSeen ? '' : ' · source has no shared sessions in this window'}
         </Text>
       )}
@@ -118,11 +112,6 @@ export function AutomaticSleepSettings({
           onPress={review}
         />
       )}
-      <Text style={common.small}>
-        Sync your tracker in Fitbit first. This cannot make Fitbit publish missing nights. Nothing
-        runs while locked or in the background. Removed copies stay excluded until you manually
-        import them again.
-      </Text>
       {demo && (
         <Text style={common.small}>Demo only: no automatic reads or phone permissions.</Text>
       )}

@@ -1,5 +1,18 @@
 # Android preview testing
 
+## 0.21.0 Calendar & journal
+
+Install `artifacts/android/cycle-tracker-preview-0.21.0-arm64-v8a.apk` as an update. Version **0.21.0 / code 26**, journal **format 10**, existing preview package and signing certificate. Back up first. The owner approved Calendar & journal, History and wearable sleep on October 18. Use this layout checklist instead of older Journal-first/Day-tab expectations; the underlying feature checks remain relevant.
+
+1. **Calendar first.** The cycle summary, Add period and calendar should be easy to find. Test Month/Year, previous year → January/December, Today, Find date (including leap day and invalid dates), and month arrows. Scroll to earlier/later months across years. Open/close a date after scrolling and check the same position returns. Test four-, five- and six-week months and larger system text.
+2. **Focused journal.** Tap a date; check previous/next day beside its heading. Open observations, medications/dose form, manual sleep, flow/product form, sexual details, notes and symptom ratings. A form must open visibly. Save status/error stays at the top; explicit-save forms name the Save/Add action needed to apply changes. Android Back cancels the current unsaved form first, then returns to the journal, then calendar. Verify saved values, cancellation, deletion confirmation and Undo using disposable records.
+3. **Settings and symptoms.** Journal settings → Section order/Pinned symptoms. Reorder all seven sections. Pinning must not log anything; each daily chip appears once. Unpin a logged symptom and confirm it remains visible. Check custom symptoms, hidden perimenopause labels already logged, optional ratings, lock/restart and backup/restore preferences.
+4. **History.** Recorded charts appear first, with units, unknown/incomplete values and statistics intact. Expand observations, symptoms and sleep; open a date and close it to return to the same History view. Verify a date from Saved nights likewise returns to wearable sleep.
+5. **Wearable sleep.** Verify permission status and chosen source are truthful. Import on unlock remains off until explicitly enabled. Sync the Inspire 3, load nights, choose the source, batch-review/import, then open Saved nights. Incomplete stage data must show Unknown as its total, not zero. Retest last-result/Check sleep now, permissions, failures, corrections/overlaps and manual values using the 0.20.0 checklist below. Browser fictional imports are not hardware validation.
+6. **Appearance and access.** Check light/dark and approved backgrounds, 320 px-class narrow layouts, large system text, TalkBack, keyboard, rotation and Flip5 fold/reopen. Explore remains reachable beneath the calendar; its cycle context/experimental estimate and the three-hormone guide retain their qualifications.
+
+Physical-device results are pending. Continue the consolidated local-Android regression, including encrypted retention, biometrics, reminders, backup/restore and exports. No store-release or 1.0 decision is implied.
+
 ## 0.20.1 navigation repair
 
 Install `artifacts/android/cycle-tracker-preview-0.20.1-arm64-v8a.apk` as an update. Version **0.20.1 / code 25** keeps journal **format 10**, package and signing certificate. The proposed layout redesign is not part of this build.

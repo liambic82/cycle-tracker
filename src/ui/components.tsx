@@ -15,6 +15,7 @@ export function Button({
   onPress,
   icon: Icon,
   secondary = false,
+  quiet = false,
   danger = false,
   disabled = false,
   busy = false,
@@ -24,6 +25,7 @@ export function Button({
   onPress: () => void;
   icon?: LucideIcon;
   secondary?: boolean;
+  quiet?: boolean;
   danger?: boolean;
   disabled?: boolean;
   busy?: boolean;
@@ -31,14 +33,15 @@ export function Button({
 }) {
   const { colors } = useTheme();
   const accent = danger ? colors.error : colors.plumDark;
-  const foreground = secondary
-    ? danger
-      ? colors.error
-      : colors.ink
-    : danger
-      ? colors.onError
-      : colors.onAccent;
-  const iconColor = secondary ? (danger ? colors.error : colors.plum) : foreground;
+  const foreground =
+    secondary || quiet
+      ? danger
+        ? colors.error
+        : colors.ink
+      : danger
+        ? colors.onError
+        : colors.onAccent;
+  const iconColor = secondary || quiet ? (danger ? colors.error : colors.plum) : foreground;
   return (
     <Pressable
       accessibilityRole="button"
@@ -47,17 +50,17 @@ export function Button({
       onPress={onPress}
       style={({ pressed }) => [
         {
-          paddingHorizontal: 18,
-          paddingVertical: 12,
-          minHeight: 46,
-          borderRadius: 12,
+          paddingHorizontal: quiet ? 8 : 14,
+          paddingVertical: 10,
+          minHeight: 44,
+          borderRadius: 10,
           flexDirection: 'row',
           gap: 9,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: secondary ? colors.paper : accent,
+          backgroundColor: quiet ? 'transparent' : secondary ? colors.paper : accent,
           borderColor: secondary && !danger ? colors.line : accent,
-          borderWidth: 1,
+          borderWidth: quiet ? 0 : 1,
           opacity: disabled ? 0.4 : pressed ? 0.75 : 1,
         },
         style,

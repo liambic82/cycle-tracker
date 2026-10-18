@@ -1,6 +1,7 @@
 import { HormoneGuide } from './src/ui/HormoneGuide';
 import { ActionRow } from './src/ui/ActionRow';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { JournalEditorContext } from './src/ui/JournalEditorContext';
 import {
   ActivityIndicator,
   BackHandler,
@@ -21,7 +22,6 @@ import {
   CircleAlert,
   Flower2,
   LockKeyhole,
-  Plus,
   Pill,
   ShieldCheck,
   X,
@@ -34,7 +34,7 @@ import { addCustomSymptom, cycleDay, starts, updateEntry } from './src/domain/jo
 import { formatDay, toDay, type Day } from './src/domain/dates';
 import { AuthGate } from './src/ui/AuthGate';
 import { Calendar, type CalendarView, type CalendarHandle } from './src/ui/Calendar';
-import { DayEditor } from './src/ui/DayEditor';
+import { DayEditor, type DayEditorHandle } from './src/ui/DayEditor';
 import { History } from './src/ui/History';
 import { DataSettings } from './src/ui/DataSettings';
 import { UndoNotice } from './src/ui/UndoNotice';
@@ -74,6 +74,19 @@ function CycleApp() {
   const [addingPeriod, setAddingPeriod] = useState(false);
   const mainScroll = useRef<ScrollView>(null);
   const editorScroll = useRef<ScrollView>(null);
+  const editorBack = useRef<DayEditorHandle>(null);
+  const draftCancel = useRef<(() => void) | null>(null);
+  const [draftAction, setDraftAction] = useState<string | null>(null);
+  const registerDraft = useCallback((cancel: () => void, action: string) => {
+    draftCancel.current = cancel;
+    setDraftAction(action);
+    return () => {
+      if (draftCancel.current === cancel) {
+        draftCancel.current = null;
+        setDraftAction(null);
+      }
+    };
+  }, []);
   const [today, setToday] = useState(toDay(new Date()));
   useEffect(() => {
     const timer = setInterval(() => setToday(toDay(new Date())), 30000);
@@ -145,16 +158,8 @@ function CycleApp() {
     setEditing(false);
     calendarScroll.current?.restorePosition();
   };
-  const showDay = (date: Day) => {
-    setLearning(false);
-    setEstimating(false);
-    setAddingPeriod(false);
-    setPage('calendar');
-    setCalendarView('day');
-    setEditing(false);
-    state.update((value) => ({ ...value, selectedDate: date }));
-    calendarScroll.current?.journal();
-  };
+  // History and sleep links retain their originating page behind the editor.
+  const showDay = select;
   const logToday = () => showDay(today);
   const undoNotice = state.deleted ? (
     <UndoNotice date={state.deleted.date} undo={state.undoDelete} dismiss={state.dismissUndo} />
@@ -175,6 +180,7 @@ function CycleApp() {
   );
   const editor = (
     <DayEditor
+      backRef={editorBack}
       key={journal.selectedDate}
       journal={journal}
       today={today}
@@ -183,7 +189,10 @@ function CycleApp() {
       demo={state.demo}
       onViewChange={() => {
         if (editing) editorScroll.current?.scrollTo({ y: 0, animated: false });
-        else calendarScroll.current?.journal();
+      }}
+      onSelectDate={(date) => {
+        state.update((value) => ({ ...value, selectedDate: date }));
+        editorScroll.current?.scrollTo({ y: 0, animated: false });
       }}
       onDelete={() => state.removeEntry(journal.selectedDate)}
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
@@ -210,11 +219,10 @@ function CycleApp() {
         setCalendarView(view);
         setEditing(false);
       }}
-      dayContent={editor}
+      addPeriod={() => setAddingPeriod(true)}
       header={
-        <View style={{ gap: 14 }}>
-          <View style={[common.card, { padding: 18, gap: 10 }]}>
-            <Text style={common.eyebrow}>CURRENT CYCLE · TODAY</Text>
+        <View style={{ gap: 8 }}>
+          <View style={[common.card, { padding: 12, gap: 2, backgroundColor: colors.accentSoft }]}>
             <View style={[common.between, { flexWrap: 'wrap', gap: 12 }]}>
               <View>
                 <Text style={common.heading}>{day ? `Cycle day ${day}` : 'Cycle day unknown'}</Text>
@@ -228,14 +236,6 @@ function CycleApp() {
             </View>
             <HormoneGuide />
           </View>
-          <Button
-            icon={Plus}
-            label="Add period"
-            onPress={() => {
-              setEditing(false);
-              setAddingPeriod(true);
-            }}
-          />
           {journal.preferences.sleepAutomation.enabled && (
             <Text style={common.small} accessibilityLiveRegion="polite">
               {state.autoSleep.message ||
@@ -598,7 +598,10 @@ function CycleApp() {
         visible={editing && !state.obscured}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={closeDay}
+        onRequestClose={() => {
+          if (draftCancel.current) draftCancel.current();
+          else if (!editorBack.current?.back()) closeDay();
+        }}
       >
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }}>
           <View
@@ -612,7 +615,13 @@ function CycleApp() {
               },
             ]}
           >
-            {saveStatus}
+            {draftAction && state.status !== 'Not saved' && state.status !== 'Saving…' ? (
+              <Text style={[common.small, { flexShrink: 1 }]}>
+                Use {draftAction} to apply this form
+              </Text>
+            ) : (
+              saveStatus
+            )}
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Close daily journal"
@@ -622,12 +631,28 @@ function CycleApp() {
               <X size={22} color={colors.ink} />
             </Pressable>
           </View>
+          {!!state.error && (
+            <View style={{ paddingHorizontal: 16, paddingVertical: 8, gap: 4 }}>
+              <Text accessibilityRole="alert" style={common.error}>
+                {state.error}
+              </Text>
+              <Button quiet label="Retry saving" onPress={state.retry} />
+            </View>
+          )}
           <ScrollView
             ref={editorScroll}
-            contentContainerStyle={{ padding: 24, paddingBottom: 55 }}
+            contentContainerStyle={{
+              width: '100%',
+              maxWidth: 760,
+              alignSelf: 'center',
+              padding: desktop ? 24 : 16,
+              paddingBottom: 32,
+            }}
             keyboardShouldPersistTaps="handled"
           >
-            {editor}
+            <JournalEditorContext.Provider value={registerDraft}>
+              {editor}
+            </JournalEditorContext.Provider>
           </ScrollView>
         </SafeAreaView>
       </Modal>

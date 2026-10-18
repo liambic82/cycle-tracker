@@ -1,3 +1,4 @@
+import { useJournalDraft } from './JournalEditorContext';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Keyboard, Text, TextInput, View } from 'react-native';
 import {
@@ -24,6 +25,7 @@ export function DailyDetailsEditor({
   save: (v: DailyDetails) => void;
   cancel: () => void;
 }) {
+  useJournalDraft(cancel);
   const { common, colors, dark } = useTheme();
   const inputValues = (v: DailyDetails) =>
     Object.fromEntries(

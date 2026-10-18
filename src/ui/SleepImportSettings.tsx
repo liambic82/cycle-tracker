@@ -45,12 +45,13 @@ function SleepSummary({ record }: { record: ImportedSleep }) {
         {friendlyDate(sleepWakingDay(record))} · {record.sourceName}
       </Text>
       <Text style={common.body}>
-        {summary.complete ? 'Time asleep' : 'Recorded sleep stages'} ·{' '}
-        {duration(summary.asleepMinutes)}
+        Time asleep · {summary.complete ? duration(summary.asleepMinutes) : 'Unknown'}
       </Text>
       {!summary.complete && (
         <Text style={common.small}>
-          Some sleep stages are missing; total time asleep is unknown.
+          {summary.asleepMinutes > 0
+            ? `Incomplete stages · ${duration(summary.asleepMinutes)} recorded. This is not the total.`
+            : 'No asleep-stage duration shared.'}
         </Text>
       )}
       <Text style={common.small}>
@@ -212,7 +213,7 @@ export function SleepImportSettings({
       );
     });
   return (
-    <View style={{ gap: 20 }}>
+    <View style={{ gap: 14 }}>
       <Button
         secondary
         label={
@@ -237,30 +238,86 @@ export function SleepImportSettings({
       {!candidate && !batchReview && !historyOpen && (
         <>
           <Text style={common.heading}>Wearable sleep</Text>
-          <AutomaticSleepSettings
-            journal={journal}
-            update={update}
-            source={source}
-            sourceName={sources.find(([id]) => id === source)?.[1] ?? null}
-            available={demo || status === 'granted'}
-            busy={busy}
-            demo={demo}
-            autoSleep={autoSleep}
-            checkSleep={checkSleep}
-            review={() => {
-              setDays(30);
-              load(30);
-            }}
-          />
+          <View style={[common.card, { gap: 12 }]}>
+            {demo ? (
+              <Text style={common.label}>
+                Fictional demonstration · no wearable connection or permission request
+              </Text>
+            ) : (
+              <>
+                <Text style={common.label}>
+                  {status === null
+                    ? 'Checking Health Connect…'
+                    : status === 'granted'
+                      ? 'Sleep read permission granted'
+                      : status === 'not-granted'
+                        ? 'Sleep permission is off'
+                        : status === 'update-required'
+                          ? 'Install or update Health Connect'
+                          : status === 'unavailable'
+                            ? 'Health Connect is unavailable on this device'
+                            : 'Connect from the installed Android app. Computer and iPhone imports are not available yet.'}
+                </Text>
+                {status === 'not-granted' && (
+                  <Button
+                    label="Allow reading sleep"
+                    busy={busy}
+                    onPress={() =>
+                      void run(async (valid) => {
+                        await healthSleep.requestPermission();
+                        if (valid()) await refresh(valid);
+                      })
+                    }
+                  />
+                )}
+              </>
+            )}
+            {!!records.length && (
+              <>
+                <Text style={common.label}>Sleep source</Text>
+                <View style={common.wrap}>
+                  {sources.map(([id, name]) => (
+                    <Chip
+                      key={id}
+                      label={name}
+                      accessibilityLabel={`Sleep source ${name}, ${id}`}
+                      selected={source === id}
+                      onPress={() => {
+                        setSource(id);
+                        setSelected(null);
+                        setChosen([]);
+                        setLimit(20);
+                      }}
+                    />
+                  ))}
+                </View>
+              </>
+            )}
+            <AutomaticSleepSettings
+              journal={journal}
+              update={update}
+              source={source}
+              sourceName={sources.find(([id]) => id === source)?.[1] ?? null}
+              available={demo || status === 'granted'}
+              busy={busy}
+              demo={demo}
+              autoSleep={autoSleep}
+              checkSleep={checkSleep}
+              review={() => {
+                setDays(30);
+                load(30);
+              }}
+            />
 
-          <Button
-            secondary
-            label="View saved sleep nights"
-            onPress={() => {
-              setHistoryOpen(true);
-              onViewChange();
-            }}
-          />
+            <Button
+              secondary
+              label="Saved nights"
+              onPress={() => {
+                setHistoryOpen(true);
+                onViewChange();
+              }}
+            />
+          </View>
           <ActionRow
             label="Connection steps & privacy"
             expanded={help}
@@ -278,80 +335,56 @@ export function SleepImportSettings({
                 write-back or background access. Source apps have their own data practices. Backups
                 include copies; CSV and PDF exports with Sleep are readable.
               </Text>
-            </View>
-          )}
-          {demo ? (
-            <Text style={common.label}>
-              Fictional demonstration · no wearable connection or permission request
-            </Text>
-          ) : (
-            <>
-              <Text style={common.label}>
-                {status === null
-                  ? 'Checking Health Connect…'
-                  : status === 'granted'
-                    ? 'Sleep read permission granted'
-                    : status === 'not-granted'
-                      ? 'Sleep permission is off'
-                      : status === 'update-required'
-                        ? 'Install or update Health Connect'
-                        : status === 'unavailable'
-                          ? 'Health Connect is unavailable on this device'
-                          : 'Connect from the installed Android app. Computer and iPhone imports are not available yet.'}
-              </Text>
               <Text style={common.small}>
                 On Android 14 or later, search phone Settings for Health Connect. On supported older
                 Android phones, install or update Google’s Health Connect app. Existing imported
                 copies can be viewed on a computer using an encrypted journal backup.
               </Text>
-              {status === 'not-granted' && (
-                <Button
-                  label="Allow reading sleep"
-                  busy={busy}
-                  onPress={() =>
-                    void run(async (valid) => {
-                      await healthSleep.requestPermission();
-                      if (valid()) await refresh(valid);
-                    })
-                  }
-                />
-              )}
-              {status !== 'unsupported' && (
+              <Text style={common.small}>
+                Sync your tracker in Fitbit first. This app cannot make Fitbit publish missing
+                nights. Removed copies stay excluded from automatic import until you manually import
+                them again.
+              </Text>
+              {!demo && (
                 <>
-                  <Button
-                    secondary
-                    label="Check connection"
-                    disabled={busy}
-                    onPress={() => void run(refresh)}
-                  />
-                  <Button
-                    secondary
-                    label="Open Health Connect settings"
-                    disabled={busy}
-                    onPress={() =>
-                      void run(async () => {
-                        clear();
-                        await healthSleep.openSettings();
-                      })
-                    }
-                  />
-                  <Button
-                    secondary
-                    label="Sleep privacy information"
-                    disabled={busy}
-                    onPress={() =>
-                      void run(async () => {
-                        await healthSleep.openPrivacy();
-                      })
-                    }
-                  />
+                  {status !== 'unsupported' && (
+                    <>
+                      <Button
+                        secondary
+                        label="Check connection"
+                        disabled={busy}
+                        onPress={() => void run(refresh)}
+                      />
+                      <Button
+                        secondary
+                        label="Open Health Connect settings"
+                        disabled={busy}
+                        onPress={() =>
+                          void run(async () => {
+                            clear();
+                            await healthSleep.openSettings();
+                          })
+                        }
+                      />
+                      <Button
+                        secondary
+                        label="Sleep privacy information"
+                        disabled={busy}
+                        onPress={() =>
+                          void run(async () => {
+                            await healthSleep.openPrivacy();
+                          })
+                        }
+                      />
+                    </>
+                  )}
                 </>
               )}
-            </>
+            </View>
           )}
           {(demo || status === 'granted') && (
             <>
-              <Text style={common.label}>Sleep sessions</Text>
+              <Text style={common.label}>Import nights</Text>
               {!demo && historyStatus === 'not-granted' && (
                 <>
                   <Text style={common.small}>
@@ -417,22 +450,6 @@ export function SleepImportSettings({
                 {sources.length === 1 ? 'Sleep source' : 'Choose a sleep source'} · {records.length}{' '}
                 sessions found
               </Text>
-              <View style={common.wrap}>
-                {sources.map(([id, name]) => (
-                  <Chip
-                    key={id}
-                    label={name}
-                    accessibilityLabel={`Sleep source ${name}, ${id}`}
-                    selected={source === id}
-                    onPress={() => {
-                      setSource(id);
-                      setSelected(null);
-                      setChosen([]);
-                      setLimit(20);
-                    }}
-                  />
-                ))}
-              </View>
               {source && (
                 <>
                   <Text style={common.small}>
@@ -568,7 +585,7 @@ export function SleepImportSettings({
               try {
                 update((current) => applySleepImports(current, batch, today));
                 setMessage(
-                  `${batch.length} sleep sessions added to your journal. Check the save status, or choose View saved sleep nights to see them.`,
+                  `${batch.length} sessions added. Check the save status, then open Saved nights.`,
                 );
                 setChosen([]);
                 setBatchReview(false);

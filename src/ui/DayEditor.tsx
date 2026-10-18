@@ -1,10 +1,13 @@
 import { ActionRow } from './ActionRow';
 import { DaySectionOrder } from './DaySectionOrder';
 import type { DaySection } from '../domain/journalPreferences';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useState } from 'react';
 import { BackHandler, Pressable, Text, TextInput, View } from 'react-native';
 import {
   Check,
+  ChevronLeft,
+  ChevronRight,
+  Settings2,
   Droplet,
   Ellipsis,
   Heart,
@@ -12,7 +15,7 @@ import {
   Sparkles,
   Trash2,
 } from 'lucide-react-native';
-import { formatDay, type Day } from '../domain/dates';
+import { addDays, validDay, formatDay, type Day } from '../domain/dates';
 import {
   cycleDay,
   emptyEntry,
@@ -45,7 +48,12 @@ import { SleepEditor } from './SleepEditor';
 import { ImportedSleepDetails } from './ImportedSleepDetails';
 import { hasSleep } from '../domain/sleep';
 
+export interface DayEditorHandle {
+  back(): boolean;
+}
+
 export function DayEditor({
+  backRef,
   journal,
   today,
   onPatch,
@@ -57,7 +65,9 @@ export function DayEditor({
   onViewChange,
   onUpdate,
   onManageMedications,
+  onSelectDate,
 }: {
+  backRef: React.Ref<DayEditorHandle>;
   journal: Journal;
   today: Day;
   onPatch: (patch: Partial<Entry>) => void;
@@ -69,6 +79,7 @@ export function DayEditor({
   onViewChange: () => void;
   onUpdate: (transform: (journal: Journal) => Journal) => void;
   onManageMedications: () => void;
+  onSelectDate: (date: Day) => void;
 }) {
   const { colors, common, dark } = useTheme();
   const date = journal.selectedDate;
@@ -85,19 +96,55 @@ export function DayEditor({
   const [dailyOpen, setDailyOpen] = useState(false);
   const [sleepOpen, setSleepOpen] = useState(false);
   const [orderOpen, setOrderOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [pinsOpen, setPinsOpen] = useState(false);
   const [flowOpen, setFlowOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
+  // Android Modal sends system Back to onRequestClose, not to BackHandler listeners.
+  useImperativeHandle(backRef, () => ({
+    back: () => {
+      const close = orderOpen
+        ? () => setOrderOpen(false)
+        : pinsOpen
+          ? () => setPinsOpen(false)
+          : settingsOpen
+            ? () => setSettingsOpen(false)
+            : browsing !== null
+              ? () => setBrowsing(null)
+              : dailyOpen
+                ? () => setDailyOpen(false)
+                : sleepOpen
+                  ? () => setSleepOpen(false)
+                  : dosesOpen
+                    ? () => setDosesOpen(false)
+                    : severityOpen
+                      ? () => setSeverityOpen(false)
+                      : flowDetailsOpen
+                        ? () => setFlowDetailsOpen(false)
+                        : sexualHealthOpen
+                          ? () => setSexualHealthOpen(false)
+                          : deleteConfirm
+                            ? () => setDeleteConfirm(false)
+                            : actionsOpen
+                              ? () => setActionsOpen(false)
+                              : null;
+      if (!close) return false;
+      close();
+      onViewChange();
+      return true;
+    },
+  }));
   useEffect(() => {
-    if (!pinsOpen && browsing === null) return;
+    if (!settingsOpen && !pinsOpen && browsing === null) return;
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      setPinsOpen(false);
-      setBrowsing(null);
+      if (pinsOpen) setPinsOpen(false);
+      else if (browsing !== null) setBrowsing(null);
+      else setSettingsOpen(false);
       onViewChange();
       return true;
     });
     return () => sub.remove();
-  }, [pinsOpen, browsing, onViewChange]);
+  }, [settingsOpen, pinsOpen, browsing, onViewChange]);
   const closeActions = () => {
     setActionsOpen(false);
     setDeleteConfirm(false);
@@ -134,6 +181,7 @@ export function DayEditor({
     return (
       <SymptomBrowser
         pinMode
+        backLabel="Back to journal settings"
         selected={journal.preferences.pinnedSymptoms}
         custom={journal.customSymptoms}
         showPerimenopause={journal.preferences.showPerimenopause}
@@ -154,6 +202,36 @@ export function DayEditor({
         }}
         error=""
       />
+    );
+  if (settingsOpen)
+    return (
+      <View style={{ gap: 12 }}>
+        <Button
+          quiet
+          label="Back to journal"
+          onPress={() => {
+            setSettingsOpen(false);
+            onViewChange();
+          }}
+        />
+        <Text style={common.heading}>Journal settings</Text>
+        <ActionRow
+          label="Section order"
+          detail="Choose what comes first"
+          onPress={() => {
+            setOrderOpen(true);
+            onViewChange();
+          }}
+        />
+        <ActionRow
+          label="Pinned symptoms"
+          detail="Quick choices for every day"
+          onPress={() => {
+            setPinsOpen(true);
+            onViewChange();
+          }}
+        />
+      </View>
     );
   if (dailyOpen && date <= today)
     return (
@@ -269,48 +347,33 @@ export function DayEditor({
     symptoms: (
       <View>
         <SectionLabel icon={Heart}>How are you feeling?</SectionLabel>
-        {entry.symptoms.length > 0 && (
-          <View style={{ gap: 9, marginBottom: 18 }}>
-            <Text style={common.label}>Logged this day · {entry.symptoms.length}</Text>
-            <Text style={common.small}>Tap a selected symptom to remove it from this day.</Text>
-            <View style={common.wrap}>
-              {entry.symptoms.map((symptom) => (
-                <Chip
-                  key={symptom}
-                  label={`${symptom}${symptomSeverity(entry, symptom) === null ? '' : ` · ${symptomSeverity(entry, symptom)}/10`}`}
-                  accessibilityLabel={`Remove ${symptom}${symptomSeverity(entry, symptom) === null ? '' : `, severity ${symptomSeverity(entry, symptom)} of 10`}`}
-                  selected
-                  icon={Check}
-                  onPress={() => toggle(symptom)}
-                />
-              ))}
-            </View>
-          </View>
-        )}
-        <Text style={[common.small, { marginBottom: 9 }]}>Pinned symptoms</Text>
+        <Text style={[common.small, { marginBottom: 8 }]}>
+          {entry.symptoms.length} logged · tap to add or remove
+        </Text>
         <View style={common.wrap}>
-          {pinnedSymptoms.map((symptom) => (
-            <Chip
-              key={symptom}
-              label={symptom}
-              selected={symptomSelected(entry.symptoms, symptom)}
-              onPress={() => toggle(symptom)}
-            />
-          ))}
+          {[
+            ...pinnedSymptoms,
+            ...entry.symptoms.filter((symptom) => !symptomSelected(pinnedSymptoms, symptom)),
+          ].map((symptom) => {
+            const selected = symptomSelected(entry.symptoms, symptom);
+            const severity = symptomSeverity(entry, symptom);
+            return (
+              <Chip
+                key={symptomIdentity(symptom)}
+                label={`${symptom}${selected && severity !== null ? ` · ${severity}/10` : ''}`}
+                accessibilityLabel={`${selected ? 'Remove' : 'Log'} ${symptom}${selected && severity !== null ? `, severity ${severity} of 10` : ''}`}
+                selected={selected}
+                icon={selected ? Check : undefined}
+                onPress={() => toggle(symptom)}
+              />
+            );
+          })}
         </View>
-        <View style={{ gap: 10, marginTop: 16 }}>
-          <Button
-            secondary
-            label="Pin symptoms"
-            onPress={() => {
-              setPinsOpen(true);
-              onViewChange();
-            }}
-          />
-          <Button secondary label="Browse all symptoms" onPress={() => browse('All')} />
+        <View style={[common.wrap, { marginTop: 8 }]}>
+          <Button quiet label="All symptoms" onPress={() => browse('All')} />
           {entry.symptoms.length > 0 && (
             <Button
-              secondary
+              quiet
               label="Rate symptoms · optional"
               onPress={() => {
                 closeActions();
@@ -542,13 +605,13 @@ export function DayEditor({
     ),
   };
   return (
-    <View style={{ gap: 16 }}>
+    <View style={{ gap: 8 }}>
       <View style={[common.between, { alignItems: 'flex-start' }]}>
         <View style={{ flex: 1, gap: 6 }}>
           <Text style={common.eyebrow}>{date === today ? 'TODAY’S JOURNAL' : 'DAILY JOURNAL'}</Text>
           <Text style={common.heading}>{formatDay(date, { month: 'long', day: 'numeric' })}</Text>
           <Text style={common.body}>
-            {formatDay(date, { weekday: 'long', year: 'numeric' })}
+            {formatDay(date, { weekday: 'long' })} · {date.slice(0, 4)}
             {day ? `  ·  Cycle day ${day}` : ''}
           </Text>
         </View>
@@ -577,14 +640,38 @@ export function DayEditor({
           </Pressable>
         )}
       </View>
-      <Button
-        secondary
-        label="Edit section order"
-        onPress={() => {
-          setOrderOpen(true);
-          onViewChange();
-        }}
-      />
+      <View style={[common.between, { flexWrap: 'wrap', gap: 4 }]}>
+        <View style={common.row}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Previous day"
+            disabled={!validDay(addDays(date, -1))}
+            onPress={() => onSelectDate(addDays(date, -1))}
+            style={{ minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <ChevronLeft color={colors.plum} size={22} />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Next day"
+            disabled={!validDay(addDays(date, 1))}
+            onPress={() => onSelectDate(addDays(date, 1))}
+            style={{ minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <ChevronRight color={colors.plum} size={22} />
+          </Pressable>
+        </View>
+        <Button
+          quiet
+          icon={Settings2}
+          label="Journal settings"
+          onPress={() => {
+            setSettingsOpen(true);
+            closeActions();
+            onViewChange();
+          }}
+        />
+      </View>
       {actionsOpen && date <= today && !!journal.entries[date] && (
         <View
           style={{

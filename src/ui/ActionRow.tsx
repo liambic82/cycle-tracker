@@ -24,8 +24,8 @@ export function ActionRow({
       aria-expanded={expanded}
       onPress={onPress}
       style={({ pressed }) => ({
-        minHeight: 56,
-        paddingVertical: 12,
+        minHeight: 48,
+        paddingVertical: 10,
         paddingHorizontal: 4,
         borderBottomWidth: 1,
         borderColor: colors.line,

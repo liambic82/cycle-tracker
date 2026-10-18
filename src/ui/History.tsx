@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { Activity, Flower2 } from 'lucide-react-native';
+import { Flower2 } from 'lucide-react-native';
 import { addDays, formatDay, type Day } from '../domain/dates';
 import { history, type Journal } from '../domain/journal';
 import { flowTimeline, statistics, type FlowState } from '../domain/history';
 import { Button } from './components';
+import { ActionRow } from './ActionRow';
 import { useTheme } from './theme';
 import { SymptomHistory } from './SymptomHistory';
 import { DailyDetailsHistory } from './DailyDetailsHistory';
@@ -125,41 +126,7 @@ export function History({
   const lengths = statistics(cycles.map((cycle) => cycle.length));
   const durations = statistics(cycles.map((cycle) => cycle.duration));
   return (
-    <View style={{ gap: 22 }}>
-      <View style={[common.card, { gap: 16 }]}>
-        <Button
-          secondary
-          label={dailyOpen ? 'Hide daily observations' : 'Explore daily observation history'}
-          onPress={() => setDailyOpen(!dailyOpen)}
-        />
-        {dailyOpen && <DailyDetailsHistory journal={journal} today={today} openDay={openDay} />}
-      </View>
-      <View style={[common.card, { backgroundColor: colors.sage, gap: 14 }]}>
-        <Activity color={colors.sageInk} size={24} strokeWidth={1.5} />
-        <Text style={common.heading}>Your history, in your own time.</Text>
-        <Text style={common.body}>
-          See how your recorded cycles and bleeding durations vary. Missing logs stay visible as
-          gaps.
-        </Text>
-      </View>
-      <View style={[common.card, { gap: 16 }]}>
-        <Text style={common.heading}>Symptom severity</Text>
-        <Button
-          secondary
-          label={symptomsOpen ? 'Close symptom history' : 'Explore symptom history'}
-          onPress={() => setSymptomsOpen(!symptomsOpen)}
-        />
-        {symptomsOpen && <SymptomHistory journal={journal} today={today} openDay={openDay} />}
-      </View>
-      <View style={[common.card, { gap: 16 }]}>
-        <Text style={common.heading}>Sleep</Text>
-        <Button
-          secondary
-          label={sleepOpen ? 'Close sleep history' : 'Explore sleep history'}
-          onPress={() => setSleepOpen(!sleepOpen)}
-        />
-        {sleepOpen && <SleepHistory journal={journal} today={today} openDay={openDay} />}
-      </View>
+    <View style={{ gap: 14 }}>
       <TrendChart
         title="Cycle length"
         points={cycles.map((cycle) => ({ start: cycle.start, value: cycle.length }))}
@@ -174,6 +141,26 @@ export function History({
         color={colors.roseInk}
         explanation="Days from a recorded period start through its first recorded last bleeding day, inclusive. This is a span between markers; it doesn’t fill in missing daily flow logs."
       />
+      <View style={common.card}>
+        <ActionRow
+          label="Daily observations"
+          expanded={dailyOpen}
+          onPress={() => setDailyOpen(!dailyOpen)}
+        />
+        {dailyOpen && <DailyDetailsHistory journal={journal} today={today} openDay={openDay} />}
+        <ActionRow
+          label="Symptom history"
+          expanded={symptomsOpen}
+          onPress={() => setSymptomsOpen(!symptomsOpen)}
+        />
+        {symptomsOpen && <SymptomHistory journal={journal} today={today} openDay={openDay} />}
+        <ActionRow
+          label="Sleep history"
+          expanded={sleepOpen}
+          onPress={() => setSleepOpen(!sleepOpen)}
+        />
+        {sleepOpen && <SleepHistory journal={journal} today={today} openDay={openDay} />}
+      </View>
       <View style={[common.card, { gap: 20 }]}>
         <Text style={common.heading}>Inside each cycle</Text>
         <View style={common.wrap}>

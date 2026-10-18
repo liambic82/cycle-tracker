@@ -15,6 +15,7 @@ import { useTheme } from './theme';
 
 export function SymptomBrowser({
   pinMode = false,
+  backLabel = 'Back to daily journal',
   favorites = [],
   selected,
   custom,
@@ -26,6 +27,7 @@ export function SymptomBrowser({
   error,
 }: {
   pinMode?: boolean;
+  backLabel?: string;
   favorites?: string[];
   selected: string[];
   custom: string[];
@@ -92,7 +94,7 @@ export function SymptomBrowser({
     <View style={{ gap: 18 }}>
       <Button
         secondary
-        label="Back to daily journal"
+        label={backLabel}
         icon={ArrowLeft}
         onPress={() => {
           Keyboard.dismiss();

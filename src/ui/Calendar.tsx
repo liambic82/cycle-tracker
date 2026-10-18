@@ -16,14 +16,14 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { ArrowDown, ArrowUp } from 'lucide-react-native';
-import { addDays, formatDay, monthCells, monthKey, validDay, type Day } from '../domain/dates';
+import { ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { formatDay, monthCells, monthKey, validDay, type Day } from '../domain/dates';
 import { hasEntry, FLOW_LABELS, type Journal } from '../domain/journal';
 import { cycleDayLookup, flowState } from '../domain/history';
 import { Button, Chip } from './components';
-import { useTheme, serif } from './theme';
+import { useTheme } from './theme';
 
-export type CalendarView = 'year' | 'month' | 'day';
+export type CalendarView = 'year' | 'month';
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 function DayGrid({
@@ -60,128 +60,114 @@ function DayGrid({
         ))}
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {[...monthCells(month), ...Array(42 - monthCells(month).length).fill(null)].map(
-          (day, index) => {
-            const medicalCount = day
-              ? journal.medicalRecords.filter((record) => record.date === day).length
-              : 0;
-            const entry = day ? journal.entries[day] : undefined;
-            const state = flowState(entry);
-            const chosen = day === journal.selectedDate;
-            const cycle = day ? dayNumber(day) : null;
-            const shade = chosen
-              ? colors.plumDark
-              : state === 'bleeding'
-                ? colors.rose
-                : state === 'spotting'
-                  ? colors.sand
-                  : state === 'none'
-                    ? colors.sage
-                    : 'transparent';
-            const textColor = chosen
-              ? colors.onAccent
-              : state === 'bleeding'
-                ? colors.roseInk
-                : colors.ink;
-            const content = day && (
-              <>
-                {!mini && (
-                  <Text
-                    style={{
-                      fontSize: 9,
-                      color: chosen ? colors.onAccent : colors.muted,
-                      textAlign: 'center',
-                    }}
-                  >
-                    {cycle === null ? '·' : `C${cycle}`}
-                  </Text>
-                )}
-                <Text
-                  style={{
-                    fontSize: mini ? 10 : 15,
-                    color: textColor,
-                    fontWeight: chosen || day === today ? '700' : '400',
-                  }}
-                >
-                  {Number(day.slice(-2))}
-                </Text>
-                {!mini && (
-                  <View style={{ height: 4, flexDirection: 'row', gap: 3 }}>
-                    {(hasEntry(entry) || medicalCount > 0) && (
-                      <View
-                        style={{
-                          width: entry?.periodStart ? 9 : 4,
-                          height: 4,
-                          borderRadius: 2,
-                          backgroundColor: chosen ? colors.onAccent : colors.plum,
-                        }}
-                      />
-                    )}
-                  </View>
-                )}
-              </>
-            );
-            return (
-              <View
-                key={day ?? `blank-${index}`}
+        {monthCells(month).map((day, index) => {
+          const medicalCount = day
+            ? journal.medicalRecords.filter((record) => record.date === day).length
+            : 0;
+          const entry = day ? journal.entries[day] : undefined;
+          const state = flowState(entry);
+          const chosen = day === journal.selectedDate;
+          const cycle = day ? dayNumber(day) : null;
+          const shade = chosen
+            ? colors.plumDark
+            : state === 'bleeding'
+              ? colors.rose
+              : state === 'spotting'
+                ? colors.sand
+                : state === 'none'
+                  ? colors.sage
+                  : 'transparent';
+          const textColor = chosen
+            ? colors.onAccent
+            : state === 'bleeding'
+              ? colors.roseInk
+              : colors.ink;
+          const content = day && (
+            <>
+              <Text
                 style={{
-                  width: `${100 / 7}%`,
-                  height: mini ? 26 : cellHeight,
-                  padding: mini ? 1 : 2,
+                  fontSize: mini ? 10 : 15,
+                  color: textColor,
+                  fontWeight: chosen || day === today ? '700' : '400',
                 }}
               >
-                {day &&
-                  (mini ? (
+                {Number(day.slice(-2))}
+              </Text>
+              {!mini && (
+                <View style={{ height: 4, flexDirection: 'row', gap: 3 }}>
+                  {(hasEntry(entry) || medicalCount > 0) && (
                     <View
                       style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: shade,
-                        borderRadius: 4,
-                        minHeight: 19,
-                        opacity: day > today ? 0.4 : 1,
+                        width: entry?.periodStart ? 9 : 4,
+                        height: 4,
+                        borderRadius: 2,
+                        backgroundColor: chosen ? colors.onAccent : colors.plum,
                       }}
-                    >
-                      {content}
-                    </View>
-                  ) : (
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={`${formatDay(day, { month: 'long', day: 'numeric', year: 'numeric' })}${day === today ? ', today' : ''}${cycle === null ? '' : `, cycle day ${cycle}`}, ${state === 'unknown' ? 'flow not logged' : state === 'none' ? 'no flow' : entry && FLOW_LABELS[entry.flow]}${hasEntry(entry) ? ', logged' : ''}${medicalCount ? `, ${medicalCount} medical records` : ''}`}
-                      accessibilityState={{ selected: chosen }}
-                      aria-pressed={chosen}
-                      onPress={() => onOpenDay(day)}
-                      style={({ pressed }) => ({
-                        flex: 1,
-                        minHeight: cellHeight - 4,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 3,
-                        backgroundColor: shade,
-                        borderRadius: 10,
-                        borderWidth: chosen || day === today ? 1.5 : 0,
-                        borderColor: colors.plum,
-                        opacity: pressed ? 0.65 : day > today ? 0.45 : 1,
-                      })}
-                    >
-                      {content}
-                    </Pressable>
-                  ))}
-              </View>
-            );
-          },
-        )}
+                    />
+                  )}
+                </View>
+              )}
+            </>
+          );
+          return (
+            <View
+              key={day ?? `blank-${index}`}
+              style={{
+                width: `${100 / 7}%`,
+                height: mini ? 26 : cellHeight,
+                padding: mini ? 1 : 2,
+              }}
+            >
+              {day &&
+                (mini ? (
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: shade,
+                      borderRadius: 4,
+                      minHeight: 19,
+                      opacity: day > today ? 0.4 : 1,
+                    }}
+                  >
+                    {content}
+                  </View>
+                ) : (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`${formatDay(day, { month: 'long', day: 'numeric', year: 'numeric' })}${day === today ? ', today' : ''}${cycle === null ? '' : `, cycle day ${cycle}`}, ${state === 'unknown' ? 'flow not logged' : state === 'none' ? 'no flow' : entry && FLOW_LABELS[entry.flow]}${hasEntry(entry) ? ', logged' : ''}${medicalCount ? `, ${medicalCount} medical records` : ''}`}
+                    accessibilityState={{ selected: chosen }}
+                    aria-pressed={chosen}
+                    onPress={() => onOpenDay(day)}
+                    style={({ pressed }) => ({
+                      flex: 1,
+                      minHeight: cellHeight - 4,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 3,
+                      backgroundColor: shade,
+                      borderRadius: 10,
+                      borderWidth: chosen || day === today ? 1.5 : 0,
+                      borderColor: colors.plum,
+                      opacity: pressed ? 0.65 : day > today ? 0.45 : 1,
+                    })}
+                  >
+                    {content}
+                  </Pressable>
+                ))}
+            </View>
+          );
+        })}
       </View>
     </>
   );
 }
 export interface CalendarHandle {
   top(): void;
-  journal(): void;
   rememberPosition(open: () => void): void;
   restorePosition(): void;
 }
-type ScrollTarget = 'top' | 'journal' | 'controls' | 'months' | 'return';
+type ScrollTarget = 'top' | 'controls' | 'months' | 'return';
 export const Calendar = forwardRef<
   CalendarHandle,
   {
@@ -193,18 +179,22 @@ export const Calendar = forwardRef<
     view: CalendarView;
     changeView: (view: CalendarView) => void;
     header: React.ReactNode;
-    dayContent: React.ReactNode;
+    addPeriod: () => void;
     explore: React.ReactNode;
   }
 >(function Calendar(
-  { journal, today, onSelect, onOpenDay, compact, view, changeView, header, dayContent, explore },
+  { journal, today, onSelect, onOpenDay, compact, view, changeView, header, addPeriod, explore },
   ref,
 ) {
   const { colors, common, dark } = useTheme();
   const { fontScale } = useWindowDimensions();
   const scale = Math.max(1, fontScale);
-  const cellHeight = Math.ceil(44 * scale + 26);
-  const monthHeight = Math.ceil(6 * cellHeight + 100 * scale + 30);
+  const cellHeight = Math.ceil(48 * scale);
+  // Reserve wrapping space for long month names at enlarged Android text sizes.
+  const monthHeadingHeight = 28 * scale * (scale > 1.2 ? Math.ceil(scale * 1.5) : 1) + 8;
+  // Exact row heights keep continuous month scrolling anchored through prepends.
+  const monthHeight = (month: Day) =>
+    (monthCells(month).length / 7) * cellHeight + monthHeadingHeight + 19 * scale + 31;
   const selected = journal.selectedDate;
   const [first, setFirst] = useState(monthKey(selected));
   const [count, setCount] = useState(3);
@@ -215,16 +205,13 @@ export const Calendar = forwardRef<
   const list = useRef<FlatList<string>>(null);
   const viewportNode = useRef<View>(null);
   const headerNode = useRef<View>(null);
-  const journalNode = useRef<View>(null);
   const controlsNode = useRef<View>(null);
   const headerHeight = useRef(0);
   const y = useRef(0);
   const savedMonthOffset = useRef(0);
   const pendingOffset = useRef<number | null>(null);
   const lastPrepend = useRef(0);
-  const navigation = useRef<{ id: number; target: ScrollTarget } | null>(
-    view === 'day' ? { id: 0, target: 'journal' } : null,
-  );
+  const navigation = useRef<{ id: number; target: ScrollTarget } | null>(null);
   const navigationId = useRef(0);
   const navigationFrame = useRef<number | null>(null);
   const [navigationRevision, setNavigationRevision] = useState(0);
@@ -261,7 +248,7 @@ export const Calendar = forwardRef<
             finish(height + (request.target === 'return' ? savedMonthOffset.current : 0)),
           );
         } else {
-          const node = request.target === 'journal' ? journalNode.current : controlsNode.current;
+          const node = controlsNode.current;
           node?.measureLayout(
             header,
             (_x, offset) => finish(offset),
@@ -281,7 +268,6 @@ export const Calendar = forwardRef<
   );
   useImperativeHandle(ref, () => ({
     top: () => navigate('top'),
-    journal: () => navigate('journal'),
     rememberPosition: (open) => {
       const id = ++navigationId.current;
       navigation.current = null;
@@ -315,7 +301,13 @@ export const Calendar = forwardRef<
       (Number(first.slice(0, 4)) - Number(earlier.slice(0, 4))) * 12 +
       Number(first.slice(5, 7)) -
       Number(earlier.slice(5, 7));
-    pendingOffset.current = showEarlier ? headerHeight.current : y.current + extra * monthHeight;
+    pendingOffset.current = showEarlier
+      ? headerHeight.current
+      : y.current +
+        Array.from({ length: extra }, (_, i) => monthHeight(monthKey(earlier, i))).reduce(
+          (a, b) => a + b,
+          0,
+        );
     lastPrepend.current = Date.now();
     setFirst(earlier);
     setCount((n) => n + extra);
@@ -335,7 +327,7 @@ export const Calendar = forwardRef<
       setError('Use a real date from 1900 to 2199, like 2026-10-09.');
       return;
     }
-    navigate(view === 'day' ? 'journal' : view === 'year' ? 'controls' : 'months');
+    navigate(view === 'year' ? 'controls' : 'months');
     setFirst(monthKey(date));
     setCount(3);
     setYear(Number(date.slice(0, 4)));
@@ -344,7 +336,7 @@ export const Calendar = forwardRef<
     setError('');
   };
   const chooseView = (next: CalendarView) => {
-    navigate(next === 'day' ? 'journal' : 'controls');
+    navigate('controls');
     changeView(next);
     setYear(Number(selected.slice(0, 4)));
   };
@@ -367,8 +359,10 @@ export const Calendar = forwardRef<
           paddingBottom: 32,
         }}
         getItemLayout={(_, index) => ({
-          length: monthHeight,
-          offset: headerHeight.current + monthHeight * index,
+          length: monthHeight(months[index]!),
+          offset:
+            headerHeight.current +
+            months.slice(0, index).reduce((sum, month) => sum + monthHeight(month), 0),
           index,
         })}
         onScroll={(event) => {
@@ -380,7 +374,7 @@ export const Calendar = forwardRef<
             !navigation.current &&
             offset < previous - 1 &&
             offset > headerHeight.current - 40 &&
-            offset < headerHeight.current + monthHeight * 0.7 &&
+            offset < headerHeight.current + monthHeight(first) * 0.7 &&
             Date.now() - lastPrepend.current > 800
           )
             prepend();
@@ -418,45 +412,34 @@ export const Calendar = forwardRef<
               }
               settleNavigation();
             }}
-            style={{ gap: 18, paddingTop: 20 }}
+            style={{ gap: 12, paddingTop: 12 }}
           >
             {header}
-            <View
-              ref={journalNode}
-              collapsable={false}
-              style={[common.card, { padding: compact ? 16 : 24 }]}
-            >
-              {dayContent}
-            </View>
-            {explore}
-            <View
-              ref={controlsNode}
-              collapsable={false}
-              style={{ gap: 12, paddingTop: 8, paddingBottom: 16 }}
-            >
+            <View ref={controlsNode} collapsable={false} style={{ gap: 6, paddingBottom: 8 }}>
               <View style={common.between}>
-                <Text style={common.heading}>Calendar</Text>
-                <Button secondary label="Today" onPress={() => go(today)} />
+                <Text style={[common.heading, { flexShrink: 1 }]}>Your calendar</Text>
+                <Button label="Add period" onPress={addPeriod} />
               </View>
               <View style={common.wrap}>
-                {(['month', 'year', 'day'] as CalendarView[]).map((mode) => (
+                {(['month', 'year'] as CalendarView[]).map((mode) => (
                   <Chip
                     key={mode}
-                    label={`${mode[0]!.toUpperCase()}${mode.slice(1)} view`}
+                    label={`${mode[0]!.toUpperCase()}${mode.slice(1)}`}
                     selected={mode === view}
                     onPress={() => chooseView(mode)}
                   />
                 ))}
+                <Button quiet label="Today" onPress={() => go(today)} />
+                <Button
+                  quiet
+                  label="Find date"
+                  onPress={() => {
+                    setJump(!jump);
+                    setDateInput(selected);
+                    setError('');
+                  }}
+                />
               </View>
-              <Button
-                secondary
-                label="Jump to date"
-                onPress={() => {
-                  setJump(!jump);
-                  setDateInput(selected);
-                  setError('');
-                }}
-              />
               {jump && (
                 <View style={{ gap: 8 }}>
                   <TextInput
@@ -478,56 +461,30 @@ export const Calendar = forwardRef<
                   )}
                 </View>
               )}
-              {view === 'day' ? (
+              <>
                 <View style={common.wrap}>
-                  <Button
-                    secondary
-                    label="Previous day"
-                    disabled={!validDay(addDays(selected, -1))}
-                    onPress={() => go(addDays(selected, -1))}
-                  />
-                  <Button
-                    secondary
-                    label="Next day"
-                    disabled={!validDay(addDays(selected, 1))}
-                    onPress={() => go(addDays(selected, 1))}
-                  />
+                  {[
+                    [colors.rose, 'Bleeding'],
+                    [colors.sand, 'Spotting'],
+                    [colors.sage, 'No flow'],
+                    [colors.paper, 'Not logged'],
+                  ].map(([color, label]) => (
+                    <View key={label} style={common.row}>
+                      <View
+                        style={{
+                          width: 10,
+                          height: 10,
+                          backgroundColor: color,
+                          borderWidth: 1,
+                          borderColor: colors.line,
+                        }}
+                      />
+                      <Text style={common.small}>{label}</Text>
+                    </View>
+                  ))}
                 </View>
-              ) : (
-                <>
-                  <View style={common.wrap}>
-                    {[
-                      [colors.rose, 'Bleeding'],
-                      [colors.sand, 'Spotting'],
-                      [colors.sage, 'No flow'],
-                      [colors.paper, 'Not logged'],
-                    ].map(([color, label]) => (
-                      <View key={label} style={common.row}>
-                        <View
-                          style={{
-                            width: 10,
-                            height: 10,
-                            backgroundColor: color,
-                            borderWidth: 1,
-                            borderColor: colors.line,
-                          }}
-                        />
-                        <Text style={common.small}>{label}</Text>
-                      </View>
-                    ))}
-                  </View>
-                  <Text style={common.small}>C = recorded cycle day · Tap a day to open it.</Text>
-                </>
-              )}
-              {view === 'month' && (
-                <Button
-                  secondary
-                  icon={ArrowUp}
-                  label="Earlier months"
-                  disabled={first <= '1900-01-01'}
-                  onPress={() => prepend(true)}
-                />
-              )}
+                <Text style={common.small}>Tap a date to open its journal.</Text>
+              </>
               {view === 'year' && (
                 <>
                   <View style={common.wrap}>
@@ -596,25 +553,52 @@ export const Calendar = forwardRef<
         renderItem={({ item: month }) => (
           <View
             style={{
-              height: monthHeight,
+              height: monthHeight(month),
               padding: 12,
               borderWidth: 1,
               borderColor: colors.line,
               backgroundColor: colors.paper,
-              borderRadius: 14,
+              borderRadius: 12,
             }}
           >
-            <Text
-              style={{
-                fontFamily: serif,
-                fontSize: 23,
-                color: colors.ink,
-                marginVertical: 12,
-                minHeight: 34 * scale,
-              }}
-            >
-              {formatDay(month, { month: 'long', year: 'numeric' })}
-            </Text>
+            <View style={[common.between, { height: monthHeadingHeight, marginBottom: 0 }]}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Month before ${formatDay(month, { month: 'long', year: 'numeric' })}`}
+                disabled={!validDay(monthKey(month, -1))}
+                onPress={() => go(monthKey(month, -1))}
+                style={{
+                  minWidth: 44,
+                  minHeight: 44,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <ChevronLeft color={colors.plum} size={20} />
+              </Pressable>
+              <Text
+                style={[
+                  common.label,
+                  { flexShrink: 1, textAlign: 'center', fontSize: 17, lineHeight: 28 },
+                ]}
+              >
+                {formatDay(month, { month: 'long', year: 'numeric' })}
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Month after ${formatDay(month, { month: 'long', year: 'numeric' })}`}
+                disabled={!validDay(monthKey(month, 1))}
+                onPress={() => go(monthKey(month, 1))}
+                style={{
+                  minWidth: 44,
+                  minHeight: 44,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <ChevronRight color={colors.plum} size={20} />
+              </Pressable>
+            </View>
             <DayGrid
               journal={journal}
               month={month}
@@ -640,6 +624,9 @@ export const Calendar = forwardRef<
           ) : null
         }
       />
+      <View style={{ paddingHorizontal: compact ? 16 : 28, backgroundColor: colors.paper }}>
+        {explore}
+      </View>
     </View>
   );
 });

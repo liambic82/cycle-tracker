@@ -27,11 +27,10 @@ export function SleepHistory({
   const [limit, setLimit] = useState(30);
   const history = useMemo(() => sleepHistory(journal, today, window), [journal, today, window]);
   return (
-    <View style={{ gap: 16 }}>
+    <View style={{ gap: 12 }}>
       <Text style={common.body}>
-        Main sleep, recorded on the day you woke up. Duration, quality and wakings can each be left
-        unlogged. Imported sessions stay separate and are never added to manual values or each
-        other. Sleep disruption symptom ratings stay in symptom history.
+        By waking date. Manual sleep and imported sessions stay separate; their durations are never
+        added together.
       </Text>
       <Text style={common.label}>History range · ending today</Text>
       <View style={common.wrap}>
@@ -57,8 +56,8 @@ export function SleepHistory({
         duration · {history.notLogged} days without sleep details
       </Text>
       <Text style={common.small}>
-        Bars use the same 0–24-hour scale. Rows show logged waking dates, newest first. Missing
-        values stay unknown. Tap a row to open that day.
+        Newest first · bars use a 0–24-hour scale. Missing values stay unknown. Tap a date to open
+        it.
       </Text>
       {!history.records.length && (
         <Text style={common.body}>
@@ -117,9 +116,10 @@ export function SleepHistory({
                 const summary = sleepStageSummary(record);
                 return (
                   <Text key={JSON.stringify([record.sourcePackage, record.id])} style={common.body}>
-                    Imported · {record.sourceName} · recorded asleep stages{' '}
-                    {minutesLabel(summary.asleepMinutes)}
-                    {summary.complete ? '' : ' · incomplete stages; total unknown'}
+                    Imported · {record.sourceName} · time asleep{' '}
+                    {summary.complete
+                      ? minutesLabel(summary.asleepMinutes)
+                      : 'Unknown — incomplete stages'}
                   </Text>
                 );
               })}
