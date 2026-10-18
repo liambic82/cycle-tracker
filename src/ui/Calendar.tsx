@@ -2,11 +2,20 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { FlatList, Pressable, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import {
+  FlatList,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { ArrowDown, ArrowUp } from 'lucide-react-native';
 import { addDays, formatDay, monthCells, monthKey, validDay, type Day } from '../domain/dates';
 import { hasEntry, FLOW_LABELS, type Journal } from '../domain/journal';
@@ -168,7 +177,11 @@ function DayGrid({
 }
 export interface CalendarHandle {
   top(): void;
+  journal(): void;
+  rememberPosition(open: () => void): void;
+  restorePosition(): void;
 }
+type ScrollTarget = 'top' | 'journal' | 'controls' | 'months' | 'return';
 export const Calendar = forwardRef<
   CalendarHandle,
   {
@@ -200,12 +213,95 @@ export const Calendar = forwardRef<
   const [dateInput, setDateInput] = useState(selected);
   const [error, setError] = useState('');
   const list = useRef<FlatList<string>>(null);
+  const viewportNode = useRef<View>(null);
+  const headerNode = useRef<View>(null);
+  const journalNode = useRef<View>(null);
+  const controlsNode = useRef<View>(null);
   const headerHeight = useRef(0);
   const y = useRef(0);
+  const savedMonthOffset = useRef(0);
   const pendingOffset = useRef<number | null>(null);
   const lastPrepend = useRef(0);
+  const navigation = useRef<{ id: number; target: ScrollTarget } | null>(
+    view === 'day' ? { id: 0, target: 'journal' } : null,
+  );
+  const navigationId = useRef(0);
+  const navigationFrame = useRef<number | null>(null);
+  const [navigationRevision, setNavigationRevision] = useState(0);
+  const scrollTo = (offset: number) => {
+    y.current = Math.max(0, offset);
+    list.current?.scrollToOffset({ offset: y.current, animated: false });
+  };
+  const navigate = (target: ScrollTarget) => {
+    pendingOffset.current = null;
+    navigation.current = { id: ++navigationId.current, target };
+    lastPrepend.current = Date.now();
+    setNavigationRevision((n) => n + 1);
+  };
+  const settleNavigation = () => {
+    if (!navigation.current) return;
+    if (navigationFrame.current !== null) cancelAnimationFrame(navigationFrame.current);
+    // Measure committed native layout, not the previous view's cached header height.
+    // Content-size/onLayout events can reschedule this while the view is settling.
+    navigationFrame.current = requestAnimationFrame(() => {
+      navigationFrame.current = requestAnimationFrame(() => {
+        navigationFrame.current = null;
+        const request = navigation.current;
+        const header = headerNode.current;
+        if (!request || !header) return;
+        const finish = (offset: number) => {
+          if (navigation.current?.id !== request.id) return;
+          scrollTo(offset);
+          navigation.current = null;
+          lastPrepend.current = Date.now();
+        };
+        if (request.target === 'top') finish(0);
+        else if (request.target === 'months' || request.target === 'return') {
+          header.measure((_x, _y, _width, height) =>
+            finish(height + (request.target === 'return' ? savedMonthOffset.current : 0)),
+          );
+        } else {
+          const node = request.target === 'journal' ? journalNode.current : controlsNode.current;
+          node?.measureLayout(
+            header,
+            (_x, offset) => finish(offset),
+            () => {},
+          );
+        }
+      });
+    });
+  };
+  useLayoutEffect(settleNavigation, [navigationRevision, view, first, count]);
+  useEffect(
+    () => () => {
+      navigation.current = null;
+      if (navigationFrame.current !== null) cancelAnimationFrame(navigationFrame.current);
+    },
+    [],
+  );
   useImperativeHandle(ref, () => ({
-    top: () => list.current?.scrollToOffset({ offset: 0, animated: false }),
+    top: () => navigate('top'),
+    journal: () => navigate('journal'),
+    rememberPosition: (open) => {
+      const id = ++navigationId.current;
+      navigation.current = null;
+      savedMonthOffset.current = y.current - headerHeight.current;
+      const header = headerNode.current;
+      const viewport = viewportNode.current;
+      if (!header || !viewport) {
+        open();
+        return;
+      }
+      // Native scroll events are throttled; measure the visible position before opening.
+      header.measureInWindow((_x, headerY, _width, height) => {
+        viewport.measureInWindow((_vx, viewportY) => {
+          if (id !== navigationId.current || viewportNode.current !== viewport) return;
+          if (height > 0) savedMonthOffset.current = viewportY - headerY - height;
+          open();
+        });
+      });
+    },
+    restorePosition: () => navigate('return'),
   }));
   const dayNumber = useMemo(() => cycleDayLookup(journal, today), [journal, today]);
   const months =
@@ -213,7 +309,7 @@ export const Calendar = forwardRef<
       ? Array.from({ length: count }, (_, i) => monthKey(first, i)).filter(validDay)
       : [];
   const prepend = (showEarlier = false) => {
-    if (first <= '1900-01-01' || pendingOffset.current !== null) return;
+    if (first <= '1900-01-01' || pendingOffset.current !== null || navigation.current) return;
     const earlier = monthKey(first, -3) < '1900-01-01' ? '1900-01-01' : monthKey(first, -3);
     const extra =
       (Number(first.slice(0, 4)) - Number(earlier.slice(0, 4))) * 12 +
@@ -228,8 +324,8 @@ export const Calendar = forwardRef<
     if (pendingOffset.current === null) return;
     const offset = pendingOffset.current;
     const frame = requestAnimationFrame(() => {
-      list.current?.scrollToOffset({ offset, animated: false });
-      y.current = offset;
+      if (pendingOffset.current === null) return;
+      scrollTo(offset);
       pendingOffset.current = null;
     });
     return () => cancelAnimationFrame(frame);
@@ -239,298 +335,311 @@ export const Calendar = forwardRef<
       setError('Use a real date from 1900 to 2199, like 2026-10-09.');
       return;
     }
-    pendingOffset.current = null;
+    navigate(view === 'day' ? 'journal' : view === 'year' ? 'controls' : 'months');
     setFirst(monthKey(date));
     setCount(3);
     setYear(Number(date.slice(0, 4)));
     onSelect(date);
     setJump(false);
     setError('');
-    list.current?.scrollToOffset({ offset: 0, animated: false });
   };
   const chooseView = (next: CalendarView) => {
+    navigate(next === 'day' ? 'journal' : 'controls');
     changeView(next);
     setYear(Number(selected.slice(0, 4)));
-    list.current?.scrollToOffset({ offset: 0, animated: false });
   };
   return (
-    <FlatList
-      ref={list}
-      style={{ flex: 1 }}
-      data={months}
-      keyExtractor={(m) => m}
-      keyboardShouldPersistTaps="handled"
-      initialNumToRender={3}
-      maxToRenderPerBatch={3}
-      windowSize={5}
-      contentContainerStyle={{
-        width: '100%',
-        maxWidth: 900,
-        alignSelf: 'center',
-        paddingHorizontal: compact ? 16 : 28,
-        paddingBottom: 32,
-      }}
-      getItemLayout={(_, index) => ({
-        length: monthHeight,
-        offset: headerHeight.current + monthHeight * index,
-        index,
-      })}
-      onScroll={(event) => {
-        const offset = event.nativeEvent.contentOffset.y,
-          previous = y.current;
-        y.current = offset;
-        if (
-          view === 'month' &&
-          offset < previous - 1 &&
-          offset > headerHeight.current - 40 &&
-          offset < headerHeight.current + monthHeight * 0.7 &&
-          Date.now() - lastPrepend.current > 800
-        )
-          prepend();
-      }}
-      scrollEventThrottle={32}
-      onEndReachedThreshold={0.4}
-      onEndReached={() => {
-        if (
-          view === 'month' &&
-          y.current > headerHeight.current &&
-          validDay(monthKey(first, count))
-        )
-          setCount((n) => n + 3);
-      }}
-      ListHeaderComponent={
-        <View
-          onLayout={(event) => {
-            const height = event.nativeEvent.layout.height;
-            const previous = headerHeight.current;
-            headerHeight.current = height;
-            if (
-              previous > 0 &&
-              height !== previous &&
-              y.current >= previous &&
-              pendingOffset.current === null
-            ) {
-              const offset = y.current + height - previous;
-              y.current = offset;
-              list.current?.scrollToOffset({ offset, animated: false });
-            }
-          }}
-          style={{ gap: 18, paddingTop: 20 }}
-        >
-          {header}
-          <View style={[common.card, { padding: compact ? 16 : 24 }]}>{dayContent}</View>
-          {explore}
-          <View style={{ gap: 12, paddingTop: 8, paddingBottom: 16 }}>
-            <View style={common.between}>
-              <Text style={common.heading}>Calendar</Text>
-              <Button secondary label="Today" onPress={() => go(today)} />
+    <View ref={viewportNode} collapsable={false} style={{ flex: 1 }}>
+      <FlatList
+        ref={list}
+        style={{ flex: 1, ...(Platform.OS === 'web' ? { overflowAnchor: 'none' } : {}) }}
+        data={months}
+        keyExtractor={(m) => m}
+        keyboardShouldPersistTaps="handled"
+        initialNumToRender={3}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        contentContainerStyle={{
+          width: '100%',
+          maxWidth: 900,
+          alignSelf: 'center',
+          paddingHorizontal: compact ? 16 : 28,
+          paddingBottom: 32,
+        }}
+        getItemLayout={(_, index) => ({
+          length: monthHeight,
+          offset: headerHeight.current + monthHeight * index,
+          index,
+        })}
+        onScroll={(event) => {
+          const offset = event.nativeEvent.contentOffset.y,
+            previous = y.current;
+          y.current = offset;
+          if (
+            view === 'month' &&
+            !navigation.current &&
+            offset < previous - 1 &&
+            offset > headerHeight.current - 40 &&
+            offset < headerHeight.current + monthHeight * 0.7 &&
+            Date.now() - lastPrepend.current > 800
+          )
+            prepend();
+        }}
+        scrollEventThrottle={32}
+        onContentSizeChange={settleNavigation}
+        onEndReachedThreshold={0.4}
+        onEndReached={() => {
+          if (
+            view === 'month' &&
+            !navigation.current &&
+            y.current > headerHeight.current &&
+            validDay(monthKey(first, count))
+          )
+            setCount((n) => n + 3);
+        }}
+        ListHeaderComponent={
+          <View
+            ref={headerNode}
+            collapsable={false}
+            onLayout={(event) => {
+              const height = event.nativeEvent.layout.height;
+              const previous = headerHeight.current;
+              headerHeight.current = height;
+              if (
+                previous > 0 &&
+                height !== previous &&
+                // Scroll offsets may be rounded to whole pixels while layout is fractional.
+                y.current >= previous - 1 &&
+                !navigation.current &&
+                pendingOffset.current === null
+              ) {
+                const offset = y.current + height - previous;
+                scrollTo(offset);
+              }
+              settleNavigation();
+            }}
+            style={{ gap: 18, paddingTop: 20 }}
+          >
+            {header}
+            <View
+              ref={journalNode}
+              collapsable={false}
+              style={[common.card, { padding: compact ? 16 : 24 }]}
+            >
+              {dayContent}
             </View>
-            <View style={common.wrap}>
-              {(['month', 'year', 'day'] as CalendarView[]).map((mode) => (
-                <Chip
-                  key={mode}
-                  label={`${mode[0]!.toUpperCase()}${mode.slice(1)} view`}
-                  selected={mode === view}
-                  onPress={() => chooseView(mode)}
-                />
-              ))}
-            </View>
-            <Button
-              secondary
-              label="Jump to date"
-              onPress={() => {
-                setJump(!jump);
-                setDateInput(selected);
-                setError('');
-              }}
-            />
-            {jump && (
-              <View style={{ gap: 8 }}>
-                <TextInput
-                  style={common.input}
-                  value={dateInput}
-                  onChangeText={setDateInput}
-                  accessibilityLabel="Jump to date"
-                  placeholder="YYYY-MM-DD"
-                  placeholderTextColor={colors.muted}
-                  keyboardAppearance={dark ? 'dark' : 'light'}
-                  maxLength={10}
-                  onSubmitEditing={() => go(dateInput)}
-                />
-                <Button label="Go to date" onPress={() => go(dateInput)} />
-                {!!error && (
-                  <Text accessibilityRole="alert" style={common.error}>
-                    {error}
-                  </Text>
-                )}
+            {explore}
+            <View
+              ref={controlsNode}
+              collapsable={false}
+              style={{ gap: 12, paddingTop: 8, paddingBottom: 16 }}
+            >
+              <View style={common.between}>
+                <Text style={common.heading}>Calendar</Text>
+                <Button secondary label="Today" onPress={() => go(today)} />
               </View>
-            )}
-            {view === 'day' ? (
               <View style={common.wrap}>
-                <Button
-                  secondary
-                  label="Previous day"
-                  disabled={!validDay(addDays(selected, -1))}
-                  onPress={() => go(addDays(selected, -1))}
-                />
-                <Button
-                  secondary
-                  label="Next day"
-                  disabled={!validDay(addDays(selected, 1))}
-                  onPress={() => go(addDays(selected, 1))}
-                />
+                {(['month', 'year', 'day'] as CalendarView[]).map((mode) => (
+                  <Chip
+                    key={mode}
+                    label={`${mode[0]!.toUpperCase()}${mode.slice(1)} view`}
+                    selected={mode === view}
+                    onPress={() => chooseView(mode)}
+                  />
+                ))}
               </View>
-            ) : (
-              <>
+              <Button
+                secondary
+                label="Jump to date"
+                onPress={() => {
+                  setJump(!jump);
+                  setDateInput(selected);
+                  setError('');
+                }}
+              />
+              {jump && (
+                <View style={{ gap: 8 }}>
+                  <TextInput
+                    style={common.input}
+                    value={dateInput}
+                    onChangeText={setDateInput}
+                    accessibilityLabel="Jump to date"
+                    placeholder="YYYY-MM-DD"
+                    placeholderTextColor={colors.muted}
+                    keyboardAppearance={dark ? 'dark' : 'light'}
+                    maxLength={10}
+                    onSubmitEditing={() => go(dateInput)}
+                  />
+                  <Button label="Go to date" onPress={() => go(dateInput)} />
+                  {!!error && (
+                    <Text accessibilityRole="alert" style={common.error}>
+                      {error}
+                    </Text>
+                  )}
+                </View>
+              )}
+              {view === 'day' ? (
                 <View style={common.wrap}>
-                  {[
-                    [colors.rose, 'Bleeding'],
-                    [colors.sand, 'Spotting'],
-                    [colors.sage, 'No flow'],
-                    [colors.paper, 'Not logged'],
-                  ].map(([color, label]) => (
-                    <View key={label} style={common.row}>
-                      <View
+                  <Button
+                    secondary
+                    label="Previous day"
+                    disabled={!validDay(addDays(selected, -1))}
+                    onPress={() => go(addDays(selected, -1))}
+                  />
+                  <Button
+                    secondary
+                    label="Next day"
+                    disabled={!validDay(addDays(selected, 1))}
+                    onPress={() => go(addDays(selected, 1))}
+                  />
+                </View>
+              ) : (
+                <>
+                  <View style={common.wrap}>
+                    {[
+                      [colors.rose, 'Bleeding'],
+                      [colors.sand, 'Spotting'],
+                      [colors.sage, 'No flow'],
+                      [colors.paper, 'Not logged'],
+                    ].map(([color, label]) => (
+                      <View key={label} style={common.row}>
+                        <View
+                          style={{
+                            width: 10,
+                            height: 10,
+                            backgroundColor: color,
+                            borderWidth: 1,
+                            borderColor: colors.line,
+                          }}
+                        />
+                        <Text style={common.small}>{label}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  <Text style={common.small}>C = recorded cycle day · Tap a day to open it.</Text>
+                </>
+              )}
+              {view === 'month' && (
+                <Button
+                  secondary
+                  icon={ArrowUp}
+                  label="Earlier months"
+                  disabled={first <= '1900-01-01'}
+                  onPress={() => prepend(true)}
+                />
+              )}
+              {view === 'year' && (
+                <>
+                  <View style={common.wrap}>
+                    <Button
+                      secondary
+                      label="Previous year"
+                      disabled={year <= 1900}
+                      onPress={() => setYear(year - 1)}
+                    />
+                    <Text style={common.heading}>{year}</Text>
+                    <Button
+                      secondary
+                      label="Next year"
+                      disabled={year >= 2199}
+                      onPress={() => setYear(year + 1)}
+                    />
+                  </View>
+                  <View style={common.wrap}>
+                    {Array.from(
+                      { length: 12 },
+                      (_, i) => `${year}-${String(i + 1).padStart(2, '0')}-01`,
+                    ).map((month) => (
+                      <Pressable
+                        key={month}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Open ${formatDay(month, { month: 'long', year: 'numeric' })}`}
+                        onPress={() => {
+                          navigate('months');
+                          setFirst(month);
+                          setCount(3);
+                          changeView('month');
+                        }}
                         style={{
-                          width: 10,
-                          height: 10,
-                          backgroundColor: color,
+                          width: compact ? '47%' : '31%',
+                          flexGrow: 1,
+                          padding: 8,
+                          borderRadius: 12,
                           borderWidth: 1,
                           borderColor: colors.line,
                         }}
-                      />
-                      <Text style={common.small}>{label}</Text>
-                    </View>
-                  ))}
-                </View>
-                <Text style={common.small}>C = recorded cycle day · Tap a day to open it.</Text>
-              </>
-            )}
-            {view === 'month' && (
-              <Button
-                secondary
-                icon={ArrowUp}
-                label="Earlier months"
-                disabled={first <= '1900-01-01'}
-                onPress={() => prepend(true)}
-              />
-            )}
-            {view === 'year' && (
-              <>
-                <View style={common.wrap}>
-                  <Button
-                    secondary
-                    label="Previous year"
-                    disabled={year <= 1900}
-                    onPress={() => setYear(year - 1)}
-                  />
-                  <Text style={common.heading}>{year}</Text>
-                  <Button
-                    secondary
-                    label="Next year"
-                    disabled={year >= 2199}
-                    onPress={() => setYear(year + 1)}
-                  />
-                </View>
-                <View style={common.wrap}>
-                  {Array.from(
-                    { length: 12 },
-                    (_, i) => `${year}-${String(i + 1).padStart(2, '0')}-01`,
-                  ).map((month) => (
-                    <Pressable
-                      key={month}
-                      accessibilityRole="button"
-                      accessibilityLabel={`Open ${formatDay(month, { month: 'long', year: 'numeric' })}`}
-                      onPress={() => {
-                        setFirst(month);
-                        setCount(3);
-                        changeView('month');
-                        requestAnimationFrame(() =>
-                          list.current?.scrollToOffset({
-                            offset: headerHeight.current,
-                            animated: false,
-                          }),
-                        );
-                      }}
-                      style={{
-                        width: compact ? '47%' : '31%',
-                        flexGrow: 1,
-                        padding: 8,
-                        borderRadius: 12,
-                        borderWidth: 1,
-                        borderColor: colors.line,
-                      }}
-                    >
-                      <Text style={common.label}>{formatDay(month, { month: 'long' })}</Text>
-                      <View
-                        pointerEvents="none"
-                        accessibilityElementsHidden
-                        importantForAccessibility="no-hide-descendants"
-                        aria-hidden
                       >
-                        <DayGrid
-                          journal={journal}
-                          month={month}
-                          today={today}
-                          mini
-                          dayNumber={dayNumber}
-                          onOpenDay={onOpenDay}
-                        />
-                      </View>
-                    </Pressable>
-                  ))}
-                </View>
-              </>
-            )}
+                        <Text style={common.label}>{formatDay(month, { month: 'long' })}</Text>
+                        <View
+                          pointerEvents="none"
+                          accessibilityElementsHidden
+                          importantForAccessibility="no-hide-descendants"
+                          aria-hidden
+                        >
+                          <DayGrid
+                            journal={journal}
+                            month={month}
+                            today={today}
+                            mini
+                            dayNumber={dayNumber}
+                            onOpenDay={onOpenDay}
+                          />
+                        </View>
+                      </Pressable>
+                    ))}
+                  </View>
+                </>
+              )}
+            </View>
           </View>
-        </View>
-      }
-      renderItem={({ item: month }) => (
-        <View
-          style={{
-            height: monthHeight,
-            padding: 12,
-            borderWidth: 1,
-            borderColor: colors.line,
-            backgroundColor: colors.paper,
-            borderRadius: 14,
-          }}
-        >
-          <Text
+        }
+        renderItem={({ item: month }) => (
+          <View
             style={{
-              fontFamily: serif,
-              fontSize: 23,
-              color: colors.ink,
-              marginVertical: 12,
-              minHeight: 34 * scale,
+              height: monthHeight,
+              padding: 12,
+              borderWidth: 1,
+              borderColor: colors.line,
+              backgroundColor: colors.paper,
+              borderRadius: 14,
             }}
           >
-            {formatDay(month, { month: 'long', year: 'numeric' })}
-          </Text>
-          <DayGrid
-            journal={journal}
-            month={month}
-            today={today}
-            mini={false}
-            cellHeight={cellHeight}
-            dayNumber={dayNumber}
-            onOpenDay={onOpenDay}
-          />
-        </View>
-      )}
-      ListFooterComponent={
-        view === 'month' ? (
-          <View style={{ paddingTop: 16 }}>
-            <Button
-              secondary
-              icon={ArrowDown}
-              label="Later months"
-              disabled={!validDay(monthKey(first, count))}
-              onPress={() => setCount((n) => n + 3)}
+            <Text
+              style={{
+                fontFamily: serif,
+                fontSize: 23,
+                color: colors.ink,
+                marginVertical: 12,
+                minHeight: 34 * scale,
+              }}
+            >
+              {formatDay(month, { month: 'long', year: 'numeric' })}
+            </Text>
+            <DayGrid
+              journal={journal}
+              month={month}
+              today={today}
+              mini={false}
+              cellHeight={cellHeight}
+              dayNumber={dayNumber}
+              onOpenDay={onOpenDay}
             />
           </View>
-        ) : null
-      }
-    />
+        )}
+        ListFooterComponent={
+          view === 'month' ? (
+            <View style={{ paddingTop: 16 }}>
+              <Button
+                secondary
+                icon={ArrowDown}
+                label="Later months"
+                disabled={!validDay(monthKey(first, count))}
+                onPress={() => setCount((n) => n + 3)}
+              />
+            </View>
+          ) : null
+        }
+      />
+    </View>
   );
 });

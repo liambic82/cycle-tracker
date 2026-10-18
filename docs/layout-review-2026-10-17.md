@@ -1,5 +1,7 @@
 # Preview 0.20.0 layout review — October 17, 2026
 
+**Follow-up:** the owner authorized repair. The three navigation findings below are addressed in **0.20.1 / code 25** and passed production browser checks; native phone validation remains pending. [Repair evidence](validation.md#navigation-repair--october-17-2026) · [Layout proposal awaiting approval](layout-proposal-2026-10-17.md). The 31 px anchor observation below used a locator click that could scroll before tapping; a later direct-tap check returned to the same position and corrects that measurement's interpretation. The remainder records the original review, not the patch's current status.
+
 The owner reported that a tester's first impression was that the app looked broken. This review found three reproducible navigation problems and presentation choices that plausibly contribute to that impression. It does not identify which screen the tester saw. **These findings remain open; this is a review, not a repaired build.**
 
 Reviewed source: `7bfd7b1`, preview 0.20.0 / Android code 24. Browser inspection used the production export, fictional sample records, 390 × 844 and 320 × 740 phone-sized viewports, and 1280 × 900 desktop. Light and dark rendering were inspected. These are browser checks, not validation on Pixel 7, Galaxy Z Flip5 or Fitbit Inspire 3.

@@ -1,5 +1,15 @@
 # Validation record
 
+## Navigation repair — October 17, 2026
+
+The owner authorized fixing the reviewed navigation bugs before presenting a layout proposal. Preview **0.20.1 / code 25** measures the destination after committed layout, targets calendar controls or the journal as appropriate, prevents stale navigation callbacks from overriding a later request, and explicitly captures/restores the month-relative position around a day editor. The design proposal remains [unimplemented and awaiting approval](layout-proposal-2026-10-17.md). No journal schema, domain, permissions or prediction changes.
+
+- `pnpm typecheck` and production web export passed. Browser checks used fictional sample data at confirmed **320 × 740**, **390 × 844**, and **1280 × 900** viewports. Year-to-January/December selection, Month/Year/Day switching, previous day, a leap-day date jump and forms beneath an expanded hormone guide reached visible destinations. Browser warning/error logs were empty in the checked flows. No new domain tests were added; the earlier **260/260** run remains the domain-test evidence, not a newly rerun suite.
+- A direct tap on July 11 returned its cell to **y = 295 px before and after** closing, despite the journal changing height. Earlier measurements made with locator clicks were confounded by the automation tool centering the target before clicking; the review's 31 px observation is not reliable evidence of app-induced drift. Native gesture/anchor behavior still needs the focused device check.
+- Android release compilation succeeded; all **169 application/build inputs** in the build cache matched the workspace. APK: `artifacts/android/cycle-tracker-preview-0.20.1-arm64-v8a.apk`, package `com.liambic.cycletracker.preview`, version **0.20.1 / 25**, API 26 minimum, target 36, arm64-v8a. Health permissions remain Sleep and optional older history only. Signature verification passed with unchanged certificate SHA-256 `6e64159ed7656a5873b6f0379e74ef1c0a8bd6b1bbaba12e51cbd26355f75576`.
+- APK SHA-256: `d4c19c65c08cf79f723555fb19b7781a3e77c99e2483dc27e8ac1cd86767f9f5`. Build outputs, screenshots and logs stay ignored under `artifacts/`. The proposal was checked separately for both variants, local interactions and narrow wrapping; its sample save/connection states are illustrative.
+- No physical phone, wearable, large-system-text or TalkBack pass is claimed. [Focused 0.20.1 retest](android-testing.md#0201-navigation-repair). The existing first-screen hierarchy and repeated controls are design work awaiting approval, not silently included in the repair.
+
 ## Layout review — October 17, 2026
 
 The owner's report that a tester thought the app looked broken prompted a review of **0.20.0**. Three navigation defects remain open: year-grid month selection can land on the wrong month, switching views hides the selected view, and daily detail forms can open below the viewport. [Reproductions, screenshots, limitations and acceptance criteria](layout-review-2026-10-17.md).

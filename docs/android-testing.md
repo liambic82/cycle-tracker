@@ -1,5 +1,17 @@
 # Android preview testing
 
+## 0.20.1 navigation repair
+
+Install `artifacts/android/cycle-tracker-preview-0.20.1-arm64-v8a.apk` as an update. Version **0.20.1 / code 25** keeps journal **format 10**, package and signing certificate. The proposed layout redesign is not part of this build.
+
+1. Choose Year view. Its controls and grid should stay visible. Choose a previous year, then January; January must appear first, not March. Repeat with December and the current year.
+2. Switch Month/Year/Day. Month and Year reveal their controls; Day reveals the selected journal. Previous/next day and date jump should reveal the requested destination. Check Today and the Calendar tab separately.
+3. Expand the hormone guide, then open observations, symptoms/pins, order, sleep or medications. The selected form must be visible immediately. Return to the journal; it should be visible without scrolling past the guide again.
+4. Open a historical day from a scrolled month, change a sample symptom, then close using both the close button and Android Back. The same part of the calendar should remain visible. Repeat with days having very different amounts of content and with the guide expanded/collapsed.
+5. Check earlier/later month scrolling, date jumps across years, narrow/large text, keyboard opening, TalkBack and Flip5 folding/rotation. Lock/background/reopen during navigation and check that no delayed action opens the wrong screen.
+
+Browser checks and signed compilation passed; physical Android validation is pending. Continue the 0.20.0/consolidated checklist below without treating this patch as a full phone pass.
+
 ## 0.20.0 Journal first and foreground sleep import
 
 Preview **0.20.0 / code 24**, journal **format 10**. Install as an update, retaining the existing preview journal. Export a backup first; restoring a new backup requires 0.20.0+. Use fictional records for destructive/permission/failure checks. No real records, passphrases or private attachments need to be sent to the developer.

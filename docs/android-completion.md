@@ -2,7 +2,9 @@
 
 ## Owner direction — October 11, 2026
 
-**Current build: 0.20.0 / code 24.** The owner approved Journal first, section ordering, symptom pins, clearer/shorter daily controls, a single scrolling calendar and opt-in foreground sleep import, and requested testosterone in the optional hormone guide. [Implemented scope](testing-feedback-2026-10-16.md) · [Focused checks](android-testing.md#0200-journal-first-and-foreground-sleep-import). Journal format 10 migrates 1–9; new backups need 0.20.0+. Restoring a backup disables automatic sleep import.
+The 0.20.1 navigation patch fixes view switching, year-to-month selection and visible daily forms, with measured calendar return positions. [Patch evidence](validation.md#navigation-repair--october-17-2026) · [Focused retest](android-testing.md#0201-navigation-repair). The [layout refinement](layout-proposal-2026-10-17.md) is a separate proposal awaiting approval.
+
+**Current build: 0.20.1 / code 25.** The owner approved Journal first, section ordering, symptom pins, clearer/shorter daily controls, a single scrolling calendar and opt-in foreground sleep import, and requested testosterone in the optional hormone guide. [Implemented scope](testing-feedback-2026-10-16.md) · [Focused checks](android-testing.md#0200-journal-first-and-foreground-sleep-import). Journal format 10 migrates 1–9; new backups need 0.20.0+. Restoring a backup disables automatic sleep import.
 
 The [0.19 period-range and batch-import improvements](testing-feedback-2026-10-12.md) and the dated 0.18.0 scope below remain included. October 16 feedback is partial evidence, not a consolidated hardware pass. Closed-app/background sync and store release remain deferred.
 

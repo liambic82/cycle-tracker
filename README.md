@@ -10,6 +10,8 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
+**Preview 0.20.1 / code 25** repairs calendar view switching, year-to-month selection and daily form navigation, and restores the calendar position after closing a day. The existing design remains in place. [Focused retest](docs/android-testing.md#0201-navigation-repair) · [Proposed layout changes awaiting approval](docs/layout-proposal-2026-10-17.md).
+
 **Preview 0.20.0** implements the approved **Journal first** direction: a compact current-cycle summary, reorderable daily sections, pinned symptoms, shorter copy, collapsed Explore and a single scrolling calendar with earlier/later months. The optional educational hormone guide includes estrogen, progesterone and testosterone; it is not a measurement or prediction of personal hormone levels. Android sleep import can optionally check a chosen source after unlock, with corrections and overlaps left for review. [Approval, scope and evidence](docs/testing-feedback-2026-10-16.md) · [Phone checklist](docs/android-testing.md#0200-journal-first-and-foreground-sleep-import).
 
 [Period and sleep retest](docs/android-testing.md#0190-period-ranges-and-bulk-sleep-import) · [Consolidated Android checks](docs/android-testing.md#0180-consolidated-local-android-test-build) · [Completed scope and remaining dependencies](docs/android-completion.md) · [Validation evidence](docs/validation.md).

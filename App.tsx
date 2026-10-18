@@ -134,8 +134,16 @@ function CycleApp() {
   const day = cycleDay(journal, today);
   const lastStart = starts(journal, today).at(-1);
   const select = (date: Day) => {
-    state.update((value) => ({ ...value, selectedDate: date }));
-    setEditing(true);
+    const open = () => {
+      state.update((value) => ({ ...value, selectedDate: date }));
+      setEditing(true);
+    };
+    if (calendarScroll.current) calendarScroll.current.rememberPosition(open);
+    else open();
+  };
+  const closeDay = () => {
+    setEditing(false);
+    calendarScroll.current?.restorePosition();
   };
   const showDay = (date: Day) => {
     setLearning(false);
@@ -145,7 +153,7 @@ function CycleApp() {
     setCalendarView('day');
     setEditing(false);
     state.update((value) => ({ ...value, selectedDate: date }));
-    mainScroll.current?.scrollTo({ y: 0, animated: false });
+    calendarScroll.current?.journal();
   };
   const logToday = () => showDay(today);
   const undoNotice = state.deleted ? (
@@ -175,7 +183,7 @@ function CycleApp() {
       demo={state.demo}
       onViewChange={() => {
         if (editing) editorScroll.current?.scrollTo({ y: 0, animated: false });
-        else calendarScroll.current?.top();
+        else calendarScroll.current?.journal();
       }}
       onDelete={() => state.removeEntry(journal.selectedDate)}
       onPatch={(patch) => state.update((value) => updateEntry(value, value.selectedDate, patch))}
@@ -590,7 +598,7 @@ function CycleApp() {
         visible={editing && !state.obscured}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => setEditing(false)}
+        onRequestClose={closeDay}
       >
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }}>
           <View
@@ -608,7 +616,7 @@ function CycleApp() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Close daily journal"
-              onPress={() => setEditing(false)}
+              onPress={closeDay}
               style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}
             >
               <X size={22} color={colors.ink} />
