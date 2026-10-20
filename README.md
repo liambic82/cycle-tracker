@@ -4,6 +4,8 @@ A personal period and perimenopause tracker centered on a continuously scrolling
 
 ## Product brief
 
+The [October 20 brand and marketing proposal](docs/design/branding-2026-10-20/README.md) presents three names with icon/launch concepts and draft store copy. **Liltara** is the recommendation; the name and design are awaiting approval. The running app remains Cycle Tracker preview 0.21.0.
+
 The [initial feature requirements](https://docs.google.com/document/d/1tOEpyA0x_Q6Up33TXy3rcdgS_-YiQC6e1BDU2acZduM/edit) are the starting point for planning. The document's version labels are suggestions, not a fixed release scope.
 
 The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all ten comments and nine reference screenshots, including calendar view choices, richer daily logging, configurable doctor reports, and everyday education.

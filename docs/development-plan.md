@@ -6,6 +6,8 @@ The [October 9 source review](source-review-2026-10-09.md) reconciles the origin
 
 ## Current slice and next steps
 
+**October 20 marketing pass — proposal:** three names, icon/wordmark concepts and Android launch treatments are ready for owner review, with **Liltara** recommended. Draft store copy, screenshot sequence, asset requirements and a preliminary name screen are recorded in the [brand proposal](design/branding-2026-10-20/README.md). Apply the selected identity only after design approval; the app is still preview 0.21.0. Branding does not change the pending device-validation/iOS sequence or establish store-release readiness.
+
 **October 18 approved implementation — 0.21.0 / code 26:** Calendar & journal, History and wearable sleep were explicitly approved and implemented. The calendar is first, daily editors are focused, settings are secondary, logged/pinned symptoms share one list, and History leads with charts. Sleep permission/source, opt-in and saved nights are grouped; unknown totals are explicit. [Scope](layout-proposal-2026-10-17.md) · [Evidence](validation.md#calendar--journal--october-18-2026) · [Focused phone checks](android-testing.md#0210-calendar--journal). Next: consolidate Android device results and address failures, then begin the iOS port. Cloud sync, closed-app sleep syncing and store release remain later work.
 
 **October 17 navigation patch — 0.20.1 / code 25:** the three navigation repairs preceded this approved layout. Their measured destination/return handling remains in the calendar. Device gesture checks remain part of the current handoff.
