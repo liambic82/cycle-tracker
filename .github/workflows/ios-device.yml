@@ -1,0 +1,55 @@
+name: iPhone sideload package
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/ios-device.yml'
+      - 'App.tsx'
+      - 'src/**'
+      - 'assets/**'
+      - 'modules/**'
+      - 'plugins/**'
+      - 'app.config.ts'
+      - 'app.json'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'scripts/build-ios-device.sh'
+      - 'scripts/verify-ios-device.py'
+      - 'scripts/check-ios-kdf.mjs'
+      - 'tests/native/PassphraseKdfCheck.swift'
+      - 'tests/fixtures/kdf-vectors.json'
+permissions:
+  contents: read
+concurrency:
+  group: ios-device-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  device:
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      EXPO_NO_TELEMETRY: '1'
+      APP_VARIANT: preview
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@11.19.0
+      - run: pnpm install --frozen-lockfile
+      - name: Build and verify native iPhone IPA for local signing
+        run: bash scripts/build-ios-device.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trifelle-iphone-sideload-${{ github.sha }}
+          path: |
+            artifacts/ios-device/*.ipa
+            artifacts/ios-device/*.sha256
+            artifacts/ios-device/verification.json
+            artifacts/ios-device/xcodebuild.log
+          if-no-files-found: warn
+          retention-days: 30

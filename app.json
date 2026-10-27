@@ -11,6 +11,7 @@
       "./plugins/withHealthConnect.cjs",
       "expo-asset",
       "expo-system-ui",
+      "./plugins/withLocalNotificationsOnly.cjs",
       ["expo-notifications", { "color": "#604054", "icon": "./assets/brand/notification.png" }],
       [
         "expo-splash-screen",
