@@ -10,9 +10,13 @@ The shared local journal, calendar, history, reports, encrypted backup/restore, 
 
 ## Apple Silicon simulator build
 
+**Verified October 27:** [macOS run 40461106974](https://github.com/liambic82/cycle-tracker/actions/runs/40461106974) passed on source commit `aec2248`. The four shared CommonCrypto vectors passed, as did invalid-salt rejection and owned-buffer clearing. The standalone Release app installed and launched on an **iPhone 17 Pro simulator**; the light/dark welcome captures were inspected and show the Trifelle logo, readable text and correctly themed surfaces. This was a launch/appearance smoke check, not an interactive journal, biometric, notification or physical-device pass.
+
+The downloaded local package is `artifacts/ios/verified-build/trifelle-preview-0.22.0-ios-simulator-arm64.zip` (**37,188,906 bytes**), SHA-256 `2f542a781972c80bef8bbdba30cf1966fdcfdc592283cec7d9090a8099a518da`. Its embedded Info.plist confirms **Trifelle Preview**, version **0.22.0 / 27**, minimum iOS **16.4**, `iPhoneSimulator`, the preview identifier, Face ID usage description and `SplashScreen` launch storyboard. Mach-O inspection confirms ARM64. [Download the CI artifact](https://github.com/liambic82/cycle-tracker/actions/runs/40461106974/artifacts/12714802376) before its November 26 retention expiry; the local copy is outside Git.
+
 The [iOS preview workflow](../.github/workflows/ios-preview.yml) uses a macOS 26 runner with Xcode 26.6. It first compiles the actual CommonCrypto helper and checks the shared compatibility vectors, then builds a standalone Release app without signing credentials. It attempts a fresh-simulator launch and light/dark welcome captures. A successful archive build does not by itself prove the welcome screen rendered correctly; inspect the captured output and run the checks below.
 
-The workflow artifact contains `trifelle-preview-0.22.0-ios-simulator-arm64.zip`, its SHA-256, build log and any successful simulator captures. It is for **Apple Silicon Macs running Xcode Simulator**, not an installable iPhone IPA. Artifact retention is 30 days; source and scripts remain in Git.
+The workflow artifact contains `trifelle-preview-0.22.0-ios-simulator-arm64.zip`, its SHA-256, build log and simulator captures. It is for **Apple Silicon Macs running Xcode Simulator**, not an installable iPhone IPA. Artifact retention is 30 days; source and scripts remain in Git.
 
 To reproduce on a Mac with Xcode 26.4+, Node 24, pnpm 11.19.0 and CocoaPods:
 
