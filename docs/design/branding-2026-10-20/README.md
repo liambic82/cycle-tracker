@@ -1,5 +1,7 @@
 # Brand and marketing proposal — October 20, 2026
 
+**October 27 update:** the owner requested a Clover-derived name and four-leaf-clover emblem. The [Clover proposal](../branding-2026-10-27/README.md) is now the active direction. The names below are retained as unapproved historical alternatives; the marketing and production brief remains useful for the eventual selected identity.
+
 **Status: proposed; awaiting the owner's choice and design approval.** The owner requested an official name, app icon, launch screen and related marketing work. The current app remains Cycle Tracker preview 0.21.0. No app assets, display names, identifiers, behavior or release status have changed.
 
 ## Recommendation: Liltara

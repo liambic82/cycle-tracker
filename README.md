@@ -4,7 +4,7 @@ A personal period and perimenopause tracker centered on a continuously scrolling
 
 ## Product brief
 
-The [October 20 brand and marketing proposal](docs/design/branding-2026-10-20/README.md) presents three names with icon/launch concepts and draft store copy. **Liltara** is the recommendation; the name and design are awaiting approval. The running app remains Cycle Tracker preview 0.21.0.
+The [October 27 Clover brand proposal](docs/design/branding-2026-10-27/README.md) follows the owner's request for a Clover-derived name and four-leaf-clover emblem. **Cloverelle** and **Clovermere** have icon/launch concepts for review; no final identity is approved. The [earlier marketing brief](docs/design/branding-2026-10-20/README.md) retains draft store copy and asset requirements. The running app remains Cycle Tracker preview 0.21.0.
 
 The [initial feature requirements](https://docs.google.com/document/d/1tOEpyA0x_Q6Up33TXy3rcdgS_-YiQC6e1BDU2acZduM/edit) are the starting point for planning. The document's version labels are suggestions, not a fixed release scope.
 
