@@ -5,7 +5,10 @@ import Foundation
 enum PassphraseKdf {
   static func wipe(_ bytes: inout [UInt8]) {
     bytes.withUnsafeMutableBytes { buffer in
-      if let address = buffer.baseAddress { explicit_bzero(address, buffer.count) }
+      if let address = buffer.baseAddress {
+        // Darwin's non-elidable clear is memset_s; explicit_bzero is not an Apple API.
+        _ = memset_s(address, buffer.count, 0, buffer.count)
+      }
     }
   }
 
