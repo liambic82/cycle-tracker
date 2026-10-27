@@ -1,5 +1,18 @@
 # Validation record
 
+## Native iPhone sideload package — October 27, 2026
+
+The owner has no Mac or paid Apple Developer membership and directed preparation of a version for physical iPhone installation. A native Release **iPhoneOS ARM64** archive is now packaged as an unsigned IPA for local signing with a free Apple Account in Sideloadly on Windows. This is preview **0.22.0 / 27**, with no visual, domain, storage-format or prediction change.
+
+- [Device workflow 40508179298](https://github.com/liambic82/cycle-tracker/actions/runs/40508179298) passed on `d35b88e` with Xcode 26.6. The CommonCrypto vectors and native device compilation passed. No Apple signing credentials were supplied to CI.
+- `artifacts/ios-device/verified-build/trifelle-preview-0.22.0-iphone-unsigned.ipa`: **36,602,438 bytes**, SHA-256 `da74586baceb0e50ff5b16aa07dd79dd794e4be91c163f98f3340638e37f9316`. The ZIP CRC check, preview identity, version/build, minimum iOS **16.4**, Face ID description, standalone JavaScript and all **12 physical-iOS ARM64 binaries** passed the audit both in CI and after download on Windows. The outer CI ZIP matched GitHub's SHA-256 `c2bf2329db0b2640ab7ee4de3c6a764953329cb5b6164a4922f8a398659693c0`.
+- The audit was also exercised against the actual prior ARM64 simulator executable and correctly rejected its Simulator platform value, rather than accepting any ARM64 binary as device-compatible.
+- Expo config introspection and the generated native entitlements check confirm no additional signing capabilities. A config plugin removes the unused APNs entitlement and remote-push background mode. Local reminders remain enabled; no remote-push token flow exists in the app.
+- [App checks 40508179285](https://github.com/liambic82/cycle-tracker/actions/runs/40508179285) passed formatting, TypeScript/domain tests and all production JavaScript exports. Local typecheck, Bash/Python script syntax, config introspection and diff checks passed.
+- The official Windows Sideloadly installer was downloaded into ignored local artifacts. Windows reports no Authenticode signature; it was not executed and no Apple desktop software was installed or removed. Apple Account authentication, device trust and Developer Mode remain actions for the owner/tester on their computer and phone.
+
+**Not yet validated:** signing, provisioning, installation or runtime on a physical iPhone. The target iPhone model/iOS version and USB access have been requested but not supplied. The seven-day free-signing refresh and account/identifier continuity are documented in the [installation guide](ios-testing.md#native-iphone-package-and-free-account-installation). No TestFlight/App Store submission or paid service was started. Build outputs, signing tools and credentials stay out of Git.
+
 ## Trifelle integration and initial iOS port — October 27, 2026
 
 The owner approved the concrete Trifelle identity/motion proposal and requested an iOS test version after integration. Preview **0.22.0 / build 27** applies the name, clover, 2.4-second clockwise loading accent, reduced-motion fallback, static native launch marks, web icons and report branding. App IDs, schemes, signing identity, storage keys, journal format **10** and the encrypted envelope remain unchanged. No prediction, research-record or approved calendar-layout change is included.
