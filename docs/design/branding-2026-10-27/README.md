@@ -1,6 +1,6 @@
 # Clover brand direction — October 27, 2026
 
-**Status: proposals for review.** The owner requested a name based on Clover, with a four-leaf-clover emblem and icon. This becomes the active naming direction; the October 20 names remain historical, unapproved alternatives. No specific derivative, mark or palette has been selected yet. The app remains Cycle Tracker preview 0.21.0.
+**Status: historical naming proposals; visual reference for Trifelle.** The owner subsequently selected **Trifelle**, a clover logo with one contrasting leaf, and a clockwise accent animation for loading screens. See the [Trifelle motion proposal](../trifelle-2026-10-27/README.md) for the concrete vector artwork and timing now under review. The boards below retain their original names and are not final app assets. The app remains Cycle Tracker preview 0.21.0.
 
 ## The two proposals
 
@@ -49,7 +49,7 @@ Keep the simple Android launch treatment: the emblem on a solid light/dark surfa
 
 Preserve application IDs, signing identity, schemes, journal storage keys and backup formats. Branding must install as an update over the current preview. Selecting a design does not authorize publication, a domain purchase or a 1.0 release.
 
-The next owner decision is the name and visual direction (including any requested mix). Per the project design-approval rule, these remain review concepts until that choice is explicit.
+The name and one-accent-leaf clover concept have now been selected as Trifelle. The new vector refinement and requested motion are shown in the linked Trifelle proposal before app integration, following the project design-approval rule.
 
 ## Files, provenance and checks
 

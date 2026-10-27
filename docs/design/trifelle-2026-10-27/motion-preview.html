@@ -1,0 +1,237 @@
+<div id="trifelle-motion-review" aria-label="Trifelle loading animation proposal">
+  <style>
+    #trifelle-motion-review .trifelle-stage {
+      display: grid;
+      place-items: center;
+      padding: 28px 16px;
+    }
+    #trifelle-motion-review .trifelle-screen {
+      color-scheme: light dark;
+      --trifelle-surface: light-dark(#fbf7f5, #261f28);
+      --trifelle-ink: light-dark(#332832, #fbf7f5);
+      --trifelle-leaf: light-dark(#604054, #fbf7f5);
+      --trifelle-rose: light-dark(#c47d9e, #e4bacb);
+      --trifelle-muted: light-dark(#756370, #c9b8c5);
+      width: 100%;
+      max-width: 350px;
+      min-height: 390px;
+      box-sizing: border-box;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      background: var(--trifelle-surface);
+      color: var(--trifelle-ink);
+    }
+    #trifelle-motion-review[data-appearance='light'] .trifelle-screen {
+      color-scheme: light;
+    }
+    #trifelle-motion-review[data-appearance='dark'] .trifelle-screen {
+      color-scheme: dark;
+    }
+    #trifelle-motion-review .trifelle-mark {
+      display: block;
+      width: 116px;
+      height: auto;
+      overflow: visible;
+    }
+    #trifelle-motion-review .trifelle-stem {
+      fill: var(--trifelle-leaf);
+    }
+    #trifelle-motion-review .trifelle-leaf {
+      fill: var(--trifelle-leaf);
+      animation: trifelle-accent-orbit 2.4s linear infinite;
+    }
+    #trifelle-motion-review .trifelle-leaf[data-leaf='upper-right'] {
+      animation-delay: 0s;
+    }
+    #trifelle-motion-review .trifelle-leaf[data-leaf='lower-right'] {
+      animation-delay: -1.8s;
+    }
+    #trifelle-motion-review .trifelle-leaf[data-leaf='lower-left'] {
+      animation-delay: -1.2s;
+    }
+    #trifelle-motion-review .trifelle-leaf[data-leaf='upper-left'] {
+      animation-delay: -0.6s;
+    }
+    #trifelle-motion-review[data-paused='true'] .trifelle-leaf {
+      animation-play-state: paused;
+    }
+    #trifelle-motion-review[data-reduced='true'] .trifelle-leaf {
+      animation: none;
+      fill: var(--trifelle-leaf);
+    }
+    #trifelle-motion-review[data-reduced='true'] .trifelle-leaf[data-leaf='upper-right'] {
+      fill: var(--trifelle-rose);
+    }
+    #trifelle-motion-review .trifelle-wordmark {
+      margin: 16px 0 0;
+      font:
+        400 42px/1.15 Georgia,
+        'Times New Roman',
+        serif;
+      letter-spacing: -1.5px;
+    }
+    #trifelle-motion-review .trifelle-status {
+      margin: 18px 0 0;
+      color: var(--trifelle-muted);
+      font:
+        400 14px/1.5 system-ui,
+        sans-serif;
+    }
+    #trifelle-motion-review .trifelle-review-controls {
+      justify-content: center;
+    }
+    @keyframes trifelle-accent-orbit {
+      0%,
+      18.75%,
+      100% {
+        fill: var(--trifelle-rose);
+      }
+      25%,
+      93.75% {
+        fill: var(--trifelle-leaf);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #trifelle-motion-review .trifelle-leaf {
+        animation: none;
+        fill: var(--trifelle-leaf);
+      }
+      #trifelle-motion-review .trifelle-leaf[data-leaf='upper-right'] {
+        fill: var(--trifelle-rose);
+      }
+    }
+  </style>
+  <div class="trifelle-stage viz-dotted-background">
+    <section class="trifelle-screen" aria-label="Proposed Trifelle loading screen">
+      <svg
+        class="trifelle-mark"
+        viewBox="0 0 256 272"
+        role="img"
+        aria-labelledby="trifelle-mark-title trifelle-mark-description"
+      >
+        <title id="trifelle-mark-title">Trifelle four-leaf clover</title>
+        <desc id="trifelle-mark-description">
+          A still clover with four heart-shaped leaves and a curved stem. One rose accent travels
+          clockwise between the leaves.
+        </desc>
+        <path
+          class="trifelle-stem"
+          d="M127 128 C116 164 126 204 151 221 C158 226 165 229 168 233 C162 240 156 240 149 235 C113 210 112 170 121 138 Z"
+        />
+        <path
+          class="trifelle-leaf"
+          data-leaf="upper-right"
+          d="M135 113 C136 94 135 71 147 55 C157 41 177 42 183 56 C186 63 185 68 184 72 C193 68 203 70 210 77 C222 89 215 105 200 110 C182 117 156 114 135 113 Z"
+        />
+        <path
+          class="trifelle-leaf"
+          data-leaf="lower-right"
+          transform="rotate(90 128 120)"
+          d="M135 113 C136 94 135 71 147 55 C157 41 177 42 183 56 C186 63 185 68 184 72 C193 68 203 70 210 77 C222 89 215 105 200 110 C182 117 156 114 135 113 Z"
+        />
+        <path
+          class="trifelle-leaf"
+          data-leaf="lower-left"
+          transform="rotate(180 128 120)"
+          d="M135 113 C136 94 135 71 147 55 C157 41 177 42 183 56 C186 63 185 68 184 72 C193 68 203 70 210 77 C222 89 215 105 200 110 C182 117 156 114 135 113 Z"
+        />
+        <path
+          class="trifelle-leaf"
+          data-leaf="upper-left"
+          transform="rotate(270 128 120)"
+          d="M135 113 C136 94 135 71 147 55 C157 41 177 42 183 56 C186 63 185 68 184 72 C193 68 203 70 210 77 C222 89 215 105 200 110 C182 117 156 114 135 113 Z"
+        />
+      </svg>
+      <h1 class="trifelle-wordmark">Trifelle</h1>
+      <p class="trifelle-status">Opening your journal…</p>
+    </section>
+  </div>
+  <div class="viz-controls trifelle-review-controls" aria-label="Preview controls">
+    <label class="form-label"
+      >Preview appearance
+      <select class="form-select" id="trifelle-appearance">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+    <button class="btn" type="button" id="trifelle-pause" aria-pressed="false">
+      Pause animation
+    </button>
+    <label class="form-check">
+      <input class="form-check-input" type="checkbox" id="trifelle-reduced" />
+      <span class="form-check-label">Reduced motion</span>
+    </label>
+  </div>
+  <script>
+    (() => {
+      const root = document.getElementById('trifelle-motion-review');
+      const appearance = root.querySelector('#trifelle-appearance');
+      const pause = root.querySelector('#trifelle-pause');
+      const reduced = root.querySelector('#trifelle-reduced');
+      const description = root.querySelector('#trifelle-mark-description');
+      const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const state = { appearance: 'system', paused: false, reduced: false };
+      function render() {
+        const motionReduced = motionPreference.matches || state.reduced;
+        root.dataset.appearance = state.appearance;
+        root.dataset.paused = String(state.paused);
+        root.dataset.reduced = String(motionReduced);
+        appearance.value = state.appearance;
+        reduced.checked = motionReduced;
+        reduced.disabled = motionPreference.matches;
+        pause.disabled = motionReduced;
+        pause.setAttribute('aria-pressed', String(!motionReduced && state.paused));
+        pause.textContent = motionReduced
+          ? 'Static logo'
+          : state.paused
+            ? 'Resume animation'
+            : 'Pause animation';
+        description.textContent = motionReduced
+          ? 'A still clover with four heart-shaped leaves and a curved stem. The upper-right leaf is rose.'
+          : state.paused
+            ? 'A clover with four heart-shaped leaves and a curved stem. The clockwise rose accent animation is paused.'
+            : 'A still clover with four heart-shaped leaves and a curved stem. One rose accent travels clockwise between the leaves.';
+      }
+      function applySaved(saved) {
+        const values = saved?.modelContent;
+        if (!values || values.preview !== 'trifelle-loading') return;
+        if (['system', 'light', 'dark'].includes(values.appearance))
+          state.appearance = values.appearance;
+        if (typeof values.paused === 'boolean') state.paused = values.paused;
+        if (typeof values.reduced === 'boolean') state.reduced = values.reduced;
+      }
+      function persist() {
+        window.openai
+          ?.setWidgetState?.({ modelContent: { preview: 'trifelle-loading', ...state } })
+          ?.catch(() => {});
+      }
+      appearance.addEventListener('change', () => {
+        state.appearance = appearance.value;
+        render();
+        persist();
+      });
+      pause.addEventListener('click', () => {
+        state.paused = !state.paused;
+        render();
+        persist();
+      });
+      reduced.addEventListener('change', () => {
+        state.reduced = reduced.checked;
+        render();
+        persist();
+      });
+      motionPreference.addEventListener('change', render);
+      window.addEventListener('openai:set_globals', (event) => {
+        applySaved(event.detail?.globals?.widgetState);
+        render();
+      });
+      applySaved(window.openai?.widgetState);
+      render();
+    })();
+  </script>
+</div>
