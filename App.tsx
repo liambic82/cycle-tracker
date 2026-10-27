@@ -43,6 +43,7 @@ import { CycleContext } from './src/ui/CycleContext';
 import { PeriodEstimate } from './src/ui/PeriodEstimate';
 import { PeriodRangeEditor } from './src/ui/PeriodRangeEditor';
 import { Brand, Button } from './src/ui/components';
+import { BrandLoading } from './src/ui/TrifelleLogo';
 import { useTheme, serif } from './src/ui/theme';
 import { AppearanceProvider, useAppearance } from './src/ui/AppearanceProvider';
 import { AppearanceBackdrop } from './src/ui/AppearanceBackdrop';
@@ -124,8 +125,7 @@ function CycleApp() {
           backgroundColor: colors.background,
         }}
       >
-        <Brand />
-        <ActivityIndicator color={colors.plum} />
+        <BrandLoading />
       </View>
     );
   if (!state.journal)
@@ -683,8 +683,7 @@ function CycleApp() {
             gap: 16,
           }}
         >
-          <ActivityIndicator color={colors.plum} />
-          <Text style={common.body}>Please wait…</Text>
+          <BrandLoading label="Please wait…" />
         </View>
       )}
     </View>
@@ -710,16 +709,16 @@ function AppShell() {
               alignItems: 'center',
             }}
           >
-            <Brand />
             {privacy.error ? (
               <>
+                <Brand />
                 <Text accessibilityRole="alert" style={common.error}>
                   Privacy setup could not finish. Try again before opening your journal.
                 </Text>
                 <Button label="Retry privacy setup" onPress={privacy.retry} />
               </>
             ) : (
-              <ActivityIndicator color={colors.plum} />
+              <BrandLoading label="Preparing your private journal…" />
             )}
           </View>
         )}

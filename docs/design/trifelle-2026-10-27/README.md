@@ -1,4 +1,10 @@
-# Trifelle — selected name and loading-motion proposal
+# Trifelle — approved identity and loading motion
+
+## Approval and integration
+
+The owner approved this concrete proposal on October 27, 2026: “Looks good. After you package that up and integrate it, go ahead and produce an iOS version of the app for testing.” Preview **0.22.0 / build 27** integrates this identity, the 2.4-second clockwise accent, reduced-motion fallback, native static launch marks and app/web icons. The [reproducible asset pack](../../../assets/brand/README.md) shares geometry with the runtime component. Existing identifiers, credentials, formats, layout and appearance choices are retained. Native OS launch screens stay static; no minimum display timer is introduced. [Validation](../../validation.md) and [iOS build/testing status](../../ios-testing.md) distinguish compilation from device evidence.
+
+The original proposal and its review-only verification below are retained as design history; statements that integration is pending describe that earlier stage.
 
 ## Decision and scope
 

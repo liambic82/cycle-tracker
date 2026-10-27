@@ -9,7 +9,7 @@ const options: SecureStore.SecureStoreOptions = {
   keychainService: 'cycle-tracker.biometric.v1',
   requireAuthentication: true,
   keychainAccessible: SecureStore.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
-  authenticationPrompt: 'Unlock your Cycle journal',
+  authenticationPrompt: 'Unlock your Trifelle journal',
 };
 
 export const biometrics = new BiometricVault(
@@ -26,7 +26,7 @@ export const biometrics = new BiometricVault(
     write: (value) =>
       SecureStore.setItemAsync(KEY, value, {
         ...options,
-        authenticationPrompt: 'Enable biometric unlock for Cycle',
+        authenticationPrompt: 'Enable biometric unlock for Trifelle',
       }),
     remove: () => SecureStore.deleteItemAsync(KEY, options),
   },

@@ -1,5 +1,18 @@
 # Validation record
 
+## Trifelle integration and initial iOS port — October 27, 2026
+
+The owner approved the concrete Trifelle identity/motion proposal and requested an iOS test version after integration. Preview **0.22.0 / build 27** applies the name, clover, 2.4-second clockwise loading accent, reduced-motion fallback, static native launch marks, web icons and report branding. App IDs, schemes, signing identity, storage keys, journal format **10** and the encrypted envelope remain unchanged. No prediction, research-record or approved calendar-layout change is included.
+
+- `pnpm check`: TypeScript and **260/260 tests passed**, no skips. The existing PDF metadata assertion was updated to the approved Trifelle title. No cosmetic implementation-mirroring tests were added.
+- `pnpm build:all`: production web plus Android/iOS Hermes exports passed. These are JavaScript checks, not native iOS compilation or physical-device results.
+- Frozen dependency installation and formatting passed. Expo's Apple autolinking resolver identifies `CyclePassphraseCryptoModule` and its local podspec. The new macOS workflow compiles the actual CommonCrypto helper against shared compatibility vectors before attempting a Release simulator build; its result must be recorded separately.
+- Generated launcher, adaptive/monochrome, notification and light/dark splash assets were inspected as rendered vectors. The approved geometry and fixed upper-right accent remain consistent; the animation uses the approved clockwise intervals and no forced launch delay. Static asset inspection does not establish native motion, accessibility or responsive layout behavior.
+- Browser automation inventory was empty in this session, so no fresh browser interaction/layout or runtime reduced-motion pass is claimed. Source review verified the platform reduced-motion and visibility APIs. No real journal was opened or changed.
+- Android packaging and macOS CI results are pending at this commit. No signed iPhone IPA or TestFlight upload has been produced; Expo/Apple account access and the target device details are pending. See [iOS build/install guidance and limits](ios-testing.md) and [Android update checks](android-testing.md#0220-trifelle-branding).
+
+No new physical phone pass, wearable pass or 1.0/store-release decision is claimed. Apple Health import and an iOS widget are outside the first iOS preview; transferred sleep copies remain readable.
+
 ## Calendar & journal — October 18, 2026
 
 The owner explicitly approved Calendar & journal, including History and wearable sleep. Preview **0.21.0 / code 26** implements [that proposal](layout-proposal-2026-10-17.md). Journal format **10**, import/permission behavior and prediction methods remain unchanged. No health records, frozen research inputs/results or credentials were modified.

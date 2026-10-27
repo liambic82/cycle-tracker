@@ -7,7 +7,7 @@ const indexPath = path.join(root, 'index.html');
 let html = await readFile(indexPath, 'utf8');
 html = html.replace(
   '</head>',
-  '<link rel="manifest" href="/manifest.webmanifest"/><link rel="icon" href="/icon.svg" type="image/svg+xml"/><meta name="theme-color" content="#56394B"/></head>',
+  '<link rel="manifest" href="/manifest.webmanifest"/><link rel="icon" href="/icon.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><meta name="theme-color" content="#604054"/></head>',
 );
 await writeFile(indexPath, html);
 const assets = (await readdir(root, { recursive: true }))

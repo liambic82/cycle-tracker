@@ -33,6 +33,4 @@ const server = createServer(async (req, res) => {
     res.writeHead(404).end('Not found');
   }
 });
-server.listen(port, '127.0.0.1', () =>
-  console.log(`Cycle Tracker preview: http://127.0.0.1:${port}`),
-);
+server.listen(port, '127.0.0.1', () => console.log(`Trifelle preview: http://127.0.0.1:${port}`));

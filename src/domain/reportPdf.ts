@@ -61,7 +61,14 @@ export function layoutReport(report: DoctorReport, regular: PDFFont, bold: PDFFo
     page = [];
     pages.push(page);
     y = HEIGHT - MARGIN;
-    page.push({ text: 'CYCLE / DOCTOR SUMMARY', x: MARGIN, y, size: 9, bold: true, muted: true });
+    page.push({
+      text: 'TRIFELLE / DOCTOR SUMMARY',
+      x: MARGIN,
+      y,
+      size: 9,
+      bold: true,
+      muted: true,
+    });
     y -= 28;
   };
   const ensure = (height: number) => {
@@ -126,10 +133,10 @@ export async function createReportPdf(
 ): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
-  pdf.setTitle('Cycle - Doctor summary');
+  pdf.setTitle('Trifelle - Doctor summary');
   pdf.setAuthor('');
   pdf.setSubject('Selected journal records');
-  pdf.setCreator('Cycle Tracker');
+  pdf.setCreator('Trifelle');
   const regular = await pdf.embedFont(fonts.regular, { subset: true });
   const bold = await pdf.embedFont(fonts.bold, { subset: true });
   const layout = layoutReport(report, regular, bold);

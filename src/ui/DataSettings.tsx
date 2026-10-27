@@ -244,14 +244,16 @@ export function DataSettings({
           }}
         />
       </View>
-      <View style={[common.card, { gap: 12 }]}>
-        <Text style={common.heading}>Android home-screen widget</Text>
-        <Text style={common.body}>
-          Long-press an empty area of the Android home screen, choose Widgets, then Cycle journal.
-          The shortcut opens the app through its normal lock screen. It displays no health records
-          and needs no background access.
-        </Text>
-      </View>
+      {Platform.OS === 'android' && (
+        <View style={[common.card, { gap: 12 }]}>
+          <Text style={common.heading}>Android home-screen widget</Text>
+          <Text style={common.body}>
+            Long-press an empty area of the Android home screen, choose Widgets, then Trifelle
+            journal. The shortcut opens the app through its normal lock screen. It displays no
+            health records and needs no background access.
+          </Text>
+        </View>
+      )}
       <View style={[common.card, { gap: 14 }]}>
         <Text style={common.heading}>Appearance</Text>
         <Text style={common.body}>
@@ -277,12 +279,13 @@ export function DataSettings({
       <View style={[common.card, { gap: 15 }]}>
         <Text style={common.heading}>Wearable sleep</Text>
         <Text style={common.body}>
-          Review sleep shared by Fitbit / Google Health through Android Health Connect. Imported
-          copies stay separate from manual sleep details.
+          {Platform.OS === 'ios'
+            ? 'Review sleep saved in your journal or restored from an Android backup. Apple Health import is not included in this iPhone preview.'
+            : 'Review sleep shared by Fitbit / Google Health through Android Health Connect. Imported copies stay separate from manual sleep details.'}
         </Text>
         <Button
           secondary
-          label="Import wearable sleep"
+          label={Platform.OS === 'ios' ? 'View imported sleep' : 'Import wearable sleep'}
           onPress={() => {
             setSleepImportOpen(true);
             onViewChange();

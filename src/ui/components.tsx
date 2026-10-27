@@ -7,8 +7,10 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import { Flower2, type LucideIcon } from 'lucide-react-native';
+import { type LucideIcon } from 'lucide-react-native';
 import { useTheme, serif } from './theme';
+import { TrifelleLogo } from './TrifelleLogo';
+import { TRIFELLE_COLORS } from '../brand/trifelle';
 
 export function Button({
   label,
@@ -150,15 +152,15 @@ export function Brand({ small = false }: { small?: boolean }) {
           width: small ? 33 : 39,
           height: small ? 33 : 39,
           borderRadius: 13,
-          backgroundColor: colors.plumDark,
+          backgroundColor: TRIFELLE_COLORS.plum,
           justifyContent: 'center',
           alignItems: 'center',
         }}
       >
-        <Flower2 color={colors.onAccent} size={small ? 22 : 27} strokeWidth={1.4} />
+        <TrifelleLogo size={small ? 29 : 35} />
       </View>
       <Text style={{ fontFamily: serif, color: colors.ink, fontSize: small ? 23 : 27 }}>
-        Cycle<Text style={{ color: colors.plum }}>.</Text>
+        Trifelle
       </Text>
     </View>
   );

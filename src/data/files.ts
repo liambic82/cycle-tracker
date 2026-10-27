@@ -22,7 +22,7 @@ export async function exportText(content: string, filename: string, mime: string
       throw new Error('File sharing is not available on this device.');
     await Sharing.shareAsync(file.uri, {
       mimeType: mime,
-      dialogTitle: 'Save your Cycle Tracker export',
+      dialogTitle: 'Save your Trifelle export',
     });
   } finally {
     // Exports may contain readable health information. Do not leave copies in app cache.

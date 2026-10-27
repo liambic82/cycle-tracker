@@ -1,0 +1,68 @@
+name: iOS preview
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/ios-preview.yml'
+      - 'App.tsx'
+      - 'src/**'
+      - 'assets/**'
+      - 'modules/**'
+      - 'plugins/**'
+      - 'app.config.ts'
+      - 'app.json'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'scripts/build-ios-simulator.sh'
+      - 'scripts/check-ios-kdf.mjs'
+      - 'tests/native/PassphraseKdfCheck.swift'
+      - 'tests/fixtures/kdf-vectors.json'
+permissions:
+  contents: read
+concurrency:
+  group: ios-preview-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  simulator:
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      EXPO_NO_TELEMETRY: '1'
+      APP_VARIANT: preview
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@11.19.0
+      - run: pnpm install --frozen-lockfile
+      - name: Compile native crypto and standalone simulator app
+        run: bash scripts/build-ios-simulator.sh
+      - name: Launch on a clean simulator and capture welcome screens
+        run: |
+          device=$(xcrun simctl list devices available -j | node -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>{const d=Object.values(JSON.parse(s).devices).flat().find(d=>d.name.startsWith("iPhone"));if(!d)process.exit(1);process.stdout.write(d.udid)})')
+          xcrun simctl boot "$device"
+          xcrun simctl bootstatus "$device" -b
+          xcrun simctl ui "$device" appearance light
+          xcrun simctl install "$device" "$(cat artifacts/ios/app-path.txt)"
+          xcrun simctl launch "$device" com.liambic.cycletracker.preview
+          sleep 10
+          xcrun simctl io "$device" screenshot artifacts/ios/welcome-light.png
+          xcrun simctl ui "$device" appearance dark
+          sleep 3
+          xcrun simctl io "$device" screenshot artifacts/ios/welcome-dark.png
+          xcrun simctl shutdown "$device"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trifelle-ios-simulator-${{ github.sha }}
+          path: |
+            artifacts/ios/*.zip
+            artifacts/ios/*.sha256
+            artifacts/ios/*.png
+            artifacts/ios/xcodebuild.log
+          if-no-files-found: warn
+          retention-days: 30

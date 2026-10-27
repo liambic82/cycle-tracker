@@ -6,6 +6,15 @@
       "env": { "APP_VARIANT": "preview" },
       "android": { "buildType": "apk" }
     },
+    "ios-simulator": {
+      "extends": "preview",
+      "ios": { "simulator": true }
+    },
+    "ios-testflight": {
+      "distribution": "store",
+      "env": { "APP_VARIANT": "preview" },
+      "ios": { "buildConfiguration": "Release" }
+    },
     "production": { "android": { "buildType": "app-bundle" } }
   }
 }

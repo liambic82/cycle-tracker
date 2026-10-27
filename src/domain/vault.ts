@@ -82,7 +82,7 @@ export function parseEnvelope(raw: string): Envelope {
   try {
     e = JSON.parse(raw);
   } catch {
-    throw new Error('Choose a valid Cycle Tracker encrypted backup.');
+    throw new Error('Choose a valid Trifelle encrypted backup.');
   }
   const hex = (s: unknown, length?: number) =>
     typeof s === 'string' &&
@@ -100,7 +100,7 @@ export function parseEnvelope(raw: string): Envelope {
     !hex(e.ciphertext) ||
     e.ciphertext.length < 32
   ) {
-    throw new Error('This is not a supported Cycle Tracker encrypted backup.');
+    throw new Error('This is not a supported Trifelle encrypted backup.');
   }
   return e;
 }

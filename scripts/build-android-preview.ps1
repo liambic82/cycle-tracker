@@ -94,7 +94,7 @@ try {
     } finally { Pop-Location }
 
     $taskVersion = (Get-Content package.json -Raw | ConvertFrom-Json).version
-    $taskApk = Join-Path $taskOutput "cycle-tracker-preview-$taskVersion-$Architecture.apk"
+    $taskApk = Join-Path $taskOutput "trifelle-preview-$taskVersion-$Architecture.apk"
     Copy-Item -LiteralPath 'android\app\build\outputs\apk\release\app-release.apk' -Destination $taskApk
     $taskHash = (Get-FileHash -LiteralPath $taskApk -Algorithm SHA256).Hash.ToLowerInvariant()
     "$taskHash  $([IO.Path]::GetFileName($taskApk))" | Set-Content -LiteralPath "$taskApk.sha256" -Encoding ascii

@@ -1,5 +1,6 @@
 {
-  "platforms": ["android"],
+  "platforms": ["android", "apple"],
+  "apple": { "modules": ["CyclePassphraseCryptoModule"] },
   "android": {
     "modules": ["com.liambic.cyclecrypto.CyclePassphraseCryptoModule"]
   }

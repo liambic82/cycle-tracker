@@ -292,7 +292,7 @@ test('PDF creation embeds fonts, produces numbered pages and has no attachments 
   const bytes = await createReportPdf(report, await fonts);
   const pdf = await PDFDocument.load(bytes);
   assert.ok(pdf.getPageCount() >= 2);
-  assert.equal(pdf.getTitle(), 'Cycle - Doctor summary');
+  assert.equal(pdf.getTitle(), 'Trifelle - Doctor summary');
   const catalog = pdf.catalog.toString();
   assert.ok(!catalog.includes('/OpenAction'));
   assert.ok(!catalog.includes('/EmbeddedFiles'));

@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
   <application>
-    <receiver android:name="com.liambic.cyclewidget.JournalWidgetProvider" android:exported="false" android:label="Cycle journal">
+    <receiver android:name="com.liambic.cyclewidget.JournalWidgetProvider" android:exported="false" android:label="Trifelle journal">
       <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/cycle_journal_widget" />
     </receiver>

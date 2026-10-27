@@ -1,5 +1,16 @@
 # Android preview testing
 
+## 0.22.0 Trifelle branding
+
+Install `artifacts/android/trifelle-preview-0.22.0-arm64-v8a.apk` as an update after making a backup. The launcher label becomes **Trifelle Preview**; package `com.liambic.cycletracker.preview`, signing certificate, storage and journal format **10** remain unchanged. Do not uninstall or clear data to rename the app. Version code is **27**.
+
+1. Confirm old entries, biometrics, reminder choices and appearance survive the update. Test normal unlock, lock/restart, backup and readable PDF/CSV export.
+2. Check the four-leaf launcher icon, Android themed icon, static light/dark native launch, Trifelle header and report title. During actual loading the rose accent travels clockwise while the clover stays still. Ready content must appear without waiting for a complete loop. Very fast loading may show no visible animation.
+3. Turn on the system's reduced-motion/remove-animations setting; the accent should remain on the upper-right leaf. Check background/reopen, large text, TalkBack and light/dark appearance. Keep selected palettes/backgrounds unchanged.
+4. Retest Calendar & journal and wearable sleep with the 0.21.0 checklist below. Verify the home-screen shortcut now identifies Trifelle and notification icons remain recognizable.
+
+No 0.22.0 physical-device pass is claimed by packaging or automated checks. The iOS preview is a separate test effort; see [its platform limits and installation requirements](ios-testing.md).
+
 ## 0.21.0 Calendar & journal
 
 Install `artifacts/android/cycle-tracker-preview-0.21.0-arm64-v8a.apk` as an update. Version **0.21.0 / code 26**, journal **format 10**, existing preview package and signing certificate. Back up first. The owner approved Calendar & journal, History and wearable sleep on October 18. Use this layout checklist instead of older Journal-first/Day-tab expectations; the underlying feature checks remain relevant.

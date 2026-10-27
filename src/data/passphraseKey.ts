@@ -1,2 +1,2 @@
-// iOS retains the portable implementation until its native path can be built and validated.
+// Fallback for other platforms; Android, iOS and web use their own adapters.
 export { portableKeyDeriver as derivePassphraseKey } from '../domain/keyDerivation';

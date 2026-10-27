@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "Cycle Tracker",
+    "name": "Trifelle",
     "slug": "cycle-tracker",
-    "version": "0.21.0",
+    "version": "0.22.0",
+    "icon": "./assets/brand/icon.png",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "scheme": "cycletracker",
@@ -10,21 +11,39 @@
       "./plugins/withHealthConnect.cjs",
       "expo-asset",
       "expo-system-ui",
-      ["expo-notifications", { "color": "#604054" }],
+      ["expo-notifications", { "color": "#604054", "icon": "./assets/brand/notification.png" }],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/brand/splash-light.png",
+          "imageWidth": 160,
+          "backgroundColor": "#FBF7F5",
+          "dark": { "image": "./assets/brand/splash-dark.png", "backgroundColor": "#261F28" }
+        }
+      ],
       [
         "expo-secure-store",
         {
           "configureAndroidBackup": true,
-          "faceIDPermission": "Use Face ID to unlock your Cycle journal when you enable biometric unlock."
+          "faceIDPermission": "Use Face ID to unlock your Trifelle journal when you enable biometric unlock."
         }
       ]
     ],
     "ios": { "supportsTablet": true, "bundleIdentifier": "com.liambic.cycletracker" },
-    "android": { "package": "com.liambic.cycletracker", "allowBackup": false },
+    "android": {
+      "package": "com.liambic.cycletracker",
+      "allowBackup": false,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/adaptive-foreground.png",
+        "monochromeImage": "./assets/brand/monochrome.png",
+        "backgroundColor": "#604054"
+      }
+    },
     "web": {
       "bundler": "metro",
-      "name": "Cycle Tracker",
-      "description": "A little more in tune with you. Your private cycle journal."
+      "name": "Trifelle",
+      "favicon": "./public/favicon.png",
+      "description": "Trifelle. Your cycle. Your space. A private period and perimenopause journal."
     }
   }
 }

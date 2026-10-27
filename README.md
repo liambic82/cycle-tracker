@@ -1,16 +1,20 @@
-# Cycle Tracker App
+# Trifelle
 
 A personal period and perimenopause tracker centered on a continuously scrolling calendar, daily symptoms, medication tracking, and useful records for doctor visits.
 
 ## Product brief
 
-The owner selected **Trifelle**, a clover logo with one contrasting leaf, and a clockwise moving accent for loading screens. The [Trifelle motion proposal](docs/design/trifelle-2026-10-27/README.md) records the decision and supplies an animated preview for approval of the exact artwork and motion before app integration. The [earlier Clover boards](docs/design/branding-2026-10-27/README.md) remain the visual reference; the [marketing brief](docs/design/branding-2026-10-20/README.md) retains draft store copy and asset requirements. The running app remains Cycle Tracker preview 0.21.0.
+**Trifelle — Your cycle. Your space.** The owner approved the [clover identity and loading animation](docs/design/trifelle-2026-10-27/README.md) on October 27, 2026. Preview **0.22.0 / build 27** integrates the name, native/web icons, light/dark launch marks, clockwise accent animation and report branding. The [source asset pack](assets/brand/README.md) is reproducible. App identifiers, signing identity, storage keys, encrypted backups and the approved Calendar & journal layout are preserved.
+
+The owner also authorized the first iOS test version. Native iOS passphrase derivation, simulator packaging and device-build profiles are prepared; see [iOS build status, installation and testing](docs/ios-testing.md). A simulator app is not an installable iPhone IPA. Physical iPhone distribution still needs Apple signing access. Naming approval does not constitute trademark clearance or a public store-release decision.
 
 The [initial feature requirements](https://docs.google.com/document/d/1tOEpyA0x_Q6Up33TXy3rcdgS_-YiQC6e1BDU2acZduM/edit) are the starting point for planning. The document's version labels are suggestions, not a fixed release scope.
 
 The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all ten comments and nine reference screenshots, including calendar view choices, richer daily logging, configurable doctor reports, and everyday education.
 
 ## Current Android test build
+
+**Preview 0.22.0 / code 27** applies the approved Trifelle branding over the existing local app. [Brand/update checks](docs/android-testing.md#0220-trifelle-branding) cover update retention, launch/loading, Reduce Motion, theme preservation and exports. The existing feature checklists below still apply.
 
 **Preview 0.21.0 / code 26** implements the approved **Calendar & journal** layout: calendar first, focused daily entries, quiet Journal settings, one combined pinned/logged symptom list, charts first in History, and grouped wearable sleep controls. Existing soft palettes and backgrounds remain, with sans-serif section headings and a serif brand. Explicit-save forms identify pending form changes; journal persistence feedback and errors stay near the active editor. [Approved scope](docs/layout-proposal-2026-10-17.md) · [Focused phone checks](docs/android-testing.md#0210-calendar--journal).
 
@@ -28,7 +32,7 @@ The [internal statistical review](docs/prediction-statistical-review-2026-10-12.
 
 ## Agreed direction
 
-- Finish the local Android features and consolidated phone validation first, then port to iOS. Cloud sync and automatic background wearable syncing follow later.
+- Local Android features are implemented for consolidated phone validation. The October 27 direction authorizes the iOS test port now while pending Android checks remain open. Cloud sync and automatic background wearable syncing follow later.
 - Use internal statistical review and clear prediction disclaimers; no external prediction-review sign-off is required. Predictions are experimental and are not medical advice.
 - Plan for eventual publication in Google Play and the Apple App Store.
 - Support use on a computer as well as on a phone.
@@ -78,7 +82,7 @@ The first implemented milestone uses React Native, Expo SDK 57, and TypeScript f
 - An encrypted preference to hide curated perimenopause choices without removing existing logs or custom symptoms.
 - Cycle-length and bleeding-duration charts with average, shortest, and longest recorded values. Incomplete cycles remain unknown.
 - Flow strips inside each cycle, distinguishing bleeding, spotting, explicitly recorded no flow, and unlogged days. Clearing a flow log preserves other daily details.
-- A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute. Android 8+ uses background native passphrase key calculation; browsers use Web Crypto. Existing passphrases and backup format are preserved.
+- A passphrase-encrypted local journal, autosave, manual locking, and background locking after a minute. Android 8+ and the iOS preview use background native passphrase key calculation; browsers use Web Crypto. Existing passphrases and backup format are preserved.
 - Encrypted backup/restore and readable CSV export. Each sexual-health column requires a separate choice for each CSV export, with all four off initially. Dates containing only excluded fields are omitted; notes and symptom labels remain included. Encrypted backups always retain the full journal.
 - Journal CSV includes recorded doses and their notes. A separate readable CSV contains complete dated medication schedule history; encrypted backups retain both.
 - Doctor summaries under **Your data**, with a date range, selectable sections, an on-screen preview, and printable PDF export. Include recorded cycles, flow/bleeding observations, products, symptoms, moods, medication schedules, and doses. Notes and each sexual-health field start off for every new report. PDFs are generated locally with bundled fonts and contain readable, unencrypted information.
@@ -135,9 +139,9 @@ pnpm build:all
 
 `check` runs TypeScript and the domain/storage tests. `build:all` verifies web JavaScript and Android/iOS Hermes bundles; it does not create or test an APK or IPA.
 
-`scripts/build-android-preview.ps1` builds a standalone APK using the Android SDK installed on this Windows computer. It creates a separate **Cycle Tracker Preview** app and uses a private local preview signing key. See [Android installation and testing](docs/android-testing.md) for the build command, signing-key location, and device checklist.
+`scripts/build-android-preview.ps1` builds a standalone APK using the Android SDK installed on this Windows computer. The app is now labeled **Trifelle Preview** and updates the existing preview installation using the same private signing key. See [Android installation and testing](docs/android-testing.md) for the build command, signing-key location, and device checklist.
 
-`eas.json` also defines a cloud preview APK profile and a production store profile for future use. No EAS project has been created and no cloud build or deployment has been requested. `app.config.ts` selects the preview identifier when `APP_VARIANT=preview`; the store identifier remains provisional.
+`eas.json` defines internal Android/iOS preview, iOS simulator, iOS TestFlight-build and future production profiles. No EAS account/project has been linked yet. The repository's macOS workflow builds an unsigned Apple Silicon simulator app without signing credentials; see [iOS testing](docs/ios-testing.md). `app.config.ts` selects the stable preview identifier when `APP_VARIANT=preview`; the store identifier remains provisional. No public store submission is authorized.
 
 ## Data handling
 

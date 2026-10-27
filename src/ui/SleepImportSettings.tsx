@@ -702,8 +702,8 @@ export function SleepImportSettings({
         (confirmDisconnect ? (
           <>
             <Text style={common.body}>
-              Revoke Cycle Tracker’s sleep access? Existing imported copies remain in your journal
-              and exports.
+              Revoke Trifelle’s sleep access? Existing imported copies remain in your journal and
+              exports.
             </Text>
             <Button
               secondary
