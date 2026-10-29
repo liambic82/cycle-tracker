@@ -39,6 +39,8 @@ The local-reminders configuration now removes Expo's default APNs entitlement an
 
 ### Install from Windows
 
+**Remote tester handoff (October 29):** the owner confirmed the tester has their own Windows PC. Send them `artifacts/ios-device/trifelle-preview-0.22.0-iphone-test-kit.zip` as a file or through a file-sharing link they can access; a local `C:/...` link from the development chat is not a remote download. The kit contains the unchanged verified IPA, `INSTALL-IPHONE.txt` and the package audit. The tester downloads it on **their PC**, right-clicks the ZIP and chooses **Extract All**, then follows the steps below using **their iPhone, USB connection and Apple Account**. The developer's computer does not need to be connected or nearby. iPhone model, iOS version and successful installation remain unreported.
+
 1. Use an iPhone with **iOS 16.4 or later**, a USB cable, an internet connection and a free Apple Account with access to its two-factor authentication. A free account has a limit of three sideloaded apps per device. [Apple's account limits](https://developer.apple.com/help/account/basics/about-your-developer-account).
 2. Install the Windows version of [Sideloadly from its official site](https://sideloadly.io/). Its Windows instructions require Apple's desktop/web versions of iTunes and iCloud; use the official links on that page. If Store versions are already installed, follow Sideloadly's documented migration steps. Do not change another person's Apple software installation without their involvement.
 3. Connect and unlock the iPhone. Accept **Trust This Computer** on the phone, then select the detected iPhone in Sideloadly.

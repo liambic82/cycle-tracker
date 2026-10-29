@@ -1,5 +1,9 @@
 # Validation record
 
+## Remote Windows tester handoff — October 29, 2026
+
+The tester is remote and has their own Windows PC. The existing **0.22.0 / 27** test kit was refreshed with explicit Windows extraction and local signing instructions. The IPA is unchanged from the October 27 device build; the archive contents were checked against its recorded SHA-256. This is an installation-documentation update, not a new app build or a physical-device pass. The tester uses their own Apple Account and USB connection; no credentials or phone access have been supplied to this workspace. The iPhone model, iOS version and installation result remain pending.
+
 ## Native iPhone sideload package — October 27, 2026
 
 The owner has no Mac or paid Apple Developer membership and directed preparation of a version for physical iPhone installation. A native Release **iPhoneOS ARM64** archive is now packaged as an unsigned IPA for local signing with a free Apple Account in Sideloadly on Windows. This is preview **0.22.0 / 27**, with no visual, domain, storage-format or prediction change.
