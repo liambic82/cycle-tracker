@@ -23,6 +23,7 @@ import { MedicalRecords } from './MedicalRecords';
 import { SleepImportSettings } from './SleepImportSettings';
 import type { PhotoControls } from '../data/personalBackgroundStore';
 import { useTheme } from './theme';
+import { PrivacyInfo } from './PrivacyInfo';
 
 export function DataSettings({
   autoSleep,
@@ -563,6 +564,7 @@ export function DataSettings({
           {message}
         </Text>
       )}
+      <PrivacyInfo />
       <Text style={[common.small, common.readable]}>
         Early preview · {app.expo.version}
         {'\n'}Medication reminders are available in the installed mobile app. Period estimates are

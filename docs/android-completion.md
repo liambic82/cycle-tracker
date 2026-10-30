@@ -2,7 +2,7 @@
 
 ## Play preparation — October 30, 2026
 
-**Current build: 0.23.0 / code 28.** Trifelle branding is integrated and the first storage/export hardening slice is implemented. See [the Play release plan](play-release-plan.md), [focused 0.23.0 checks](android-testing.md#0230-storage-and-export-hardening) and [validation record](validation.md). The owner authorized store preparation using the shared Plowden Digital account; there is no public-release or 1.0 decision. Native iOS test packaging has also progressed under the later October 27 direction, with physical-iPhone installation/runtime still pending. The dated sections below preserve earlier scope and evidence.
+**Current build: 0.24.0 / code 29.** Storage/export hardening is followed by the [SDK/privacy audit](android-privacy-audit-2026-10-30.md), offline policy access and a locally validated upload-signed store bundle. Public policy/support files and listing copy are prepared but unpublished. See [the Play release plan](play-release-plan.md), [focused 0.24.0 checks](android-testing.md#0240-privacy-and-store-preparation), [store build guide](android-store-build.md) and [validation record](validation.md). The owner authorized store preparation using the shared Plowden Digital account; there is no public-release or 1.0 decision. Organization verification, key recovery, hosting and Play/device validation remain open. Native iOS test packaging has also progressed under the later October 27 direction, with physical-iPhone installation/runtime still pending. The dated sections below preserve earlier scope and evidence.
 
 ## Owner direction — October 11, 2026
 

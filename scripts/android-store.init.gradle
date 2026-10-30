@@ -1,0 +1,22 @@
+// Never fall back to Expo's generated debug signing for a store artifact.
+gradle.beforeProject { project ->
+    project.plugins.withId('com.android.application') {
+        project.extensions.getByName('androidComponents').finalizeDsl { android ->
+            if (android.defaultConfig.applicationId != 'com.liambic.cycletracker') {
+                throw new GradleException('Store signing requires the production app identifier.')
+            }
+            def required = { name ->
+                def value = System.getenv(name)
+                if (!value) throw new GradleException("Missing upload signing variable: ${name}")
+                return value
+            }
+            def upload = android.signingConfigs.maybeCreate('trifelleUpload')
+            upload.storeFile = new File(required('TRIFELLE_UPLOAD_KEYSTORE'))
+            upload.storePassword = required('TRIFELLE_UPLOAD_PASSWORD')
+            upload.keyAlias = 'trifelle-upload'
+            upload.keyPassword = required('TRIFELLE_UPLOAD_PASSWORD')
+            android.buildTypes.getByName('release').signingConfig = upload
+            android.buildTypes.getByName('release').debuggable = false
+        }
+    }
+}

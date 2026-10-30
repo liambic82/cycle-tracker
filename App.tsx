@@ -297,7 +297,7 @@ function CycleApp() {
                 key={id}
                 accessibilityRole="tab"
                 accessibilityLabel={label}
-                accessibilityState={{ selected: page === id }}
+                aria-selected={page === id}
                 onPress={() => {
                   setLearning(false);
                   setEstimating(false);
@@ -565,7 +565,7 @@ function CycleApp() {
                 key={id}
                 accessibilityRole="tab"
                 accessibilityLabel={label}
-                accessibilityState={{ selected: page === id }}
+                aria-selected={page === id}
                 onPress={() => {
                   setLearning(false);
                   setEstimating(false);

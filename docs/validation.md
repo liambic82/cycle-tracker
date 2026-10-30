@@ -1,5 +1,25 @@
 # Validation record
 
+## Android privacy and store packaging — October 30, 2026
+
+Preview **0.24.0 / build 29** adds a bundled policy accessible before setup/while locked and from Your data. The same source generates the public HTML and native Health Connect explanation. Release variants remove direct internet, remote-push/referrer and 16 unused launcher badge permissions; Firebase auto-init is disabled/removed. Explicit backup exclusions cover all nine supported legacy/cloud/device-transfer domains, including preferences and device-protected storage. See the [bounded audit](android-privacy-audit-2026-10-30.md); this is not a penetration test or proof of all OEM behavior.
+
+- `pnpm check`: TypeScript, generated-policy drift detection and **275/275 tests passed**, no skips. `pnpm build:all` passed web and Android/iOS JavaScript/Hermes exports. Native Android Release compilation passed for the existing preview and separate production identity. All **189 checked application/configuration/asset/native inputs** match each build cache. Repository formatting, diff checks and new PowerShell/Python script syntax checks passed.
+- Browser checks passed at **320 × 740**, **390 × 844** and **1280 × 900**: policy open/close, Escape, scroll to contact controls and public HTML without horizontal overflow or captured page errors. Dark/offline policy access, preserved setup draft and return to Your data passed. Browser inspection found tab selection was not exposed through the old accessibility prop; explicit `aria-selected` now passes the DOM check. Native TalkBack remains untested.
+- Google **bundletool 1.18.3** validated the final AAB and generated a signed universal APK. AAB signature verification and all three APK signature checks passed. Preview certificate is unchanged; the dedicated upload certificate is recorded in the [build guide](android-store-build.md). Play App Signing and distribution are not configured by these local checks.
+- Final artifact audits passed CRC, identity/version, target API **36**, non-debuggable release, disabled backup/cleartext/Firebase initialization, retained local notification receiver, allowed permissions and screenshot configuration. APK inspection verified all backup exclusions and **16 KiB ZIP alignment**. Every native library passed **16 KiB ELF segment alignment**: 18 ARM64 libraries in the preview; 36 across ARM64/x86_64 in each store artifact. No 16 KiB runtime pass is claimed.
+
+| Final local artifact                                                      |      Bytes | SHA-256                                                            |
+| ------------------------------------------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `artifacts/android/trifelle-preview-0.24.0-arm64-v8a.apk`                 | 60,840,584 | `6d6a9ae2a2316a30dcae553d9e134978b0b1f9494535cfe155a13100089654a4` |
+| `artifacts/android-store/trifelle-0.24.0-upload.aab`                      | 61,336,867 | `cbc34125b75d1fac776e0fe55e07da7e93010c0fe03e71eefc810c81352cd6b1` |
+| `artifacts/android-store/trifelle-0.24.0-store-local-test.apk`            | 78,768,806 | `f2308e228573aab8fa72ab82c0043d6c665c641e7fec97ca09c8be20eaf8f71b` |
+| `artifacts/android-store/trifelle-0.24.0-upload-bundletool-universal.apk` | 78,859,519 | `44b01548cf31ebb08c1887537fa9200b8894dc3a2b05a5170c377a1829920229` |
+
+The policy/support-only ZIP and 512-pixel copy of the approved icon are prepared under ignored artifacts. Listing copy, Data safety candidates and reviewer instructions are documented. No public site, Play upload, account conversion, purchase, support email or 1.0 release occurred. Credential recovery needs an owner-controlled backup; the local DPAPI password is not portable to another Windows identity.
+
+**Hardware and account work remains:** no connected device or configured emulator was available. Test update/retention, Health Connect with the Inspire 3, local reminders after the manifest changes, support intent, policy navigation/TalkBack, production screenshot protection and backup/transfer behavior using the [0.24.0 checklist](android-testing.md#0240-privacy-and-store-preparation). The last broad owner-reported phone pass remains 0.15.0, with later partial feedback. Hosting, organization verification, final declarations/assets and actual Play delivery remain separate requirements. No new native iOS device result or clinical claim is made.
+
 ## Android storage and export hardening — October 30, 2026
 
 The owner authorized Play Store preparation. Preview **0.23.0 / build 28** moves the Android journal envelope from a single SQLite value into verified private ciphertext files with a small committed pointer. Legacy data migrates on the first successful save. Encryption, journal content format **10**, backup portability, preview package and signing certificate remain unchanged. Android downgrades after migration are unsupported. Web/iOS keep their existing storage backend.

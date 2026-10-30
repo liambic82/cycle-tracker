@@ -1,0 +1,83 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  color: #302631;
+  background: #fbf7f5;
+}
+body {
+  margin: 0 auto;
+  max-width: 780px;
+  padding: 24px;
+  line-height: 1.65;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-bottom: 1px solid #d8cbd2;
+  padding-bottom: 20px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: Georgia, serif;
+  font-size: 28px;
+  text-decoration: none;
+}
+nav a {
+  margin-right: 12px;
+}
+a {
+  color: #604054;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+a:focus-visible {
+  outline: 3px solid #604054;
+  outline-offset: 5px;
+}
+h1 {
+  font-size: 32px;
+  line-height: 1.2;
+  margin-top: 36px;
+}
+h2 {
+  font-size: 21px;
+  line-height: 1.35;
+  margin: 0;
+}
+p {
+  margin: 12px 0 20px;
+}
+section {
+  margin-top: 36px;
+  scroll-margin-top: 20px;
+}
+.muted,
+footer {
+  color: #62545e;
+}
+footer {
+  margin-top: 44px;
+  padding-top: 20px;
+  border-top: 1px solid #d8cbd2;
+  font-size: 14px;
+}
+.skip {
+  position: absolute;
+  left: -9999px;
+}
+.skip:focus {
+  position: static;
+}
+@media (max-width: 420px) {
+  body {
+    padding: 18px;
+  }
+  h1 {
+    font-size: 28px;
+  }
+}

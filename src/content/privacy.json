@@ -1,0 +1,71 @@
+{
+  "title": "Trifelle privacy",
+  "updated": "October 30, 2026",
+  "publisher": "Plowden Digital",
+  "email": "plowdendigital.apps@gmail.com",
+  "intro": "Trifelle is a personal period and wellbeing journal provided by Plowden Digital. This policy explains how your information is used in version 0.24.0. You do not need a Trifelle online account.",
+  "sections": [
+    {
+      "id": "journal",
+      "title": "Your journal stays on your device",
+      "paragraphs": [
+        "Trifelle uses the records you choose to enter to show your calendar, history, reminders and reports. These can include periods and flow, symptoms, moods, sexual-health observations, measurements and test observations, medications and doses, medical notes and attachments, appointments, sleep and a chosen background photo.",
+        "Your journal and saved background photo are encrypted locally using a key protected by your passphrase. Plowden Digital does not receive a copy of them. There is no cloud sync, advertising, analytics service or password-reset service in this version. Experimental period estimates are calculated on your device.",
+        "On Android, packaged release builds have no direct internet permission. Opening an external website, email app, file provider or share destination uses that other service. The browser version downloads app assets from its host and stores your encrypted journal in that browser's site storage. A host can receive ordinary connection information, including your IP address, when serving the web app or policy pages."
+      ]
+    },
+    {
+      "id": "sleep",
+      "title": "Optional Health Connect sleep access",
+      "paragraphs": [
+        "If you grant permission, the Android app reads sleep sessions and stages from Health Connect, together with source identifiers, available device labels and time-zone offsets. It uses this information to let you review sleep alongside your journal. It does not read other Health Connect data types, write records to Health Connect or connect directly to your Fitbit account. Fitbit and other source apps handle their own syncing and privacy settings.",
+        "You can review and import selected nights. If you separately enable Import when I unlock for a chosen source, Trifelle checks up to 30 recent days while active and unlocked, importing new non-overlapping sessions. Corrections and overlaps need review. There are no locked-app or background sleep reads. Older history needs a separate optional permission on supported phones. Unselected previews are temporary and clear when you leave or background the import screen.",
+        "Imported copies are encrypted in your journal and included in encrypted backups. Readable CSV and selected PDF sections can include sleep observations and source details. We do not use Health Connect data for advertising, sale, data brokerage, credit decisions or training AI models.",
+        "Revoke access in Health Connect or choose Disconnect in Trifelle to stop future reads. Previously imported copies remain until you remove them from a daily entry or delete the journal. Removing a copy does not delete the source record. Source corrections or deletions do not automatically change your saved copies. Restore turns automatic import off; removed records stay excluded from automatic reimport unless you manually reimport them."
+      ]
+    },
+    {
+      "id": "device",
+      "title": "Biometrics, reminders and selected files",
+      "paragraphs": [
+        "Optional biometric unlock uses Android or iOS authentication to access a key protected by the operating system. Trifelle does not receive or store your fingerprint or face scan. Keep your passphrase: biometrics can become unavailable after device or enrollment changes.",
+        "Reminders are scheduled locally after you enable them and grant notification permission. Notification messages are generic and do not contain your medication names, doses or journal notes. Their timing can still be visible on your device. Android and iOS control delivery, lock-screen display and battery restrictions.",
+        "Photos and medical attachments are accessed through the system picker when you select them. The app does not scan your photo library or request broad storage access. Original medical attachment bytes and metadata are preserved inside the encrypted journal. Your original files remain in their original location."
+      ]
+    },
+    {
+      "id": "exports",
+      "title": "Backups and readable exports",
+      "paragraphs": [
+        "Encrypted backups contain your full journal and need the passphrase used to create them. Your custom background photo is stored separately and is not included in a journal backup. CSV, PDF and exported medical attachments are readable, unencrypted files. Review the export choices before sharing sensitive information.",
+        "You choose the destination through your browser or phone. A destination may be a local folder, a cloud provider or another person. That destination's privacy practices apply. Trifelle creates temporary private copies for native sharing. Android keeps handed-off copies until the next cold app startup so the receiving app can read them; iOS removes them when sharing completes. Interrupted copies are cleaned up at startup.",
+        "Android builds disable automatic cloud backup and exclude app storage from Android cloud backup and device-transfer rules. Use a manual encrypted backup to move your journal. iOS test previews may be included in device backups according to iOS settings. Browser site-data controls and clearing app storage can remove your local journal. Keep a separate backup you can open."
+      ]
+    },
+    {
+      "id": "deletion",
+      "title": "Retention and deletion",
+      "paragraphs": [
+        "Local records remain until you remove them, replace the journal by restoring a backup, or delete the journal through the app or operating-system storage controls. Delete journal from this device also removes the app's saved background photo, biometric key and scheduled reminders. Trifelle cannot recover a forgotten passphrase or remotely access your journal.",
+        "Deleting local records does not delete copies you exported, shared, backed up or stored on another device. It does not delete records in Health Connect or the source wearable app. Manage those copies separately with the relevant provider. Temporary readable export copies are cleared at the next cold startup on Android."
+      ]
+    },
+    {
+      "id": "support",
+      "title": "Support and other services",
+      "paragraphs": [
+        "If you contact Plowden Digital, we receive your email address, message and any attachments you send through our email provider, Gmail. We use them to answer your request and investigate reported problems. We retain correspondence while needed for that request, related follow-up or applicable legal obligations. You can ask us to delete support correspondence; we will explain any information we need to retain.",
+        "Do not send passphrases, biometric keys, encrypted backups or unredacted health records when reporting an issue. Your app version, phone model, Android or iOS version and steps using fictional records are usually sufficient. Sending an email is optional and does not give us access to your journal.",
+        "Google Play and Apple handle their own store accounts, distribution and purchase information. Plowden Digital does not receive your payment-card details through Trifelle. External education links, wearable apps, file destinations and web hosts operate under their own policies."
+      ]
+    },
+    {
+      "id": "limits",
+      "title": "Health information and policy updates",
+      "paragraphs": [
+        "Trifelle is not a medical device and does not diagnose, treat, cure, or prevent any medical condition. Consult a healthcare professional for medical advice, diagnosis or treatment. Predictions are experimental and are not medical advice or contraception guidance. Educational hormone curves do not measure your hormone levels.",
+        "We will update this policy and its date when data practices change. Optional cloud sync and background sleep syncing are not included in this version. For support or privacy questions, contact plowdendigital.apps@gmail.com."
+      ]
+    }
+  ]
+}

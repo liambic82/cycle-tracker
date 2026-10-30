@@ -14,6 +14,7 @@ import { PassphraseField } from './PassphraseField';
 import { useTheme, serif } from './theme';
 import { readBackup } from '../data/files';
 import { parseEnvelope } from '../domain/vault';
+import { PrivacyInfo } from './PrivacyInfo';
 
 interface Props {
   exists: boolean;
@@ -305,6 +306,7 @@ export function AuthGate({
             </View>
           </View>
         </View>
+        <PrivacyInfo />
         <Text style={[common.small, { textAlign: 'center' }]}>
           Early preview · Calendar & daily journal · Built with care, at your pace
         </Text>

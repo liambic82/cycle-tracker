@@ -1,6 +1,6 @@
 {
   "name": "cycle-tracker",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "private": true,
   "type": "module",
   "main": "index.ts",
@@ -26,7 +26,9 @@
     "preview": "node scripts/serve-preview.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "tsc --noEmit && node --experimental-strip-types --test tests/*.test.ts",
+    "check": "tsc --noEmit && node scripts/build-privacy-pages.mjs --check && node --experimental-strip-types --test tests/*.test.ts",
+    "privacy:generate": "node scripts/build-privacy-pages.mjs",
+    "privacy:check": "node scripts/build-privacy-pages.mjs --check",
     "assets:brand": "node scripts/build-brand-assets.mjs",
     "check:ios-kdf": "node scripts/check-ios-kdf.mjs"
   },

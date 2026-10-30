@@ -1,5 +1,17 @@
 # Android preview testing
 
+## 0.24.0 privacy and store preparation
+
+Back up first, then install `artifacts/android/trifelle-preview-0.24.0-arm64-v8a.apk` (**code 29**) over the existing preview. Keep the app and its storage; do not uninstall. This includes the 0.23.0 storage migration, so do not downgrade after saving. Use fictional records for failure and deletion checks.
+
+1. **Policy access:** open Privacy & support before setup, while locked and from Your data. It should work in airplane mode, scroll to the end, and close with its button or Android Back. Returning should preserve a setup draft and the selected page. Test large text, TalkBack, dark/light appearance and Flip5 folding. Check that the support action opens an email draft with only the address and generic subject; sending is optional and no journal content is attached automatically.
+2. **Health Connect:** open Trifelle's privacy explanation from Android's permission flow and read/close it. Import several Inspire 3 nights from the chosen source, inspect Saved nights, then test optional import after unlock and revoked access. Removing Trifelle's internet permission should not prevent reading records already shared through Health Connect; syncing Fitbit's own app remains separate.
+3. **Reminders:** test notification permission granted/denied, a test alert and a scheduled fictional medication/care reminder while backgrounded. Check lock-screen wording, reboot/rescheduling and cancellation. Remote-push components and unused badge permissions were removed; local delivery still needs this hardware check on Pixel and Samsung.
+4. **Retention and recovery:** perform the 0.23.0 update/save/restart, biometrics, encrypted backup/restore and actual Android share-destination checks below. Test offline access and selected-photo/attachment pickers. The app should not request broad storage or overlay permissions.
+5. **Production configuration:** the separate `artifacts/android-store/trifelle-0.24.0-store-local-test.apk` uses the store ID and a different key. It installs separately from the preview; restore a fictional backup and check screenshot/app-switcher protection. Keep the preview and original backup. This is optional local testing, not evidence of a Play installation. A future Play-signed build may need a separate reinstall because its certificate can differ.
+
+Record device, exact Android/One UI version, installation source and each result. Automated manifest/backup-rule inspection and 16 KiB ELF/ZIP checks passed; OEM device transfer, actual notification delivery, 16 KiB runtime and Play-delivered installation remain untested. No new physical-device pass is recorded.
+
 ## 0.23.0 storage and export hardening
 
 Make an encrypted backup in the installed preview, then update with `artifacts/android/trifelle-preview-0.23.0-arm64-v8a.apk` (**code 28**). Do not uninstall or clear storage. Package/signing identity and backup format are unchanged. The first successful save migrates Android's local encrypted storage; **do not downgrade the app after migration**. Keep the backup separately.
