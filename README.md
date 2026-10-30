@@ -14,6 +14,8 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
+**Preview 0.23.0 / code 28** hardens Android journal storage for larger histories, verifies writes before committing, preserves recovery after interrupted saves/deletion, removes unused broad permissions and cleans up private export files without cutting off Android share recipients. Back up before updating and do not downgrade after the first save. [Focused update checks](docs/android-testing.md#0230-storage-and-export-hardening) · [Play release plan](docs/play-release-plan.md). Publisher: **Plowden Digital**; support: **plowdendigital.apps@gmail.com**. Real-device validation and store preparation remain open.
+
 **Preview 0.22.0 / code 27** applies the approved Trifelle branding over the existing local app. [Brand/update checks](docs/android-testing.md#0220-trifelle-branding) cover update retention, launch/loading, Reduce Motion, theme preservation and exports. The existing feature checklists below still apply.
 
 **Preview 0.21.0 / code 26** implements the approved **Calendar & journal** layout: calendar first, focused daily entries, quiet Journal settings, one combined pinned/logged symptom list, charts first in History, and grouped wearable sleep controls. Existing soft palettes and backgrounds remain, with sans-serif section headings and a serif brand. Explicit-save forms identify pending form changes; journal persistence feedback and errors stay near the active editor. [Approved scope](docs/layout-proposal-2026-10-17.md) · [Focused phone checks](docs/android-testing.md#0210-calendar--journal).

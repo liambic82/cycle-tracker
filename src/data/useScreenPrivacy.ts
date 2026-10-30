@@ -7,6 +7,9 @@ import {
 } from 'expo-screen-capture';
 import { allowPreviewScreenshots } from './buildSettings';
 import { clearPhotoCache } from './photoCache';
+import { clearTextExportCache } from './files';
+import { clearMedicalExportCache } from './medicalAttachments';
+import { clearReportExportCache } from './reportExport';
 
 // Configure capture before displaying native content. Preview builds allow testing screenshots;
 // store builds keep protection on. The browser has no equivalent capture prevention API.
@@ -20,6 +23,9 @@ export function useScreenPrivacy() {
     setError(false);
     try {
       clearPhotoCache();
+      clearTextExportCache();
+      clearMedicalExportCache();
+      clearReportExportCache();
       if (allowPreviewScreenshots) await allowScreenCaptureAsync('cycle-journal');
       else await preventScreenCaptureAsync('cycle-journal');
       if (Platform.OS === 'ios') await enableAppSwitcherProtectionAsync(1);

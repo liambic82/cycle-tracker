@@ -57,8 +57,12 @@ export async function newKey(
 export function seal(journal: Journal, vault: VaultKey, random: RandomBytes): string {
   const nonce = random(12);
   const plain = new TextEncoder().encode(JSON.stringify(journal));
-  const ciphertext = gcm(vault.key, nonce, AAD).encrypt(plain);
-  plain.fill(0);
+  let ciphertext: Uint8Array;
+  try {
+    ciphertext = gcm(vault.key, nonce, AAD).encrypt(plain);
+  } finally {
+    plain.fill(0);
+  }
   const result: Envelope = {
     format: 'cycle-tracker-vault',
     version: 1,

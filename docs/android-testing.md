@@ -1,5 +1,18 @@
 # Android preview testing
 
+## 0.23.0 storage and export hardening
+
+Make an encrypted backup in the installed preview, then update with `artifacts/android/trifelle-preview-0.23.0-arm64-v8a.apk` (**code 28**). Do not uninstall or clear storage. Package/signing identity and backup format are unchanged. The first successful save migrates Android's local encrypted storage; **do not downgrade the app after migration**. Keep the backup separately.
+
+1. **Update and migrate:** unlock the existing journal, compare older/recent entries and any attachments, make a small disposable edit and wait for Saved. Fully close/reopen, unlock with passphrase, then test biometric unlock. Confirm all records and the edit remain. Test reminders and the selected appearance still work.
+2. **Persistence and recovery:** use fictional records for interruption, low-storage and larger-journal checks. A rejected save must remain visibly unsaved and retryable; never force-stop a real journal with pending changes. Confirm several saves followed by restart retain the latest completed state. Measure save/unlock time on Flip5. Automated failure injection does not substitute for native behavior.
+3. **Back up and restore:** export after migration, save it outside the app, then restore into a disposable test installation/browser and compare dates, notes, medications, imported sleep and attachments. Retain the source and original backup. Check that restoring disables reminder/automatic-import opt-ins as designed.
+4. **Export handoff:** save/open a CSV, PDF, encrypted backup and fictional medical attachment using the phone's actual share destinations. Include a slow receiving app, cancellation, repeated exports, returning to Trifelle, and restarting after the destination finishes. The destination copy must stay readable and a second export must not replace the first. Private temporary copies clear at the next cold start; external copies remain. Report any receiving-app race or startup cleanup error.
+5. **Permissions and picker:** select a background photo/medical attachment, import CSV, read a backup, test notifications and import sleep. Broad storage/photo-library and overlay permission prompts should not appear. Screenshots remain enabled for testing. Health Connect's explicit sleep/history grants are unchanged.
+6. **Deletion:** only in a disposable journal, confirm whole-journal deletion and restart; no old records should return. Recreate a journal and verify save/reopen. Do not use a tester's only real records for destructive checks.
+
+Continue the consolidated feature and accessibility checklist below. Record build/device/OS and exact results; no 0.23.0 physical-device pass is established by the automated checks or APK build. The eventual Play package is separate: follow [preview-to-Play transfer](play-release-plan.md#preview-to-play-transfer-and-test-evidence).
+
 ## 0.22.0 Trifelle branding
 
 Install `artifacts/android/trifelle-preview-0.22.0-arm64-v8a.apk` as an update after making a backup. The launcher label becomes **Trifelle Preview**; package `com.liambic.cycletracker.preview`, signing certificate, storage and journal format **10** remain unchanged. Do not uninstall or clear data to rename the app. Version code is **27**.

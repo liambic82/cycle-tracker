@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { Directory, File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { randomUUID } from 'expo-crypto';
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js';
 import {
   MAX_ATTACHMENT_BYTES,
@@ -78,20 +79,23 @@ export async function exportMedicalAttachment(
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
     } else {
-      clearMedicalExportCache();
-      const dir = new Directory(Paths.cache, 'cycle-medical-exports');
-      dir.create({ intermediates: true, idempotent: true });
+      const dir = new Directory(Paths.cache, 'cycle-medical-exports', randomUUID());
+      dir.create({ intermediates: true });
       const file = new File(dir, filename);
+      let sharingStarted = false;
       try {
         file.write(bytes);
         if (!(await Sharing.isAvailableAsync())) throw new Error('Sharing is unavailable.');
-        if (valid())
+        if (valid()) {
+          sharingStarted = true;
           await Sharing.shareAsync(file.uri, {
             mimeType: attachment.mime,
             dialogTitle: 'Export readable medical attachment',
           });
+        }
       } finally {
-        if (file.exists) file.delete();
+        // Keep Android's handed-off URI readable until the next app startup.
+        if ((Platform.OS !== 'android' || !sharingStarted) && dir.exists) dir.delete();
       }
     }
   } finally {

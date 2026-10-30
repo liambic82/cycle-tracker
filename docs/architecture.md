@@ -1,5 +1,19 @@
 # Architecture and security notes
 
+## Android storage and export hardening (0.23.0)
+
+Android now persists the encrypted journal in app-private document files via `journalStorage.android.ts`. The existing AsyncStorage key holds a small versioned pointer with a fixed slot (`a` or `b`), UTF-8 size and SHA-256 ciphertext digest. Installed AsyncStorage 2.2.0 defaults its Android database to 6 MiB (`android/config.gradle`); SQLite cursor/row limits also constrain large single values. Keeping the existing 8 MiB journal envelope outside that row supports the app's attachment and backup limits without increasing SQLite limits. Web and iOS retain their existing storage backend.
+
+Each save validates the envelope, writes the inactive slot, reads it back exactly and only then replaces the metadata pointer. Reads/writes/restores/deletion are serialized. Failed writes before the pointer commit preserve the prior journal. Ambiguous commit failures retain both files; the next read verifies the authoritative pointer. A damaged active file produces a recovery error, never an unnoticed rollback to older health records. Cleanup after a committed save is best effort and does not falsely report a failed save. This is process-interruption protection, not a guarantee against filesystem/device failure or abrupt power loss.
+
+Existing encrypted SQLite values remain readable and migrate only on the first successful save. The encrypted envelope, passphrase/biometric key, journal content **format 10**, backup format and package identity remain unchanged. Android 0.22.0 and earlier cannot read the new local pointer after migration: back up before updating and do not downgrade over a migrated journal. Portable encrypted backups remain ordinary envelope files, not storage pointers.
+
+Confirmed restore can replace unreadable metadata or an oversized legacy SQLite row; ordinary saves cannot. Deletion first commits a tombstone, removes both file slots and finally removes the tombstone. Startup finishes interrupted deletion rather than restoring leftover files. A storage-read failure preserves the unlock/restore route instead of presenting new-journal creation. Plaintext serialization buffers are wiped even if encryption throws.
+
+Native CSV/backup, PDF and attachment exports use unique app-private cache subfolders. Android share completion does not prove the recipient has read its URI, so handed-off files remain available until the next cold app startup; later shares do not overwrite them. iOS completion and failures before handoff clean up immediately. Startup removes these folders and exact legacy text-export filenames before mounting journal content, with the existing retry path on failure. Files deliberately saved/shared outside the app remain the user's responsibility. Do not describe temporary exports as always encrypted or instantly erased. Actual receiving-app compatibility and interrupted sharing remain device checks.
+
+Android removes unused external-storage, media-images and overlay permissions. The screen-capture detection permission remains because the installed Expo module registers its native callback during module creation. The preview still allows testing screenshots; production screenshot prevention is unchanged. Remaining SDK/manifest/network audit is tracked in the [Play release plan](play-release-plan.md).
+
 ## Local completion batch (0.18.0)
 
 Current journal content is **format 8**: entries gain `dailyDetails`; the journal gains `medicalRecords` and `personalReminders`. Formats 1–7 migrate new fields to empty values. Parsers reject malformed numbers/units, ambiguous dates, invalid attachment signatures/identities, duplicate records and care/medication ID collisions. New backups require 0.18.0+. Envelope encryption and key derivation are unchanged.

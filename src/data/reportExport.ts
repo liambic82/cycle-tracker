@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import { Asset } from 'expo-asset';
 import { Directory, File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { randomUUID } from 'expo-crypto';
 import { createReportPdf } from '../domain/reportPdf';
 import type { DoctorReport } from '../domain/report';
 
@@ -46,19 +47,21 @@ export async function exportDoctorReport(
   if (!(await Sharing.isAvailableAsync()))
     throw new Error('File sharing is not available on this device.');
   if (!isActive()) return;
-  clearReportExportCache();
-  const directory = new Directory(Paths.cache, 'cycle-report-exports');
-  directory.create();
+  const directory = new Directory(Paths.cache, 'cycle-report-exports', randomUUID());
+  directory.create({ intermediates: true });
   const file = new File(directory, filename);
+  let sharingStarted = false;
   try {
     file.write(bytes);
+    sharingStarted = true;
     await Sharing.shareAsync(file.uri, {
       mimeType: 'application/pdf',
       UTI: 'com.adobe.pdf',
       dialogTitle: 'Save or share your doctor summary',
     });
   } finally {
-    // Only the explicitly shared copy should remain outside the app's encrypted journal.
-    if (directory.exists) directory.delete();
+    // The Android recipient can still be reading after the chooser returns.
+    // Startup removes handed-off private copies; iOS reports completion here.
+    if ((Platform.OS !== 'android' || !sharingStarted) && directory.exists) directory.delete();
   }
 }

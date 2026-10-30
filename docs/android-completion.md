@@ -1,5 +1,9 @@
 # Android completion and test handoff
 
+## Play preparation — October 30, 2026
+
+**Current build: 0.23.0 / code 28.** Trifelle branding is integrated and the first storage/export hardening slice is implemented. See [the Play release plan](play-release-plan.md), [focused 0.23.0 checks](android-testing.md#0230-storage-and-export-hardening) and [validation record](validation.md). The owner authorized store preparation using the shared Plowden Digital account; there is no public-release or 1.0 decision. Native iOS test packaging has also progressed under the later October 27 direction, with physical-iPhone installation/runtime still pending. The dated sections below preserve earlier scope and evidence.
+
 ## Owner direction — October 11, 2026
 
 **Current build: 0.21.0 / code 26.** The owner explicitly approved Calendar & journal, including History and wearable sleep, on October 18. This replaces Journal first with the calendar as the primary task, focused daily entries, quiet settings and charts-first History. The grouped sleep controls preserve explicit source opt-in and existing import behavior. [Implemented scope](layout-proposal-2026-10-17.md) · [Focused checks](android-testing.md#0210-calendar--journal) · [Validation](validation.md#calendar--journal--october-18-2026). Journal format 10 migrates 1–9; new backups need 0.20.0+. Restoring a backup disables automatic sleep import.

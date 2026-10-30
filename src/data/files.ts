@@ -1,8 +1,27 @@
 import { Platform } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import { File, Paths } from 'expo-file-system';
+import { Directory, File, Paths } from 'expo-file-system';
+import { randomUUID } from 'expo-crypto';
 import * as Sharing from 'expo-sharing';
 import { MAX_BACKUP_BYTES } from '../domain/vault';
+
+export function clearTextExportCache() {
+  if (Platform.OS === 'web') return;
+  const directory = new Directory(Paths.cache, 'cycle-text-exports');
+  if (directory.exists) directory.delete();
+  // These exact cache names were used by previews through 0.22.0. Never scan
+  // external folders or delete the user's intentionally shared/exported copies.
+  for (const name of [
+    'cycle-tracker-journal.csv',
+    'cycle-tracker-medication-schedules.csv',
+    'cycle-tracker-backup.cyclevault',
+    'cycle-medical-records.csv',
+    'cycle-simple-import-template.csv',
+  ]) {
+    const legacy = new File(Paths.cache, name);
+    if (legacy.exists) legacy.delete();
+  }
+}
 
 export async function exportText(content: string, filename: string, mime: string): Promise<void> {
   if (Platform.OS === 'web') {
@@ -15,18 +34,23 @@ export async function exportText(content: string, filename: string, mime: string
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     return;
   }
-  const file = new File(Paths.cache, filename);
+  const directory = new Directory(Paths.cache, 'cycle-text-exports', randomUUID());
+  directory.create({ intermediates: true });
+  const file = new File(directory, filename);
+  let sharingStarted = false;
   try {
     file.write(content);
     if (!(await Sharing.isAvailableAsync()))
       throw new Error('File sharing is not available on this device.');
+    sharingStarted = true;
     await Sharing.shareAsync(file.uri, {
       mimeType: mime,
       dialogTitle: 'Save your Trifelle export',
     });
   } finally {
-    // Exports may contain readable health information. Do not leave copies in app cache.
-    if (file.exists) file.delete();
+    // Android's chooser result does not confirm that the recipient has read the file.
+    // Retain handed-off copies until next startup; never overwrite an earlier share.
+    if ((Platform.OS !== 'android' || !sharingStarted) && directory.exists) directory.delete();
   }
 }
 

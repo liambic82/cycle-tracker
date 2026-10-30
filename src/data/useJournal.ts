@@ -5,6 +5,7 @@ import { ForegroundSleepImporter, type AutoSleepState } from './foregroundSleepI
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { journalStorage, replaceJournal } from './journalStorage';
 import { getRandomValues } from 'expo-crypto';
 import { toDay, type Day } from '../domain/dates';
 import { deleteEntry, undoEntryDeletion, type DeletedEntry } from '../domain/deletion';
@@ -113,7 +114,8 @@ export function useJournal() {
   ]);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
+    journalStorage
+      .getItem(STORAGE_KEY)
       .then(async (value) => {
         setExists(value !== null);
         let salt: string | null = null;
@@ -124,7 +126,13 @@ export function useJournal() {
         }
         await refreshBiometrics(salt);
       })
-      .catch(() => setError('Local storage could not be read. Reload the app to try again.'))
+      .catch(() => {
+        // A read error is not proof of an empty device. Offer unlock/restore, not setup.
+        setExists(true);
+        setError(
+          'Local storage could not be read. Reload the app to try again or restore a backup.',
+        );
+      })
       .finally(() => setLoading(false));
     return () => {
       sleepImporter.cancel();
@@ -295,7 +303,7 @@ export function useJournal() {
     const openingEpoch = backgroundEpoch.current;
     try {
       release = await acquireEditLease();
-      const raw = await AsyncStorage.getItem(STORAGE_KEY);
+      const raw = await journalStorage.getItem(STORAGE_KEY);
       // Never replace an existing vault when a second tab created it during onboarding.
       if (create && raw !== null) {
         setExists(true);
@@ -326,7 +334,7 @@ export function useJournal() {
           : await openVault(raw!, passphrase, derivePassphraseKey);
       openedKey = session.vault;
       salt = session.vault.salt;
-      const nextWriter = new JournalWriter(AsyncStorage, session.vault, secureRandomBytes);
+      const nextWriter = new JournalWriter(journalStorage, session.vault, secureRandomBytes);
       if (create) {
         setAuthProgress('Saving your encrypted journal…');
         await nextWriter.save(session.journal);
@@ -564,10 +572,7 @@ export function useJournal() {
       await biometrics.clear();
       setBiometricEnabled(false);
       // Replacement is allowed only in the explicit restore-confirmation flow.
-      await AsyncStorage.setItem(
-        STORAGE_KEY,
-        seal(restored.journal, restored.vault, secureRandomBytes),
-      );
+      await replaceJournal(seal(restored.journal, restored.vault, secureRandomBytes));
       setExists(true);
       await photos.open(restored.vault);
       if (openingEpoch !== backgroundEpoch.current || lockPending.current) {
@@ -575,7 +580,7 @@ export function useJournal() {
       }
       key.current = restored.vault;
       releaseLease.current = release;
-      writer.current = new JournalWriter(AsyncStorage, restored.vault, secureRandomBytes);
+      writer.current = new JournalWriter(journalStorage, restored.vault, secureRandomBytes);
       setCurrent(restored.journal);
       savedRevision.current = revision.current;
       setDemo(false);
