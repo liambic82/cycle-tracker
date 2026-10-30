@@ -260,6 +260,8 @@ References: [Expo DocumentPicker](https://docs.expo.dev/versions/latest/sdk/docu
 
 ## Release work
 
+The 0.25.0 [recovery review](accessibility-recovery-review-2026-10-30.md) adds two safeguards: confirmed Android restore uses only an empty slot when metadata cannot be read, preserving occupied files until commit; web before-unload handling warns while the current real journal revision is unsaved. `InteractionBoundary` removes covered content from native accessibility navigation and web keyboard focus without unmounting drafts. These safeguards do not guarantee persistence after process termination or make convenience-setting cleanup atomic with journal replacement.
+
 `app.config.ts` selects a separate native preview app identity when `APP_VARIANT=preview`. The Windows build script produces an ARM64 release APK from a dedicated short-path build cache and signs it with a private preview key outside Git. A Gradle guard prevents this signing configuration from being used with the store identifier. This separates test installations and credentials from a future public release; it does not replace device or security validation.
 
 The cryptographic libraries are established implementations; this app's integration has not received an independent security audit. Review lifecycle behavior, import handling, key recovery UX, native backup behavior, accessibility, browser storage limits, and performance before real health data or public release. No remote service has been provisioned.

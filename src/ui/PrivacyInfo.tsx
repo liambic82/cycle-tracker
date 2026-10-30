@@ -23,13 +23,19 @@ export function PrivacyInfo() {
           <View
             style={[
               common.between,
-              { padding: 16, gap: 12, borderBottomWidth: 1, borderColor: colors.line },
+              {
+                padding: 16,
+                gap: 12,
+                flexWrap: 'wrap',
+                borderBottomWidth: 1,
+                borderColor: colors.line,
+              },
             ]}
           >
             <Text accessibilityRole="header" style={[common.heading, { flexShrink: 1 }]}>
               Privacy & support
             </Text>
-            <Button secondary label="Close privacy" onPress={close} />
+            <Button secondary label="Close privacy" onPress={close} style={{ maxWidth: '100%' }} />
           </View>
           <ScrollView
             contentContainerStyle={{

@@ -178,6 +178,7 @@ export function PeriodRangeEditor({
                             <Pressable
                               accessibilityRole="button"
                               accessibilityLabel={`${choosing === 'start' ? 'Start' : 'Finish'} ${label(day)}`}
+                              aria-pressed={selected}
                               accessibilityState={{
                                 selected,
                                 disabled:

@@ -118,14 +118,30 @@ export class FileJournalStorage implements Storage {
   private async write(raw: string, replacing: boolean) {
     parseEnvelope(raw);
     const actual = fingerprint(raw);
+    let metadata: string | null;
+    let vacantSlot: Slot | undefined;
+    try {
+      metadata = await this.metadata.getItem(STORAGE_KEY);
+    } catch (error) {
+      if (!replacing) throw error;
+      // An oversized legacy row can need explicit restore. A transient read
+      // failure can also hide a valid pointer: never overwrite an occupied slot
+      // before the new pointer commits, even in the confirmed restore flow.
+      if ((await this.files.read('a')) === null) vacantSlot = 'a';
+      else if ((await this.files.read('b')) === null) vacantSlot = 'b';
+      else
+        throw new Error('Storage could not be read safely. Restart the app and retry restoring.');
+      metadata = null;
+    }
     let previous: RecordState;
     try {
-      previous = parseRecord(await this.metadata.getItem(STORAGE_KEY));
+      previous = parseRecord(metadata);
     } catch (error) {
       if (!replacing) throw error;
       previous = null;
     }
-    const slot: Slot = previous?.state === 'active' && previous.slot === 'a' ? 'b' : 'a';
+    const slot: Slot =
+      vacantSlot ?? (previous?.state === 'active' && previous.slot === 'a' ? 'b' : 'a');
     await this.files.write(slot, raw);
     if ((await this.files.read(slot)) !== raw)
       throw new Error('The journal write could not be verified. Retry saving.');

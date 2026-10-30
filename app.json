@@ -2,7 +2,7 @@
   "expo": {
     "name": "Trifelle",
     "slug": "cycle-tracker",
-    "version": "0.24.0",
+    "version": "0.25.0",
     "icon": "./assets/brand/icon.png",
     "orientation": "default",
     "userInterfaceStyle": "automatic",

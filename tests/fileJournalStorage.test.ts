@@ -202,6 +202,48 @@ test('confirmed backup restore can replace an unreadable oversized legacy databa
   assert.equal(await f.restart().getItem(STORAGE_KEY), second);
 });
 
+test('restore after a database read failure never overwrites the committed file before commit', async () => {
+  for (const failure of ['write', 'commit'] as const) {
+    const f = fixture();
+    await f.store.setItem(STORAGE_KEY, first);
+    const pointer = f.records.get(STORAGE_KEY);
+    f.faults.metadataRead = true;
+    f.faults[failure] = true;
+    await assert.rejects(f.store.replace(second));
+    assert.equal(f.records.get(STORAGE_KEY), pointer);
+    f.faults.metadataRead = false;
+    f.faults[failure] = false;
+    assert.equal(await f.restart().getItem(STORAGE_KEY), first);
+    await f.store.replace(second);
+    assert.equal(await f.restart().getItem(STORAGE_KEY), second);
+  }
+});
+
+test('restore can use an empty slot when the database row cannot be read', async () => {
+  const f = fixture();
+  await f.store.setItem(STORAGE_KEY, first);
+  f.faults.metadataRead = true;
+  await f.store.replace(second);
+  f.faults.metadataRead = false;
+  assert.equal(await f.restart().getItem(STORAGE_KEY), second);
+});
+
+test('restore refuses ambiguous occupied slots during a database read failure', async () => {
+  const f = fixture();
+  await f.store.setItem(STORAGE_KEY, first);
+  f.faults.remove = true;
+  await f.store.setItem(STORAGE_KEY, second);
+  f.faults.remove = false;
+  const slots = new Map(f.slots);
+  const pointer = f.records.get(STORAGE_KEY);
+  f.faults.metadataRead = true;
+  await assert.rejects(f.store.replace(first), /read.*retry/i);
+  assert.deepEqual(f.slots, slots);
+  assert.equal(f.records.get(STORAGE_KEY), pointer);
+  f.faults.metadataRead = false;
+  assert.equal(await f.restart().getItem(STORAGE_KEY), second);
+});
+
 test('queued save/read/delete operations cannot expose a half-written file or resurrect a deleted journal', async () => {
   const f = fixture();
   let resume!: () => void;

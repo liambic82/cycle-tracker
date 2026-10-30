@@ -214,7 +214,9 @@ export function DayEditor({
             onViewChange();
           }}
         />
-        <Text style={common.heading}>Journal settings</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Journal settings
+        </Text>
         <ActionRow
           label="Section order"
           detail="Choose what comes first"
@@ -609,7 +611,9 @@ export function DayEditor({
       <View style={[common.between, { alignItems: 'flex-start' }]}>
         <View style={{ flex: 1, gap: 6 }}>
           <Text style={common.eyebrow}>{date === today ? 'TODAY’S JOURNAL' : 'DAILY JOURNAL'}</Text>
-          <Text style={common.heading}>{formatDay(date, { month: 'long', day: 'numeric' })}</Text>
+          <Text accessibilityRole="header" style={common.heading}>
+            {formatDay(date, { month: 'long', day: 'numeric' })}
+          </Text>
           <Text style={common.body}>
             {formatDay(date, { weekday: 'long' })} · {date.slice(0, 4)}
             {day ? `  ·  Cycle day ${day}` : ''}

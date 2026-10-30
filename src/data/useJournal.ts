@@ -549,6 +549,19 @@ export function useJournal() {
     return seal(current.current, key.current, secureRandomBytes);
   };
 
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const protectUnsavedChanges = (event: BeforeUnloadEvent) => {
+      if (!current.current || demoRef.current || revision.current === savedRevision.current) return;
+      // The browser supplies the wording. This cannot protect against an OS kill;
+      // it only warns about closing/reloading while a save is pending or failed.
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', protectUnsavedChanges);
+    return () => window.removeEventListener('beforeunload', protectUnsavedChanges);
+  }, []);
+
   const restore = async (raw: string, passphrase: string) => {
     if (working.current) return;
     if (current.current) throw new Error('Lock your journal before restoring a backup.');

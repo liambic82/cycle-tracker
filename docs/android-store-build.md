@@ -1,6 +1,6 @@
 # Android store build and reviewer handoff
 
-Updated October 30, 2026. These commands build locally; none upload to Play. Current app version **0.24.0 / code 29** remains a pre-release version.
+Updated October 30, 2026. These commands build locally; none upload to Play. Current app version **0.25.0 / code 30** remains a pre-release version.
 
 ## Identities and signing
 
@@ -35,9 +35,9 @@ The initial upload key has already been generated on the development machine. `-
 Download [Google bundletool 1.18.3](https://github.com/google/bundletool/releases/tag/1.18.3) as `.tools/bundletool-all-1.18.3.jar`. Expected SHA-256: `a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29`. The validation helper checks this hash, passes the keystore password through stdin and creates an ignored universal APK from the AAB for inspection.
 
 ```powershell
-./scripts/validate-store-bundle.ps1 -Bundle artifacts/android-store/trifelle-0.24.0-upload.aab
-python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.24.0-upload.aab --version 0.24.0 --code 29 --java '<JDK>/bin/java.exe'
-python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.24.0-upload-bundletool-universal.apk --version 0.24.0 --code 29 --aapt '<SDK>/build-tools/36.0.0/aapt.exe' --zipalign '<SDK>/build-tools/36.0.0/zipalign.exe'
+./scripts/validate-store-bundle.ps1 -Bundle artifacts/android-store/trifelle-0.25.0-upload.aab
+python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.25.0-upload.aab --version 0.25.0 --code 30 --java '<JDK>/bin/java.exe'
+python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.25.0-upload-bundletool-universal.apk --version 0.25.0 --code 30 --aapt '<SDK>/build-tools/36.0.0/aapt.exe' --zipalign '<SDK>/build-tools/36.0.0/zipalign.exe'
 ```
 
 Use actual local SDK/JDK paths in place of the placeholders. Verify the AAB signature with `jarsigner -verify`; self-signed upload-certificate and missing timestamp notices are expected, but unsigned payload entries or invalid signatures are not acceptable. Verify APK signatures with `apksigner verify --print-certs`. The auditor checks CRCs, identity/version, embedded screenshot setting, release privacy controls, health scope, allowed permissions, 64-bit ABIs and 16 KiB ELF alignment. APKs additionally verify ZIP alignment and backup rules. It does not install the app or claim a real 16 KiB device pass.
@@ -58,6 +58,6 @@ The Play listing/reviewer instructions must explain these prerequisites. Do not 
 
 `src/content/privacy.json` is the policy source. `pnpm privacy:generate` produces `public/privacy.html`, `public/support.html` and the Android native policy string. `pnpm check` detects drift. The functional in-app screen reads the JSON directly and uses existing app styling; no new appearance options are introduced.
 
-The local `artifacts/site/trifelle-support-site-0.24.0.zip` includes only the public HTML/CSS and approved icon, not the journal app or health records. Its `index.html` is a copy of the support page. It is ready for anonymous HTTPS hosting. Hosting has not been configured, and there is no live Trifelle policy URL to submit yet. Finalize the hosting provider details in the policy before publication, then check the public policy directly without authentication and enter that exact URL in Play Console. In-app text already works without a hosted URL. The approved 512-pixel icon copy is at `artifacts/store-materials/trifelle-play-icon-512.png`.
+The local `artifacts/site/trifelle-support-site-0.25.0.zip` includes only the public HTML/CSS and approved icon, not the journal app or health records. Its `index.html` is a copy of the support page. It is ready for anonymous HTTPS hosting. Hosting has not been configured, and there is no live Trifelle policy URL to submit yet. Finalize the hosting provider details in the policy before publication, then check the public policy directly without authentication and enter that exact URL in Play Console. In-app text already works without a hosted URL. The approved 512-pixel icon copy is at `artifacts/store-materials/trifelle-play-icon-512.png`.
 
 Account organization verification, upload-key recovery, final price/countries, Play App Signing, declarations, hardware testing and owner publication approval remain separate release requirements in the [release plan](play-release-plan.md).

@@ -48,6 +48,8 @@ export function Button({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      aria-disabled={disabled || busy}
+      aria-busy={busy}
       disabled={disabled || busy}
       onPress={onPress}
       style={({ pressed }) => [
@@ -177,7 +179,9 @@ export function SectionLabel({
   return (
     <View style={[common.row, { marginBottom: 12 }]}>
       {Icon && <Icon size={16} color={colors.plum} strokeWidth={1.6} />}
-      <Text style={common.label}>{children}</Text>
+      <Text accessibilityRole="header" style={common.label}>
+        {children}
+      </Text>
     </View>
   );
 }

@@ -47,6 +47,7 @@ import { BrandLoading } from './src/ui/TrifelleLogo';
 import { useTheme, serif } from './src/ui/theme';
 import { AppearanceProvider, useAppearance } from './src/ui/AppearanceProvider';
 import { AppearanceBackdrop } from './src/ui/AppearanceBackdrop';
+import { InteractionBoundary } from './src/ui/InteractionBoundary';
 
 type Page = 'calendar' | 'history' | 'medications' | 'data';
 const NAV: Array<{ id: Page; label: string; icon: LucideIcon }> = [
@@ -165,7 +166,7 @@ function CycleApp() {
     <UndoNotice date={state.deleted.date} undo={state.undoDelete} dismiss={state.dismissUndo} />
   ) : null;
   const saveStatus = (
-    <View style={[common.row, { gap: 6 }]}>
+    <View style={[common.row, { gap: 6, flexShrink: 1 }]}>
       {state.status === 'Saving…' ? (
         <ActivityIndicator size="small" color={colors.plum} />
       ) : state.status === 'Not saved' ? (
@@ -277,7 +278,8 @@ function CycleApp() {
   return (
     <View style={{ flex: 1, flexDirection: 'row', backgroundColor: colors.background }}>
       {desktop && (
-        <View
+        <InteractionBoundary
+          hidden={editing || state.obscured || state.busy}
           style={{
             width: 210,
             paddingHorizontal: 22,
@@ -354,13 +356,11 @@ function CycleApp() {
           <Text style={[common.eyebrow, { fontSize: 8, marginLeft: 12, color: colors.muted }]}>
             EARLY PREVIEW · {app.expo.version}
           </Text>
-        </View>
+        </InteractionBoundary>
       )}
-      <View
+      <InteractionBoundary
         style={{ flex: 1, minWidth: 0 }}
-        accessibilityElementsHidden={editing}
-        importantForAccessibility={editing ? 'no-hide-descendants' : 'auto'}
-        aria-hidden={editing}
+        hidden={editing || state.obscured || state.busy}
       >
         {!state.obscured && <AppearanceBackdrop personalUri={state.photo.uri} />}
         {!desktop && (
@@ -454,7 +454,7 @@ function CycleApp() {
             }}
             keyboardShouldPersistTaps="handled"
           >
-            <Text style={common.heading}>
+            <Text accessibilityRole="header" style={common.heading}>
               {page === 'calendar'
                 ? addingPeriod
                   ? 'Add period'
@@ -593,9 +593,9 @@ function CycleApp() {
             ))}
           </View>
         )}
-      </View>
+      </InteractionBoundary>
       <Modal
-        visible={editing && !state.obscured}
+        visible={editing && !state.obscured && !state.busy}
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={() => {

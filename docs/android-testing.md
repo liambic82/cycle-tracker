@@ -1,5 +1,18 @@
 # Android preview testing
 
+## 0.25.0 accessibility and recovery
+
+Make an encrypted backup, then update with `artifacts/android/trifelle-preview-0.25.0-arm64-v8a.apk` (**code 30**) without uninstalling or clearing storage. Package/signature and backup format remain unchanged. The 0.23.0 storage migration is included; do not downgrade after saving. Use fictional records and a disposable installation for failures or replacement tests.
+
+1. **TalkBack and keyboard:** navigate Calendar, Your data and a daily entry. Check headings, selected dates and busy/disabled buttons. Open/close the editor and privacy screen using Android Back, their close controls and a keyboard where available. Focus should not reach underlying navigation while a modal or privacy/loading cover is active, and should be usable again afterward.
+2. **Large text:** use Android's largest text/display settings on Pixel and Flip5. Read and close Privacy & support, and check the daily editor's status/close row. Verify important buttons remain reachable without clipping. Fold/reopen and rotate with a draft. Browser screenshots do not establish this native pass.
+3. **Normal recovery:** update an existing journal, edit a fictional note, lock/reopen and cold-restart offline. Export an encrypted backup, then verify it in a disposable installation. A wrong backup passphrase must leave the saved journal intact; a correct restore should retain its records while resetting reminder/automatic-import opt-ins.
+4. **Failure checks, disposable data only:** if a real storage error occurs, confirm Not saved and Retry saving remain available. Retry after resolving space/access and verify the latest edit after reopening. Locking that cannot save must report an error and retain the open journal. Export a backup before terminating the app. Do not fill or interrupt a phone containing the only copy of real records just to exercise this check.
+5. **Browser companion:** after a save failure, attempting reload/close should offer the browser warning; cancelling must preserve the note. After successful retry, ordinary navigation should no longer warn. Force-stop/power loss is not covered by this warning.
+6. **Regression:** repeat the 0.24.0 reminder, Health Connect/Inspire 3, biometrics, actual share destination, offline and production screenshot-protection checks below. Record exact device/OS/build and results.
+
+The [review](accessibility-recovery-review-2026-10-30.md) records the reproduced faults, implemented protections and remaining recovery limitations. Automated and browser checks are separate from physical-device results.
+
 ## 0.24.0 privacy and store preparation
 
 Back up first, then install `artifacts/android/trifelle-preview-0.24.0-arm64-v8a.apk` (**code 29**) over the existing preview. Keep the app and its storage; do not uninstall. This includes the 0.23.0 storage migration, so do not downgrade after saving. Use fictional records for failure and deletion checks.

@@ -1,6 +1,6 @@
 # Trifelle Google Play release plan
 
-Updated October 30, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.24.0 / build 29**. Cloud sync and closed-app wearable syncing remain deferred.
+Updated October 30, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.25.0 / build 30**. Cloud sync and closed-app wearable syncing remain deferred.
 
 ## Publisher and account
 
@@ -41,7 +41,7 @@ Next account step: establish what verifiable business identity the owner can use
 | Supported Android     | Preview manifest: minimum API 26, target API 36                                                                                | Exercise oldest supported Android and current Pixel/Samsung versions; record exact OS/build.                                                                               |
 | Current target policy | API 36 meets the phone-app requirement effective August 31, 2026                                                               | Recheck policy at submission. [Official target requirements](https://support.google.com/googleplay/android-developer/answer/11926878?hl=en).                               |
 | Native packaging      | Signed preview, production AAB/APK and bundletool-generated APK; all native ELF segments and APK ZIPs pass 16 KiB alignment    | Actual 16 KiB runtime, generated split/Play installation, signing recovery and Play App Signing. Local packaging checks do not establish delivery or device compatibility. |
-| Journal safety        | 275 automated checks; file-store failure injection; encrypted synthetic journal above 6 MiB round-trips                        | Real Android update/save/restart, low storage, interruptions and backup restore. Check large attachment-heavy histories on the Flip5.                                      |
+| Journal safety        | 278 automated checks; file-store failure injection; encrypted synthetic journal above 6 MiB round-trips                        | Real Android update/save/restart, low storage, interruptions and backup restore. Check large attachment-heavy histories on the Flip5.                                      |
 | Permissions           | Final Release allowlist verified; direct networking, push/referrer, broad storage/overlay and unused badge permissions removed | Phone Health Connect, reminder, picker/share and external-link operation after changes; no background sleep access requested.                                              |
 | App data/privacy      | SDK/source inventory; disabled Firebase initialization; compiled backup/transfer exclusions verified                           | Real OEM transfer/recovery behavior and device execution; confirm final Data safety answers including support handling.                                                    |
 | Health declarations   | Experimental prediction disclaimer, shared full policy and prepared sleep/history purpose statement                            | Enter final Health apps/Health Connect declarations and public policy URL; obtain production permission approval.                                                          |
@@ -61,4 +61,4 @@ For each test record, capture app version/code, device/OS, installation source, 
 
 ## Next development slice
 
-Consolidate [0.24.0 device results](android-testing.md#0240-privacy-and-store-preparation), finish accessibility/recovery checks and prepare concrete store screenshot/feature-graphic proposals for approval. Resolve public policy hosting, upload-key recovery and the organization's verification route before Play testing. Exact price/countries and final publication remain owner choices, not assumptions copied from Worthward.
+Consolidate [0.25.0 device results](android-testing.md#0250-accessibility-and-recovery), finish the remaining native checks from the [accessibility/recovery review](accessibility-recovery-review-2026-10-30.md) and prepare concrete store screenshot/feature-graphic proposals for approval. Resolve public policy hosting, upload-key recovery and the organization's verification route before Play testing. Exact price/countries and final publication remain owner choices, not assumptions copied from Worthward.
