@@ -22,6 +22,7 @@ import { hasEntry, FLOW_LABELS, type Journal } from '../domain/journal';
 import { cycleDayLookup, flowState } from '../domain/history';
 import { Button, Chip } from './components';
 import { useTheme } from './theme';
+import { CalendarWeeks } from './CalendarWeeks';
 
 export type CalendarView = 'year' | 'month';
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -52,15 +53,15 @@ function DayGrid({
             key={index}
             style={[
               common.small,
-              { width: `${100 / 7}%`, textAlign: 'center', fontSize: mini ? 9 : 11 },
+              { flex: 1, minWidth: 0, textAlign: 'center', fontSize: mini ? 9 : 11 },
             ]}
           >
             {label}
           </Text>
         ))}
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {monthCells(month).map((day, index) => {
+      <CalendarWeeks month={month}>
+        {(day, index) => {
           const medicalCount = day
             ? journal.medicalRecords.filter((record) => record.date === day).length
             : 0;
@@ -113,7 +114,8 @@ function DayGrid({
             <View
               key={day ?? `blank-${index}`}
               style={{
-                width: `${100 / 7}%`,
+                flex: 1,
+                minWidth: 0,
                 height: mini ? 26 : cellHeight,
                 padding: mini ? 1 : 2,
               }}
@@ -157,8 +159,8 @@ function DayGrid({
                 ))}
             </View>
           );
-        })}
-      </View>
+        }}
+      </CalendarWeeks>
     </>
   );
 }

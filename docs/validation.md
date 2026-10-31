@@ -1,8 +1,27 @@
 # Validation record
 
+## Approved Android artwork and calendar correction — October 31, 2026
+
+The owner approved **A · Clover & cream**, including its feature composition, six captions and ordering. The [finished pack](design/play-store-2026-10-31/android/README.md) uses real native captures of **0.27.1 / build 33** on a disposable AOSP Android 16 / API 36 x86_64 emulator with 42 fictional entries. Production privacy settings remain unchanged; the existing preview screenshot allowance supplies the captures. No tester records were read and nothing was uploaded to Play.
+
+Native inspection reproduced a 0.27.0 calendar defect: seven fractional percentage cells wrapped after six columns, putting October 3 under Sunday. Month, annual mini-calendars and the period picker now use explicit seven-cell weeks. Dates, storage and journal format are unchanged. `pnpm check` passes **340/340** tests, including TypeScript; production web/Android/iOS JavaScript exports pass. The isolated Chrome check verifies all October weekday positions at **320/390/1280** widths, the period picker, and six screen captures without page errors.
+
+The Android preview updates from 0.27.0 and reopens its fictional journal. Native UI bounds verify all 31 October dates at **400 and 420 dpi**, and the period picker at 400 dpi. **480 dpi / 130% system text** preserves weekday positions and week wrapping across two scroll positions, including October 31. The annual overview was visually checked around January/February and September/October, and selecting October opens that month. The repeatable read-only `scripts/audit-calendar-layout.py` checks UI Automator dumps; those fictional dumps and temporary screenshots stay in ignored `artifacts/`. This is bounded emulator evidence, not TalkBack, rotation/folding, biometrics, Health Connect, reminders or a physical-phone pass.
+
+**Remaining visual observation:** at 480 dpi / 130% text (360 dp width), the bottom **Medications** label breaks before its final letter. The tab remains usable; no calendar date is lost. Keep this pre-existing navigation-text issue in the next accessibility polish pass and phone checks; this record does not claim complete large-text validation.
+
+All seven finished artwork files pass their required dimensions, RGB/no-alpha, size below 8 MiB, output/source hash checks and alt text of at most 140 characters. All six source captures and final feature/sequence were visually inspected. The gallery loads all six images, supports its keyboard control and has no horizontal overflow or page errors at **320/736/1280** widths. The pack includes the approved 512-pixel icon and listing/approval/provenance/checksum records. Historical browser proposals remain separate.
+
+| Preview artifact                        |      Bytes | SHA-256                                                            |
+| --------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `trifelle-preview-0.27.1-arm64-v8a.apk` | 60,855,512 | `b2de228b02a7d7f930834b455eb3700d021e777f5154974597922cd1979acb58` |
+| `trifelle-preview-0.27.1-x86_64.apk`    | 61,415,290 | `e2cc3817feac169aad41838ad86eb15a8e8949ac77f780df94507645aaf0e23f` |
+
+Both APKs pass package/version/code, release-permission, backup-exclusion, preview-screenshot and 16 KiB ELF/ZIP alignment audits. The ARM64 APK signature has the unchanged preview certificate, was copied to the locally configured testing folder and matches the source SHA-256. Cloud-drive sync was not verified. The previous **0.27.0 store AAB does not contain this patch** and must be rebuilt/audited before upload. No native iOS rebuild, store delivery, 1.0 decision or new physical-device pass is claimed. Follow the [0.27.1 phone checklist](android-testing.md#0271-calendar-weekday-alignment).
+
 ## Play presentation proposals — October 31, 2026
 
-Two [review-only directions](design/play-store-2026-10-31/README.md) supply a feature graphic and six portrait compositions each, reusing approved Trifelle vectors. The six source captures come from the production 0.27.0 mobile web interface in an isolated Chrome context with fictional records. No application source/configuration changes or Android capture pass are implied.
+Historical evidence before the subsequent A approval above: two [review-only directions](design/play-store-2026-10-31/README.md) supply a feature graphic and six portrait compositions each, reusing approved Trifelle vectors. The six source captures come from the production 0.27.0 mobile web interface in an isolated Chrome context with fictional records. No application source/configuration changes or Android capture pass are implied.
 
 All **14** individual assets pass the intended dimensions (1024 × 500 or 1080 × 1920), RGB/no-alpha, size below 8 MiB and alt text at most 140 characters. Source hashes match the capture provenance. Actual captures and composed feature graphics/boards/sequence were visually inspected. The review gallery passes both directions, image decoding, keyboard switching and no horizontal overflow at **320/736/1280** widths with no page errors. Source/render scripts are repeatable; temporary QA evidence stays under ignored `artifacts/`. Formatting and Git whitespace checks pass. No new app tests, native builds, device validation, Play upload or publication are claimed; design approval and checked Android replacement captures remain required.
 

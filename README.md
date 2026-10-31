@@ -14,7 +14,9 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
-**Store presentation for review:** [Clover & cream and Plum & petal](docs/design/play-store-2026-10-31/README.md) propose two feature graphics and matching six-screen sets, using fictional 0.27.0 mobile-web captures. Visual approval and final Android capture verification remain pending; no app appearance or release change is included.
+**Approved store presentation:** [A · Clover & cream](docs/design/play-store-2026-10-31/android/index.html) now has a feature graphic and six portrait assets with actual Android emulator captures and fictional records. The owner approved its composition, captions and ordering. Nothing has been uploaded or published.
+
+**Preview 0.27.1 / code 33** fixes native calendar wrapping that could put Saturday in the next row. Month, annual mini-calendars and the period picker now keep exactly seven cells per week. [Evidence and artwork](docs/design/play-store-2026-10-31/android/README.md) · [Phone checks](docs/android-testing.md#0271-calendar-weekday-alignment). The Android emulator check is separate from pending Pixel/Flip5 confirmation.
 
 **Preview 0.27.0 / code 32** adds verified browser migration to IndexedDB and removes the previously observed localStorage ceiling for the encrypted journal. Real-browser tests now restore, save, reload, unlock and export a roughly 7.9 MB fictional vault. Missing/unavailable storage remains a visible error; interrupted migration is retryable. [Migration and evidence](docs/browser-storage-migration-2026-10-31.md) · [Update checks](docs/android-testing.md#0270-browser-storage-and-native-regression). This milestone primarily improves the computer/browser app; native device validation remains pending.
 

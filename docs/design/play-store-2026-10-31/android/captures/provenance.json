@@ -1,0 +1,45 @@
+{
+  "purpose": "Approved Clover & cream store artwork. Actual Android emulator captures; not a physical-phone or Play-delivered test.",
+  "applicationVersion": "0.27.1",
+  "versionCode": 33,
+  "date": "2026-10-31",
+  "source": "Release-signed Android preview, installed over 0.27.0 on a disposable AOSP Android 16 / API 36 x86_64 emulator. Native UI, captured by adb exec-out screencap -p.",
+  "package": "com.liambic.cycletracker.preview",
+  "apkSha256": "e2cc3817feac169aad41838ad86eb15a8e8949ac77f780df94507645aaf0e23f",
+  "data": "Built-in demoJournal(2026-10-31), 42 fictional entries, Cramps/Fatigue/Bloating pinned; restored through the normal encrypted-backup flow. No tester records.",
+  "display": {
+    "widthPixels": 1080,
+    "heightPixels": 1920,
+    "densityDpi": 400,
+    "fontScale": 1.0,
+    "appearance": "light"
+  },
+  "captureEdits": "None. Normal navigation and scrolling only. Posters scale the complete PNG; feature graphic crops a calendar excerpt.",
+  "periodForm": "October 21\u201325 selected but not saved; existing fictional period records retained.",
+  "captures": [
+    {
+      "file": "01-calendar.png",
+      "sha256": "62f1f54a834f98d69c0ce381bc9dce9f4bd6f7bf834fc638b031f78cdb141c82"
+    },
+    {
+      "file": "02-period.png",
+      "sha256": "122b93b9f6b66da927c89f8239c57eb3da045bcaab83e8166aec8480dd16adc8"
+    },
+    {
+      "file": "03-daily.png",
+      "sha256": "7275630709220b5703d3d0a6dea9f6b6123f606812314b9e86e14a8279eb0cf2"
+    },
+    {
+      "file": "04-history.png",
+      "sha256": "fa5e582746c0f63a149d99adbd35c934219ded3848a4d6ca7623f95e25aa2dc2"
+    },
+    {
+      "file": "05-appearance.png",
+      "sha256": "430a8e782817cc8da91bdbd6314be22ea8a7dfe88b83a5de6843cf33d9c87a50"
+    },
+    {
+      "file": "06-backup.png",
+      "sha256": "1b6f102b9e2cfa29087ce2fcda8c19e7f0b50eb64c808c7d6326346826508686"
+    }
+  ]
+}

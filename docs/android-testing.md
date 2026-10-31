@@ -1,5 +1,15 @@
 # Android preview testing
 
+## 0.27.1 calendar weekday alignment
+
+Update with `artifacts/android/trifelle-preview-0.27.1-arm64-v8a.apk` (**code 33**), also copied with a verified hash to the configured testing folder. Back up first and install over the current preview without clearing storage. This fixes a reproduced Android layout defect; dates and journal format are unchanged.
+
+1. In October 2026, confirm **1 is Thursday, 3 is Saturday and 4 is Sunday**. Every week has seven columns; October 31 is reachable. Check another month, the annual mini-calendars and both Start/Finish pickers in Add period.
+2. Repeat at larger Android display/text settings and after Flip5 fold/reopen or rotation. Dates must stay under their weekday headings. Scroll to the final row and open the intended day's journal. Record navigation-label wrapping too: the emulator still wraps the final letter of Medications at 360 dp / 130% text.
+3. Check update retention, passphrase/biometrics, edit/save/restart and backup export. Continue the outstanding recovery/accessibility, reminder and Inspire 3 checks below.
+
+Automated tests, browser layout checks and the Android 16/API 36 emulator evidence are recorded separately in [validation](validation.md). No new physical-phone pass is claimed.
+
 ## 0.27.0 browser storage and native regression
 
 The matching preview is `artifacts/android/trifelle-preview-0.27.0-arm64-v8a.apk` (**code 32**). Back up before updating over the existing preview. Keep its storage and original signing identity; do not uninstall or downgrade.

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Pressable, Text, View } from 'react-native';
-import { formatDay, monthCells, monthKey, daysBetween, type Day } from '../domain/dates';
+import { formatDay, monthKey, daysBetween, type Day } from '../domain/dates';
 import { FLOW_LABELS, type Flow, type Journal } from '../domain/journal';
 import { applyPeriodRange } from '../domain/periodRange';
 import { Button, Chip } from './components';
 import { useTheme } from './theme';
+import { CalendarWeeks } from './CalendarWeeks';
 
 const label = (date: Day) => formatDay(date, { month: 'short', day: 'numeric', year: 'numeric' });
 export function PeriodRangeEditor({
@@ -162,18 +163,18 @@ export function PeriodRangeEditor({
                     {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
                       <Text
                         key={i}
-                        style={[common.small, { width: `${100 / 7}%`, textAlign: 'center' }]}
+                        style={[common.small, { flex: 1, minWidth: 0, textAlign: 'center' }]}
                       >
                         {day}
                       </Text>
                     ))}
                   </View>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    {monthCells(month).map((day, i) => {
+                  <CalendarWeeks month={month}>
+                    {(day, i) => {
                       const selected = !!day && (day === start || day === end);
                       const inRange = !!day && !!start && !!end && day >= start && day <= end;
                       return (
-                        <View key={day ?? `blank${i}`} style={{ width: `${100 / 7}%`, padding: 1 }}>
+                        <View key={day ?? `blank${i}`} style={{ flex: 1, minWidth: 0, padding: 1 }}>
                           {day && (
                             <Pressable
                               accessibilityRole="button"
@@ -226,8 +227,8 @@ export function PeriodRangeEditor({
                           )}
                         </View>
                       );
-                    })}
-                  </View>
+                    }}
+                  </CalendarWeeks>
                 </>
               )}
               {!!start && (

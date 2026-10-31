@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Trifelle · Clover &amp; cream</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #fbf7f5;
+        color: #50394a;
+        font-family: system-ui, sans-serif;
+      }
+      main {
+        max-width: 1180px;
+        margin: auto;
+        padding: 32px 20px;
+      }
+      h1 {
+        font:
+          38px Georgia,
+          serif;
+        margin: 12px 0;
+      }
+      p {
+        line-height: 1.55;
+        max-width: 850px;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 24px 0;
+      }
+      button {
+        padding: 14px 20px;
+        font: inherit;
+        border: 1px solid #604054;
+        border-radius: 8px;
+        color: #604054;
+        background: transparent;
+        cursor: pointer;
+      }
+      button[aria-selected='true'] {
+        background: #604054;
+        color: #fbf7f5;
+      }
+      :focus-visible {
+        outline: 3px solid #38634c;
+        outline-offset: 3px;
+      }
+      .feature {
+        display: block;
+        width: 100%;
+        max-width: 1024px;
+        margin: 24px auto;
+      }
+      section[hidden] {
+        display: none;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+      }
+      figure {
+        margin: 0;
+      }
+      figure img {
+        width: 100%;
+        display: block;
+      }
+      figcaption {
+        font-size: 15px;
+        padding: 12px 0 24px;
+      }
+      a {
+        color: inherit;
+      }
+      .kicker {
+        font-size: 13px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .note {
+        border-top: 1px solid #dbcfd4;
+        padding-top: 18px;
+      }
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 480px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        h1 {
+          font-size: 31px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="kicker">Plowden Digital · approved artwork</div>
+      <h1>Trifelle, on the shelf.</h1>
+      <p>
+        The approved Clover &amp; cream direction, using actual Android emulator captures of
+        Trifelle 0.27.1 with fictional records. These assets are prepared for the store listing;
+        nothing has been uploaded or published.
+      </p>
+      <div class="toolbar" role="tablist" aria-label="Design direction">
+        <button
+          id="tab-clover-cream"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="clover-cream"
+          data-target="clover-cream"
+        >
+          A · Clover &amp; cream (approved)
+        </button>
+      </div>
+      <section id="clover-cream" role="tabpanel" aria-labelledby="tab-clover-cream">
+        <h2>Clover &amp; cream</h2>
+        <p>Ivory, soft sage and the existing plum mark. Approved October 31, 2026.</p>
+        <a href="clover-cream-feature.png"
+          ><img
+            class="feature"
+            src="clover-cream-feature.png"
+            alt="Trifelle: Your cycle. Your space. A period and wellbeing journal, with a fictional calendar excerpt. Clover &amp; cream."
+        /></a>
+        <div class="grid">
+          <figure>
+            <a href="clover-cream-01-calendar.png"
+              ><img
+                loading="lazy"
+                src="clover-cream-01-calendar.png"
+                alt="Trifelle calendar showing fictional period days in October, with month navigation and daily journal access."
+            /></a>
+            <figcaption>1. Your cycle, clearly recorded.</figcaption>
+          </figure>
+          <figure>
+            <a href="clover-cream-02-period.png"
+              ><img
+                loading="lazy"
+                src="clover-cream-02-period.png"
+                alt="Add a period with October 21 and 25 selected as its start and finish, with optional flow details and Save period."
+            /></a>
+            <figcaption>2. Log a period in one go.</figcaption>
+          </figure>
+          <figure>
+            <a href="clover-cream-03-daily.png"
+              ><img
+                loading="lazy"
+                src="clover-cream-03-daily.png"
+                alt="Daily journal with a fictional bloating rating, pinned symptoms, daily observations, medication and sleep sections."
+            /></a>
+            <figcaption>3. Space for how you feel.</figcaption>
+          </figure>
+          <figure>
+            <a href="clover-cream-04-history.png"
+              ><img
+                loading="lazy"
+                src="clover-cream-04-history.png"
+                alt="History chart of fictional recorded cycle lengths, with average, shortest and longest intervals in days."
+            /></a>
+            <figcaption>4. See your recorded patterns.</figcaption>
+          </figure>
+          <figure>
+            <a href="clover-cream-05-appearance.png"
+              ><img
+                loading="lazy"
+                src="clover-cream-05-appearance.png"
+                alt="Appearance settings showing the included color palettes, with Plum selected."
+            /></a>
+            <figcaption>5. A little more you.</figcaption>
+          </figure>
+          <figure>
+            <a href="clover-cream-06-backup.png"
+              ><img
+                loading="lazy"
+                src="clover-cream-06-backup.png"
+                alt="Keep a copy settings with encrypted backup export and the reminder to retain the backup passphrase."
+            /></a>
+            <figcaption>6. Keep a copy. Keep control.</figcaption>
+          </figure>
+        </div>
+      </section>
+      <p class="note">
+        Approval covers the color treatment, feature-graphic composition, captions and screen
+        sequence. It does not change the app’s themes or authorize publication. Android emulator
+        evidence is separate from physical-phone, wearable and Play-delivered validation.
+      </p>
+      <p>
+        <a href="https://support.google.com/googleplay/android-developer/answer/9866151?hl=en"
+          >Google Play preview-asset guidance</a
+        >
+        · 1024 × 500 feature graphic · 1080 × 1920 portraits.
+      </p>
+    </main>
+    <script>
+      const tabs = [...document.querySelectorAll('[role=tab]')];
+      function select(t) {
+        for (const tab of tabs) {
+          const active = tab === t;
+          tab.setAttribute('aria-selected', String(active));
+          document.getElementById(tab.dataset.target).hidden = !active;
+        }
+      }
+      for (const tab of tabs) {
+        tab.addEventListener('click', () => select(tab));
+        tab.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            const next =
+              tabs[
+                (tabs.indexOf(tab) + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length
+              ];
+            select(next);
+            next.focus();
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

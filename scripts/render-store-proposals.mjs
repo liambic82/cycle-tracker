@@ -1,13 +1,20 @@
-// Code-authored review compositions; no changes to application UI or store listing.
+// Reproduce historical proposals, or render the approved artwork from verified Android captures.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { format, resolveConfig } from 'prettier';
 import { TRIFELLE_LEAF, TRIFELLE_STEM } from '../src/brand/trifelle.ts';
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.TRIFELLE_PLAYWRIGHT_MODULE || 'playwright');
-const root = new URL('../docs/design/play-store-2026-10-31/', import.meta.url);
+const android = process.argv.includes('--android');
+const base = new URL('../docs/design/play-store-2026-10-31/', import.meta.url);
+const root = android ? new URL('android/', base) : base;
+const approval = JSON.parse(await readFile(new URL('approval.json', base), 'utf8'));
+if (approval.status !== 'approved' || approval.direction !== 'clover-cream')
+  throw new Error('Clover & cream approval is required.');
+const provenance = JSON.parse(await readFile(new URL('captures/provenance.json', root), 'utf8'));
 await mkdir(root, { recursive: true });
 const font = await readFile(new URL('../assets/fonts/NotoSans-Regular.ttf', import.meta.url));
 const bold = await readFile(new URL('../assets/fonts/NotoSans-Bold.ttf', import.meta.url));
@@ -22,7 +29,7 @@ const schemes = [
     id: 'clover-cream',
     name: 'Clover & cream',
     label: 'A',
-    description: 'Ivory, soft sage and the existing plum mark. Recommended.',
+    description: 'Ivory, soft sage and the existing plum mark. Approved October 31, 2026.',
     background: '#F7F4EA',
     ink: '#50394A',
     accent: '#D8E3D3',
@@ -34,7 +41,7 @@ const schemes = [
     id: 'plum-petal',
     name: 'Plum & petal',
     label: 'B',
-    description: 'Rose backgrounds and a deeper plum feature graphic.',
+    description: 'Rose backgrounds and a deeper plum feature graphic. Unselected alternative.',
     background: '#F3E4E9',
     ink: '#503447',
     accent: '#E4BACB',
@@ -42,7 +49,7 @@ const schemes = [
     feature: '#604054',
     featureInk: '#FBF7F5',
   },
-];
+].filter((scheme) => !android || scheme.id === approval.direction);
 const screens = [
   {
     id: '01-calendar',
@@ -88,7 +95,7 @@ for (const screen of screens)
     (await readFile(new URL(`captures/${screen.id}.png`, root))).toString('base64');
 const css = `@font-face{font-family:Noto;src:url(data:font/ttf;base64,${font.toString('base64')})}@font-face{font-family:Noto;src:url(data:font/ttf;base64,${bold.toString('base64')});font-weight:700}*{box-sizing:border-box}body{margin:0;font-family:Noto,Arial,sans-serif}.art{position:relative;overflow:hidden}.petal{position:absolute;pointer-events:none}.brand{position:absolute;display:flex;align-items:center;gap:14px;font:40px Georgia,serif}.brand svg{height:49px;width:49px}.screen{position:absolute;width:840px;height:auto;left:120px;top:368px;border-radius:22px;box-shadow:0 18px 48px #50394a1a;display:block}.heading{position:absolute;left:76px;top:130px;font-size:68px;font-weight:700;line-height:1.08;letter-spacing:-2.1px;margin:0}.sub{position:absolute;left:80px;top:293px;font-size:31px;line-height:1.3;margin:0;max-width:930px}.wordmark{font-family:Georgia,serif}.feature-title{position:absolute;top:175px;left:84px;font-family:Georgia,serif;font-size:65px;line-height:1.05;letter-spacing:-1.5px;margin:0}.feature-sub{position:absolute;left:88px;top:342px;font-size:22px;margin:0}.calendar-window{position:absolute;left:658px;top:78px;width:276px;height:350px;overflow:hidden;border-radius:16px;box-shadow:0 12px 28px #261f2826}.calendar-window img{width:100%;display:block;margin-top:-51px}.feature .brand{left:82px;top:81px;font-size:31px}.feature .brand svg{width:35px;height:35px}`;
 const document = (html) =>
-  `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>${css}</style></head><body>${html}</body></html>`;
+  `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>${css}${android ? '.calendar-window{top:94px;height:312px}.calendar-window img{margin-top:-62px}' : ''}</style></head><body>${html}</body></html>`;
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const files = [];
 try {
@@ -115,7 +122,17 @@ try {
     if (metadata.width !== width || metadata.height !== height || metadata.hasAlpha)
       throw new Error('Invalid asset dimensions/alpha: ' + filename);
     if (alt.length > 140) throw new Error('Alt text too long: ' + filename);
-    files.push({ file: filename, width, height, alpha: false, alt });
+    const bytes = await readFile(new URL(filename, root));
+    if (bytes.length >= 8 * 1024 * 1024) throw new Error('Asset exceeds 8 MiB: ' + filename);
+    files.push({
+      file: filename,
+      width,
+      height,
+      alpha: false,
+      alt,
+      bytes: bytes.length,
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+    });
   };
   for (const scheme of schemes) {
     const { id, background, ink, accent } = scheme;
@@ -172,7 +189,7 @@ for (const scheme of schemes) {
     });
   overlays.push({
     input: Buffer.from(
-      `<svg width="1200" height="75"><text x="42" y="48" font-family="Arial" font-size="29" fill="#50394A">${scheme.label} · ${escape(scheme.name)} · design proposal</text></svg>`,
+      `<svg width="1200" height="75"><text x="42" y="48" font-family="Arial" font-size="29" fill="#50394A">${scheme.label} · ${escape(scheme.name)} · ${android ? 'approved Android artwork' : 'historical proposal'}</text></svg>`,
     ),
     left: 0,
     top: 0,
@@ -195,7 +212,7 @@ for (const [index, screen] of screens.entries())
   });
 grid.push({
   input: Buffer.from(
-    '<svg width="1716" height="60"><text x="24" y="40" font-family="Arial" font-size="26" fill="#50394A">Clover &amp; cream · proposed six-screen sequence · fictional records</text></svg>',
+    `<svg width="1716" height="60"><text x="24" y="40" font-family="Arial" font-size="26" fill="#50394A">Clover &amp; cream · ${android ? 'approved Android sequence' : 'historical browser sequence'} · fictional records</text></svg>`,
   ),
   left: 0,
   top: 0,
@@ -205,7 +222,7 @@ await sharp({ create: { width: 1716, height: 2038, channels: 3, background: '#FB
   .png()
   .toFile(fileURLToPath(new URL('clover-cream-sequence.png', root)));
 
-const gallery = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trifelle · Play design proposals</title><style>*{box-sizing:border-box}body{margin:0;background:#FBF7F5;color:#50394A;font-family:system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:32px 20px}h1{font:38px Georgia,serif;margin:12px 0}p{line-height:1.55;max-width:850px}.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}button{padding:14px 20px;font:inherit;border:1px solid #604054;border-radius:8px;color:#604054;background:transparent;cursor:pointer}button[aria-selected=true]{background:#604054;color:#FBF7F5}:focus-visible{outline:3px solid #38634C;outline-offset:3px}.feature{display:block;width:100%;max-width:1024px;margin:24px auto}section[hidden]{display:none}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}figure{margin:0}figure img{width:100%;display:block}figcaption{font-size:15px;padding:12px 0 24px}a{color:inherit}.kicker{font-size:13px;letter-spacing:.1em;text-transform:uppercase}.note{border-top:1px solid #DBCFD4;padding-top:18px}@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:480px){.grid{grid-template-columns:1fr}h1{font-size:31px}}</style></head><body><main><div class="kicker">Plowden Digital · review only</div><h1>Trifelle, on the shelf.</h1><p>Two visual directions using the approved clover identity. Screens are real captures of the 0.27.0 mobile browser interface with fictional records. Final store uploads require approval and verified Android captures.</p><div class="toolbar" role="tablist" aria-label="Design direction">${schemes.map((s, i) => `<button id="tab-${s.id}" type="button" role="tab" aria-selected="${i === 0}" aria-controls="${s.id}" data-target="${s.id}">${s.label} · ${escape(s.name)}${i === 0 ? ' (recommended)' : ''}</button>`).join('')}</div>${schemes.map((s, i) => `<section id="${s.id}" role="tabpanel" aria-labelledby="tab-${s.id}" ${i ? 'hidden' : ''}><h2>${escape(s.name)}</h2><p>${escape(s.description)}</p><a href="${s.id}-feature.png"><img class="feature" src="${s.id}-feature.png" alt="${escape(files.find((f) => f.file === s.id + '-feature.png').alt)}"></a><div class="grid">${screens.map((screen, j) => `<figure><a href="${s.id}-${screen.id}.png"><img loading="lazy" src="${s.id}-${screen.id}.png" alt="${escape(screen.alt)}"></a><figcaption>${j + 1}. ${escape(screen.title.join(' '))}</figcaption></figure>`).join('')}</div></section>`).join('')}<p class="note">Approval covers the color treatment, feature-graphic composition, captions and screen sequence. It does not change the app’s themes or authorize publication. Sleep permissions, biometric prompts and reminder delivery will use native Android evidence.</p><p><a href="https://support.google.com/googleplay/android-developer/answer/9866151?hl=en">Google Play preview-asset guidance</a> · 1024 × 500 feature graphic · 1080 × 1920 portraits.</p></main><script>const tabs=[...document.querySelectorAll('[role=tab]')];function select(t){for(const tab of tabs){const active=tab===t;tab.setAttribute('aria-selected',String(active));document.getElementById(tab.dataset.target).hidden=!active;}}for(const tab of tabs){tab.addEventListener('click',()=>select(tab));tab.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();const next=tabs[(tabs.indexOf(tab)+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];select(next);next.focus();}});}</script></body></html>`;
+const gallery = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trifelle · Clover &amp; cream</title><style>*{box-sizing:border-box}body{margin:0;background:#FBF7F5;color:#50394A;font-family:system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:32px 20px}h1{font:38px Georgia,serif;margin:12px 0}p{line-height:1.55;max-width:850px}.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}button{padding:14px 20px;font:inherit;border:1px solid #604054;border-radius:8px;color:#604054;background:transparent;cursor:pointer}button[aria-selected=true]{background:#604054;color:#FBF7F5}:focus-visible{outline:3px solid #38634C;outline-offset:3px}.feature{display:block;width:100%;max-width:1024px;margin:24px auto}section[hidden]{display:none}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}figure{margin:0}figure img{width:100%;display:block}figcaption{font-size:15px;padding:12px 0 24px}a{color:inherit}.kicker{font-size:13px;letter-spacing:.1em;text-transform:uppercase}.note{border-top:1px solid #DBCFD4;padding-top:18px}@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:480px){.grid{grid-template-columns:1fr}h1{font-size:31px}}</style></head><body><main><div class="kicker">Plowden Digital · ${android ? 'approved artwork' : 'design archive'}</div><h1>Trifelle, on the shelf.</h1><p>${android ? `The approved Clover &amp; cream direction, using actual Android emulator captures of Trifelle ${escape(provenance.applicationVersion)} with fictional records. These assets are prepared for the store listing; nothing has been uploaded or published.` : `Clover &amp; cream was approved on October 31, 2026. These historical 0.27.0 mobile-browser proposals preserve the design decision. <a href="android/">Open the finished Android artwork.</a>`}</p><div class="toolbar" role="tablist" aria-label="Design direction">${schemes.map((s, i) => `<button id="tab-${s.id}" type="button" role="tab" aria-selected="${i === 0}" aria-controls="${s.id}" data-target="${s.id}">${s.label} · ${escape(s.name)}${i === 0 ? ' (approved)' : ''}</button>`).join('')}</div>${schemes.map((s, i) => `<section id="${s.id}" role="tabpanel" aria-labelledby="tab-${s.id}" ${i ? 'hidden' : ''}><h2>${escape(s.name)}</h2><p>${escape(s.description)}</p><a href="${s.id}-feature.png"><img class="feature" src="${s.id}-feature.png" alt="${escape(files.find((f) => f.file === s.id + '-feature.png').alt)}"></a><div class="grid">${screens.map((screen, j) => `<figure><a href="${s.id}-${screen.id}.png"><img loading="lazy" src="${s.id}-${screen.id}.png" alt="${escape(screen.alt)}"></a><figcaption>${j + 1}. ${escape(screen.title.join(' '))}</figcaption></figure>`).join('')}</div></section>`).join('')}<p class="note">Approval covers the color treatment, feature-graphic composition, captions and screen sequence. It does not change the app’s themes or authorize publication. Android emulator evidence is separate from physical-phone, wearable and Play-delivered validation.</p><p><a href="https://support.google.com/googleplay/android-developer/answer/9866151?hl=en">Google Play preview-asset guidance</a> · 1024 × 500 feature graphic · 1080 × 1920 portraits.</p></main><script>const tabs=[...document.querySelectorAll('[role=tab]')];function select(t){for(const tab of tabs){const active=tab===t;tab.setAttribute('aria-selected',String(active));document.getElementById(tab.dataset.target).hidden=!active;}}for(const tab of tabs){tab.addEventListener('click',()=>select(tab));tab.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();const next=tabs[(tabs.indexOf(tab)+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];select(next);next.focus();}});}</script></body></html>`;
 const formatting = await resolveConfig(fileURLToPath(new URL('index.html', root)));
 await writeFile(
   new URL('index.html', root),
@@ -214,10 +231,19 @@ await writeFile(
 await writeFile(
   new URL('assets.json', root),
   await format(
-    JSON.stringify({ status: 'proposed; not approved or uploaded', schemes, screens, files }),
+    JSON.stringify({
+      status: android
+        ? 'approved Clover & cream; Android emulator captures; not uploaded'
+        : 'historical browser proposals; Clover & cream selected',
+      applicationVersion: provenance.applicationVersion,
+      approval: android ? '../approval.json' : 'approval.json',
+      schemes,
+      screens,
+      files,
+    }),
     { ...formatting, parser: 'json' },
   ),
 );
 console.log(
-  `Rendered ${files.length} RGB proposal assets, two review boards and a six-screen sequence.`,
+  `Rendered ${files.length} ${android ? 'approved Android' : 'historical browser'} RGB assets, ${schemes.length} review boards and a six-screen sequence.`,
 );

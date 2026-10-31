@@ -1,0 +1,122 @@
+{
+  "status": "approved Clover & cream; Android emulator captures; not uploaded",
+  "applicationVersion": "0.27.1",
+  "approval": "../approval.json",
+  "schemes": [
+    {
+      "id": "clover-cream",
+      "name": "Clover & cream",
+      "label": "A",
+      "description": "Ivory, soft sage and the existing plum mark. Approved October 31, 2026.",
+      "background": "#F7F4EA",
+      "ink": "#50394A",
+      "accent": "#D8E3D3",
+      "leaf": "#7D967D",
+      "feature": "#F1F0E4",
+      "featureInk": "#50394A"
+    }
+  ],
+  "screens": [
+    {
+      "id": "01-calendar",
+      "title": ["Your cycle,", "clearly recorded."],
+      "subtitle": "Calendar, flow and daily notes.",
+      "alt": "Trifelle calendar showing fictional period days in October, with month navigation and daily journal access."
+    },
+    {
+      "id": "02-period",
+      "title": ["Log a period", "in one go."],
+      "subtitle": "Start and finish. Details can wait.",
+      "alt": "Add a period with October 21 and 25 selected as its start and finish, with optional flow details and Save period."
+    },
+    {
+      "id": "03-daily",
+      "title": ["Space for how", "you feel."],
+      "subtitle": "Keep symptoms and observations together.",
+      "alt": "Daily journal with a fictional bloating rating, pinned symptoms, daily observations, medication and sleep sections."
+    },
+    {
+      "id": "04-history",
+      "title": ["See your", "recorded patterns."],
+      "subtitle": "Review cycle lengths over time.",
+      "alt": "History chart of fictional recorded cycle lengths, with average, shortest and longest intervals in days."
+    },
+    {
+      "id": "05-appearance",
+      "title": ["A little more", "you."],
+      "subtitle": "Choose colors that feel like yours.",
+      "alt": "Appearance settings showing the included color palettes, with Plum selected."
+    },
+    {
+      "id": "06-backup",
+      "title": ["Keep a copy.", "Keep control."],
+      "subtitle": "Export your journal as an encrypted backup.",
+      "alt": "Keep a copy settings with encrypted backup export and the reminder to retain the backup passphrase."
+    }
+  ],
+  "files": [
+    {
+      "file": "clover-cream-feature.png",
+      "width": 1024,
+      "height": 500,
+      "alpha": false,
+      "alt": "Trifelle: Your cycle. Your space. A period and wellbeing journal, with a fictional calendar excerpt. Clover & cream.",
+      "bytes": 53259,
+      "sha256": "24b83f3f4a0cdfe84272b7db78ed63918b7f6353fd279a20d289e3ff036c52b2"
+    },
+    {
+      "file": "clover-cream-01-calendar.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Trifelle calendar showing fictional period days in October, with month navigation and daily journal access.",
+      "bytes": 160535,
+      "sha256": "851c14e7bdef300bc4443ee9dee19a13c7f4468b2b8d074b8733565eeb894589"
+    },
+    {
+      "file": "clover-cream-02-period.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Add a period with October 21 and 25 selected as its start and finish, with optional flow details and Save period.",
+      "bytes": 193689,
+      "sha256": "a0c5c86db8c528b2c958482bd0ffa208b8ecebdff483a18ef8c400818db660c0"
+    },
+    {
+      "file": "clover-cream-03-daily.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Daily journal with a fictional bloating rating, pinned symptoms, daily observations, medication and sleep sections.",
+      "bytes": 155641,
+      "sha256": "a4199b9b50afcac9096685b986e41b3e323fb260ed318362d113d68131941498"
+    },
+    {
+      "file": "clover-cream-04-history.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "History chart of fictional recorded cycle lengths, with average, shortest and longest intervals in days.",
+      "bytes": 179844,
+      "sha256": "a231d0f84cb036a9ffa826b9b350af20407181a8aee3c2b009aeb21788a57b42"
+    },
+    {
+      "file": "clover-cream-05-appearance.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Appearance settings showing the included color palettes, with Plum selected.",
+      "bytes": 167722,
+      "sha256": "c508ae48722c8be6995abec04342d86cec0bb647602a55b4fb18a2a3267c0887"
+    },
+    {
+      "file": "clover-cream-06-backup.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Keep a copy settings with encrypted backup export and the reminder to retain the backup passphrase.",
+      "bytes": 266276,
+      "sha256": "18058a6975fa82577ec88872a5df3644c618d68fa666da96d87f236d1b0dc555"
+    }
+  ]
+}
