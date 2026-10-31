@@ -95,7 +95,7 @@ function CycleApp() {
     return () => clearInterval(timer);
   }, []);
   useEffect(() => {
-    if (!state.journal) {
+    if (!state.journal || state.recoveryError) {
       setEditing(false);
       setLearning(false);
       setEstimating(false);
@@ -103,7 +103,7 @@ function CycleApp() {
       setPage('calendar');
       setCalendarView('month');
     }
-  }, [!!state.journal]);
+  }, [!!state.journal, state.recoveryError]);
   useEffect(() => {
     if ((!learning && !estimating) || page !== 'calendar') return;
     const listener = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -129,13 +129,15 @@ function CycleApp() {
         <BrandLoading />
       </View>
     );
-  if (!state.journal)
+  if (!state.journal || state.recoveryError)
     return (
       <AuthGate
-        exists={state.exists}
+        exists={state.exists || !!state.recoveryError}
         busy={state.busy}
         authProgress={state.authProgress}
         error={state.error}
+        recoveryError={state.recoveryError}
+        retryRecovery={state.retryRecovery}
         start={state.start}
         explore={state.explore}
         restore={state.restore}

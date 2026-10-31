@@ -1,6 +1,6 @@
 # Android store build and reviewer handoff
 
-Updated October 30, 2026. These commands build locally; none upload to Play. Current app version **0.25.0 / code 30** remains a pre-release version.
+Updated October 30, 2026. These commands build locally; none upload to Play. Current app version **0.26.0 / code 31** remains a pre-release version.
 
 ## Identities and signing
 
@@ -37,9 +37,9 @@ The initial upload key has already been generated on the development machine. `-
 Download [Google bundletool 1.18.3](https://github.com/google/bundletool/releases/tag/1.18.3) as `.tools/bundletool-all-1.18.3.jar`. Expected SHA-256: `a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29`. The validation helper checks this hash, passes the keystore password through stdin and creates an ignored universal APK from the AAB for inspection.
 
 ```powershell
-./scripts/validate-store-bundle.ps1 -Bundle artifacts/android-store/trifelle-0.25.0-upload.aab
-python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.25.0-upload.aab --version 0.25.0 --code 30 --java '<JDK>/bin/java.exe'
-python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.25.0-upload-bundletool-universal.apk --version 0.25.0 --code 30 --aapt '<SDK>/build-tools/36.0.0/aapt.exe' --zipalign '<SDK>/build-tools/36.0.0/zipalign.exe'
+./scripts/validate-store-bundle.ps1 -Bundle artifacts/android-store/trifelle-0.26.0-upload.aab
+python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.26.0-upload.aab --version 0.26.0 --code 31 --java '<JDK>/bin/java.exe'
+python scripts/audit-android-artifact.py artifacts/android-store/trifelle-0.26.0-upload-bundletool-universal.apk --version 0.26.0 --code 31 --aapt '<SDK>/build-tools/36.0.0/aapt.exe' --zipalign '<SDK>/build-tools/36.0.0/zipalign.exe'
 ```
 
 Use actual local SDK/JDK paths in place of the placeholders. Verify the AAB signature with `jarsigner -verify`; self-signed upload-certificate and missing timestamp notices are expected, but unsigned payload entries or invalid signatures are not acceptable. Verify APK signatures with `apksigner verify --print-certs`. The auditor checks CRCs, identity/version, embedded screenshot setting, release privacy controls, health scope, allowed permissions, 64-bit ABIs and 16 KiB ELF alignment. APKs additionally verify ZIP alignment and backup rules. It does not install the app or claim a real 16 KiB device pass.

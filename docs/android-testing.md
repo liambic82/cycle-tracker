@@ -1,5 +1,18 @@
 # Android preview testing
 
+## 0.26.0 interrupted recovery and large histories
+
+Back up first, then install `artifacts/android/trifelle-preview-0.26.0-arm64-v8a.apk` (**code 31**) over the current preview. Keep existing app storage and do not downgrade after the Android file-storage migration. The verified APK is also handed off through the owner's locally configured testing folder.
+
+1. **Update and ordinary use:** compare older/recent records, save several notes quickly, wait for Saved, lock/reopen and cold-start offline. Confirm the latest note, selected appearance and existing biometric access remain. Record save/unlock time and any visible pauses on Pixel 7 and Flip5.
+2. **Restore, disposable data:** restore a backup containing known fictional entries. Confirm those entries survive restart. Successful restore removes the app's saved photo and resets biometric/reminder convenience access and automatic-import opt-ins; re-enable them explicitly and test again. A wrong backup passphrase must leave the prior journal and its convenience settings intact.
+3. **Interrupted cleanup:** use a disposable journal only. If storage or OS cleanup fails, expect **Finish journal recovery**, rather than normal access or a false success message. Retry after resolving the failure; restart should also retry. Old reminder alerts can continue while cancellation fails. Never interrupt the only copy of real records to manufacture a failure. Automated stage-by-stage fault injection is covered separately.
+4. **Delete, disposable data:** confirm DELETE, restart and verify that no records return and a new journal can be created. Verify pending alerts and biometric access are cleared. A rejected journal deletion with readable storage keeps the original journal open and retryable. If storage cannot establish what happened, expect the recovery screen before access resumes.
+5. **Larger history and accessibility:** navigate several earlier years, open History, edit notes, export/reopen an encrypted backup and generate a selected report. Check Android's larger text/display settings, TalkBack, folding/reopening and rotation. Browser/Node timings do not establish this phone result.
+6. **Regression:** retain the reminder, Health Connect/Inspire 3, actual export destination, offline and production screenshot-protection checks from 0.24/0.25 below. Record exact device, OS, build and results; there is no new phone pass yet.
+
+See the [recovery and performance review](journal-recovery-performance-2026-10-30.md). Browser quotas can be lower than Android's 8 MiB vault cap; browser migration is separate follow-up work.
+
 ## 0.25.0 accessibility and recovery
 
 Make an encrypted backup, then update with `artifacts/android/trifelle-preview-0.25.0-arm64-v8a.apk` (**code 30**) without uninstalling or clearing storage. Package/signature and backup format remain unchanged. The 0.23.0 storage migration is included; do not downgrade after saving. Use fictional records and a disposable installation for failures or replacement tests.

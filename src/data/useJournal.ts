@@ -12,6 +12,7 @@ import { deleteEntry, undoEntryDeletion, type DeletedEntry } from '../domain/del
 import { emptyJournal, type Journal } from '../domain/journal';
 import { newKey, openVault, parseEnvelope, seal, type VaultKey } from '../domain/vault';
 import { JournalWriter, STORAGE_KEY } from './repository';
+import { JournalRecovery, JournalRecoveryRequired } from './journalRecovery';
 import { demoJournal } from './demo';
 import { acquireEditLease } from './lease';
 import { biometrics } from './biometrics';
@@ -25,6 +26,19 @@ const secureRandomBytes = (length: number) => getRandomValues(new Uint8Array(len
 
 export function useJournal() {
   const [photos] = useState(() => new PersonalBackgroundStore(AsyncStorage, secureRandomBytes));
+  const [recovery] = useState(
+    () =>
+      new JournalRecovery(
+        AsyncStorage,
+        () => journalStorage.getItem(STORAGE_KEY),
+        async () => {
+          await reminders.clear();
+          await biometrics.clear();
+          await photos.clearPersistent();
+        },
+      ),
+  );
+  const [recoveryError, setRecoveryError] = useState('');
   const photoSnapshot = useSyncExternalStore(
     photos.subscribe,
     photos.getSnapshot,
@@ -114,8 +128,8 @@ export function useJournal() {
   ]);
 
   useEffect(() => {
-    journalStorage
-      .getItem(STORAGE_KEY)
+    recoverIfPending()
+      .then(() => journalStorage.getItem(STORAGE_KEY))
       .then(async (value) => {
         setExists(value !== null);
         let salt: string | null = null;
@@ -126,7 +140,11 @@ export function useJournal() {
         }
         await refreshBiometrics(salt);
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err instanceof JournalRecoveryRequired) {
+          setRecoveryError(err.message);
+          return;
+        }
         // A read error is not proof of an empty device. Offer unlock/restore, not setup.
         setExists(true);
         setError(
@@ -141,6 +159,48 @@ export function useJournal() {
       releaseLease.current?.();
     };
   }, []);
+
+  async function recoverIfPending() {
+    if (!(await recovery.pending())) return;
+    let release: (() => void) | null = null;
+    try {
+      release = await acquireEditLease();
+      await recovery.resume();
+    } catch (err) {
+      if (err instanceof JournalRecoveryRequired) throw err;
+      throw new JournalRecoveryRequired();
+    } finally {
+      release?.();
+    }
+  }
+
+  async function retryRecovery() {
+    if (working.current) return;
+    working.current = true;
+    setBusy(true);
+    try {
+      await recoverIfPending();
+      const raw = await journalStorage.getItem(STORAGE_KEY);
+      setExists(raw !== null);
+      let salt: string | null = null;
+      try {
+        if (raw) salt = parseEnvelope(raw).salt;
+      } catch {
+        /* Unlock reports corruption. */
+      }
+      await refreshBiometrics(salt);
+      setRecoveryError('');
+      setError('');
+    } catch (err) {
+      setRecoveryError(
+        err instanceof JournalRecoveryRequired
+          ? err.message
+          : 'Recovery could not finish. Close any other Trifelle tabs, then retry.',
+      );
+    } finally {
+      finishWork();
+    }
+  }
 
   const setCurrent = (value: Journal | null) => {
     current.current = value;
@@ -292,7 +352,7 @@ export function useJournal() {
   }, []);
 
   const start = async (passphrase: string | null, create: boolean) => {
-    if (working.current || current.current) return;
+    if (working.current || current.current || recoveryError) return;
     working.current = true;
     setBusy(true);
     setError('');
@@ -303,6 +363,7 @@ export function useJournal() {
     const openingEpoch = backgroundEpoch.current;
     try {
       release = await acquireEditLease();
+      await recovery.resume();
       const raw = await journalStorage.getItem(STORAGE_KEY);
       // Never replace an existing vault when a second tab created it during onboarding.
       if (create && raw !== null) {
@@ -359,7 +420,8 @@ export function useJournal() {
       photos.close();
       openedKey?.key.fill(0);
       release?.();
-      setError(err instanceof Error ? err.message : 'Unable to open your journal.');
+      if (err instanceof JournalRecoveryRequired) setRecoveryError(err.message);
+      else setError(err instanceof Error ? err.message : 'Unable to open your journal.');
     } finally {
       setAuthProgress('Finishing up…');
       await refreshBiometrics(salt);
@@ -387,7 +449,7 @@ export function useJournal() {
   };
 
   const explore = () => {
-    if (working.current || current.current) return;
+    if (working.current || current.current || recoveryError) return;
     photos.openDemo();
     demoRef.current = true;
     setDemo(true);
@@ -460,15 +522,16 @@ export function useJournal() {
     setBusy(true);
     setError('');
     try {
-      await photos.clearPersistent();
-      await reminders.clear();
-      setReminderState(emptyReminderState(reminderBackend.available));
-      await biometrics.clear();
+      await recovery.change(null, () => writer.current!.erase());
       setBiometricEnabled(false);
-      await writer.current!.erase();
       endSession();
       setExists(false);
-    } catch {
+    } catch (err) {
+      if (err instanceof JournalRecoveryRequired) {
+        endSession();
+        setRecoveryError(err.message);
+        return;
+      }
       // Retain the open journal and Undo on failure so retry or backup remains possible.
       setStatus('Not saved');
       throw new Error('Your journal could not be deleted. It is still open. Please try again.');
@@ -578,14 +641,12 @@ export function useJournal() {
       restored.journal = resetRestoredAutomation(restored.journal);
       restoredKey = restored.vault;
       setAuthProgress('Saving your restored journal…');
-      // Validate the backup before removing convenience access to the existing journal.
-      await photos.clearPersistent();
-      await reminders.clear();
+      // Commit first; a durable intent makes convenience cleanup resumable.
+      const encrypted = seal(restored.journal, restored.vault, secureRandomBytes);
+      await recovery.change(encrypted, () => replaceJournal(encrypted));
+      setRecoveryError('');
       setReminderState(emptyReminderState(reminderBackend.available));
-      await biometrics.clear();
       setBiometricEnabled(false);
-      // Replacement is allowed only in the explicit restore-confirmation flow.
-      await replaceJournal(seal(restored.journal, restored.vault, secureRandomBytes));
       setExists(true);
       await photos.open(restored.vault);
       if (openingEpoch !== backgroundEpoch.current || lockPending.current) {
@@ -604,7 +665,8 @@ export function useJournal() {
       photos.close();
       restoredKey?.key.fill(0);
       release?.();
-      setError(err instanceof Error ? err.message : 'Could not restore this backup.');
+      if (err instanceof JournalRecoveryRequired) setRecoveryError(err.message);
+      else setError(err instanceof Error ? err.message : 'Could not restore this backup.');
     } finally {
       finishWork();
     }
@@ -617,6 +679,8 @@ export function useJournal() {
     journal,
     exists,
     loading,
+    recoveryError,
+    retryRecovery,
     busy,
     authProgress,
     demo,

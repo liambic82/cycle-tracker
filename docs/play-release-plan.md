@@ -1,6 +1,6 @@
 # Trifelle Google Play release plan
 
-Updated October 30, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.25.0 / build 30**. Cloud sync and closed-app wearable syncing remain deferred.
+Updated October 30, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.26.0 / build 31**. Cloud sync and closed-app wearable syncing remain deferred.
 
 ## Publisher and account
 
@@ -61,4 +61,4 @@ For each test record, capture app version/code, device/OS, installation source, 
 
 ## Next development slice
 
-Consolidate [0.25.0 device results](android-testing.md#0250-accessibility-and-recovery), finish the remaining native checks from the [accessibility/recovery review](accessibility-recovery-review-2026-10-30.md) and prepare concrete store screenshot/feature-graphic proposals for approval. Resolve public policy hosting, upload-key recovery and the organization's verification route before Play testing. Exact price/countries and final publication remain owner choices, not assumptions copied from Worthward.
+Consolidate [0.26.0 device results](android-testing.md#0260-interrupted-recovery-and-large-histories), finish native accessibility/recovery checks and prepare concrete store screenshot/feature-graphic proposals for approval. The [0.26.0 review](journal-recovery-performance-2026-10-30.md) records resumable cleanup, save performance and a browser quota finding; verified migration to IndexedDB is follow-up desktop work. Resolve public policy hosting, upload-key recovery and the organization's verification route before Play testing. Exact price/countries and final publication remain owner choices, not assumptions copied from Worthward.

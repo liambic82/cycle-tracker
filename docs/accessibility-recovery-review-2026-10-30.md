@@ -1,5 +1,7 @@
 # Accessibility and recovery review — October 30, 2026
 
+Follow-up: [preview 0.26.0](journal-recovery-performance-2026-10-30.md) adds resumable convenience cleanup after journal commit and the fictional large-history measurements. The findings below preserve the 0.25.0 review scope; actual device performance and native accessibility checks remain open.
+
 Scope: preview **0.25.0 / code 30**, following the owner's approval of the accessibility/recovery milestone. This is an assistant-led code review, automated failure injection and isolated browser verification with fictional records. It is not a complete accessibility certification, penetration test or physical-device validation. The approved visual design and prediction behavior remain unchanged.
 
 ## Reproduced failures and repairs

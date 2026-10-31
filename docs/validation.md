@@ -1,5 +1,24 @@
 # Validation record
 
+## Interrupted recovery and large histories — October 30–31, 2026
+
+Preview **0.26.0 / build 31**: `pnpm check` passes **316/316** tests; production web/Android/iOS JavaScript exports pass. The [review](journal-recovery-performance-2026-10-30.md) records the recovery protocol, save queue, repeatable fictional benchmark and actual Chrome storage-quota finding. No new physical-device result is recorded.
+
+Isolated Chrome integration passes: wrong passphrase and rejected restore preserve the prior journal and convenience slots; post-commit photo cleanup failure persists a recovery intent across reload; retry removes it and reopens the replacement; deletion failures before/after commit follow the same safety rules; a second tab cannot discard an active intent; a confirmed restore repairs a malformed marker. Five years of fictional records (1,825 daily entries) reopen, jump to earlier calendar years and render History without page errors. The 5,879,667-byte ten-year backup exceeds this Chrome local-storage quota and fails without replacing the old journal. Node round-trips up to 7,892,605 encrypted bytes and 36-page fictional PDFs pass separately.
+
+Recovery screenshots were inspected at widths 320, 390 (dark) and 1280; controls remain reachable with 200% CSS text on the narrow browser viewport, without horizontal page overflow. This is not Android font scaling or TalkBack validation. The existing unsaved-reload warning, retry, privacy-cover and backup/restore browser regression also passes. Evidence remains in ignored `artifacts/qa/0.26.0/` and `artifacts/performance/`. The earlier 0.25 cleanup limitation below is addressed by this resumable protocol, without claiming cross-service atomicity.
+
+Both native release builds pass. All **191** app/config/source/asset files match their build caches. Final package/version, release permissions, backup rules, screenshot configuration, signatures and 16 KiB ELF/ZIP alignment audits pass; bundletool validates the AAB and produces a verified universal APK. Preview and upload certificate identities are unchanged. Final ignored artifacts:
+
+| Artifact                                                                  |      Bytes | SHA-256                                                            |
+| ------------------------------------------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `artifacts/android/trifelle-preview-0.26.0-arm64-v8a.apk`                 | 60,853,928 | `886b3531abe0b3021bd352af90ca6ae91368a7592ff13d0698c13539f2277a46` |
+| `artifacts/android-store/trifelle-0.26.0-upload.aab`                      | 61,342,465 | `96bc6a3b8b3987c7fa25685e2f6c09817324cc202280df059b3211759843cff9` |
+| `artifacts/android-store/trifelle-0.26.0-store-local-test.apk`            | 78,782,146 | `7291c59795e2da7e63af268ba1daf5edd7bba8140b8a04379c4f895e2c2f0509` |
+| `artifacts/android-store/trifelle-0.26.0-upload-bundletool-universal.apk` | 78,859,519 | `8fac182c03cc3045b02201e0a08b6fcbd7725ed9f341d6021fc4c45a9531d5a6` |
+
+No Play upload, public policy publication, native iOS rebuild or new phone-validation pass occurred. See the [0.26.0 phone checklist](android-testing.md#0260-interrupted-recovery-and-large-histories).
+
 ## Accessibility and recovery — October 30, 2026
 
 Preview **0.25.0 / build 30** implements the owner's approved reliability/accessibility milestone. The [review](accessibility-recovery-review-2026-10-30.md) records reproduced defects and remaining limits. The Android restore path preserves occupied files when metadata reads fail, the browser warns on navigation with unsaved changes, and covered content is excluded from accessibility/keyboard interaction. Buttons/headings/date selection expose their state; large-text privacy controls wrap. Journal format **10**, encryption, identifiers, signing identities, approved themes and predictions remain unchanged.

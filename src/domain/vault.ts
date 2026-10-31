@@ -55,8 +55,18 @@ export async function newKey(
 }
 
 export function seal(journal: Journal, vault: VaultKey, random: RandomBytes): string {
+  return sealSerializedJournal(JSON.stringify(journal), vault, random);
+}
+
+// JournalWriter snapshots JSON at save request time, then encrypts only the
+// latest waiting snapshot. Backups use exactly the same envelope.
+export function sealSerializedJournal(
+  serializedJournal: string,
+  vault: VaultKey,
+  random: RandomBytes,
+): string {
   const nonce = random(12);
-  const plain = new TextEncoder().encode(JSON.stringify(journal));
+  const plain = new TextEncoder().encode(serializedJournal);
   let ciphertext: Uint8Array;
   try {
     ciphertext = gcm(vault.key, nonce, AAD).encrypt(plain);

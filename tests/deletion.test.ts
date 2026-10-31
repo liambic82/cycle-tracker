@@ -67,7 +67,7 @@ test('whole-journal deletion waits for queued saves, removes only the vault, and
   assert.throws(() => writer.save(journal), /session/);
   releaseWrite();
   await Promise.all([first, last, erasing]);
-  assert.deepEqual(calls, ['save', 'save', 'erase']);
+  assert.deepEqual(calls, ['save', 'erase']);
   assert.equal(await storage.getItem(STORAGE_KEY), null);
   assert.equal(values.get('unrelated-setting'), 'preserve');
   assert.throws(() => writer.save(journal), /session/);

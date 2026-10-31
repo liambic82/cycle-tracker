@@ -27,6 +27,8 @@ interface Props {
   biometricEnabled: boolean;
   biometricAvailable: boolean;
   unlockBiometric: () => Promise<void>;
+  recoveryError?: string;
+  retryRecovery?: () => Promise<void>;
 }
 
 export function AuthGate({
@@ -40,6 +42,8 @@ export function AuthGate({
   biometricEnabled,
   biometricAvailable,
   unlockBiometric,
+  recoveryError,
+  retryRecovery,
 }: Props) {
   const { colors, common } = useTheme();
   const wide = useWindowDimensions().width >= 900;
@@ -58,7 +62,7 @@ export function AuthGate({
   }, [busy]);
   const submit = async () => {
     setMessage('');
-    if (busy) return;
+    if (busy || (recoveryError && !backup)) return;
     if (backup && exists && !acknowledged) {
       setMessage('Confirm that you have saved your current journal before replacing it.');
       return;
@@ -106,53 +110,55 @@ export function AuthGate({
             paddingVertical: wide ? 65 : 36,
           }}
         >
-          <View style={{ flex: wide ? 1 : undefined, minWidth: 0, gap: 24 }}>
-            <View style={[common.row, { gap: 7 }]}>
+          {!recoveryError && (
+            <View style={{ flex: wide ? 1 : undefined, minWidth: 0, gap: 24 }}>
+              <View style={[common.row, { gap: 7 }]}>
+                <View
+                  style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.sageInk }}
+                />
+                <Text style={common.eyebrow}>A LITTLE MORE IN TUNE WITH YOU</Text>
+              </View>
+              <Text
+                style={{
+                  fontFamily: serif,
+                  color: colors.ink,
+                  fontSize: wide ? 62 : 43,
+                  lineHeight: wide ? 70 : 52,
+                }}
+              >
+                Your rhythm.{'\n'}Your own space.
+              </Text>
+              <Text style={[common.body, { fontSize: 17, lineHeight: 28, maxWidth: 450 }]}>
+                A calmer way to keep track of your cycle, notice how you feel, and make room for the
+                whole picture.
+              </Text>
               <View
-                style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.sageInk }}
-              />
-              <Text style={common.eyebrow}>A LITTLE MORE IN TUNE WITH YOU</Text>
-            </View>
-            <Text
-              style={{
-                fontFamily: serif,
-                color: colors.ink,
-                fontSize: wide ? 62 : 43,
-                lineHeight: wide ? 70 : 52,
-              }}
-            >
-              Your rhythm.{'\n'}Your own space.
-            </Text>
-            <Text style={[common.body, { fontSize: 17, lineHeight: 28, maxWidth: 450 }]}>
-              A calmer way to keep track of your cycle, notice how you feel, and make room for the
-              whole picture.
-            </Text>
-            <View
-              style={{
-                backgroundColor: colors.sage,
-                borderRadius: 24,
-                padding: 25,
-                gap: 18,
-                marginTop: 8,
-              }}
-            >
-              <View style={common.row}>
-                <CalendarDays size={20} color={colors.sageInk} strokeWidth={1.6} />
-                <Text style={[common.label, { flex: 1 }]}>See your days together</Text>
+                style={{
+                  backgroundColor: colors.sage,
+                  borderRadius: 24,
+                  padding: 25,
+                  gap: 18,
+                  marginTop: 8,
+                }}
+              >
+                <View style={common.row}>
+                  <CalendarDays size={20} color={colors.sageInk} strokeWidth={1.6} />
+                  <Text style={[common.label, { flex: 1 }]}>See your days together</Text>
+                </View>
+                <Text style={common.body}>
+                  A calendar that keeps flowing. A journal that meets you wherever you are in your
+                  cycle.
+                </Text>
+                <View style={common.row}>
+                  <Heart size={20} color={colors.sageInk} strokeWidth={1.6} />
+                  <Text style={[common.label, { flex: 1 }]}>Every feeling has a place</Text>
+                </View>
+                <Text style={common.body}>
+                  Flow, symptoms, and the little things you want to remember. All on your device.
+                </Text>
               </View>
-              <Text style={common.body}>
-                A calendar that keeps flowing. A journal that meets you wherever you are in your
-                cycle.
-              </Text>
-              <View style={common.row}>
-                <Heart size={20} color={colors.sageInk} strokeWidth={1.6} />
-                <Text style={[common.label, { flex: 1 }]}>Every feeling has a place</Text>
-              </View>
-              <Text style={common.body}>
-                Flow, symptoms, and the little things you want to remember. All on your device.
-              </Text>
             </View>
-          </View>
+          )}
           <View
             style={[
               common.card,
@@ -160,103 +166,131 @@ export function AuthGate({
               { flexShrink: 0, width: wide ? 390 : '100%', padding: 30, gap: 18 },
             ]}
           >
-            <View
-              style={{
-                backgroundColor: colors.roseSoft,
-                padding: 14,
-                borderRadius: 16,
-                alignSelf: 'flex-start',
-              }}
-            >
-              <LockKeyhole size={25} color={colors.plum} strokeWidth={1.5} />
-            </View>
-            <View style={{ gap: 7 }}>
-              <Text style={common.heading}>
-                {backup
-                  ? 'Bring your journal home'
-                  : exists
-                    ? 'Welcome back.'
-                    : 'Make this space yours.'}
-              </Text>
-              <Text style={common.body}>
-                {backup
-                  ? 'Enter the passphrase used when this backup was created.'
-                  : exists
-                    ? 'Unlock the journal saved on this device.'
-                    : 'Choose a passphrase to encrypt your journal. No account or email needed.'}
-              </Text>
-            </View>
-            {exists && !backup && biometricEnabled && (
-              <View style={{ gap: 10 }}>
-                <Button
-                  label="Unlock with biometrics"
-                  icon={Fingerprint}
-                  disabled={busy || !biometricAvailable}
-                  onPress={() => {
-                    setMessage('');
-                    setPassphrase('');
-                    void unlockBiometric();
-                  }}
-                />
+            {!!recoveryError && (
+              <View style={{ gap: 14 }}>
+                <Text accessibilityRole="header" style={common.heading}>
+                  Finish journal recovery
+                </Text>
+                <Text accessibilityRole="alert" style={common.body}>
+                  {recoveryError}
+                </Text>
                 <Text style={common.small}>
-                  {biometricAvailable
-                    ? 'Or enter your passphrase below.'
-                    : 'Biometrics are unavailable right now. Your passphrase still works.'}
+                  Close any other Trifelle tabs before retrying. Reminder alerts may continue until
+                  cleanup finishes.
                 </Text>
+                <Button label="Retry recovery" busy={busy} onPress={() => void retryRecovery?.()} />
               </View>
             )}
-            <PassphraseField
-              key={backup ? 'restore' : exists ? 'unlock' : 'create'}
-              label="Passphrase"
-              busy={busy}
-              value={passphrase}
-              onChangeText={setPassphrase}
-              placeholder={exists || backup ? 'Your journal passphrase' : 'At least 12 characters'}
-              onSubmitEditing={exists || backup ? submit : undefined}
-            />
-            {!exists && !backup && (
-              <PassphraseField
-                label="Confirm passphrase"
-                busy={busy}
-                value={confirm}
-                onChangeText={setConfirm}
-                placeholder="One more time"
-                onSubmitEditing={submit}
-              />
-            )}
-            {backup && exists && (
-              <View
-                style={{ backgroundColor: colors.roseSoft, padding: 14, borderRadius: 12, gap: 12 }}
-              >
-                <Text style={common.body}>
-                  Restoring replaces the journal on this device. Export your current journal first
-                  if you want to keep it. The app’s saved background photo is also removed; photos
-                  are not included in journal backups.
-                </Text>
-                <Button
-                  secondary
-                  label={acknowledged ? 'Replacement confirmed' : 'I have saved what I need'}
-                  disabled={busy}
-                  onPress={() => setAcknowledged(true)}
+            {(!recoveryError || backup) && (
+              <>
+                <View
+                  style={{
+                    backgroundColor: colors.roseSoft,
+                    padding: 14,
+                    borderRadius: 16,
+                    alignSelf: 'flex-start',
+                  }}
+                >
+                  <LockKeyhole size={25} color={colors.plum} strokeWidth={1.5} />
+                </View>
+                <View style={{ gap: 7 }}>
+                  <Text style={common.heading}>
+                    {backup
+                      ? 'Bring your journal home'
+                      : exists
+                        ? 'Welcome back.'
+                        : 'Make this space yours.'}
+                  </Text>
+                  <Text style={common.body}>
+                    {backup
+                      ? 'Enter the passphrase used when this backup was created.'
+                      : exists
+                        ? 'Unlock the journal saved on this device.'
+                        : 'Choose a passphrase to encrypt your journal. No account or email needed.'}
+                  </Text>
+                </View>
+                {exists && !backup && biometricEnabled && (
+                  <View style={{ gap: 10 }}>
+                    <Button
+                      label="Unlock with biometrics"
+                      icon={Fingerprint}
+                      disabled={busy || !biometricAvailable}
+                      onPress={() => {
+                        setMessage('');
+                        setPassphrase('');
+                        void unlockBiometric();
+                      }}
+                    />
+                    <Text style={common.small}>
+                      {biometricAvailable
+                        ? 'Or enter your passphrase below.'
+                        : 'Biometrics are unavailable right now. Your passphrase still works.'}
+                    </Text>
+                  </View>
+                )}
+                <PassphraseField
+                  key={backup ? 'restore' : exists ? 'unlock' : 'create'}
+                  label="Passphrase"
+                  busy={busy}
+                  value={passphrase}
+                  onChangeText={setPassphrase}
+                  placeholder={
+                    exists || backup ? 'Your journal passphrase' : 'At least 12 characters'
+                  }
+                  onSubmitEditing={exists || backup ? submit : undefined}
                 />
-              </View>
+                {!exists && !backup && (
+                  <PassphraseField
+                    label="Confirm passphrase"
+                    busy={busy}
+                    value={confirm}
+                    onChangeText={setConfirm}
+                    placeholder="One more time"
+                    onSubmitEditing={submit}
+                  />
+                )}
+                {backup && exists && (
+                  <View
+                    style={{
+                      backgroundColor: colors.roseSoft,
+                      padding: 14,
+                      borderRadius: 12,
+                      gap: 12,
+                    }}
+                  >
+                    <Text style={common.body}>
+                      Restoring replaces the journal on this device. Export your current journal
+                      first if you want to keep it. The app’s saved background photo is also
+                      removed; photos are not included in journal backups.
+                    </Text>
+                    <Button
+                      secondary
+                      label={acknowledged ? 'Replacement confirmed' : 'I have saved what I need'}
+                      disabled={busy}
+                      onPress={() => setAcknowledged(true)}
+                    />
+                  </View>
+                )}
+                <Button
+                  label={
+                    backup ? 'Restore journal' : exists ? 'Unlock journal' : 'Create my journal'
+                  }
+                  icon={ArrowRight}
+                  onPress={submit}
+                  busy={busy}
+                  disabled={
+                    !passphrase ||
+                    (!exists && !backup && (!confirm || passphrase.length < 12)) ||
+                    (!!backup && exists && !acknowledged)
+                  }
+                />
+              </>
             )}
             {!!(message || error) && (
               <Text accessibilityRole="alert" style={common.error}>
                 {message || error}
               </Text>
             )}
-            <Button
-              label={backup ? 'Restore journal' : exists ? 'Unlock journal' : 'Create my journal'}
-              icon={ArrowRight}
-              onPress={submit}
-              busy={busy}
-              disabled={
-                !passphrase ||
-                (!exists && !backup && (!confirm || passphrase.length < 12)) ||
-                (!!backup && exists && !acknowledged)
-              }
-            />
             {!exists && !backup && (
               <Text style={common.small}>
                 Keep your passphrase somewhere safe. There is no password reset, and a backup needs
@@ -285,12 +319,14 @@ export function AuthGate({
               />
             ) : (
               <>
-                <Button
-                  secondary
-                  label="Explore with sample data"
-                  disabled={busy}
-                  onPress={explore}
-                />
+                {!recoveryError && (
+                  <Button
+                    secondary
+                    label="Explore with sample data"
+                    disabled={busy}
+                    onPress={explore}
+                  />
+                )}
                 <Button
                   secondary
                   label="Restore a backup"
