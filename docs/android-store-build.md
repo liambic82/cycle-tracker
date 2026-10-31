@@ -15,6 +15,8 @@ The upload certificate SHA-256 is `8de0364d01ee09b7f1343a535229393a5beeaf5ce3cac
 
 Both release variants remove direct internet, remote-push and unused launcher badge permissions. Development networking remains available in Debug. The store variant keeps screenshot protection enabled; the preview preserves the owner's testing screenshot setting.
 
+The owner's testing-APK handoff folder is recorded locally in ignored `.tools/android-preview-destination.json`, under `directory`. After verification, copy the versioned test APK to that folder and compare its SHA-256 with the build copy. Keep the original under `artifacts/`, preserve different existing files, and report an unavailable destination. This is a handoff step; the build scripts still output to `artifacts/`. The personal path and APKs are not committed, and signing material is never part of the handoff.
+
 ## Build
 
 Use Node 24+, the repository pnpm helper, Android SDK and JDK 22. The short build caches have source markers and guarded replacement paths. They exclude credentials and health records from copied build inputs.
