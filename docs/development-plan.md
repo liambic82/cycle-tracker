@@ -1,5 +1,7 @@
 # Development plan
 
+**October 31 Play presentation — proposal only:** [Clover & cream and Plum & petal](design/play-store-2026-10-31/README.md) now provide concrete feature graphics, six-screen portrait sets, captions and alt text for approval. Captured UI uses fictional records in the production 0.27.0 mobile browser app. Gallery/asset checks pass; final Android capture verification and owner design approval remain pending. The app remains 0.27.0 / build 32. Next: approve a direction, produce the Android capture pack and continue the existing Play/account/policy/device checklist.
+
 The [October 9 source review](source-review-2026-10-09.md) reconciles the original brief, all ten comments, and all nine screenshots against preview 0.3.0. It records detailed gaps and dependencies; source stage numbers remain suggestions.
 
 **October 10, 2026 update:** the owner reported “Phone tests passed. Keep going.” after preview 0.15.0, following the earlier 0.13.0 and 0.14.0 phone passes. This records the reported phone-validation pass and approval to continue in the established Pixel 7 / Android 17 and Galaxy Z Flip5 testing context. Individual checklist results, a per-device breakdown, Flip5 OS version, notification timings, and independent security/accessibility validation were not supplied. Older pending statements below describe the evidence available at those earlier milestones; retain their checklists for regression. The owner also requested wearable sleep support and selected **Fitbit first**.

@@ -14,6 +14,8 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
+**Store presentation for review:** [Clover & cream and Plum & petal](docs/design/play-store-2026-10-31/README.md) propose two feature graphics and matching six-screen sets, using fictional 0.27.0 mobile-web captures. Visual approval and final Android capture verification remain pending; no app appearance or release change is included.
+
 **Preview 0.27.0 / code 32** adds verified browser migration to IndexedDB and removes the previously observed localStorage ceiling for the encrypted journal. Real-browser tests now restore, save, reload, unlock and export a roughly 7.9 MB fictional vault. Missing/unavailable storage remains a visible error; interrupted migration is retryable. [Migration and evidence](docs/browser-storage-migration-2026-10-31.md) · [Update checks](docs/android-testing.md#0270-browser-storage-and-native-regression). This milestone primarily improves the computer/browser app; native device validation remains pending.
 
 **Preview 0.26.0 / code 31** makes restore/deletion cleanup resumable after interruption and preserves the old photo, biometric access and reminders if replacement does not commit. Rapid waiting saves are combined to reduce redundant encryption. [Recovery and fictional-history measurements](docs/journal-recovery-performance-2026-10-30.md) · [Focused phone checks](docs/android-testing.md#0260-interrupted-recovery-and-large-histories). Its browser-quota finding is addressed by the 0.27.0 migration above. No new phone pass or Play release is implied.

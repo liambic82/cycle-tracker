@@ -1,0 +1,167 @@
+{
+  "status": "proposed; not approved or uploaded",
+  "schemes": [
+    {
+      "id": "clover-cream",
+      "name": "Clover & cream",
+      "label": "A",
+      "description": "Ivory, soft sage and the existing plum mark. Recommended.",
+      "background": "#F7F4EA",
+      "ink": "#50394A",
+      "accent": "#D8E3D3",
+      "leaf": "#7D967D",
+      "feature": "#F1F0E4",
+      "featureInk": "#50394A"
+    },
+    {
+      "id": "plum-petal",
+      "name": "Plum & petal",
+      "label": "B",
+      "description": "Rose backgrounds and a deeper plum feature graphic.",
+      "background": "#F3E4E9",
+      "ink": "#503447",
+      "accent": "#E4BACB",
+      "leaf": "#B97994",
+      "feature": "#604054",
+      "featureInk": "#FBF7F5"
+    }
+  ],
+  "screens": [
+    {
+      "id": "01-calendar",
+      "title": ["Your cycle,", "clearly recorded."],
+      "subtitle": "Calendar, flow and daily notes.",
+      "alt": "Trifelle calendar showing fictional period days in October, with month navigation and daily journal access."
+    },
+    {
+      "id": "02-period",
+      "title": ["Log a period", "in one go."],
+      "subtitle": "Start and finish. Details can wait.",
+      "alt": "Add a period with October 21 and 25 selected as its start and finish, with optional flow details and Save period."
+    },
+    {
+      "id": "03-daily",
+      "title": ["Space for how", "you feel."],
+      "subtitle": "Keep symptoms and observations together.",
+      "alt": "Daily journal with a fictional bloating rating, pinned symptoms, daily observations, medication and sleep sections."
+    },
+    {
+      "id": "04-history",
+      "title": ["See your", "recorded patterns."],
+      "subtitle": "Review cycle lengths over time.",
+      "alt": "History chart of fictional recorded cycle lengths, with average, shortest and longest intervals in days."
+    },
+    {
+      "id": "05-appearance",
+      "title": ["A little more", "you."],
+      "subtitle": "Choose colors that feel like yours.",
+      "alt": "Appearance settings showing the included color palettes, with Plum selected."
+    },
+    {
+      "id": "06-backup",
+      "title": ["Keep a copy.", "Keep control."],
+      "subtitle": "Export your journal as an encrypted backup.",
+      "alt": "Keep a copy settings with encrypted backup export and the reminder to retain the backup passphrase."
+    }
+  ],
+  "files": [
+    {
+      "file": "clover-cream-feature.png",
+      "width": 1024,
+      "height": 500,
+      "alpha": false,
+      "alt": "Trifelle: Your cycle. Your space. A period and wellbeing journal, with a fictional calendar excerpt. Clover & cream."
+    },
+    {
+      "file": "clover-cream-01-calendar.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Trifelle calendar showing fictional period days in October, with month navigation and daily journal access."
+    },
+    {
+      "file": "clover-cream-02-period.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Add a period with October 21 and 25 selected as its start and finish, with optional flow details and Save period."
+    },
+    {
+      "file": "clover-cream-03-daily.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Daily journal with a fictional bloating rating, pinned symptoms, daily observations, medication and sleep sections."
+    },
+    {
+      "file": "clover-cream-04-history.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "History chart of fictional recorded cycle lengths, with average, shortest and longest intervals in days."
+    },
+    {
+      "file": "clover-cream-05-appearance.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Appearance settings showing the included color palettes, with Plum selected."
+    },
+    {
+      "file": "clover-cream-06-backup.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Keep a copy settings with encrypted backup export and the reminder to retain the backup passphrase."
+    },
+    {
+      "file": "plum-petal-feature.png",
+      "width": 1024,
+      "height": 500,
+      "alpha": false,
+      "alt": "Trifelle: Your cycle. Your space. A period and wellbeing journal, with a fictional calendar excerpt. Plum & petal."
+    },
+    {
+      "file": "plum-petal-01-calendar.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Trifelle calendar showing fictional period days in October, with month navigation and daily journal access."
+    },
+    {
+      "file": "plum-petal-02-period.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Add a period with October 21 and 25 selected as its start and finish, with optional flow details and Save period."
+    },
+    {
+      "file": "plum-petal-03-daily.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Daily journal with a fictional bloating rating, pinned symptoms, daily observations, medication and sleep sections."
+    },
+    {
+      "file": "plum-petal-04-history.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "History chart of fictional recorded cycle lengths, with average, shortest and longest intervals in days."
+    },
+    {
+      "file": "plum-petal-05-appearance.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Appearance settings showing the included color palettes, with Plum selected."
+    },
+    {
+      "file": "plum-petal-06-backup.png",
+      "width": 1080,
+      "height": 1920,
+      "alpha": false,
+      "alt": "Keep a copy settings with encrypted backup export and the reminder to retain the backup passphrase."
+    }
+  ]
+}

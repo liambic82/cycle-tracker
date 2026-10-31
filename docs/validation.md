@@ -1,5 +1,11 @@
 # Validation record
 
+## Play presentation proposals — October 31, 2026
+
+Two [review-only directions](design/play-store-2026-10-31/README.md) supply a feature graphic and six portrait compositions each, reusing approved Trifelle vectors. The six source captures come from the production 0.27.0 mobile web interface in an isolated Chrome context with fictional records. No application source/configuration changes or Android capture pass are implied.
+
+All **14** individual assets pass the intended dimensions (1024 × 500 or 1080 × 1920), RGB/no-alpha, size below 8 MiB and alt text at most 140 characters. Source hashes match the capture provenance. Actual captures and composed feature graphics/boards/sequence were visually inspected. The review gallery passes both directions, image decoding, keyboard switching and no horizontal overflow at **320/736/1280** widths with no page errors. Source/render scripts are repeatable; temporary QA evidence stays under ignored `artifacts/`. Formatting and Git whitespace checks pass. No new app tests, native builds, device validation, Play upload or publication are claimed; design approval and checked Android replacement captures remain required.
+
 ## Browser storage migration — October 31, 2026
 
 Preview **0.27.0 / build 32** passes **340/340** tests and production web/Android/iOS JavaScript exports. The [review](browser-storage-migration-2026-10-31.md) records the protocol, 19 storage tests, five driver tests and bounded evidence. Both isolated Chrome suites pass without page errors: migration/failure/retry, another editor's lease, denied/missing storage, save failure and actual reload warning, backup repair, transaction abort, restore/deletion recovery and damaged-marker handling.

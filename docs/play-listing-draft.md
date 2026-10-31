@@ -1,6 +1,6 @@
 # Trifelle Play listing draft
 
-Prepared October 30, 2026. Not submitted. Pricing, countries, audience/content-rating answers, public privacy URL and organization verification remain open. Use approved Trifelle branding and fictional records in screenshots.
+Prepared October 30, 2026; visual proposal record updated October 31. Not submitted. Pricing, countries, audience/content-rating answers, public privacy URL and organization verification remain open. Use approved Trifelle branding and fictional records in screenshots.
 
 **Title:** Trifelle
 
@@ -33,6 +33,6 @@ Trifelle is not a medical device and does not diagnose, treat, cure, or prevent 
 
 ## Assets and claims review
 
-The selected name and clover identity are already approved. The prepared 512-pixel store icon is a resize of that approved artwork. A new feature graphic or screenshot composition must be presented for visual approval before implementation. No new marketing artwork is produced in this slice.
+The selected name and clover identity are already approved. The prepared 512-pixel store icon is a resize of that approved artwork. The [October 31 presentation proposals](design/play-store-2026-10-31/README.md) now show two feature-graphic directions and matching six-screen compositions for owner approval. They use actual mobile-web captures with fictional records. After design approval, replace those sources with verified Android captures before upload. No visual direction is approved or published by preparing these drafts.
 
 Use the [reviewer walkthrough](android-store-build.md#reviewer-walkthrough). Do not claim universal Fitbit compatibility, prospective/clinical prediction validation, medical interpretation, automatic background syncing, cross-device sync, published-store availability or a device pass that has not occurred.

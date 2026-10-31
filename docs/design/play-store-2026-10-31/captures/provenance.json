@@ -1,0 +1,40 @@
+{
+  "purpose": "Design approval only; replace with verified Android captures before store submission.",
+  "applicationVersion": "0.27.0",
+  "date": "2026-10-31",
+  "source": "Production mobile web bundle, Windows Chrome, fresh non-persistent browser context.",
+  "data": "Built-in fictional demo journal with three pinned symptoms; no tester records.",
+  "viewport": {
+    "width": 390,
+    "height": 700,
+    "scale": 3
+  },
+  "productionIndexSha256": "72037ad6830f8fddf265bee3638a2ba6403ebae5d42b56b33756adf38d86d0bb",
+  "captures": [
+    {
+      "file": "01-calendar.png",
+      "sha256": "ceceacfbfc94a0df20454142196cda4fe2dfb3ff8091633800de75c0fba15c84"
+    },
+    {
+      "file": "02-period.png",
+      "sha256": "8f81bf754cc097ac7a7526b13754f2e17baf61fac3f5ce90d5d25eb260fc4a66"
+    },
+    {
+      "file": "03-daily.png",
+      "sha256": "8100b3d7d1a09b767dfa9b55b513c571c49ef47406695bde211465e2a5a2bbc8"
+    },
+    {
+      "file": "04-history.png",
+      "sha256": "a60eb3b172f3ce005165a5f024f315f4403f897f020cd27c904719b03f60ad0e"
+    },
+    {
+      "file": "05-appearance.png",
+      "sha256": "0c38af829d38e845883dcdb81e1bb4f0e3bcc25e4509cdc1f1136d33e1e9893e"
+    },
+    {
+      "file": "06-backup.png",
+      "sha256": "e471a8fa99ec400bf965d1183438f84bcabcb53f65f99b9e10b395f536748527"
+    }
+  ],
+  "pageErrors": []
+}
