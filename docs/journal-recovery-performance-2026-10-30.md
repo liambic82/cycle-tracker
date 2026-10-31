@@ -4,6 +4,8 @@ October 30, 2026 · app 0.26.0 / build 31. This is a development preview, not a 
 
 Final verification and the checksum-matched APK handoff completed October 31, 2026. The build copy remains under `artifacts/`; the destination is the owner's locally configured testing folder. Local copy verification does not establish completion of Drive's cloud sync.
 
+Follow-up completed in [0.27.0](browser-storage-migration-2026-10-31.md): verified browser migration to IndexedDB supports the previously rejected 5,879,667-byte fixture and a 7,892,605-byte fixture through restore/save/reload/unlock/export. The dated findings below describe 0.26.0; its browser quota result remains useful baseline evidence. The current browser integration script now tests the IndexedDB backend and writes evidence under `artifacts/qa/0.27.0/`.
+
 ## Recovery behavior
 
 Before this change, validated restore and whole-journal deletion cleared the saved background photo, biometric access and reminder opt-ins before committing the journal change. A failed journal write could therefore leave the original journal with some convenience settings already removed.

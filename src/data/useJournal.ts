@@ -5,7 +5,7 @@ import { ForegroundSleepImporter, type AutoSleepState } from './foregroundSleepI
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { journalStorage, replaceJournal } from './journalStorage';
+import { journalStorage, replaceJournal, prepareJournalStorage } from './journalStorage';
 import { getRandomValues } from 'expo-crypto';
 import { toDay, type Day } from '../domain/dates';
 import { deleteEntry, undoEntryDeletion, type DeletedEntry } from '../domain/deletion';
@@ -148,7 +148,7 @@ export function useJournal() {
         // A read error is not proof of an empty device. Offer unlock/restore, not setup.
         setExists(true);
         setError(
-          'Local storage could not be read. Reload the app to try again or restore a backup.',
+          'Local storage could not be read. Unlock to retry, or restore an encrypted backup.',
         );
       })
       .finally(() => setLoading(false));
@@ -165,6 +165,7 @@ export function useJournal() {
     let release: (() => void) | null = null;
     try {
       release = await acquireEditLease();
+      await prepareJournalStorage();
       await recovery.resume();
     } catch (err) {
       if (err instanceof JournalRecoveryRequired) throw err;
@@ -363,6 +364,7 @@ export function useJournal() {
     const openingEpoch = backgroundEpoch.current;
     try {
       release = await acquireEditLease();
+      await prepareJournalStorage();
       await recovery.resume();
       const raw = await journalStorage.getItem(STORAGE_KEY);
       // Never replace an existing vault when a second tab created it during onboarding.

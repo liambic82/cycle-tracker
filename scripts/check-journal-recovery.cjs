@@ -6,7 +6,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { randomBytes, createHash } = require('node:crypto');
 const origin = process.env.TRIFELLE_QA_URL || 'http://127.0.0.1:4174/';
-const output = 'artifacts/qa/0.26.0';
+const output = 'artifacts/qa/0.27.0';
+const { installStorageFaults, readVault } = require('./browser-storage-qa.cjs');
 const VAULT = 'cycle-tracker.encrypted-vault.v1';
 const INTENT = 'cycle-tracker.journal-operation.v1';
 const PHOTO = 'cycle-tracker.personal-background.v1';
@@ -19,10 +20,10 @@ const hash = (raw) => createHash('sha256').update(raw).digest('hex');
   const { newKey, seal, openVaultWithKey } = await import('../src/domain/vault.ts');
   const { fictionalJournal } = await import('./fictional-journal.ts');
   const vault = await newKey(passphrase, randomBytes);
-  const backupPath = path.resolve(output, 'fictional-five-years.cyclevault');
-  const oversizedPath = path.resolve(output, 'fictional-ten-years.cyclevault');
-  fs.writeFileSync(backupPath, seal(fictionalJournal(1825), vault, randomBytes));
-  fs.writeFileSync(oversizedPath, seal(fictionalJournal(3650), vault, randomBytes));
+  const backupPath = path.resolve(output, 'fictional-ten-years.cyclevault');
+  const oversizedPath = path.resolve(output, 'fictional-near-limit.cyclevault');
+  fs.writeFileSync(backupPath, seal(fictionalJournal(3650), vault, randomBytes));
+  fs.writeFileSync(oversizedPath, seal(fictionalJournal(4900), vault, randomBytes));
   const browser = await chromium.launch({ channel: 'chrome', headless: true });
   const results = {};
   try {
@@ -30,23 +31,11 @@ const hash = (raw) => createHash('sha256').update(raw).digest('hex');
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    await context.addInitScript(() => {
-      const write = Storage.prototype.setItem,
-        remove = Storage.prototype.removeItem;
-      Storage.prototype.setItem = function (key, value) {
-        if (sessionStorage.getItem('qa.failWrite') === key)
-          throw new Error('Fictional write failure');
-        return write.call(this, key, value);
-      };
-      Storage.prototype.removeItem = function (key) {
-        if (sessionStorage.getItem('qa.failRemove') === key)
-          throw new Error('Fictional removal failure');
-        return remove.call(this, key);
-      };
-    });
+    await installStorageFaults(context);
     const button = (name) => page.getByRole('button', { name, exact: true });
     const text = (name) => page.getByRole('textbox', { name, exact: true });
-    const read = (key) => page.evaluate((key) => localStorage.getItem(key), key);
+    const read = (key) =>
+      key === VAULT ? readVault(page) : page.evaluate((key) => localStorage.getItem(key), key);
     const seedConveniences = () =>
       page.evaluate(
         ({ PHOTO, REMINDERS }) => {
@@ -105,7 +94,7 @@ const hash = (raw) => createHash('sha256').update(raw).digest('hex');
     assert.notEqual(await read(PHOTO), null);
     await page.evaluate((key) => sessionStorage.setItem('qa.failWrite', key), VAULT);
     await restore();
-    await page.getByRole('alert').filter({ hasText: 'Fictional write failure' }).waitFor();
+    await page.getByRole('alert').filter({ hasText: 'Browser storage is unavailable' }).waitFor();
     assert.equal(hash(await read(VAULT)), before);
     assert.equal(await read(INTENT), null);
     assert.notEqual(await read(PHOTO), null);
@@ -116,16 +105,14 @@ const hash = (raw) => createHash('sha256').update(raw).digest('hex');
       sessionStorage.removeItem('qa.failWrite');
       sessionStorage.setItem('qa.failRemove', key);
     }, PHOTO);
-    await button('Cancel restore').click();
-    await chooseBackup(oversizedPath);
+    await page.evaluate(() => sessionStorage.setItem('qa.abortTransaction', '1'));
     await restore();
-    await page.getByRole('alert').filter({ hasText: /quota/i }).waitFor();
+    await page.getByRole('alert').filter({ hasText: 'Browser storage is unavailable' }).waitFor();
     assert.equal(hash(await read(VAULT)), before);
     assert.notEqual(await read(PHOTO), null);
     assert.notEqual(await read(REMINDERS), null);
-    results.browserQuotaFailurePreservesPriorJournal = true;
-    await button('Cancel restore').click();
-    await chooseBackup();
+    results.abortedTransactionPreservesPriorJournal = true;
+    await page.evaluate(() => sessionStorage.removeItem('qa.abortTransaction'));
     await restore();
     await page.getByRole('heading', { name: 'Finish journal recovery' }).waitFor();
     assert.notEqual(hash(await read(VAULT)), before);
@@ -178,7 +165,7 @@ const hash = (raw) => createHash('sha256').update(raw).digest('hex');
     await button('Unlock journal').click();
     await calendar().waitFor();
     results.largeJournalUnlockMs = Date.now() - openedAt;
-    assert.equal(Object.keys(openVaultWithKey(await read(VAULT), vault).entries).length, 1825);
+    assert.equal(Object.keys(openVaultWithKey(await read(VAULT), vault).entries).length, 3650);
     results.cleanupResumesAfterReload = true;
 
     await page.setViewportSize({ width: 390, height: 844 });
@@ -236,11 +223,30 @@ const hash = (raw) => createHash('sha256').update(raw).digest('hex');
     await page.getByRole('heading', { name: 'Finish journal recovery' }).waitFor();
     assert.equal(await button('Unlock journal').count(), 0);
     await page.evaluate(() => sessionStorage.removeItem('qa.failWrite'));
-    await chooseBackup();
+    await chooseBackup(oversizedPath);
     await restore();
     await calendar().waitFor();
     assert.equal(await read(INTENT), null);
     results.confirmedRestoreRepairsDamagedMarker = true;
+    assert.equal(Object.keys(openVaultWithKey(await read(VAULT), vault).entries).length, 4900);
+    results.nearLimitIndexedDbRestore = true;
+    await page.getByRole('tab', { name: 'Your data', exact: true }).click();
+    await button('Lock now').click();
+    await button('Unlock journal').waitFor();
+    await page.reload();
+    await text('Passphrase').fill(passphrase);
+    await button('Unlock journal').click();
+    await calendar().waitFor();
+    await page.getByRole('tab', { name: 'Your data', exact: true }).click();
+    const download = page.waitForEvent('download');
+    await button('Download encrypted backup').click();
+    const roundTripPath = path.resolve(output, 'fictional-near-limit-roundtrip.cyclevault');
+    await (await download).saveAs(roundTripPath);
+    assert.equal(
+      Object.keys(openVaultWithKey(fs.readFileSync(roundTripPath, 'utf8'), vault).entries).length,
+      4900,
+    );
+    results.nearLimitSaveReloadUnlockAndExport = true;
     results.rejectedMarkerRepairRemainsGatedAcrossReload = true;
     assert.deepEqual(errors, []);
     results.pageErrors = errors;

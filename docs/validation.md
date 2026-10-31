@@ -1,5 +1,22 @@
 # Validation record
 
+## Browser storage migration — October 31, 2026
+
+Preview **0.27.0 / build 32** passes **340/340** tests and production web/Android/iOS JavaScript exports. The [review](browser-storage-migration-2026-10-31.md) records the protocol, 19 storage tests, five driver tests and bounded evidence. Both isolated Chrome suites pass without page errors: migration/failure/retry, another editor's lease, denied/missing storage, save failure and actual reload warning, backup repair, transaction abort, restore/deletion recovery and damaged-marker handling.
+
+The 5,879,667-byte fictional journal rejected by 0.26.0's browser backend now works. A 7,892,605-byte, 4,900-entry fictional journal restores, saves, reloads, unlocks and exports through the real app; the exported backup decrypts with all entries present. This is Chrome/Windows evidence, not a phone, Safari/Firefox, real disk-exhaustion or eviction test. Recovery screens remain usable at 320/390/1280 widths and doubled browser CSS text. Evidence stays under ignored `artifacts/qa/0.27.0/`.
+
+Both native release builds pass. All **194** app/config/source/asset files match both build caches. Final artifact audits pass version/package identity, release permissions, backup exclusions, screenshot configuration and 16 KiB ELF/ZIP alignment. Bundletool validates the AAB and generates an audited universal APK. APK/AAB signatures pass with unchanged preview/upload certificate identities. These are local packaging checks, not Play installation or real-device runtime results.
+
+| Artifact                                                                  |      Bytes | SHA-256                                                            |
+| ------------------------------------------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `artifacts/android/trifelle-preview-0.27.0-arm64-v8a.apk`                 | 60,853,400 | `344cc5eaf95ef6cc43790d478c452f429ccb7a273ec1c7cdf1bcaff67017e903` |
+| `artifacts/android-store/trifelle-0.27.0-upload.aab`                      | 61,342,679 | `76576add48f52254a7e995aa772a381317d4f1da081a34ecd7b2cb9c44a87d2d` |
+| `artifacts/android-store/trifelle-0.27.0-store-local-test.apk`            | 78,781,630 | `cf7d87fba8dbb78b95b194392dc1406fd84d176a0b0b71e2778d21a2280c5348` |
+| `artifacts/android-store/trifelle-0.27.0-upload-bundletool-universal.apk` | 78,859,519 | `e81875be9e0e51719c1b6cc079ff0fb14dc8d2801a08774e6d963799e2bcaa5d` |
+
+The versioned testing APK was copied to the owner's locally configured testing folder and its destination SHA-256 verified; cloud sync was not verified. No Play upload, policy publication, native iOS rebuild or new phone pass occurred. See the [current update checklist](android-testing.md#0270-browser-storage-and-native-regression).
+
 ## Interrupted recovery and large histories — October 30–31, 2026
 
 Preview **0.26.0 / build 31**: `pnpm check` passes **316/316** tests; production web/Android/iOS JavaScript exports pass. The [review](journal-recovery-performance-2026-10-30.md) records the recovery protocol, save queue, repeatable fictional benchmark and actual Chrome storage-quota finding. No new physical-device result is recorded.

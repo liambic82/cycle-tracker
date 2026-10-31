@@ -1,5 +1,13 @@
 # Android preview testing
 
+## 0.27.0 browser storage and native regression
+
+The matching preview is `artifacts/android/trifelle-preview-0.27.0-arm64-v8a.apk` (**code 32**). Back up before updating over the existing preview. Keep its storage and original signing identity; do not uninstall or downgrade.
+
+This milestone primarily improves the computer/browser app. Android retains encrypted-file storage. On phones, verify update retention, unlock/biometrics, an edit followed by lock/restart and encrypted backup export, and continue the outstanding 0.26.0 checklist below. Automated/browser checks do not establish another phone pass.
+
+For the browser, follow the [migration update checks](browser-storage-migration-2026-10-31.md#update-checks-and-next-work). Use the same browser address, close other tabs and back up before refreshing/upgrading. Missing/unavailable storage must remain an error; never clear real site data to manufacture a failure. After migration, use the current build rather than downgrading.
+
 ## 0.26.0 interrupted recovery and large histories
 
 Back up first, then install `artifacts/android/trifelle-preview-0.26.0-arm64-v8a.apk` (**code 31**) over the current preview. Keep existing app storage and do not downgrade after the Android file-storage migration. The verified APK is also handed off through the owner's locally configured testing folder.

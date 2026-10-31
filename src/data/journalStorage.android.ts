@@ -27,3 +27,4 @@ const files: VaultFiles = {
 
 export const journalStorage = new FileJournalStorage(AsyncStorage, files);
 export const replaceJournal = (encrypted: string) => journalStorage.replace(encrypted);
+export const prepareJournalStorage = async () => {};
