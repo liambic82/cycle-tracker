@@ -56,7 +56,9 @@ export function Button({
         {
           paddingHorizontal: quiet ? 8 : 14,
           paddingVertical: 10,
-          minHeight: 44,
+          minHeight: 48,
+          minWidth: 48,
+          maxWidth: '100%',
           borderRadius: 10,
           flexDirection: 'row',
           gap: 9,
@@ -115,7 +117,8 @@ export function Chip({
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => ({
-        minHeight: 42,
+        minHeight: 48,
+        minWidth: 48,
         maxWidth: '100%',
         paddingHorizontal: 12,
         paddingVertical: 9,
@@ -179,7 +182,7 @@ export function SectionLabel({
   return (
     <View style={[common.row, { marginBottom: 12 }]}>
       {Icon && <Icon size={16} color={colors.plum} strokeWidth={1.6} />}
-      <Text accessibilityRole="header" style={common.label}>
+      <Text accessibilityRole="header" style={[common.label, { flexShrink: 1 }]}>
         {children}
       </Text>
     </View>

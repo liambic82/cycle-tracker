@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { ArrowLeft, Ellipsis, Pencil, Plus, Trash2, Undo2 } from 'lucide-react-native';
@@ -61,7 +62,7 @@ export function FlowDetails({
     <View style={{ gap: 24 }}>
       <Button secondary label="Back to daily journal" icon={ArrowLeft} onPress={done} />
       <View style={{ gap: 6 }}>
-        <Text style={common.heading}>Flow details</Text>
+        <ScreenHeading style={common.heading}>Flow details</ScreenHeading>
         <Text style={common.label}>
           {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}
         </Text>
@@ -104,7 +105,9 @@ export function FlowDetails({
         </Text>
       </View>
       <View style={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 22, gap: 14 }}>
-        <Text style={common.heading}>Product log</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Product log
+        </Text>
         <Text style={common.small}>
           {entry.productRecords.length
             ? `${entry.productRecords.length} ${entry.productRecords.length === 1 ? 'record' : 'records'} for this day`

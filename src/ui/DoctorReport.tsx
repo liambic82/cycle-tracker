@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useEffect, useRef, useState } from 'react';
 import { Keyboard, Switch, Text, View } from 'react-native';
 import { ArrowLeft, FileText } from 'lucide-react-native';
@@ -105,7 +106,7 @@ export function DoctorReport({
           }}
         />
         <View style={[common.card, { gap: 12, backgroundColor: colors.sage }]}>
-          <Text style={common.heading}>Review your doctor summary</Text>
+          <ScreenHeading style={common.heading}>Review your doctor summary</ScreenHeading>
           <Text style={common.body}>
             {report.from} to {report.through} · Prepared {report.generatedOn}
           </Text>
@@ -122,7 +123,9 @@ export function DoctorReport({
         </View>
         {report.sections.map((section) => (
           <View key={section.title} style={[common.card, { gap: 12 }]}>
-            <Text style={common.heading}>{section.title}</Text>
+            <Text accessibilityRole="header" style={common.heading}>
+              {section.title}
+            </Text>
             <Text style={common.small}>{section.explanation}</Text>
             {!section.blocks.length && (
               <Text style={common.body}>No selected records in this date range.</Text>
@@ -156,7 +159,7 @@ export function DoctorReport({
     <View style={{ gap: 20, maxWidth: 850, width: '100%', alignSelf: 'center' }}>
       <Button secondary icon={ArrowLeft} label="Back to Your data" onPress={close} />
       <View style={[common.card, { gap: 14 }]}>
-        <Text style={common.heading}>A clearer picture for your visit.</Text>
+        <ScreenHeading style={common.heading}>A clearer picture for your visit.</ScreenHeading>
         <Text style={common.body}>
           Choose a date range and the records you want to include. You’ll review a preview before
           exporting a PDF. These choices apply only to this report.
@@ -177,7 +180,9 @@ export function DoctorReport({
         />
       </View>
       <View style={[common.card, { gap: 16 }]}>
-        <Text style={common.heading}>Include in this report</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Include in this report
+        </Text>
         {(Object.keys(REPORT_SECTIONS) as ReportSectionKey[]).map((key) => (
           <View key={key} style={common.between}>
             <Text style={[common.label, { flex: 1 }]}>{REPORT_SECTIONS[key]}</Text>
@@ -200,7 +205,9 @@ export function DoctorReport({
         </Text>
       </View>
       <View style={[common.card, { gap: 16 }]}>
-        <Text style={common.heading}>Optional sexual-health details</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Optional sexual-health details
+        </Text>
         <Text style={common.body}>
           Each field starts off for every new report. Excluded fields and dates containing only
           excluded information do not appear. Symptom labels and any selected notes are not

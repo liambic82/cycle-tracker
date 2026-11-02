@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, Text, TextInput, View } from 'react-native';
 import * as Crypto from 'expo-crypto';
@@ -140,9 +141,9 @@ export function MedicalRecords({
         }}
       />
       {saveStatus}
-      <Text style={common.heading}>
+      <ScreenHeading style={common.heading}>
         {draft ? 'Medical record' : 'Medical records & doctor visits'}
-      </Text>
+      </ScreenHeading>
       {!!error && !draft && (
         <Text accessibilityRole="alert" style={common.error}>
           {error}
@@ -369,7 +370,9 @@ export function MedicalRecords({
           <Text style={common.small}>{rows.length} records in this category</Text>
           {rows.slice(0, limit).map((record) => (
             <View key={record.id} style={[common.card, { gap: 12 }]}>
-              <Text style={common.heading}>{record.title}</Text>
+              <Text accessibilityRole="header" style={common.heading}>
+                {record.title}
+              </Text>
               <Text style={common.label}>
                 {record.date ?? 'Date unknown'}
                 {record.kind === 'lab' && record.date

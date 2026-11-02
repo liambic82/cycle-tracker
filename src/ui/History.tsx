@@ -36,7 +36,9 @@ function TrendChart({
   const maximum = Math.max(1, ...latest.map((point) => point.value ?? 0));
   return (
     <View style={[common.card, { gap: 16 }]}>
-      <Text style={common.heading}>{title}</Text>
+      <Text accessibilityRole="header" style={common.heading}>
+        {title}
+      </Text>
       <Text style={common.small}>{explanation}</Text>
       <View style={[common.wrap, { justifyContent: 'space-between' }]}>
         {[
@@ -162,7 +164,9 @@ export function History({
         {sleepOpen && <SleepHistory journal={journal} today={today} openDay={openDay} />}
       </View>
       <View style={[common.card, { gap: 20 }]}>
-        <Text style={common.heading}>Inside each cycle</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Inside each cycle
+        </Text>
         <View style={common.wrap}>
           {(Object.keys(FLOW_LABELS) as FlowState[]).map((state) => (
             <View key={state} style={[common.row, { gap: 6 }]}>

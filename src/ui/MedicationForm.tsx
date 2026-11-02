@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useState } from 'react';
 import { Keyboard, Text, TextInput, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
@@ -133,13 +134,13 @@ export function MedicationForm({
           cancel();
         }}
       />
-      <Text style={common.heading}>
+      <ScreenHeading style={common.heading}>
         {pastCorrection
           ? 'Correct a past schedule'
           : existing
             ? 'Change a schedule'
             : 'Add to your routine'}
-      </Text>
+      </ScreenHeading>
       <Text style={common.body}>
         Enter the schedule you already use. Doses are recorded as you enter them; the app does not
         calculate dose changes.

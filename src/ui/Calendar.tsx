@@ -419,7 +419,9 @@ export const Calendar = forwardRef<
             {header}
             <View ref={controlsNode} collapsable={false} style={{ gap: 6, paddingBottom: 8 }}>
               <View style={common.between}>
-                <Text style={[common.heading, { flexShrink: 1 }]}>Your calendar</Text>
+                <Text accessibilityRole="header" style={[common.heading, { flexShrink: 1 }]}>
+                  Your calendar
+                </Text>
                 <Button label="Add period" onPress={addPeriod} />
               </View>
               <View style={common.wrap}>
@@ -496,7 +498,9 @@ export const Calendar = forwardRef<
                       disabled={year <= 1900}
                       onPress={() => setYear(year - 1)}
                     />
-                    <Text style={common.heading}>{year}</Text>
+                    <Text accessibilityRole="header" style={common.heading}>
+                      {year}
+                    </Text>
                     <Button
                       secondary
                       label="Next year"

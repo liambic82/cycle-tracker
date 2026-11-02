@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
@@ -29,7 +30,7 @@ export function SexualHealthEditor({
     <View style={{ gap: 24 }}>
       <Button secondary label="Back to daily journal" icon={ArrowLeft} onPress={done} />
       <View style={{ gap: 6 }}>
-        <Text style={common.heading}>Sexual health</Text>
+        <ScreenHeading style={common.heading}>Sexual health</ScreenHeading>
         <Text style={common.label}>
           {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}
         </Text>

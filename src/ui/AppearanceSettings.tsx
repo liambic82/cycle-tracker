@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { BackgroundVisibility } from './BackgroundVisibility';
@@ -36,7 +37,7 @@ export function AppearanceSettings({ close, photo }: { close: () => void; photo:
       <Button secondary icon={ArrowLeft} label="Back to your data" onPress={close} />
       <View style={[common.card, { gap: 10 }]}>
         <Palette size={26} color={colors.plum} />
-        <Text style={common.heading}>Make it feel like you.</Text>
+        <ScreenHeading style={common.heading}>Make it feel like you.</ScreenHeading>
         <Text style={common.body}>
           Choose your colors and a little scenery. Text and records stay on solid surfaces.
         </Text>
@@ -61,7 +62,9 @@ export function AppearanceSettings({ close, photo }: { close: () => void; photo:
         )}
       </View>
       <View style={[common.card, { gap: 16 }]}>
-        <Text style={common.heading}>Color palette</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Color palette
+        </Text>
         <View style={[common.wrap, { gap: 10 }]}>
           {PALETTES.map((p) => (
             <Pressable
@@ -122,7 +125,9 @@ export function AppearanceSettings({ close, photo }: { close: () => void; photo:
         </View>
       </View>
       <View style={[common.card, { gap: 16 }]}>
-        <Text style={common.heading}>Background</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Background
+        </Text>
         <View style={common.wrap}>
           <Chip
             label="Plain"

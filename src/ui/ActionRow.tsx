@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { ChevronDown, ChevronRight } from 'lucide-react-native';
 import { useTheme } from './theme';
@@ -15,11 +15,14 @@ export function ActionRow({
   expanded?: boolean;
 }) {
   const { colors, common } = useTheme();
+  const detailId = useId();
   const Icon = expanded ? ChevronDown : ChevronRight;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityHint={detail}
+      aria-describedby={detail ? detailId : undefined}
       accessibilityState={expanded === undefined ? undefined : { expanded }}
       aria-expanded={expanded}
       onPress={onPress}
@@ -37,7 +40,11 @@ export function ActionRow({
     >
       <View style={{ flex: 1, gap: 4 }}>
         <Text style={common.label}>{label}</Text>
-        {!!detail && <Text style={common.small}>{detail}</Text>}
+        {!!detail && (
+          <Text nativeID={detailId} style={common.small}>
+            {detail}
+          </Text>
+        )}
       </View>
       <Icon color={colors.plum} size={20} />
     </Pressable>

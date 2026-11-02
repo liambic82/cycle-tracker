@@ -37,7 +37,9 @@ export function BiometricSettings({
   return (
     <View style={[common.card, { gap: 15 }]}>
       <Fingerprint size={27} color={colors.plum} strokeWidth={1.5} />
-      <Text style={common.heading}>An easier way to unlock</Text>
+      <Text accessibilityRole="header" style={common.heading}>
+        An easier way to unlock
+      </Text>
       {Platform.OS === 'web' ? (
         <Text style={common.body}>
           Biometric unlock is available in the installed mobile app. Use your passphrase in this

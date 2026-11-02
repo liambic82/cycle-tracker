@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { formatDay, type Day } from '../domain/dates';
@@ -60,7 +61,7 @@ export function SymptomSeverityEditor({
   return (
     <View style={{ gap: 22 }}>
       <Button secondary label="Back to daily journal" onPress={done} />
-      <Text style={common.heading}>Symptom severity</Text>
+      <ScreenHeading style={common.heading}>Symptom severity</ScreenHeading>
       <Text style={common.body}>
         {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}
       </Text>

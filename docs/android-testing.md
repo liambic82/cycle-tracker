@@ -1,5 +1,17 @@
 # Android preview testing
 
+## 0.28.0 accessible forms and controls
+
+Back up first, then install `artifacts/android/trifelle-preview-0.28.0-arm64-v8a.apk` (**code 35**) over the current preview without uninstalling or clearing storage. The verified handoff copy is also placed in the locally configured testing folder. Keep the backup until the update is checked.
+
+1. **TalkBack:** open a day, then Daily observations, Sleep, symptoms, Products & bleeding details and a dose form. Expect the new screen context to be announced; navigate by headings. Daily action rows should expose their saved summary. Editing a field must not repeatedly move focus to the heading. Check Save/Cancel, returning to the day, previous/next dates and closing the dialog.
+2. **Other forms:** check medication schedules, care reminders, medical records, CSV import/review, period ranges, doctor-summary choices/preview, wearable sleep and appearance. Cancel/back should reach the destination context rather than lose the screen-reader position. Confirm headings and form controls follow a useful reading order; report repeated or missing announcements.
+3. **Large text:** at normal, about 130% and 200% Android text sizes, check long actions, symptom chips, period start/end rows and section headings. Scroll each form to its final controls. Open the keyboard, enter a fictional note, dismiss it and reach Save/Cancel. Check the two-row bottom navigation, rotation and Flip5 folding. A browser CSS stress check is not this phone result.
+4. **Motion and contrast:** enable Android's Remove animations preference and reopen a day; it should appear without the slide. The loading clover should remain still. Check selected/unselected controls in light/dark modes and the palettes/backgrounds actually used, including personal photos. Confirm keyboard focus indicators on the computer and external-keyboard navigation if available.
+5. **Regression:** unlock the retained journal, confirm entries, make/reopen a backup and retain the outstanding reminder, Inspire 3, recovery and production screenshot-protection checks below. Record device, OS, exact build and any failure; do not send real records or passphrases.
+
+The [review](accessibility-review-2026-11-02.md) documents automated/emulator scope. TalkBack speech, real folding/rotation, actual device performance and Play delivery are not established by builds or browser checks. This remains a development preview.
+
 ## 0.27.2 enlarged-text navigation
 
 Update with `artifacts/android/trifelle-preview-0.27.2-arm64-v8a.apk` (**code 34**), also available in the locally configured testing folder after hash verification. Back up first, install over the current preview and retain app storage.

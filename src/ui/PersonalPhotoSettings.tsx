@@ -103,7 +103,9 @@ export function PersonalPhotoSettings({ photo }: { photo: PhotoControls }) {
   return (
     <>
       <View style={[common.card, { gap: 14 }]}>
-        <Text style={common.heading}>Your own photo</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Your own photo
+        </Text>
         <Text style={common.body}>
           Choose a JPEG or PNG up to 12 MB. Review it here before using it as your background. Your
           original photo stays unchanged.

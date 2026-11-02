@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useState } from 'react';
 import { Linking, Pressable, ScrollView, Text, View } from 'react-native';
 import { ArrowLeft, ArrowRight, BookOpen, ExternalLink } from 'lucide-react-native';
@@ -53,16 +54,16 @@ export function CycleContext({
     <View style={{ width: '100%', maxWidth: 850, alignSelf: 'center', gap: 20 }}>
       <Button secondary icon={ArrowLeft} label={doneLabel} onPress={done} />
       <View style={[common.readable, { gap: 8 }]}>
-        <Text accessibilityRole="header" style={common.heading}>
+        <ScreenHeading accessibilityRole="header" style={common.heading}>
           Your day in context.
-        </Text>
+        </ScreenHeading>
         <Text style={common.body}>
           {formatDay(date, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
         </Text>
       </View>
       <View style={[common.card, { backgroundColor: colors.sage, gap: 12 }]}>
         <Text style={[common.eyebrow, { color: colors.sageInk }]}>IN YOUR JOURNAL</Text>
-        <Text style={common.heading}>
+        <Text accessibilityRole="header" style={common.heading}>
           {context.future
             ? 'A day still to come'
             : context.cycleDay === null

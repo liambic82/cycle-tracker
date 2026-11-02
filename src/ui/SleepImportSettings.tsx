@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import type { AutoSleepState } from '../data/foregroundSleepImporter';
 import { AutomaticSleepSettings } from './AutomaticSleepSettings';
 import { ActionRow } from './ActionRow';
@@ -231,13 +232,13 @@ export function SleepImportSettings({
       {saveStatus}
       {historyOpen && (
         <>
-          <Text style={common.heading}>Saved sleep nights</Text>
+          <ScreenHeading style={common.heading}>Saved sleep nights</ScreenHeading>
           <SleepHistory journal={journal} today={today} openDay={openDay} />
         </>
       )}
       {!candidate && !batchReview && !historyOpen && (
         <>
-          <Text style={common.heading}>Wearable sleep</Text>
+          <ScreenHeading style={common.heading}>Wearable sleep</ScreenHeading>
           <View style={[common.card, { gap: 12 }]}>
             {demo ? (
               <Text style={common.label}>
@@ -550,7 +551,9 @@ export function SleepImportSettings({
       )}
       {batchReview && (
         <View style={{ gap: 16 }}>
-          <Text style={common.heading}>Import {batch.length} selected sleep sessions</Text>
+          <ScreenHeading style={common.heading}>
+            Import {batch.length} selected sleep sessions
+          </ScreenHeading>
           <Text style={common.body}>
             These copies will be added to the days you woke up. Manual sleep, symptoms and other
             journal details stay unchanged. Sleep sessions and naps stay separate; their durations
@@ -612,7 +615,7 @@ export function SleepImportSettings({
       )}
       {candidate && (
         <View style={[common.card, { gap: 14 }]}>
-          <Text style={common.heading}>Review imported copy</Text>
+          <ScreenHeading style={common.heading}>Review imported copy</ScreenHeading>
           <Text style={common.label}>Waking day · {waking}</Text>
           {describeImportedSleep(candidate)
             .slice(0, -1)

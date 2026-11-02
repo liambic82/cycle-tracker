@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import type { AutoSleepState } from '../data/foregroundSleepImporter';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Platform, Switch, Text, TextInput, View } from 'react-native';
@@ -210,7 +211,7 @@ export function DataSettings({
   return (
     <View style={{ gap: 22 }}>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Earlier records</Text>
+        <ScreenHeading style={common.heading}>Earlier records</ScreenHeading>
         <Text style={common.body}>
           Record a period's start and finish together, or import a prepared CSV file.
         </Text>
@@ -232,7 +233,9 @@ export function DataSettings({
         />
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Medical records & doctor visits</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Medical records & doctor visits
+        </Text>
         <Text style={common.body}>
           Bloodwork, attachments, appointments, questions and medical history.
         </Text>
@@ -247,7 +250,9 @@ export function DataSettings({
       </View>
       {Platform.OS === 'android' && (
         <View style={[common.card, { gap: 12 }]}>
-          <Text style={common.heading}>Android home-screen widget</Text>
+          <Text accessibilityRole="header" style={common.heading}>
+            Android home-screen widget
+          </Text>
           <Text style={common.body}>
             Long-press an empty area of the Android home screen, choose Widgets, then Trifelle
             journal. The shortcut opens the app through its normal lock screen. It displays no
@@ -256,7 +261,9 @@ export function DataSettings({
         </View>
       )}
       <View style={[common.card, { gap: 14 }]}>
-        <Text style={common.heading}>Appearance</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Appearance
+        </Text>
         <Text style={common.body}>
           Choose your colors, light or dark mode, and a built-in background or your own photo.
         </Text>
@@ -271,14 +278,18 @@ export function DataSettings({
       </View>
       <View style={[common.card, { backgroundColor: colors.sage, gap: 12 }]}>
         <ShieldCheck size={27} color={colors.sageInk} strokeWidth={1.5} />
-        <Text style={common.heading}>Your journal belongs to you.</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Your journal belongs to you.
+        </Text>
         <Text style={common.body}>
           Your records are encrypted with your passphrase and stored on this device. This preview
           has no account, cloud sync, or analytics.
         </Text>
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Wearable sleep</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Wearable sleep
+        </Text>
         <Text style={common.body}>
           {Platform.OS === 'ios'
             ? 'Review sleep saved in your journal or restored from an Android backup. Apple Health import is not included in this iPhone preview.'
@@ -294,7 +305,9 @@ export function DataSettings({
         />
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Doctor summary</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Doctor summary
+        </Text>
         <Text style={common.body}>
           Build a PDF from the dates and sections you choose, then review the content before saving
           or sharing it.
@@ -309,7 +322,9 @@ export function DataSettings({
         />
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Symptom preferences</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Symptom preferences
+        </Text>
         <View style={common.between}>
           <Text style={[common.label, { flex: 1 }]}>Show perimenopause choices</Text>
           <Switch
@@ -332,7 +347,9 @@ export function DataSettings({
         </Text>
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Keep a copy</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Keep a copy
+        </Text>
         <Text style={common.body}>
           An encrypted backup contains your full journal. Save a copy somewhere you trust, and use
           “Restore a backup” on the lock screen to bring it to another device.
@@ -359,7 +376,9 @@ export function DataSettings({
         )}
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Take your records with you</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Take your records with you
+        </Text>
         <Text style={common.body}>
           Export daily entries as a spreadsheet-friendly CSV for your own records or to share with
           your doctor.
@@ -437,7 +456,9 @@ export function DataSettings({
         )}
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Medication schedule history</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Medication schedule history
+        </Text>
         <Text style={common.body}>
           Export your medication and supplement names, planned doses, dated schedule changes, and
           schedule notes. Daily dose records are in the journal CSV above.
@@ -470,7 +491,9 @@ export function DataSettings({
         )}
       </View>
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Lock your journal</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Lock your journal
+        </Text>
         <Text style={common.body}>
           Lock whenever you’re done. Your journal also locks after the app has been in the
           background for a minute. It always starts locked after reopening.
@@ -496,7 +519,9 @@ export function DataSettings({
         change={setBiometricUnlock}
       />
       <View style={[common.card, { gap: 15 }]}>
-        <Text style={common.heading}>Delete your journal</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Delete your journal
+        </Text>
         <Text style={common.body}>
           Remove all entries, medication schedules, and custom symptoms stored by this app on this
           device. This cannot be undone. Export an encrypted backup first if you want to keep a

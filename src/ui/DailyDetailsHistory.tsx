@@ -20,7 +20,9 @@ export function DailyDetailsHistory({
   const rows = dailyDetailsHistory(journal, today, days);
   return (
     <View style={{ gap: 16 }}>
-      <Text style={common.heading}>Daily observation history</Text>
+      <Text accessibilityRole="header" style={common.heading}>
+        Daily observation history
+      </Text>
       <View style={common.wrap}>
         {([30, 90, 365] as const).map((n) => (
           <Chip

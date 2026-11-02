@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ScreenHeading } from './ScreenHeading';
 import { Text, TextInput, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
 import {
@@ -52,7 +53,9 @@ export function PersonalReminders({
   );
   return (
     <View style={[common.card, { gap: 14 }]}>
-      <Text style={common.heading}>Journal & care reminders</Text>
+      <ScreenHeading autoFocus={open} focusKey={draft?.id ?? 'list'} style={common.heading}>
+        Journal & care reminders
+      </ScreenHeading>
       <Text style={common.body}>
         Daily logging, patch/ring changes, injections, refills and appointments. You set the dates
         and intervals from your own plan. These reminders do not record a medication dose or

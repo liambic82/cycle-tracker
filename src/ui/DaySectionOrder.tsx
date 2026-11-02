@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useEffect } from 'react';
 import { BackHandler, Text, View } from 'react-native';
 import { ArrowUp, ArrowDown } from 'lucide-react-native';
@@ -26,7 +27,7 @@ export function DaySectionOrder({
   return (
     <View style={{ gap: 16 }}>
       <Button quiet label="Back to journal settings" onPress={done} />
-      <Text style={common.heading}>Daily section order</Text>
+      <ScreenHeading style={common.heading}>Daily section order</ScreenHeading>
       <Text style={common.body}>Move sections to suit your routine.</Text>
       {order.map((section, i) => (
         <View key={section} style={{ gap: 8 }}>

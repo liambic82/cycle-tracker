@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import { useJournalDraft } from './JournalEditorContext';
 import React, { useState } from 'react';
 import { Keyboard, Text, View } from 'react-native';
@@ -78,7 +79,9 @@ export function DoseForm({
         }}
       />
       <View style={{ gap: 6 }}>
-        <Text style={common.heading}>{existing ? 'Edit dose record' : 'Record a dose'}</Text>
+        <ScreenHeading style={common.heading}>
+          {existing ? 'Edit dose record' : 'Record a dose'}
+        </ScreenHeading>
         <Text style={common.label}>{name}</Text>
         <Text style={common.body}>
           {date} · {scheduledTime ? `Scheduled ${scheduledTime}` : 'As needed'}

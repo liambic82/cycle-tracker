@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
@@ -84,7 +85,7 @@ export function DoseLog({
     <View style={{ gap: 22 }}>
       <Button secondary label="Back to daily journal" icon={ArrowLeft} onPress={done} />
       <View style={{ gap: 6 }}>
-        <Text style={common.heading}>Medications & supplements</Text>
+        <ScreenHeading style={common.heading}>Medications & supplements</ScreenHeading>
         <Text style={common.label}>
           {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}
         </Text>
@@ -138,7 +139,9 @@ export function DoseLog({
         </View>
       ))}
       <View style={{ gap: 12, borderTopWidth: 1, borderColor: colors.line, paddingTop: 20 }}>
-        <Text style={common.heading}>Recorded doses</Text>
+        <Text accessibilityRole="header" style={common.heading}>
+          Recorded doses
+        </Text>
         <Text style={common.small}>
           {records.length} {records.length === 1 ? 'record' : 'records'} for this day. Changes to
           schedules do not rewrite these records.

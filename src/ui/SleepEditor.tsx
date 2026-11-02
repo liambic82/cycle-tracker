@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import { useJournalDraft } from './JournalEditorContext';
 import React, { useState } from 'react';
 import { Keyboard, Text, TextInput, View } from 'react-native';
@@ -61,7 +62,7 @@ export function SleepEditor({
         }}
       />
       <View style={{ gap: 8 }}>
-        <Text style={common.heading}>Sleep details</Text>
+        <ScreenHeading style={common.heading}>Sleep details</ScreenHeading>
         <Text style={common.label}>
           Waking day · {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}
         </Text>

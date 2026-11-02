@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import { PersonalReminders } from './PersonalReminders';
 import React, { useState } from 'react';
 import { Switch, Text, View } from 'react-native';
@@ -57,7 +58,7 @@ export function Medications({
           }}
         />
         {saveStatus}
-        <Text style={common.heading}>Review past schedule correction</Text>
+        <ScreenHeading style={common.heading}>Review past schedule correction</ScreenHeading>
         <Text style={common.body}>
           {review.plan.name} · {review.plan.dose} · {describeSchedule(review.plan)}
         </Text>
@@ -148,7 +149,7 @@ export function Medications({
   return (
     <View style={{ gap: 20, maxWidth: 850, width: '100%', alignSelf: 'center' }}>
       <View style={[common.card, { gap: 14, backgroundColor: colors.sage }]}>
-        <Text style={common.heading}>Your routine, in one place.</Text>
+        <ScreenHeading style={common.heading}>Your routine, in one place.</ScreenHeading>
         <Text style={common.body}>
           Keep medications and supplements with your journal. Plans do not count as taken doses.
           Record what happened in each day’s dose log.
@@ -175,7 +176,9 @@ export function Medications({
         const upcoming = medication.plans.filter((plan) => plan.startsOn > today);
         return (
           <View key={medication.id} style={[common.card, { gap: 12 }]}>
-            <Text style={common.heading}>{display.name}</Text>
+            <Text accessibilityRole="header" style={common.heading}>
+              {display.name}
+            </Text>
             <Text style={common.label}>
               {display.kind === 'supplement' ? 'Supplement' : 'Medication'} · {display.dose}
             </Text>

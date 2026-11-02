@@ -1,3 +1,5 @@
+import { ScreenHeading } from './src/ui/ScreenHeading';
+import { useReducedMotion } from './src/ui/useReducedMotion';
 import { HormoneGuide } from './src/ui/HormoneGuide';
 import { ActionRow } from './src/ui/ActionRow';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -58,6 +60,7 @@ const NAV: Array<{ id: Page; label: string; icon: LucideIcon }> = [
 ];
 
 function CycleApp() {
+  const reducedMotion = useReducedMotion();
   const { colors, common } = useTheme();
   const state = useJournal();
   const { setDemo } = useAppearance();
@@ -234,7 +237,9 @@ function CycleApp() {
           <View style={[common.card, { padding: 12, gap: 2, backgroundColor: colors.accentSoft }]}>
             <View style={[common.between, { flexWrap: 'wrap', gap: 12 }]}>
               <View>
-                <Text style={common.heading}>{day ? `Cycle day ${day}` : 'Cycle day unknown'}</Text>
+                <Text accessibilityRole="header" style={common.heading}>
+                  {day ? `Cycle day ${day}` : 'Cycle day unknown'}
+                </Text>
                 <Text style={common.small}>
                   Last period start:{' '}
                   {lastStart
@@ -389,7 +394,7 @@ function CycleApp() {
               accessibilityRole="button"
               accessibilityLabel={state.demo ? 'Exit demo' : 'Lock journal'}
               onPress={state.lock}
-              style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center' }}
             >
               <LockKeyhole size={20} color={colors.plum} />
             </Pressable>
@@ -462,7 +467,7 @@ function CycleApp() {
             }}
             keyboardShouldPersistTaps="handled"
           >
-            <Text accessibilityRole="header" style={common.heading}>
+            <ScreenHeading accessibilityRole="header" style={common.heading}>
               {page === 'calendar'
                 ? addingPeriod
                   ? 'Add period'
@@ -474,7 +479,7 @@ function CycleApp() {
                   : page === 'medications'
                     ? 'Medications'
                     : 'Your data'}
-            </Text>
+            </ScreenHeading>
             {undoNotice}
             {page === 'calendar' && addingPeriod ? (
               <PeriodRangeEditor
@@ -613,8 +618,9 @@ function CycleApp() {
         )}
       </InteractionBoundary>
       <Modal
+        accessibilityLabel={`Daily journal for ${formatDay(journal.selectedDate, { month: 'long', day: 'numeric', year: 'numeric' })}`}
         visible={editing && !state.obscured && !state.busy}
-        animationType="slide"
+        animationType={reducedMotion ? 'none' : 'slide'}
         presentationStyle="pageSheet"
         onRequestClose={() => {
           if (draftCancel.current) draftCancel.current();
@@ -644,7 +650,7 @@ function CycleApp() {
               accessibilityRole="button"
               accessibilityLabel="Close daily journal"
               onPress={closeDay}
-              style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}
+              style={{ width: 48, height: 48, justifyContent: 'center', alignItems: 'center' }}
             >
               <X size={22} color={colors.ink} />
             </Pressable>

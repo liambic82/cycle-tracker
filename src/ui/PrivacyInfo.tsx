@@ -18,7 +18,12 @@ export function PrivacyInfo() {
   return (
     <>
       <Button quiet label="Privacy & support" onPress={() => setOpen(true)} />
-      <Modal visible={open} animationType="none" onRequestClose={close}>
+      <Modal
+        accessibilityLabel="Privacy & support"
+        visible={open}
+        animationType="none"
+        onRequestClose={close}
+      >
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.paper }}>
           <View
             style={[

@@ -194,7 +194,7 @@ export function AuthGate({
                   <LockKeyhole size={25} color={colors.plum} strokeWidth={1.5} />
                 </View>
                 <View style={{ gap: 7 }}>
-                  <Text style={common.heading}>
+                  <Text accessibilityRole="header" style={common.heading}>
                     {backup
                       ? 'Bring your journal home'
                       : exists

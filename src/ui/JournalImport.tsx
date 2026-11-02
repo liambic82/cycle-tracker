@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, Platform, Text, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
@@ -77,7 +78,9 @@ export function JournalImport({
     <View style={{ gap: 18 }}>
       <Button secondary label="Back to Your data" disabled={busy} onPress={close} />
       {saveStatus}
-      <Text style={common.heading}>Import CSV</Text>
+      <ScreenHeading focusKey={rows.length > 0} style={common.heading}>
+        Import CSV
+      </ScreenHeading>
       {!!error && (
         <Text accessibilityRole="alert" style={common.error}>
           {error}

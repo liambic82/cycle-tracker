@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import { useJournalDraft } from './JournalEditorContext';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Keyboard, Text, TextInput, View } from 'react-native';
@@ -78,7 +79,7 @@ export function DailyDetailsEditor({
           cancel();
         }}
       />
-      <Text style={common.heading}>Daily observations · {date}</Text>
+      <ScreenHeading style={common.heading}>Daily observations · {date}</ScreenHeading>
       <Text style={common.body}>
         Optional details about this day. Blank means not logged; 0 is an explicit value where
         allowed. Save applies the whole form. These records do not diagnose a condition or determine

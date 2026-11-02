@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useState } from 'react';
 import { Keyboard, Pressable, Text, TextInput, View } from 'react-native';
 import { ArrowLeft, Check, Plus, Search } from 'lucide-react-native';
@@ -102,7 +103,9 @@ export function SymptomBrowser({
         }}
       />
       <View style={{ gap: 6 }}>
-        <Text style={common.heading}>{pinMode ? 'Pinned symptoms' : 'Find symptoms'}</Text>
+        <ScreenHeading style={common.heading}>
+          {pinMode ? 'Pinned symptoms' : 'Find symptoms'}
+        </ScreenHeading>
         <Text style={common.body}>
           {pinMode
             ? 'Pin common symptoms for quick access. Pinning does not log a symptom.'

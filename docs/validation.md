@@ -1,5 +1,25 @@
 # Validation record
 
+## App accessibility pass — November 2, 2026
+
+Preview **0.28.0 / build 35** adds screen/form heading semantics and context focus, names the daily/privacy dialogs, describes daily action summaries, enlarges shared controls, constrains long labels and respects reduced motion for the daily transition. The [review](accessibility-review-2026-11-02.md) records the reproduced 0.27.2 focus/dialog/overflow failures and exact repair scope. It preserves the approved appearance and changes no journal format, storage, encryption, permissions or prediction behavior.
+
+TypeScript, production web/Android/iOS JavaScript exports and formatting checks pass. The existing named contrast test passes all defined palette pairs across nine light/dark palettes. `scripts/accessibility-ui-qa.cjs` passes **72 checks over 24 screens at 320/390/1280 pixels**, without page errors, including form focus, named fields, typing focus retention, modal containment and enlarged CSS text stress. CSS doubling is distinct from Android font scaling; Your data's long overview is excluded from the doubling stress. Selected narrow forms, dark appearance and desktop appearance were visually inspected. These checks do not simulate TalkBack speech or certify all background combinations. No domain/storage code changed, so the prior 340-test suite result is not counted as a new run.
+
+| Artifact                                          |      Bytes | SHA-256                                                            |
+| ------------------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `trifelle-preview-0.28.0-arm64-v8a.apk`           | 60,857,200 | `24c35367ad1f37f1f441e266e1c17757daee5b67b84b1db7da8b21c0f5065e91` |
+| `trifelle-preview-0.28.0-x86_64.apk`              | 61,416,974 | `e85dce578295a6cfc0b3ca9e669b6ad8fe626af182dc4eca4052e48f84aca574` |
+| `trifelle-0.28.0-upload.aab`                      | 61,344,671 | `fb7f5019d393cf6483282a86d4d72e7f07c6fbc52133af5788f46ce2f069ad7c` |
+| `trifelle-0.28.0-store-local-test.apk`            | 78,785,422 | `9850034f9b98c019e121364a0b2511b2019b3ad4ce860e1fbfb5980c5393642f` |
+| `trifelle-0.28.0-upload-bundletool-universal.apk` | 78,875,903 | `cda89d431d35467548af8aeb33d36176a21ac43518bfb16cb0822f1019ccd9be` |
+
+All five artifacts pass identity/version/code, release permission/privacy and 16 KiB ELF alignment checks; the APKs also pass ZIP alignment and compiled backup exclusions. All signatures verify against the unchanged preview/upload certificates. Bundletool generates the universal APK successfully. The ARM64 testing copy in the locally configured handoff folder matches the retained build's SHA-256; cloud-drive synchronization is not verified. The local **0.28.0 AAB** supersedes 0.27.2 as the prepared candidate. Store screenshot protection remains configured and preview screenshots remain enabled. The approved store artwork keeps its 0.27.1 capture provenance. Nothing was uploaded or published.
+
+The signed x86_64 update installs over 0.27.2 on the **Android 16 / API 36 emulator**. At **360 dp / 200% system text**, fictional-sample checks pass for native observation text entry, scrolling to the observation/sleep Save controls, Cancel, symptom-rating return and opening/cancelling a medication schedule. The native tab geometry audit passes two-row full-label containment, minimum 48 dp targets, order and selected state. Restoring **432 dp / 100% text** returns to one row and passes the audit. Native form captures were visually inspected. This is bounded emulator evidence, not TalkBack speech, a phone keyboard test or saved-journal/backup comparison. See the [review](accessibility-review-2026-11-02.md) for scope and harness corrections.
+
+Physical-phone TalkBack, folding/rotation, keyboard ergonomics, current-build reminder/biometric/Health Connect validation, true 16 KiB runtime and Play delivery remain open. No new native iOS binary, Play upload, 1.0 decision or public release is claimed. Follow the [0.28.0 phone checklist](android-testing.md#0280-accessible-forms-and-controls).
+
 ## Enlarged-text navigation — November 2, 2026
 
 Preview **0.27.2 / build 34** fixes the observed bottom-tab wrapping within the existing approved appearance. The row uses the measured available width and Android font scale to reserve room for complete labels, reflowing to two rows when needed (one column at extremely narrow widths). Normal text retains four columns, the desktop sidebar is unchanged, and no font-size cap, truncation or label abbreviation is introduced. Journal format, encryption, predictions, identifiers and signing identities are unchanged.

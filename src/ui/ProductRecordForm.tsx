@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import { useJournalDraft } from './JournalEditorContext';
 import React, { useState } from 'react';
 import { Keyboard, Text, TextInput, View } from 'react-native';
@@ -68,9 +69,9 @@ export function ProductRecordForm({
         }}
       />
       <View style={{ gap: 6 }}>
-        <Text style={common.heading}>
+        <ScreenHeading style={common.heading}>
           {existing ? 'Edit product record' : 'Add product record'}
-        </Text>
+        </ScreenHeading>
         <Text style={common.label}>
           {formatDay(date, { month: 'long', day: 'numeric', year: 'numeric' })}
         </Text>

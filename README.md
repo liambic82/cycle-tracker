@@ -14,6 +14,8 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
+**Preview 0.28.0 / code 35** adds accessible screen/form headings, reliable browser focus, named dialogs and daily-row descriptions, larger shared touch targets, long-label wrapping and a reduced-motion daily-journal transition. The approved appearance is preserved. [Review and limits](docs/accessibility-review-2026-11-02.md) · [Focused phone checks](docs/android-testing.md#0280-accessible-forms-and-controls). The 72 browser checks are separate from pending physical-phone TalkBack validation.
+
 **Approved store presentation:** [A · Clover & cream](docs/design/play-store-2026-10-31/android/index.html) now has a feature graphic and six portrait assets with actual Android emulator captures and fictional records. The owner approved its composition, captions and ordering. Nothing has been uploaded or published.
 
 **Preview 0.27.2 / code 34** repairs enlarged-text bottom navigation: full labels reflow into two rows when space is tight, while normal text keeps the existing four-tab row. [Focused phone checks](docs/android-testing.md#0272-enlarged-text-navigation) cover all four destinations, 130–200% text and display/rotation changes. Browser and emulator checks remain separate from physical-phone validation.

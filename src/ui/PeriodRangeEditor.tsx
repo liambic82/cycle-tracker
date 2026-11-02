@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Pressable, Text, View } from 'react-native';
 import { formatDay, monthKey, daysBetween, type Day } from '../domain/dates';
@@ -47,7 +48,9 @@ export function PeriodRangeEditor({
     <View style={{ gap: 18 }}>
       <Button secondary label={closeLabel} onPress={close} />
       {saveStatus}
-      <Text style={common.heading}>Add a period</Text>
+      <ScreenHeading focusKey={!!result} style={common.heading}>
+        Add a period
+      </ScreenHeading>
       {result ? (
         <>
           <Text accessibilityLiveRegion="polite" style={common.body}>

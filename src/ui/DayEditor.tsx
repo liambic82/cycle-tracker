@@ -1,3 +1,4 @@
+import { ScreenHeading } from './ScreenHeading';
 import { ActionRow } from './ActionRow';
 import { DaySectionOrder } from './DaySectionOrder';
 import type { DaySection } from '../domain/journalPreferences';
@@ -214,9 +215,9 @@ export function DayEditor({
             onViewChange();
           }}
         />
-        <Text accessibilityRole="header" style={common.heading}>
+        <ScreenHeading accessibilityRole="header" style={common.heading}>
           Journal settings
-        </Text>
+        </ScreenHeading>
         <ActionRow
           label="Section order"
           detail="Choose what comes first"
@@ -506,12 +507,13 @@ export function DayEditor({
                     onPress={() =>
                       onPatch({ [field!]: !entry[field as 'periodStart' | 'periodEnd'] })
                     }
-                    style={[common.row, { minHeight: 42 }]}
+                    style={[common.row, { minHeight: 48 }]}
                   >
                     <View
                       style={{
                         width: 20,
                         height: 20,
+                        flexShrink: 0,
                         borderRadius: 6,
                         borderWidth: 1,
                         borderColor: colors.plum,
@@ -526,7 +528,7 @@ export function DayEditor({
                         <Check size={14} color={colors.onAccent} />
                       )}
                     </View>
-                    <Text style={common.body}>{label}</Text>
+                    <Text style={[common.body, { flex: 1 }]}>{label}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -611,9 +613,9 @@ export function DayEditor({
       <View style={[common.between, { alignItems: 'flex-start' }]}>
         <View style={{ flex: 1, gap: 6 }}>
           <Text style={common.eyebrow}>{date === today ? 'TODAY’S JOURNAL' : 'DAILY JOURNAL'}</Text>
-          <Text accessibilityRole="header" style={common.heading}>
+          <ScreenHeading accessibilityRole="header" style={common.heading}>
             {formatDay(date, { month: 'long', day: 'numeric' })}
-          </Text>
+          </ScreenHeading>
           <Text style={common.body}>
             {formatDay(date, { weekday: 'long' })} · {date.slice(0, 4)}
             {day ? `  ·  Cycle day ${day}` : ''}
@@ -651,7 +653,7 @@ export function DayEditor({
             accessibilityLabel="Previous day"
             disabled={!validDay(addDays(date, -1))}
             onPress={() => onSelectDate(addDays(date, -1))}
-            style={{ minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
+            style={{ minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
           >
             <ChevronLeft color={colors.plum} size={22} />
           </Pressable>
@@ -660,7 +662,7 @@ export function DayEditor({
             accessibilityLabel="Next day"
             disabled={!validDay(addDays(date, 1))}
             onPress={() => onSelectDate(addDays(date, 1))}
-            style={{ minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
+            style={{ minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}
           >
             <ChevronRight color={colors.plum} size={22} />
           </Pressable>
