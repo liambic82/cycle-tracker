@@ -10,6 +10,48 @@ import { FileJournalStorage } from '../src/data/fileJournalStorage.ts';
 import { STORAGE_KEY, type Storage } from '../src/data/repository.ts';
 import { emptyJournal } from '../src/domain/journal.ts';
 import { seal } from '../src/domain/vault.ts';
+import { portableFingerprint } from '../src/data/vaultFingerprint.ts';
+
+test('background digest failure after restore preserves the recovery intent until retry', async () => {
+  const records = new Map<string, string>();
+  let raw = 'old',
+    calls = 0,
+    cleanups = 0;
+  const recovery = new JournalRecovery(
+    {
+      async getItem(key) {
+        return records.get(key) ?? null;
+      },
+      async setItem(key, value) {
+        records.set(key, value);
+      },
+      async removeItem(key) {
+        records.delete(key);
+      },
+    },
+    async () => raw,
+    async () => {
+      cleanups++;
+    },
+    async (value) => {
+      await Promise.resolve();
+      if (++calls === 2) throw new Error('hash failed after commit');
+      return portableFingerprint(value).digest;
+    },
+  );
+  await assert.rejects(
+    recovery.change('new', async () => {
+      raw = 'new';
+    }),
+    JournalRecoveryRequired,
+  );
+  assert.equal(raw, 'new');
+  assert.equal(cleanups, 0);
+  assert.ok(records.has(JOURNAL_OPERATION_KEY));
+  assert.equal(await recovery.resume(), 'restore');
+  assert.equal(cleanups, 1);
+  assert.equal(records.has(JOURNAL_OPERATION_KEY), false);
+});
 
 function fixture() {
   const records = new Map<string, string>();

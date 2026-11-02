@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
-import { JournalWriter } from '../src/data/repository.ts';
+import { JournalWriter, type JournalSealer } from '../src/data/repository.ts';
 import { emptyJournal, updateEntry } from '../src/domain/journal.ts';
-import { openVaultWithKey } from '../src/domain/vault.ts';
+import { openVaultWithKey, sealSerializedJournal } from '../src/domain/vault.ts';
 
 const day = '2026-10-30';
 const journal = (note: string) => updateEntry(emptyJournal(day), day, { note });
-function fixture(write: (raw: string) => Promise<void>) {
+function fixture(write: (raw: string) => Promise<void>, sealer?: JournalSealer) {
   const key = { key: randomBytes(32), salt: randomBytes(16).toString('hex') };
   let seals = 0;
   return {
@@ -28,6 +28,7 @@ function fixture(write: (raw: string) => Promise<void>) {
         seals++;
         return randomBytes(n);
       },
+      sealer,
     ),
   };
 }
@@ -50,6 +51,65 @@ test('a synchronous burst saves the latest snapshot once, without caller mutatio
   await Promise.all(saves);
   assert.equal(f.seals(), 1);
   assert.equal(openVaultWithKey(stored, f.key).entries[day]!.note, 'latest');
+});
+
+test('async encryption retains an accepted key, coalesces waiting edits, and wipes both batch keys', async () => {
+  const entered = gate(),
+    release = gate();
+  const keys: Uint8Array[] = [],
+    stored: string[] = [];
+  const f = fixture(
+    async (raw) => {
+      stored.push(raw);
+    },
+    async (serialized, key, random) => {
+      keys.push(key.key);
+      entered.resolve();
+      await release.promise;
+      return sealSerializedJournal(serialized, key, random);
+    },
+  );
+  const original = { key: new Uint8Array(f.key.key), salt: f.key.salt };
+  const first = f.writer.save(journal('first'));
+  await entered.promise;
+  const middle = f.writer.save(journal('middle'));
+  const latest = f.writer.save(journal('latest'));
+  f.key.key.fill(0);
+  assert.equal(stored.length, 0);
+  assert.ok(keys[0].some(Boolean));
+  release.resolve();
+  await Promise.all([first, middle, latest, f.writer.flush()]);
+  assert.deepEqual(
+    stored.map((raw) => openVaultWithKey(raw, original).entries[day]!.note),
+    ['first', 'latest'],
+  );
+  assert.equal(keys.length, 2);
+  assert.ok(keys.every((key) => key.every((byte) => byte === 0)));
+  original.key.fill(0);
+});
+
+test('async encryption rejection does not write, wipes the key and allows retry', async () => {
+  let fail = true,
+    writes = 0;
+  let copied: Uint8Array | undefined;
+  const f = fixture(
+    async () => {
+      writes++;
+    },
+    async (serialized, key, random) => {
+      copied = key.key;
+      await Promise.resolve();
+      if (fail) throw new Error('native encryption failed');
+      return sealSerializedJournal(serialized, key, random);
+    },
+  );
+  await assert.rejects(f.writer.save(journal('retry me')), /native encryption failed/);
+  await assert.rejects(f.writer.flush(), /native encryption failed/);
+  assert.equal(writes, 0);
+  assert.ok(copied!.every((byte) => byte === 0));
+  fail = false;
+  await f.writer.save(journal('retry me'));
+  assert.equal(writes, 1);
 });
 
 test('in-flight writes finish before the newest waiting snapshot; flush waits for it', async () => {

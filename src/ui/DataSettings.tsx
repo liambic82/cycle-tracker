@@ -1,6 +1,6 @@
 import { ScreenHeading } from './ScreenHeading';
 import type { AutoSleepState } from '../data/foregroundSleepImporter';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BackHandler, Platform, Switch, Text, TextInput, View } from 'react-native';
 import { Download, FileSpreadsheet, LockKeyhole, ShieldCheck, Trash2 } from 'lucide-react-native';
 import app from '../../app.json';
@@ -49,7 +49,7 @@ export function DataSettings({
   photo: PhotoControls;
   journal: Journal;
   demo: boolean;
-  backup: () => string;
+  backup: () => string | Promise<string>;
   lock: () => Promise<void>;
   erase: (confirmation: string) => Promise<void>;
   biometricEnabled: boolean;
@@ -78,6 +78,13 @@ export function DataSettings({
   const [medicalOpen, setMedicalOpen] = useState(false);
   const [testExport, setTestExport] = useState(false);
   const [sleepImportOpen, setSleepImportOpen] = useState(false);
+  const active = useRef(true);
+  useEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+    };
+  }, []);
   useEffect(() => {
     if (!appearanceOpen) return;
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -104,12 +111,17 @@ export function DataSettings({
     setMessage('');
     setError(false);
     try {
-      await exportText(
+      const content =
         kind === 'journal'
           ? toCSV(journal, sexualExport, testExport)
           : kind === 'schedules'
             ? medicationCSV(journal.medications)
-            : backup(),
+            : await backup();
+      // Native backup encryption is asynchronous. A lock or navigation away
+      // while it finishes must not open a new share sheet afterward.
+      if (!active.current) return;
+      await exportText(
+        content,
         kind === 'journal'
           ? 'cycle-tracker-journal.csv'
           : kind === 'schedules'

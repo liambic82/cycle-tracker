@@ -1,5 +1,33 @@
 # Validation record
 
+## Native large-journal performance and recovery — November 2, 2026
+
+Preview **0.29.0 / build 36** moves Android whole-journal encryption and integrity hashing to background native work, keeps the established envelope/cryptographic parameters, and avoids redundant selected-date and clean-lock writes. An export-screen cancellation guard prevents a completed asynchronous backup from opening a share sheet after that screen unmounts. The [native review](native-journal-performance-2026-11-02.md) records methods, measured-candidate provenance, before/after timings and remaining limits. No appearance or prediction changes are included.
+
+Final `pnpm check` passes **344 tests**. Six Java helper vectors agree exactly with Node/OpenSSL and the portable cipher, including Unicode and a 4,000,000-byte plaintext; size bounds and temporary-key cleanup pass. TypeScript, production web/Android/iOS JavaScript exports, changed-file formatting and Python QA-script syntax checks pass. The existing browser recovery integration also passes with no page errors. No native iOS rebuild is claimed.
+
+The Android 16 / API 36 disposable AVD uses fictional journals with **365, 3,650 and 4,900 entries**, plus **1,825 entries and three 384 KiB PDF attachments**. All four initial-candidate save/reopen comparisons preserve the entire expected journal, including attachment hashes. Near-limit final save commit observation improves from **10.631 to 2.110 seconds**; unlock UI upper-bound median improves from **8.194 to 5.425 seconds**. UI measurements include adb/UI Automator overhead and are not physical-phone or frame-time claims. The review distinguishes the initial measured APK from the final export-cancellation rebuild.
+
+Native recovery passes directory write denial/visible retry, a process kill after **3,309,568** candidate bytes but before commit, orphan candidate cleanup, seeded postcommit restore cleanup across restart, actual UI deletion with interrupted cleanup, and damaged-active-file handling without silently using older records. On the **final x86_64 APK**, a failed lock retains the open unsaved journal; a retry after restoring write access saves the edit before closing and survives restart.
+
+The final APK also repeats the 4,900-entry performance/integrity check: unlock median **5.335 seconds**, final save commit observed **2.118 seconds**, full equality after reopen, and no rewrite on opening the selected day or locking a saved journal. Builds had finished before this repeat.
+
+Also on the final APK: the actual exported **7,660,777-byte backup** decrypts to the complete attachment fixture; the **320,821-byte CSV** is an exact match; the **59,953-byte / 36-page / 366-day PDF** loads and matches the desktop-generated report's page count and dimensions. This PDF check is structural, not a new tagged-PDF or full visual-accessibility review. Both private export-cache directories disappear on cold restart. Actual system-picker restore rejects a wrong passphrase without changing the old journal/photo sentinel, then restores all records/attachment bytes with the correct passphrase and preserves them after another restart. Share sheets are cancelled without choosing a recipient.
+
+Full-year PDF generation remains a performance follow-up: **18.355 seconds** to file readiness in this emulator run, with a concurrent native build. Its long preview also takes substantial scrolling. This is a successful functional export, not a claim that PDF generation is fast; no report layout changes were made.
+
+| Final artifact                                    |      Bytes | SHA-256                                                            |
+| ------------------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `trifelle-preview-0.29.0-arm64-v8a.apk`           | 60,863,244 | `fa184acc1b7deb06f41f0e3ebfdcfcd2f30105e6bb8bb729fb9fb06af90d8772` |
+| `trifelle-preview-0.29.0-x86_64.apk`              | 61,423,022 | `232467e97bdce2bd5b325e7f659088163823c8b537c9b2d0cff8fe3b4dbcd860` |
+| `trifelle-0.29.0-upload.aab`                      | 61,348,407 | `4006e785cd6dc6e87a155c818c32a428903314f542ea741eee203146add3e62d` |
+| `trifelle-0.29.0-store-local-test.apk`            | 78,791,474 | `1a528da402503885b0f53b2c4368057f0d52937e2313c320d14f24f2b46ff1f9` |
+| `trifelle-0.29.0-upload-bundletool-universal.apk` | 78,875,903 | `868dd0b6d532ef4293d4607f7a83e9d8953da6672141aec3e1341bb58e4fc304` |
+
+All five final artifacts pass version/identity, release privacy/permission and ELF 16 KiB alignment checks. APKs pass ZIP alignment and compiled backup-exclusion checks. Signatures verify with the unchanged preview/upload certificates; the final AAB validates and generates its universal APK. The ARM64 testing copy in the locally configured folder has the same verified SHA-256 as the retained build; cloud-drive synchronization is not established. Final app source is unchanged by the subsequent formatting pass. Artifacts, fictional records, local destination and credentials remain outside Git. Nothing is uploaded to Play.
+
+Next: [physical-phone checks](android-testing.md#0290-native-large-journal-saves-and-recovery), including current-build biometrics, real keyboard/background behavior, accessibility and existing reminder/Health Connect tests. Real full-storage/power-loss behavior, OEM restrictions, true 16 KiB runtime and Play delivery remain separate. Public policy hosting, upload-key recovery and account preparation remain release work; this is not 1.0 or a public release.
+
 ## App accessibility pass — November 2, 2026
 
 Preview **0.28.0 / build 35** adds screen/form heading semantics and context focus, names the daily/privacy dialogs, describes daily action summaries, enlarges shared controls, constrains long labels and respects reduced motion for the daily transition. The [review](accessibility-review-2026-11-02.md) records the reproduced 0.27.2 focus/dialog/overflow failures and exact repair scope. It preserves the approved appearance and changes no journal format, storage, encryption, permissions or prediction behavior.

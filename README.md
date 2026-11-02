@@ -14,7 +14,7 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
-**Preview 0.28.0 / code 35** adds accessible screen/form headings, reliable browser focus, named dialogs and daily-row descriptions, larger shared touch targets, long-label wrapping and a reduced-motion daily-journal transition. The approved appearance is preserved. [Review and limits](docs/accessibility-review-2026-11-02.md) · [Focused phone checks](docs/android-testing.md#0280-accessible-forms-and-controls). The 72 browser checks are separate from pending physical-phone TalkBack validation.
+**Preview 0.29.0 / code 36** moves Android journal encryption and integrity hashing to native background work and removes redundant saves when opening the selected date or locking a saved journal. The existing backup format and approved appearance are preserved. Four fictional journals up to 4,900 daily entries pass native save/reopen comparisons, including an attachment-heavy case. [Native performance and recovery review](docs/native-journal-performance-2026-11-02.md) · [Focused phone checks](docs/android-testing.md#0290-native-large-journal-saves-and-recovery). Emulator evidence is separate from pending physical-phone validation.
 
 **Approved store presentation:** [A · Clover & cream](docs/design/play-store-2026-10-31/android/index.html) now has a feature graphic and six portrait assets with actual Android emulator captures and fictional records. The owner approved its composition, captions and ordering. Nothing has been uploaded or published.
 

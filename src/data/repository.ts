@@ -7,6 +7,11 @@ export interface Storage {
   setItem(key: string, value: string): Promise<void>;
   removeItem(key: string): Promise<void>;
 }
+export type JournalSealer = (
+  serialized: string,
+  vault: VaultKey,
+  random: RandomBytes,
+) => string | Promise<string>;
 
 // One writer per unlocked session: a slow write cannot replace a newer edit.
 export class JournalWriter {
@@ -21,10 +26,17 @@ export class JournalWriter {
   private storage: Storage;
   private vault: VaultKey;
   private random: RandomBytes;
-  constructor(storage: Storage, vault: VaultKey, random: RandomBytes) {
+  private seal: JournalSealer;
+  constructor(
+    storage: Storage,
+    vault: VaultKey,
+    random: RandomBytes,
+    seal: JournalSealer = sealSerializedJournal,
+  ) {
     this.storage = storage;
     this.vault = vault;
     this.random = random;
+    this.seal = seal;
   }
 
   save(journal: Journal): Promise<void> {
@@ -57,7 +69,7 @@ export class JournalWriter {
       const batch = this.pending;
       this.pending = null;
       try {
-        const encrypted = sealSerializedJournal(batch.serialized, batch.vault, this.random);
+        const encrypted = await this.seal(batch.serialized, batch.vault, this.random);
         batch.vault.key.fill(0);
         batch.serialized = '';
         await this.storage.setItem(STORAGE_KEY, encrypted);

@@ -1,5 +1,17 @@
 # Android preview testing
 
+## 0.29.0 native large-journal saves and recovery
+
+Back up first, then install `artifacts/android/trifelle-preview-0.29.0-arm64-v8a.apk` (**code 36**) over the current preview without uninstalling or clearing storage. The versioned copy belongs in the locally configured testing folder after hash verification.
+
+1. **Retained journal:** unlock with the passphrase and with biometrics if enabled. Check recent and older periods/notes, History, medical records and any saved attachments. The format is unchanged.
+2. **Editing and lock:** edit a fictional note, wait for “Saved on this device,” lock and reopen. Repeat with rapid typing followed immediately by Lock. The latest accepted text should remain. Opening the selected day or locking a saved journal should not trigger a fresh save. A failed save must remain visible with retry/backup available.
+3. **Restart:** after “Saved,” close the app from recent apps, reopen and check the edit. Test backgrounding/resuming and the automatic lock. Do not deliberately terminate the app with unsaved real changes.
+4. **Exports:** make a new encrypted backup and check that it appears in the destination you chose. Check CSV and a doctor summary with the date range you actually need. Open included attachments after a deliberate backup/restore test using fictional data or a journal whose current backup has been safely retained.
+5. **Phone behavior:** note noticeable pauses during unlock, editing, History and backup. Record device, Android version and build; no records or passphrases are needed. Continue the outstanding TalkBack/large-text, folding, keyboard, reminder and Fitbit/Health Connect checks below.
+
+The [native review](native-journal-performance-2026-11-02.md) separates automated checks, emulator timing and injected recovery faults from these phone results. Emulator directory denial/process termination does not establish real full-storage or power-loss behavior. This remains a development preview.
+
 ## 0.28.0 accessible forms and controls
 
 Back up first, then install `artifacts/android/trifelle-preview-0.28.0-arm64-v8a.apk` (**code 35**) over the current preview without uninstalling or clearing storage. The verified handoff copy is also placed in the locally configured testing folder. Keep the backup until the update is checked.

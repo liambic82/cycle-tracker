@@ -6,11 +6,32 @@ import { JournalWriter, STORAGE_KEY, type Storage } from '../src/data/repository
 import { emptyEntry, emptyJournal, updateEntry } from '../src/domain/journal.ts';
 import { MAX_BACKUP_BYTES, openVaultWithKey, seal } from '../src/domain/vault.ts';
 import { addDays } from '../src/domain/dates.ts';
+import { portableFingerprint } from '../src/data/vaultFingerprint.ts';
 
 const vault = { key: randomBytes(32), salt: randomBytes(16).toString('hex') };
 const first = seal(emptyJournal('2026-10-30'), vault, randomBytes);
 const changed = updateEntry(emptyJournal('2026-10-30'), '2026-10-30', { note: 'Fictional edit' });
 const second = seal(changed, vault, randomBytes);
+
+test('background fingerprint failure cannot commit a write or silently accept a damaged read', async () => {
+  const f = fixture();
+  let fail = false;
+  const store = new FileJournalStorage(f.metadata, f.files, async (raw) => {
+    await Promise.resolve();
+    if (fail) throw new Error('hash failed');
+    return portableFingerprint(raw);
+  });
+  await store.setItem(STORAGE_KEY, first);
+  const pointer = f.records.get(STORAGE_KEY);
+  fail = true;
+  await assert.rejects(store.setItem(STORAGE_KEY, second), /hash failed/);
+  assert.equal(f.records.get(STORAGE_KEY), pointer);
+  await assert.rejects(store.getItem(STORAGE_KEY), /hash failed/);
+  fail = false;
+  assert.equal(await store.getItem(STORAGE_KEY), first);
+  await store.setItem(STORAGE_KEY, second);
+  assert.equal(await store.getItem(STORAGE_KEY), second);
+});
 
 function fixture() {
   const records = new Map<string, string>();

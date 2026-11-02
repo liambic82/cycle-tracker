@@ -10,7 +10,8 @@ import { getRandomValues } from 'expo-crypto';
 import { toDay, type Day } from '../domain/dates';
 import { deleteEntry, undoEntryDeletion, type DeletedEntry } from '../domain/deletion';
 import { emptyJournal, type Journal } from '../domain/journal';
-import { newKey, openVault, parseEnvelope, seal, type VaultKey } from '../domain/vault';
+import { newKey, openVault, parseEnvelope, type VaultKey } from '../domain/vault';
+import { encryptJournal, fingerprintJournal } from './journalCrypto';
 import { JournalWriter, STORAGE_KEY } from './repository';
 import { JournalRecovery, JournalRecoveryRequired } from './journalRecovery';
 import { demoJournal } from './demo';
@@ -36,6 +37,7 @@ export function useJournal() {
           await biometrics.clear();
           await photos.clearPersistent();
         },
+        async (raw) => (await fingerprintJournal(raw)).digest,
       ),
   );
   const [recoveryError, setRecoveryError] = useState('');
@@ -397,7 +399,12 @@ export function useJournal() {
           : await openVault(raw!, passphrase, derivePassphraseKey);
       openedKey = session.vault;
       salt = session.vault.salt;
-      const nextWriter = new JournalWriter(journalStorage, session.vault, secureRandomBytes);
+      const nextWriter = new JournalWriter(
+        journalStorage,
+        session.vault,
+        secureRandomBytes,
+        encryptJournal,
+      );
       if (create) {
         setAuthProgress('Saving your encrypted journal…');
         await nextWriter.save(session.journal);
@@ -553,7 +560,13 @@ export function useJournal() {
     setBusy(true);
     try {
       if (!demoRef.current) {
-        await writer.current!.save(current.current);
+        // An unchanged journal is already durable. Wait for accepted edits;
+        // retry a failed queue before locking, without resealing a clean vault.
+        await writer.current!.flush().catch(() => undefined);
+        if (savedRevision.current !== revision.current) {
+          await writer.current!.save(current.current);
+          savedRevision.current = revision.current;
+        }
         await syncReminders(current.current, key.current!.salt);
       }
       endSession();
@@ -611,7 +624,7 @@ export function useJournal() {
   const backup = () => {
     if (!current.current || !key.current)
       throw new Error('Open your own journal to export a backup.');
-    return seal(current.current, key.current, secureRandomBytes);
+    return encryptJournal(JSON.stringify(current.current), key.current, secureRandomBytes);
   };
 
   useEffect(() => {
@@ -644,7 +657,11 @@ export function useJournal() {
       restoredKey = restored.vault;
       setAuthProgress('Saving your restored journal…');
       // Commit first; a durable intent makes convenience cleanup resumable.
-      const encrypted = seal(restored.journal, restored.vault, secureRandomBytes);
+      const encrypted = await encryptJournal(
+        JSON.stringify(restored.journal),
+        restored.vault,
+        secureRandomBytes,
+      );
       await recovery.change(encrypted, () => replaceJournal(encrypted));
       setRecoveryError('');
       setReminderState(emptyReminderState(reminderBackend.available));
@@ -656,7 +673,12 @@ export function useJournal() {
       }
       key.current = restored.vault;
       releaseLease.current = release;
-      writer.current = new JournalWriter(journalStorage, restored.vault, secureRandomBytes);
+      writer.current = new JournalWriter(
+        journalStorage,
+        restored.vault,
+        secureRandomBytes,
+        encryptJournal,
+      );
       setCurrent(restored.journal);
       savedRevision.current = revision.current;
       setDemo(false);
@@ -675,6 +697,10 @@ export function useJournal() {
   };
 
   return {
+    selectDate: (date: Day) => {
+      if (current.current && current.current.selectedDate !== date)
+        update((value) => ({ ...value, selectedDate: date }));
+    },
     autoSleep,
     checkSleep: () => sleepImporter.check(true),
     photo: { ...photoSnapshot, apply: photos.apply, remove: photos.remove } satisfies PhotoControls,

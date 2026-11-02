@@ -1,6 +1,6 @@
 # Trifelle Google Play release plan
 
-Updated November 2, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.28.0 / build 35**. Cloud sync and closed-app wearable syncing remain deferred.
+Updated November 2, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.29.0 / build 36**. Cloud sync and closed-app wearable syncing remain deferred.
 
 ## Publisher and account
 
@@ -61,4 +61,4 @@ For each test record, capture app version/code, device/OS, installation source, 
 
 ## Next development slice
 
-Consolidate [current device results](android-testing.md#0280-accessible-forms-and-controls), including form focus, large text, calendar alignment and recovery. Investigate failures and measure native performance with large histories. The [approved Clover & cream pack](design/play-store-2026-10-31/android/README.md) retains its 0.27.1 Android capture provenance; no new presentation is introduced by 0.28.0. See the [validation record](validation.md) for exact package and testing evidence. Resolve public policy hosting, upload-key recovery and the organization's verification route before Play testing. Exact price/countries and final publication remain owner choices, not assumptions copied from Worthward.
+Consolidate [current phone results](android-testing.md#0290-native-large-journal-saves-and-recovery), including native save/reopen, attachments, accessibility, biometrics and reminders, and investigate failures. The [large-journal native review](native-journal-performance-2026-11-02.md) records emulator performance/recovery evidence separately. The [approved Clover & cream pack](design/play-store-2026-10-31/android/README.md) retains its 0.27.1 Android capture provenance; no new presentation is introduced by 0.29.0. See the [validation record](validation.md) for exact package and testing evidence. Resolve public policy hosting, upload-key recovery and the organization's verification route before Play testing. Exact price/countries and final publication remain owner choices, not assumptions copied from Worthward.

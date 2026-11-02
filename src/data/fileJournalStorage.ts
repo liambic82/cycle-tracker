@@ -1,5 +1,4 @@
-import { sha256 } from '@noble/hashes/sha2.js';
-import { bytesToHex } from '@noble/hashes/utils.js';
+import { portableFingerprint, type Fingerprinter } from './vaultFingerprint.ts';
 import { MAX_BACKUP_BYTES, parseEnvelope } from '../domain/vault.ts';
 import { STORAGE_KEY, type Storage } from './repository.ts';
 
@@ -50,12 +49,6 @@ function parseRecord(raw: string | null): RecordState {
   return value as Pointer;
 }
 
-function fingerprint(raw: string) {
-  const bytes = new TextEncoder().encode(raw);
-  if (bytes.length > MAX_BACKUP_BYTES) throw new Error('This encrypted journal exceeds 8 MB.');
-  return { bytes: bytes.length, digest: bytesToHex(sha256(bytes)) };
-}
-
 // The database holds only a small, transactionally replaced pointer. Ciphertext
 // lives in two bounded private files, avoiding Android's SQLite row/database limits.
 // A single instance serializes reads, writes, replacement and deletion for the app.
@@ -63,9 +56,15 @@ export class FileJournalStorage implements Storage {
   private queue: Promise<unknown> = Promise.resolve();
   private metadata: Storage;
   private files: VaultFiles;
-  constructor(metadata: Storage, files: VaultFiles) {
+  private fingerprint: Fingerprinter;
+  constructor(
+    metadata: Storage,
+    files: VaultFiles,
+    fingerprint: Fingerprinter = portableFingerprint,
+  ) {
     this.metadata = metadata;
     this.files = files;
+    this.fingerprint = fingerprint;
   }
 
   private run<T>(key: string, operation: () => Promise<T>): Promise<T> {
@@ -97,7 +96,7 @@ export class FileJournalStorage implements Storage {
       if (record.state === 'legacy') return record.raw;
       const raw = await this.files.read(record.slot);
       if (raw === null) throw damaged();
-      const actual = fingerprint(raw);
+      const actual = await this.fingerprint(raw);
       if (record.bytes !== actual.bytes || record.digest !== actual.digest) throw damaged();
       parseEnvelope(raw);
       // No silent rollback to older health records if the active copy is damaged.
@@ -117,7 +116,7 @@ export class FileJournalStorage implements Storage {
 
   private async write(raw: string, replacing: boolean) {
     parseEnvelope(raw);
-    const actual = fingerprint(raw);
+    const actual = await this.fingerprint(raw);
     let metadata: string | null;
     let vacantSlot: Slot | undefined;
     try {

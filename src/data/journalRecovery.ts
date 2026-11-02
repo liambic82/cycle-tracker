@@ -30,15 +30,18 @@ export class JournalRecovery {
   private storage: Storage;
   private readJournal: () => Promise<string | null>;
   private cleanup: () => Promise<void>;
+  private digest: (raw: string) => string | Promise<string>;
 
   constructor(
     storage: Storage,
     readJournal: () => Promise<string | null>,
     cleanup: () => Promise<void>,
+    fingerprint: (raw: string) => string | Promise<string> = digest,
   ) {
     this.storage = storage;
     this.readJournal = readJournal;
     this.cleanup = cleanup;
+    this.digest = fingerprint;
   }
 
   private run<T>(operation: () => Promise<T>): Promise<T> {
@@ -86,7 +89,9 @@ export class JournalRecovery {
     try {
       const raw = await this.readJournal();
       committed =
-        intent.kind === 'delete' ? raw === null : raw !== null && digest(raw) === intent.digest;
+        intent.kind === 'delete'
+          ? raw === null
+          : raw !== null && (await this.digest(raw)) === intent.digest;
       // A confirmed restore may repair a damaged marker, but a failed attempt
       // must not silently turn unknown cleanup state into ordinary unlock.
       if (!committed && intent.requiresRestore) return 'replacement-required';
@@ -124,7 +129,7 @@ export class JournalRecovery {
       const raw = JSON.stringify({
         version: 1,
         kind,
-        digest: target === null ? null : digest(target),
+        digest: target === null ? null : await this.digest(target),
         ...(requiresRestore ? { requiresRestore: true } : {}),
       });
       try {

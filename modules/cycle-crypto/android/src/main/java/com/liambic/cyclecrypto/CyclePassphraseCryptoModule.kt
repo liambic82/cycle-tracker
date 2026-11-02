@@ -12,6 +12,21 @@ class CyclePassphraseCryptoModule : Module() {
     Name("CyclePassphraseCrypto")
     Constants("supported" to (Build.VERSION.SDK_INT >= 26))
 
+    AsyncFunction("fingerprint") Coroutine { raw: String ->
+      withContext(Dispatchers.Default) {
+        val result = VaultCrypto.fingerprint(raw)
+        mapOf("bytes" to result.bytes, "digest" to result.digest)
+      }
+    }
+
+    AsyncFunction("encrypt") Coroutine { plain: String, key: List<Int>, nonce: List<Int> ->
+      require(key.size == 32 && nonce.size == 12)
+      require(key.all { it in 0..255 } && nonce.all { it in 0..255 })
+      withContext(Dispatchers.Default) {
+        VaultCrypto.encrypt(plain, key.map { it.toByte() }.toByteArray(), nonce.map { it.toByte() }.toByteArray())
+      }
+    }
+
     AsyncFunction("derive") Coroutine { password: List<Int>, salt: List<Int> ->
       require(password.size <= 3072 && salt.size == 16)
       require(password.all { it in 0..255 } && salt.all { it in 0..255 })

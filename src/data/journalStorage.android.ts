@@ -3,6 +3,7 @@ import { Directory, File, Paths } from 'expo-file-system';
 import { readAsStringAsync, writeAsStringAsync } from 'expo-file-system/legacy';
 import { FileJournalStorage, type VaultFiles } from './fileJournalStorage';
 import { MAX_BACKUP_BYTES } from '../domain/vault';
+import { fingerprintJournal } from './journalCrypto';
 
 // App-private persistent files, never cache, shared storage, or an export folder.
 // Android OS backup remains disabled in app.json.
@@ -25,6 +26,6 @@ const files: VaultFiles = {
   },
 };
 
-export const journalStorage = new FileJournalStorage(AsyncStorage, files);
+export const journalStorage = new FileJournalStorage(AsyncStorage, files, fingerprintJournal);
 export const replaceJournal = (encrypted: string) => journalStorage.replace(encrypted);
 export const prepareJournalStorage = async () => {};

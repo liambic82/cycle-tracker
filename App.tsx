@@ -160,7 +160,7 @@ function CycleApp() {
   const lastStart = starts(journal, today).at(-1);
   const select = (date: Day) => {
     const open = () => {
-      state.update((value) => ({ ...value, selectedDate: date }));
+      state.selectDate(date);
       setEditing(true);
     };
     if (calendarScroll.current) calendarScroll.current.rememberPosition(open);
@@ -203,7 +203,7 @@ function CycleApp() {
         if (editing) editorScroll.current?.scrollTo({ y: 0, animated: false });
       }}
       onSelectDate={(date) => {
-        state.update((value) => ({ ...value, selectedDate: date }));
+        state.selectDate(date);
         editorScroll.current?.scrollTo({ y: 0, animated: false });
       }}
       onDelete={() => state.removeEntry(journal.selectedDate)}
@@ -225,7 +225,7 @@ function CycleApp() {
       today={today}
       compact={!desktop}
       view={calendarView}
-      onSelect={(date) => state.update((value) => ({ ...value, selectedDate: date }))}
+      onSelect={state.selectDate}
       onOpenDay={select}
       changeView={(view) => {
         setCalendarView(view);

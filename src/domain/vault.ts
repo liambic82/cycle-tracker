@@ -73,14 +73,20 @@ export function sealSerializedJournal(
   } finally {
     plain.fill(0);
   }
+  return serializeSealedJournal(vault.salt, bytesToHex(nonce), bytesToHex(ciphertext));
+}
+
+// Shared by the portable cipher and Android's background JCA cipher. The
+// envelope and authenticated data remain compatible with every existing backup.
+export function serializeSealedJournal(salt: string, nonce: string, ciphertext: string): string {
   const result: Envelope = {
     format: 'cycle-tracker-vault',
     version: 1,
     kdf: 'pbkdf2-sha256',
     iterations: ITERATIONS,
-    salt: vault.salt,
-    nonce: bytesToHex(nonce),
-    ciphertext: bytesToHex(ciphertext),
+    salt,
+    nonce,
+    ciphertext,
   };
   const serialized = JSON.stringify(result);
   if (serialized.length > MAX_BACKUP_BYTES)
