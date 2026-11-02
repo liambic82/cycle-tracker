@@ -1,5 +1,16 @@
 # Android preview testing
 
+## 0.27.2 enlarged-text navigation
+
+Update with `artifacts/android/trifelle-preview-0.27.2-arm64-v8a.apk` (**code 34**), also available in the locally configured testing folder after hash verification. Back up first, install over the current preview and retain app storage.
+
+1. At normal text size, confirm the existing four-tab row. Open Calendar, Your history, Medications and Your data; check the highlighted tab matches its page.
+2. Set Android text to about **130% and 200%** (or the available larger-text settings). At narrow widths the tabs should form two rows. Every full label, including Medications, should fit without losing letters, shrinking text or overlapping another control. Check each destination again and scroll its content to the bottom.
+3. Change display size, rotate, and fold/reopen the Flip5. The layout should adapt to the new available width; restore ordinary settings and confirm the four-tab row returns. Check TalkBack reading order and selected-tab announcements separately.
+4. Open a daily editor and return with Android Back. Confirm calendar weekdays still align, the journal survives the update/restart, and passphrase/biometric access and backup export still work. Continue the outstanding recovery, reminder and Inspire 3 checks below.
+
+Record the device, OS, app version and text/display settings with each result. Automated/browser checks and emulator geometry do not establish a physical-phone or TalkBack pass.
+
 ## 0.27.1 calendar weekday alignment
 
 Update with `artifacts/android/trifelle-preview-0.27.1-arm64-v8a.apk` (**code 33**), also copied with a verified hash to the configured testing folder. Back up first and install over the current preview without clearing storage. This fixes a reproduced Android layout defect; dates and journal format are unchanged.

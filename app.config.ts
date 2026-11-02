@@ -11,12 +11,12 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     android: {
       ...config.android,
       package: preview ? 'com.liambic.cycletracker.preview' : 'com.liambic.cycletracker',
-      versionCode: 33,
+      versionCode: 34,
     },
     ios: {
       ...config.ios,
       bundleIdentifier: preview ? 'com.liambic.cycletracker.preview' : 'com.liambic.cycletracker',
-      buildNumber: '33',
+      buildNumber: '34',
     },
   };
 };

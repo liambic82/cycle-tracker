@@ -1,5 +1,7 @@
 # Development plan
 
+**November 2 navigation accessibility patch — 0.27.2 / build 34:** bottom tabs now reflow according to the available width and Android font scale. Full labels and system text sizing are retained; the existing approved styling and order remain. [Phone checks](android-testing.md#0272-enlarged-text-navigation) · [Evidence](validation.md). Next: consolidate current physical-device accessibility/recovery results and the existing Play/account/policy checklist. Cloud sync and closed-app sleep import remain deferred.
+
 **October 31 approved Play presentation and calendar patch — 0.27.1 / build 33:** the owner selected **A · Clover & cream**. The [approved pack](design/play-store-2026-10-31/android/README.md) retains the feature composition, six captions and ordering, with actual Android emulator captures replacing the browser design sources. Native capture uncovered percentage-width date wrapping; month/year grids and the period picker now use explicit seven-cell weeks. See [focused phone checks](android-testing.md#0271-calendar-weekday-alignment). Next: fix the narrow-screen enlarged-text Medications label wrap, consolidate physical-device/accessibility results and complete the existing Play/account/policy checklist. No app-theme default, pricing, publication or 1.0 decision is implied.
 
 The [October 9 source review](source-review-2026-10-09.md) reconciles the original brief, all ten comments, and all nine screenshots against preview 0.3.0. It records detailed gaps and dependencies; source stage numbers remain suggestions.

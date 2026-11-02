@@ -64,8 +64,14 @@ function CycleApp() {
   useEffect(() => {
     setDemo(state.demo);
   }, [state.demo, setDemo]);
-  const width = useWindowDimensions().width;
+  const { width, fontScale } = useWindowDimensions();
   const desktop = width >= 900;
+  const [navigationWidth, setNavigationWidth] = useState(width);
+  // Reserve the full longest 10-point label plus the button's horizontal padding.
+  // Reflow instead of shrinking, truncating, or splitting a word at larger system text sizes.
+  const minimumTabWidth = 60 * Math.max(1, fontScale) + 20;
+  const navigationColumns =
+    navigationWidth >= minimumTabWidth * 4 ? 4 : navigationWidth >= minimumTabWidth * 2 ? 2 : 1;
   const [calendarView, setCalendarView] = useState<CalendarView>('month');
   const calendarScroll = useRef<CalendarHandle>(null);
   const [exploreOpen, setExploreOpen] = useState(false);
@@ -554,8 +560,10 @@ function CycleApp() {
         )}
         {!desktop && (
           <View
+            onLayout={(event) => setNavigationWidth(event.nativeEvent.layout.width)}
             style={{
               flexDirection: 'row',
+              flexWrap: 'wrap',
               borderTopWidth: 1,
               borderColor: colors.line,
               paddingTop: 7,
@@ -575,7 +583,14 @@ function CycleApp() {
                   setPage(id);
                   if (id === 'calendar') calendarScroll.current?.top();
                 }}
-                style={{ flex: 1, alignItems: 'center', gap: 5, padding: 10, minHeight: 59 }}
+                style={{
+                  width: `${100 / navigationColumns}%`,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 5,
+                  padding: 10,
+                  minHeight: 59,
+                }}
               >
                 <Icon
                   size={20}
@@ -585,6 +600,7 @@ function CycleApp() {
                 <Text
                   style={{
                     fontSize: 10,
+                    textAlign: 'center',
                     fontWeight: page === id ? '700' : '400',
                     color: page === id ? colors.plumDark : colors.muted,
                   }}

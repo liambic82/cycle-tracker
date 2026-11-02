@@ -1,5 +1,29 @@
 # Validation record
 
+## Enlarged-text navigation — November 2, 2026
+
+Preview **0.27.2 / build 34** fixes the observed bottom-tab wrapping within the existing approved appearance. The row uses the measured available width and Android font scale to reserve room for complete labels, reflowing to two rows when needed (one column at extremely narrow widths). Normal text retains four columns, the desktop sidebar is unchanged, and no font-size cap, truncation or label abbreviation is introduced. Journal format, encryption, predictions, identifiers and signing identities are unchanged.
+
+`pnpm typecheck` and production web/Android/iOS JavaScript exports pass. No domain/storage code changed; the prior **340/340** suite result belongs to 0.27.1 and is not counted as a new run. The fresh Chrome sample-data check passes all four routes, keyboard activation, one selected tab, full single-line labels and targets of at least 48 CSS pixels at **320, 360, 432, 800, 1280, 280 and back to 432** pixels, with no page errors. Narrow 280-pixel layout forms two rows; returning to 432 restores one. The desktop sidebar and 280/320-pixel calendar screens were visually inspected. Browser width changes do not establish Android font scaling or text-only browser zoom support.
+
+The pre-fix **0.27.1** emulator capture reproduces Medications splitting before its final letter at **360 dp / 130% text**. `scripts/audit-navigation-layout.py` fails that capture for a wrapped label and passes the repaired capture, including full-label containment, minimum 48 dp targets, row order, non-overlap and one selected tab. `scripts/navigation-layout-qa.cjs` provides the browser route/geometry check; temporary screenshots, fictional XML and results stay in ignored `artifacts/`.
+
+The **Android 16 / API 36 x86_64 emulator** passes all four destinations at **480 dpi / 130% text (360 dp), 480 dpi / 200% (360 dp), 540 dpi / 200% (320 dp), and back to 400 dpi / 100% (432 dp)**. Each route exposes the intended page heading and selected tab; the native geometry audit passes for every route. Enlarged settings use two rows, and returning to normal settings restores one. Native normal-size, enlarged Calendar/Medications and narrow History screens were visually inspected. One scripted attempt reached the sample journal before rendering finished; retrying with an explicit readiness wait passed. These are navigation checks, not a complete audit of every screen at 200% text.
+
+The existing fictional journal reopens after a signed **0.27.1 → 0.27.2** update without clearing storage. The retained cycle summary is present, and the calendar bounds audit passes all **17 visible October dates** (1–17) at normal text; the broader 31-day/picker checks remain the separate 0.27.1 evidence below. This is not a new backup round-trip or full-record comparison.
+
+| Artifact                                          |      Bytes | SHA-256                                                            |
+| ------------------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `trifelle-preview-0.27.2-arm64-v8a.apk`           | 60,853,956 | `1881961245248f58daca675794869768554de2b7f7d746373bcd9a1d665fc5ef` |
+| `trifelle-preview-0.27.2-x86_64.apk`              | 61,413,734 | `801c9e274b6b5f43a4a03c796531c4edcaa0d2a536ca8f3601fb4bdd37b1042b` |
+| `trifelle-0.27.2-upload.aab`                      | 61,343,174 | `ebe06f05f9e87eddb40620fc3684c11203679412b0d7b1f959a0a7735ec41083` |
+| `trifelle-0.27.2-store-local-test.apk`            | 78,782,178 | `c46a92b57d506445df51d72117fc83cb25ba0a85324a8219ca318cbc9f4bd93c` |
+| `trifelle-0.27.2-upload-bundletool-universal.apk` | 78,859,519 | `a67d85ba4606ea143d982cf6d470211903b0dbab6fb29022d875e60d40fbcfad` |
+
+All five artifacts pass package/version/code, privacy/permission and 16 KiB ELF alignment checks; the APKs also pass ZIP alignment and compiled backup-exclusion checks. The AAB signature and all APK signatures verify against the established upload/preview identities. Bundletool successfully generated the universal APK; it has not been installed through Play. Store screenshot protection remains configured, preview screenshots remain enabled. The ARM64 preview was copied to the locally configured testing folder with a matching destination SHA-256; the original remains under `artifacts/`. Cloud-drive synchronization is not verified. The refreshed **0.27.2 AAB** includes both layout fixes and supersedes 0.27.0 as the local candidate. The approved 0.27.1 store artwork remains unchanged and retains its original capture provenance. Nothing was uploaded or published.
+
+Physical Pixel/Flip5 validation, TalkBack, actual folding, biometrics, reminders, Health Connect, true 16 KiB runtime and Play delivery remain separate open checks. No new native iOS binary or public release is claimed. Use the [focused phone checklist](android-testing.md#0272-enlarged-text-navigation).
+
 ## Approved Android artwork and calendar correction — October 31, 2026
 
 The owner approved **A · Clover & cream**, including its feature composition, six captions and ordering. The [finished pack](design/play-store-2026-10-31/android/README.md) uses real native captures of **0.27.1 / build 33** on a disposable AOSP Android 16 / API 36 x86_64 emulator with 42 fictional entries. Production privacy settings remain unchanged; the existing preview screenshot allowance supplies the captures. No tester records were read and nothing was uploaded to Play.

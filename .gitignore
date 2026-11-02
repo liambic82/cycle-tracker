@@ -28,6 +28,7 @@ artifacts/
 modules/**/android/build/
 modules/**/android/.gradle/
 *.tsbuildinfo
+__pycache__/
 
 # Local health data, backups, and signing material
 research/private-data/
