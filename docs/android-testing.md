@@ -1,5 +1,17 @@
 # Android preview testing
 
+## 0.30.0 faster doctor-summary PDFs
+
+Back up first, then install `artifacts/android/trifelle-preview-0.30.0-arm64-v8a.apk` (**code 37**) over the current preview without uninstalling or clearing storage. The verified versioned copy is also placed in the locally configured testing folder.
+
+1. **Update retention:** unlock the retained journal with the passphrase and biometrics if enabled. Confirm recent/older entries and saved medical attachments. Continue the 0.29.0 editing/recovery and 0.28.0 accessibility checks below.
+2. **Useful report:** choose Your data → Create doctor summary, select the date range/sections actually needed, review and export. Save through a chosen destination, then open the PDF. Check selected dates, first/last records, page numbers, text wrapping and accented notes. Notes and each sexual-health field should still start off for a new report.
+3. **Long report:** if the journal has enough history, repeat for up to 366 days. Note elapsed export time and any visible pause, along with device, Android version and app version. A shorter journal may finish too quickly to exercise cancellation.
+4. **Cancel:** start a long PDF export and promptly tap Lock, then separately test leaving the report screen or backgrounding the app. Expect normal locking/navigation with no later unexpected PDF share sheet. Unlock/reopen the report and confirm a fresh export still succeeds. If the share sheet was already open, cancel it normally; cancellation does not retract a file already handed to another app.
+5. **Privacy and failure:** check only selected sections appear. Unsupported characters should produce a clear error rather than invisible text; the journal must remain intact. Use fictional text for deliberate failure tests. Normal PDF exporting works offline; validate the behavior of any chosen destination separately.
+
+[The review](pdf-performance-2026-11-04.md) separates identical-content/render checks, emulator performance and cancellation from these physical-phone checks. The report preview's long scroll and PDF tagging/font coverage are unchanged. This remains a development preview.
+
 ## 0.29.0 native large-journal saves and recovery
 
 Back up first, then install `artifacts/android/trifelle-preview-0.29.0-arm64-v8a.apk` (**code 36**) over the current preview without uninstalling or clearing storage. The versioned copy belongs in the locally configured testing folder after hash verification.

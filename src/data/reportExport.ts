@@ -31,7 +31,7 @@ export async function exportDoctorReport(
     fontBytes(require('../../assets/fonts/NotoSans-Regular.ttf')),
     fontBytes(require('../../assets/fonts/NotoSans-Bold.ttf')),
   ]);
-  const bytes = await createReportPdf(report, { regular, bold });
+  const bytes = await createReportPdf(report, { regular, bold }, isActive);
   // A lock/navigation during generation must not unexpectedly open a share sheet afterward.
   if (!isActive()) return;
   const filename = `cycle-doctor-summary-${report.from}-to-${report.through}.pdf`;

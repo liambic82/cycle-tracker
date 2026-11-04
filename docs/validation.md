@@ -1,5 +1,25 @@
 # Validation record
 
+## PDF generation performance — November 4, 2026
+
+Preview **0.30.0 / build 37** reuses per-export font work and page font resources, and checks cancellation while yielding between layout/drawing chunks. Locking or leaving the report screen stops an unfinished export before sharing. Report filtering, appearance, journal/envelope formats, permissions and prediction behavior are unchanged. [Implementation and measured comparison](pdf-performance-2026-11-04.md).
+
+`pnpm check` passes **347 tests**, including cancellation before font work, timer-driven cancellation during layout and the page limit rejecting incomplete output. The complete rerun outside the Windows sandbox resolved unrelated temporary-directory rename restrictions; none were skipped. TypeScript, production web/Android/iOS JavaScript exports, changed-file formatting and Python harness syntax checks pass. No native iOS binary was rebuilt.
+
+The fixed fictional **36-page** report and **109-page** note/Unicode stress report retain identical extracted text and identical rendered pages against 0.29.0 at 72 dpi. Representative pages were visually inspected. On the disposable Android 16/API 36 emulator, three full-year export observations improve from **8.181 / 7.624 / 7.509 seconds** to **5.380 / 5.404 / 5.276 seconds**: about **29% lower median**, including ADB polling overhead. Native files are about **27% smaller**. Native page/text comparisons differ only in the automatic Prepared date across midnight. Locking after a fourth export starts produces no new readable file or delayed chooser during 20 seconds of observation. Startup removes the completed export copies. No recipient was chosen and no physical-phone timing is claimed.
+
+| Artifact                                          |      Bytes | SHA-256                                                            |
+| ------------------------------------------------- | ---------: | ------------------------------------------------------------------ |
+| `trifelle-preview-0.30.0-arm64-v8a.apk`           | 60,866,876 | `a1138dee7de2193874165aab17b990bc589d11384eae0aa9c51ad72891bd903f` |
+| `trifelle-preview-0.30.0-x86_64.apk`              | 61,426,654 | `f3b4caf558d55d1a180ab63307006ec2578d432bfbb64bc902cadfe30d3c9b4e` |
+| `trifelle-0.30.0-upload.aab`                      | 61,350,351 | `3ef110b4c2d7ca1537a1f5ae5eb521a5ce7704e0e60024dd2196488ba42e043f` |
+| `trifelle-0.30.0-store-local-test.apk`            | 78,795,106 | `084d7ab8ff3b335d5dd9ce789fd1e66e77ead02e64e0e642714bb6d77a1bae04` |
+| `trifelle-0.30.0-upload-bundletool-universal.apk` | 78,875,903 | `5a9732842b9d47dd3d912e4de4c494bf3ab45368f90a7422dbf10165d4355823` |
+
+All five artifacts pass identity/version, release permission/privacy and ELF 16 KiB alignment checks. APKs pass ZIP alignment and compiled backup exclusions. Their signatures match the unchanged preview/upload certificates, and the AAB validates and generates its universal APK. These local store checks do not establish Play delivery or a physical 16 KiB runtime pass.
+
+The verified ARM64 preview is copied to the locally configured testing folder with a matching destination SHA-256, retaining its build copy. Cloud-drive synchronization is not established. [Phone checks](android-testing.md#0300-faster-doctor-summary-pdfs) cover actual saving/opening, selected content, long-report timing and cancellation, alongside the outstanding reliability/accessibility checks. The long report preview, broader font coverage and tagged PDF accessibility remain follow-up work. No Play upload, public release or 1.0 decision is included.
+
 ## Native large-journal performance and recovery — November 2, 2026
 
 Preview **0.29.0 / build 36** moves Android whole-journal encryption and integrity hashing to background native work, keeps the established envelope/cryptographic parameters, and avoids redundant selected-date and clean-lock writes. An export-screen cancellation guard prevents a completed asynchronous backup from opening a share sheet after that screen unmounts. The [native review](native-journal-performance-2026-11-02.md) records methods, measured-candidate provenance, before/after timings and remaining limits. No appearance or prediction changes are included.

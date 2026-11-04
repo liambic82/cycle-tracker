@@ -309,3 +309,44 @@ test('unsupported glyphs stop PDF export instead of producing invisible or subst
   );
   assert.ok(value.entries[today]!.note.includes('🦄'));
 });
+
+test('an abandoned export stops before loading fonts or returning readable bytes', async () => {
+  await assert.rejects(
+    createReportPdf(
+      createDoctorReport(journal(), options(), today),
+      { regular: new Uint8Array(), bold: new Uint8Array() },
+      () => false,
+    ),
+    /cancelled/,
+  );
+});
+
+test('a timer can cancel a long report after layout has started', async () => {
+  const report = createDoctorReport(journal(), only('notes'), today);
+  report.sections[0]!.blocks = Array.from({ length: 600 }, (_, index) => ({
+    heading: `Fictional record ${index}`,
+    paragraphs: [`Fictional café observation ${index}. `.repeat(10)],
+  }));
+  let active = true,
+    checkpoints = 0,
+    timerRan = false;
+  await assert.rejects(
+    createReportPdf(report, await fonts, () => {
+      if (++checkpoints === 10)
+        setTimeout(() => {
+          active = false;
+          timerRan = true;
+        }, 0);
+      return active;
+    }),
+    /cancelled/,
+  );
+  assert.ok(checkpoints > 10, 'Generation reached a later chunk');
+  assert.ok(timerRan, 'The event loop handled cancellation during generation');
+});
+
+test('excessive PDF pagination fails instead of exporting a partial report', async () => {
+  const report = createDoctorReport(journal(), only('notes'), today);
+  report.sections[0]!.blocks = [{ heading: today, paragraphs: ['\n'.repeat(10000)] }];
+  await assert.rejects(createReportPdf(report, await fonts), /too long/);
+});

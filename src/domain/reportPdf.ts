@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
+import { PDFDocument, degrees, drawLinesOfText, rgb, type PDFFont } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import type { DoctorReport } from './report.ts';
 
@@ -20,7 +20,44 @@ export type PdfLine = {
 export type PdfLayout = { pages: PdfLine[][] };
 const clean = (text: string) => text.replace(/\r\n?/g, '\n').replace(/\t/g, '    ');
 
-export function wrapReportText(text: string, font: PDFFont, size: number, width: number): string[] {
+// Each cache belongs to one export, never to the journal/session. Bound both
+// entry count and retained text; long, mostly unique notes must not grow it.
+function textCache<T>(calculate: (text: string) => T): (text: string) => T {
+  const values = new Map<string, T>();
+  let characters = 0;
+  return (text) => {
+    const cached = values.get(text);
+    if (cached !== undefined) return cached;
+    const value = calculate(text);
+    if (text.length > 131072) return value;
+    while (values.size >= 2048 || characters + text.length > 131072) {
+      const oldest = values.keys().next().value!;
+      characters -= oldest.length;
+      values.delete(oldest);
+    }
+    values.set(text, value);
+    characters += text.length;
+    return value;
+  };
+}
+
+type TextMeasurer = Pick<PDFFont, 'widthOfTextAtSize'>;
+function measuredFont(font: PDFFont): TextMeasurer {
+  // Keep whole-string shaping (ligatures/combining characters included).
+  // Summing cached character or word widths can change line breaks.
+  const measure = textCache((key: string) => {
+    const separator = key.indexOf(':');
+    return font.widthOfTextAtSize(key.slice(separator + 1), Number(key.slice(0, separator)));
+  });
+  return { widthOfTextAtSize: (text, size) => measure(`${size}:${text}`) };
+}
+
+export function wrapReportText(
+  text: string,
+  font: TextMeasurer,
+  size: number,
+  width: number,
+): string[] {
   const lines: string[] = [];
   for (const paragraph of clean(text).split('\n')) {
     if (!paragraph) {
@@ -50,11 +87,17 @@ export function wrapReportText(text: string, font: PDFFont, size: number, width:
   return lines;
 }
 
-export function layoutReport(report: DoctorReport, regular: PDFFont, bold: PDFFont): PdfLayout {
+function* layoutSteps(
+  report: DoctorReport,
+  regular: PDFFont,
+  bold: PDFFont,
+): Generator<void, PdfLayout> {
   const pages: PdfLine[][] = [];
   let page: PdfLine[],
     y = 0;
   const supported = new Set(regular.getCharacterSet());
+  const regularMeasure = measuredFont(regular),
+    boldMeasure = measuredFont(bold);
   const newPage = () => {
     if (pages.length >= 200)
       throw new Error('This PDF would be too long. Choose a shorter date range or fewer sections.');
@@ -82,7 +125,12 @@ export function layoutReport(report: DoctorReport, regular: PDFFont, bold: PDFFo
         );
     }
     const lineHeight = size * 1.45;
-    for (const line of wrapReportText(text, strong ? bold : regular, size, WIDTH - 2 * MARGIN)) {
+    for (const line of wrapReportText(
+      text,
+      strong ? boldMeasure : regularMeasure,
+      size,
+      WIDTH - 2 * MARGIN,
+    )) {
       ensure(lineHeight);
       page!.push({ text: line, x: MARGIN, y, size, bold: strong, muted });
       y -= lineHeight;
@@ -103,10 +151,11 @@ export function layoutReport(report: DoctorReport, regular: PDFFont, bold: PDFFo
     10,
   );
   write(`Included: ${report.included.join('; ')}.`, 9, false, true, 14);
+  yield;
   for (const section of report.sections) {
     const explanationLines = wrapReportText(
       section.explanation,
-      regular,
+      regularMeasure,
       9,
       WIDTH - 2 * MARGIN,
     ).length;
@@ -116,21 +165,49 @@ export function layoutReport(report: DoctorReport, regular: PDFFont, bold: PDFFo
     if (!section.blocks.length)
       write('No selected records in this date range.', 10, false, true, 10);
     for (const block of section.blocks) {
-      const headingLines = wrapReportText(block.heading, bold, 10, WIDTH - 2 * MARGIN).length;
+      const headingLines = wrapReportText(
+        block.heading,
+        boldMeasure,
+        10,
+        WIDTH - 2 * MARGIN,
+      ).length;
       ensure(headingLines * 14.5 + 24);
       write(block.heading, 10, true, false, 3);
-      for (const paragraph of block.paragraphs) write(paragraph);
+      for (const paragraph of block.paragraphs) {
+        write(paragraph);
+        yield;
+      }
       y -= 5;
+      yield;
     }
     y -= 8;
+    yield;
   }
   return { pages };
+}
+
+export function layoutReport(report: DoctorReport, regular: PDFFont, bold: PDFFont): PdfLayout {
+  const steps = layoutSteps(report, regular, bold);
+  let step = steps.next();
+  while (!step.done) step = steps.next();
+  return step.value;
 }
 
 export async function createReportPdf(
   report: DoctorReport,
   fonts: { regular: Uint8Array; bold: Uint8Array },
+  isActive: () => boolean = () => true,
 ): Promise<Uint8Array> {
+  let lastPause = Date.now();
+  const checkpoint = async (force = false) => {
+    if (!isActive()) throw new Error('Report export cancelled.');
+    if (force || Date.now() - lastPause >= 16) {
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
+      lastPause = Date.now();
+      if (!isActive()) throw new Error('Report export cancelled.');
+    }
+  };
+  await checkpoint(true);
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
   pdf.setTitle('Trifelle - Doctor summary');
@@ -139,34 +216,60 @@ export async function createReportPdf(
   pdf.setCreator('Trifelle');
   const regular = await pdf.embedFont(fonts.regular, { subset: true });
   const bold = await pdf.embedFont(fonts.bold, { subset: true });
-  const layout = layoutReport(report, regular, bold);
+  const steps = layoutSteps(report, regular, bold);
+  let step = steps.next();
+  while (!step.done) {
+    await checkpoint();
+    step = steps.next();
+  }
+  const layout = step.value;
+  const encodeRegular = textCache((text) => regular.encodeText(text));
+  const encodeBold = textCache((text) => bold.encodeText(text));
   for (const [index, lines] of layout.pages.entries()) {
-    const page: PDFPage = pdf.addPage([WIDTH, HEIGHT]);
+    await checkpoint();
+    const page = pdf.addPage([WIDTH, HEIGHT]);
+    // Reuse two page font resources and already-shaped strings. drawText's
+    // convenience path creates another resource and reshapes every repeated line.
+    const regularKey = page.node.newFontDictionary(regular.name, regular.ref);
+    const boldKey = page.node.newFontDictionary(bold.name, bold.ref);
+    const draw = (line: PdfLine) =>
+      page.pushOperators(
+        ...drawLinesOfText([(line.bold ? encodeBold : encodeRegular)(line.text)], {
+          x: line.x,
+          y: line.y,
+          size: line.size,
+          font: line.bold ? boldKey : regularKey,
+          color: line.muted ? MUTED : line.bold ? PLUM : INK,
+          rotate: degrees(0),
+          xSkew: degrees(0),
+          ySkew: degrees(0),
+          lineHeight: 24,
+        }),
+      );
     page.drawLine({
       start: { x: MARGIN, y: HEIGHT - MARGIN + 12 },
       end: { x: WIDTH - MARGIN, y: HEIGHT - MARGIN + 12 },
       color: PLUM,
       thickness: 2,
     });
-    for (const line of lines)
-      if (line.text)
-        page.drawText(line.text, {
-          x: line.x,
-          y: line.y,
-          size: line.size,
-          font: line.bold ? bold : regular,
-          color: line.muted ? MUTED : line.bold ? PLUM : INK,
-        });
+    for (const line of lines) {
+      if (line.text) draw(line);
+      await checkpoint();
+    }
     const footer = `${report.sample ? 'Fictional sample' : 'Private health information'} | ${report.from} to ${report.through}`;
-    page.drawText(footer, { x: MARGIN, y: 34, size: 8, font: regular, color: MUTED });
+    draw({ text: footer, x: MARGIN, y: 34, size: 8, bold: false, muted: true });
     const number = `${index + 1} / ${layout.pages.length}`;
-    page.drawText(number, {
+    draw({
+      text: number,
       x: WIDTH - MARGIN - regular.widthOfTextAtSize(number, 8),
       y: 34,
       size: 8,
-      font: regular,
-      color: MUTED,
+      bold: false,
+      muted: true,
     });
   }
-  return pdf.save();
+  await checkpoint(true);
+  const bytes = await pdf.save();
+  await checkpoint(true);
+  return bytes;
 }

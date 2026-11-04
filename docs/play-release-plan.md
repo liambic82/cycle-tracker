@@ -1,6 +1,6 @@
 # Trifelle Google Play release plan
 
-Updated November 2, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.29.0 / build 36**. Cloud sync and closed-app wearable syncing remain deferred.
+Updated November 4, 2026. The owner authorized Play Store preparation; no public release or 1.0 decision has been made. Current Android preview: **0.30.0 / build 37**. Cloud sync and closed-app wearable syncing remain deferred.
 
 ## Publisher and account
 

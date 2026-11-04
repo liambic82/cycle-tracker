@@ -14,6 +14,8 @@ The [October 9 source review](docs/source-review-2026-10-09.md) incorporates all
 
 ## Current Android test build
 
+**Preview 0.30.0 / code 37** speeds up doctor-summary PDF generation by reusing font work within each export. Locking or leaving the report screen cancels generation before sharing. The approved report appearance and selected content are preserved. [PDF performance and comparison](docs/pdf-performance-2026-11-04.md) · [Focused phone checks](docs/android-testing.md#0300-faster-doctor-summary-pdfs). Physical-phone timing remains separate from emulator evidence.
+
 **Preview 0.29.0 / code 36** moves Android journal encryption and integrity hashing to native background work and removes redundant saves when opening the selected date or locking a saved journal. The existing backup format and approved appearance are preserved. Four fictional journals up to 4,900 daily entries pass native save/reopen comparisons, including an attachment-heavy case. [Native performance and recovery review](docs/native-journal-performance-2026-11-02.md) · [Focused phone checks](docs/android-testing.md#0290-native-large-journal-saves-and-recovery). Emulator evidence is separate from pending physical-phone validation.
 
 **Approved store presentation:** [A · Clover & cream](docs/design/play-store-2026-10-31/android/index.html) now has a feature graphic and six portrait assets with actual Android emulator captures and fictional records. The owner approved its composition, captions and ordering. Nothing has been uploaded or published.
